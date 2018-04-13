@@ -16,6 +16,8 @@ public class TwoAxisJoystickInput extends JoystickInput{
 		super(autoJoystickTypeHelper(x, y));
 		this.xAxis = x;
 		this.yAxis = y;
+		xAxis.setParent(this);
+		yAxis.setParent(this);
 	}
 	private static JoystickType autoJoystickTypeHelper(SingleInput x, SingleInput y){
 		if (x.getAxisType() != y.getAxisType()) {
@@ -31,14 +33,25 @@ public class TwoAxisJoystickInput extends JoystickInput{
 		}
 	}
 
+	@Override
+	public void update(ControlConfig config) {
+		super.update(config);
+		xAxis.update(config);
+		yAxis.update(config);
+	}
 
 	@Override
 	public double getX(){
-		return yAxis.getPosition();
+		return xAxis.getPosition();
 	}
 	@Override
 	public double getY(){
-		return xAxis.getPosition();
+		return yAxis.getPosition();
+	}
+
+	@Override
+	public boolean isConnected(ControllerManager manager) {
+		return xAxis.isConnected(manager) && yAxis.isConnected(manager);
 	}
 
 	public SingleInput getXAxis(){

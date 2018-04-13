@@ -18,11 +18,39 @@ public abstract class SingleInput extends ControllerPart{
 	}
 
 	/**
+	 * Overridden by subclasses
+	 * <p>
+	 * When implementing:
+	 * The returned value should comply with whatever getAxisType() returns
+	 * @return The raw(est) position of the input
+	 */
+	protected abstract double calculatePosition();
+
+	/**
 	 * Can be used for all AxisTypes.
 	 * @return
 	 */
 	public boolean isDown(){
-		return getPosition() > this.config.analogButtonDownDeadzone;
+		return getPosition() > this.config.buttonDownDeadzone;
+	}
+
+	/**
+	 * @return true if the current getValue() is in a deadzone or close enough to 0
+	 */
+	public boolean isDeadzone(){
+		double deadzone;
+		switch(getAxisType()){
+			case FULL_ANALOG:
+				deadzone = config.fullAnalogDeadzone;
+				break;
+			case ANALOG:
+				deadzone = config.analogDeadzone;
+				break;
+			default: // usually digital
+				deadzone = config.digitalDeadzone;
+				break;
+		}
+		return Math.abs(position) < deadzone;
 	}
 
 	/**
@@ -41,14 +69,6 @@ public abstract class SingleInput extends ControllerPart{
 		return 0;
 	}
 
-	/**
-	 * Overridden by subclasses
-	 * <p>
-	 * When implementing:
-	 * The returned value should comply with whatever getAxisType() returns
-	 * @return The raw(est) position of the input
-	 */
-	protected abstract double calculatePosition();
 
 	/**
 	 * Depending on what getAxisType() returns, the returned value may have a smaller range.

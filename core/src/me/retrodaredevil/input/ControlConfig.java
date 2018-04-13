@@ -1,7 +1,14 @@
 package me.retrodaredevil.input;
 
 public class ControlConfig {
-	public double analogButtonDownDeadzone = .5;
-	public double analogDigitalValueDeadzone = analogButtonDownDeadzone;
+	/** Should be used for all isDown() calls */
+	public double buttonDownDeadzone = .5;
+	/** Should be used for things like D-pads and POVs */
+	public double analogDigitalValueDeadzone = buttonDownDeadzone;
+	/** Should be used for ANALOG AxisTypes */
 	public double analogDeadzone = .001;
+	/** Should be used for FULL_ANALOG AxisTypes */
+	public double fullAnalogDeadzone = .004;
+	/** Not used often if at all. Used for checking if in deadzone and should not be used for anything analog */
+	public double digitalDeadzone = .001;
 }

@@ -18,9 +18,18 @@ public abstract class JoystickInput extends ControllerPart{
 		return type;
 	}
 
+	/**
+	 * When overriding, if there are SingleInputs as instance variables, their update should not be called unless
+	 * they were created by this instance.
+	 */
 	@Override
 	public void update(ControlConfig config) {
 		super.update(config);
+	}
+
+	@Override
+	public void lateUpdate() {
+		super.lateUpdate();
 		applyCalculations();
 	}
 
@@ -82,37 +91,51 @@ public abstract class JoystickInput extends ControllerPart{
 	 * When implementing: You should try to cache the value in update() for this so if this method is called 100 times
 	 * per frame, it won't affect performance.
 	 *
+	 * NOTE: When joystick is up, this is positive, when joystick is down, this is negative
+	 *
 	 * @return The Y value of the joystick -1 to 1
 	 */
 	public abstract double getY();
 
-	public static Point2D getScaled(double x, double y, Double angleRadians){
-		final double radians45 = toRadians(45);
-		final double radians90 = toRadians(90);
-		final double radians180 = toRadians(180);
-		final double radians360 = toRadians(360);
+	/**
+	 * This method is a util method that assumes that x is -1 to 1 and y is -1 to 1 meaning that an (x, y) value of
+	 * (1, 1). This method scales the passed x and y values accordingly so that when something like (1, 1) is passed,
+	 * it is scaled down to a magnitude of 1 so it is then (1/sqrt(2), 1/sqrt(2)). When (1, 0) is passed, it is not
+	 * scaled at all
+	 *
+	 *
+	 * @param x The x value of the joystick
+	 * @param y The y value of the joystick
+	 * @param angleDegrees If the atan2 of y, x or atan of y/x has already been calculated, this will use that value
+	 *                     instead of calculating it essentially increasing performance
+	 * @return The scaled point
+	 */
+	public static Point2D getScaled(double x, double y, Double angleDegrees){
+		if(x == 0 && y == 0){
+			return new Point2D.Double(0, 0);
+		}
 
-		double angle;
-		if(angleRadians == null){
-			angle = atan(y / x);
+		double angle; // in degrees
+		if(angleDegrees == null){
+			angle = toDegrees(atan(y / x));
 		} else {
-			angle = angleRadians % radians360;
-			angle = angle < 0 ? angle + radians360 : angle;
+			angle = angleDegrees % 360;
+			angle = angle < 0 ? angle + 360 : angle;
 
-			if(angle > radians90){
-				angle -= radians180;
-			} else if(angle < -radians90){
-				angle += radians180;
+			if(angle > 90){
+				angle -= 180;
+			} else if(angle < -90){
+				angle += 180;
 			}
 		}
 		// angle is between -90 and 90
-		if(angle > radians45){
-			angle = radians45 - (angle - radians45); // = 90 - angle
-		} else if (angle < -radians45){
-			angle = -radians90 - angle;
+		if(angle > 45){
+			angle = 45 - (angle - 45); // = 90 - angle
+		} else if (angle < -46){
+			angle = -90 - angle;
 		}
 //		angle = ((angle - 45) % 45) - 45;
-		double scale = cos(angle);
+		double scale = cos(toRadians(angle));
 		return new Point2D.Double(x * scale, y * scale);
 	}
 
