@@ -2,9 +2,9 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
 import me.retrodaredevil.input.ControllerManager;
-import me.retrodaredevil.input.SingleInput;
+import me.retrodaredevil.input.InputPart;
 
-public class ControllerSingleInput extends SingleInput {
+public class ControllerInputPart extends InputPart {
 	private Controller controller;
 	private int code;
 	private boolean inverted;
@@ -16,7 +16,7 @@ public class ControllerSingleInput extends SingleInput {
 	 * @param code The code for the button or axis
 	 * @param inverted true if this is inverted. Should be true for most y axises to when up, it is positive
 	 */
-	public ControllerSingleInput(Controller controller, AxisType type, int code, boolean inverted){
+	public ControllerInputPart(Controller controller, AxisType type, int code, boolean inverted){
 		super(type);
 		this.controller = controller;
 		this.code = code;
@@ -26,7 +26,7 @@ public class ControllerSingleInput extends SingleInput {
 			throw new UnsupportedOperationException("Controller Single Input does not support FULL_DIGITAL");
 		}
 	}
-	public ControllerSingleInput(Controller controller, AxisType type, int code){
+	public ControllerInputPart(Controller controller, AxisType type, int code){
 		this(controller, type, code, false);
 	}
 	@Override
@@ -34,7 +34,7 @@ public class ControllerSingleInput extends SingleInput {
 		AxisType type = getAxisType();
 		boolean fullAnalog = type == AxisType.FULL_ANALOG;
 		if(fullAnalog || type == AxisType.ANALOG){
-			float value = controller.getAxis(this.code);
+			double value = controller.getAxis(this.code);
 			double mult = inverted ? -1 : 1;
 			return fullAnalog ? value * mult : ((value + 1.0) / 2.0) * mult;
 		}

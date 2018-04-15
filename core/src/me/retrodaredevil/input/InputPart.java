@@ -3,13 +3,13 @@ package me.retrodaredevil.input;
 /**
  * A single input such as a button, joystick axis, pov axis, etc
  */
-public abstract class SingleInput extends ControllerPart{
+public abstract class InputPart extends ControllerPart{
 	private AxisType type;
 
 	private Double position = null;
 	private Double previousPosition = null;
 
-	public SingleInput(AxisType type){
+	public InputPart(AxisType type){
 		this.type = type;
 	}
 

@@ -35,7 +35,7 @@ public abstract class ControllerPart {
 	}
 
 	/**
-	 * If this part somehow represents a button or axis (like SingleInput), then this should return true if the button
+	 * If this part somehow represents a button or axis (like InputPart), then this should return true if the button
 	 * exists on the controller, false otherwise.
 	 *
 	 * @param manager The ControllerManager that handles controllers

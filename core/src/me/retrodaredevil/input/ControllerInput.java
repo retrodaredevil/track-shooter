@@ -9,7 +9,7 @@ public abstract class ControllerInput extends ControllerPart{
 
 	/**
 	 *
-	 * @return All parts that should be updated including all Joystick Axises and JoystickInput objects or any other
+	 * @return All parts that should be updated including all Joystick Axises and JoystickPart objects or any other
 	 *         ControllerPart objects
 	 */
 	public abstract Collection<ControllerPart> getAllParts();

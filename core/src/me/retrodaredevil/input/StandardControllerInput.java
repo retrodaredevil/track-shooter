@@ -6,20 +6,20 @@ package me.retrodaredevil.input;
  */
 public abstract class StandardControllerInput extends ControllerInput {
 
-	public abstract JoystickInput dPad();
-	public abstract JoystickInput leftJoy();
-	public abstract JoystickInput rightJoy();
+	public abstract JoystickPart dPad();
+	public abstract JoystickPart leftJoy();
+	public abstract JoystickPart rightJoy();
 
-	public abstract SingleInput start();
-	public abstract SingleInput select();
+	public abstract InputPart start();
+	public abstract InputPart select();
 
-	public abstract SingleInput faceUp();
-	public abstract SingleInput faceDown();
-	public abstract SingleInput faceLeft();
-	public abstract SingleInput faceRight();
+	public abstract InputPart faceUp();
+	public abstract InputPart faceDown();
+	public abstract InputPart faceLeft();
+	public abstract InputPart faceRight();
 
-	public abstract SingleInput leftBumper();
-	public abstract SingleInput rightBumper();
-	public abstract SingleInput leftTrigger();
-	public abstract SingleInput rightTrigger();
+	public abstract InputPart leftBumper();
+	public abstract InputPart rightBumper();
+	public abstract InputPart leftTrigger();
+	public abstract InputPart rightTrigger();
 }

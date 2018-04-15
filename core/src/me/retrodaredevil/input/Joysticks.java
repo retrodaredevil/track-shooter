@@ -7,15 +7,15 @@ import java.util.Iterator;
 /**
  *
  */
-public class Joysticks implements Iterable<JoystickInput> {
-	private Collection<JoystickInput> joysticks;
+public class Joysticks implements Iterable<JoystickPart> {
+	private Collection<JoystickPart> joysticks;
 
-	public Joysticks(JoystickInput... joysticks){
+	public Joysticks(JoystickPart... joysticks){
 		this.joysticks = Arrays.asList(joysticks);
 	}
 
 	@Override
-	public Iterator<JoystickInput> iterator() {
+	public Iterator<JoystickPart> iterator() {
 		return joysticks.iterator();
 	}
 }

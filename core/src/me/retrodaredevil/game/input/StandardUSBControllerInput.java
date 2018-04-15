@@ -7,47 +7,47 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class StandardUSBControllerInput extends StandardControllerInput {
-	private final SingleInput leftXAxis, leftYAxis,
+	private final InputPart leftXAxis, leftYAxis,
 			rightXAxis, rightYAxis,
 			dXAxis, dYAxis;
 
-	private final SingleInput start, select,
+	private final InputPart start, select,
 			faceUp, faceDown, faceLeft, faceRight,
 			leftBumper, rightBumper,
 			leftTrigger, rightTrigger;
 
-	private final JoystickInput dPad, leftJoy, rightJoy;
+	private final JoystickPart dPad, leftJoy, rightJoy;
 	private final Joysticks joysticks;
 
 	private final Collection<ControllerPart> parts;
 
 	public StandardUSBControllerInput(Controller controller){
-		leftXAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 0);
-		leftYAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 1, true);
+		leftXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 0);
+		leftYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 1, true);
 
-		rightXAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 2);
-		rightYAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 3, true);
+		rightXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 2);
+		rightYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 3, true);
 
-		dXAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 4);
-		dYAxis = new ControllerSingleInput(controller, SingleInput.AxisType.FULL_ANALOG, 5, true);
+		dXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 4);
+		dYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 5, true);
 
-		start = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 9);
-		select = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 8);
+		start = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 9);
+		select = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 8);
 
-		faceUp = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 0);
-		faceDown = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 2);
-		faceLeft = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 3);
-		faceRight = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 1);
+		faceUp = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 0);
+		faceDown = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 2);
+		faceLeft = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 3);
+		faceRight = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 1);
 
-		leftBumper = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 4);
-		rightBumper = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 5);
+		leftBumper = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 4);
+		rightBumper = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 5);
 
-		leftTrigger = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 6);
-		rightTrigger = new ControllerSingleInput(controller, SingleInput.AxisType.DIGITAL, 7);
+		leftTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 6);
+		rightTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 7);
 
-		dPad = new TwoAxisJoystickInput(dXAxis, dYAxis);
-		leftJoy = new TwoAxisJoystickInput(leftXAxis, leftYAxis);
-		rightJoy = new TwoAxisJoystickInput(rightXAxis, rightYAxis);
+		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis);
+		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
+		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
 
 		joysticks = new Joysticks(dPad, leftJoy, rightJoy);
 
@@ -58,67 +58,67 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	}
 
 	@Override
-	public JoystickInput dPad() {
+	public JoystickPart dPad() {
 		return dPad;
 	}
 
 	@Override
-	public JoystickInput leftJoy() {
+	public JoystickPart leftJoy() {
 		return leftJoy;
 	}
 
 	@Override
-	public JoystickInput rightJoy() {
+	public JoystickPart rightJoy() {
 		return rightJoy;
 	}
 
 	@Override
-	public SingleInput start() {
+	public InputPart start() {
 		return start;
 	}
 
 	@Override
-	public SingleInput select() {
+	public InputPart select() {
 		return select;
 	}
 
 	@Override
-	public SingleInput faceUp() {
+	public InputPart faceUp() {
 		return faceUp;
 	}
 
 	@Override
-	public SingleInput faceDown() {
+	public InputPart faceDown() {
 		return faceDown;
 	}
 
 	@Override
-	public SingleInput faceLeft() {
+	public InputPart faceLeft() {
 		return faceLeft;
 	}
 
 	@Override
-	public SingleInput faceRight() {
+	public InputPart faceRight() {
 		return faceRight;
 	}
 
 	@Override
-	public SingleInput leftBumper() {
+	public InputPart leftBumper() {
 		return leftBumper;
 	}
 
 	@Override
-	public SingleInput rightBumper() {
+	public InputPart rightBumper() {
 		return rightBumper;
 	}
 
 	@Override
-	public SingleInput leftTrigger() {
+	public InputPart leftTrigger() {
 		return leftTrigger;
 	}
 
 	@Override
-	public SingleInput rightTrigger() {
+	public InputPart rightTrigger() {
 		return rightTrigger;
 	}
 

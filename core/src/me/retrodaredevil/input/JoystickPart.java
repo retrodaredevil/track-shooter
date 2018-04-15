@@ -4,13 +4,13 @@ import java.awt.geom.Point2D;
 
 import static java.lang.Math.*;
 
-public abstract class JoystickInput extends ControllerPart{
+public abstract class JoystickPart extends ControllerPart{
 	private JoystickType type;
 
 	protected double angleDegrees;
 	protected double magnitude;
 
-	public JoystickInput(JoystickType type){
+	public JoystickPart(JoystickType type){
 		this.type = type;
 	}
 

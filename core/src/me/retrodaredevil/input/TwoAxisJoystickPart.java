@@ -3,23 +3,23 @@ package me.retrodaredevil.input;
 /**
  * A single joystick with two axis
  */
-public class TwoAxisJoystickInput extends JoystickInput{
-	private SingleInput xAxis;
-	private SingleInput yAxis;
+public class TwoAxisJoystickPart extends JoystickPart {
+	private InputPart xAxis;
+	private InputPart yAxis;
 
-//	public TwoAxisJoystickInput(SingleInput x, SingleInput y, JoystickType type){
+//	public TwoAxisJoystickPart(InputPart x, InputPart y, JoystickType type){
 //		super(type);
 //		this.xAxis = x;
 //		this.yAxis = y;
 //	}
-	public TwoAxisJoystickInput(SingleInput x, SingleInput y){
+	public TwoAxisJoystickPart(InputPart x, InputPart y){
 		super(autoJoystickTypeHelper(x, y));
 		this.xAxis = x;
 		this.yAxis = y;
 		xAxis.setParent(this);
 		yAxis.setParent(this);
 	}
-	private static JoystickType autoJoystickTypeHelper(SingleInput x, SingleInput y){
+	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y){
 		if (x.getAxisType() != y.getAxisType()) {
 			throw new IllegalArgumentException("Each passed argument must have the same AxisType.");
 		}
@@ -54,10 +54,10 @@ public class TwoAxisJoystickInput extends JoystickInput{
 		return xAxis.isConnected(manager) && yAxis.isConnected(manager);
 	}
 
-	public SingleInput getXAxis(){
+	public InputPart getXAxis(){
 		return xAxis;
 	}
-	public SingleInput getYAxis(){
+	public InputPart getYAxis(){
 		return yAxis;
 	}
 
