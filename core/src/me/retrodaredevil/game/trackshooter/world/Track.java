@@ -9,12 +9,12 @@ import java.util.Collection;
 
 public class Track implements Renderable {
 
-	private final Collection<TrackPart> parts;
+	private final Collection<? extends TrackPart> parts;
 	private float totalDistance;
 
 	protected RenderComponent renderComponent;
 
-	public Track(Collection<TrackPart> parts){
+	public Track(Collection<? extends TrackPart> parts){
 		this.parts = parts;
 		this.totalDistance = calculateTotalDistance();
 
@@ -27,7 +27,7 @@ public class Track implements Renderable {
 		}
 		return r;
 	}
-	public Collection<TrackPart> getParts(){
+	public Collection<? extends TrackPart> getParts(){
 		return parts;
 	}
 

@@ -50,6 +50,16 @@ public class TwoAxisJoystickPart extends JoystickPart {
 	}
 
 	@Override
+	public boolean isXDeadzone() {
+		return xAxis.isDeadzone();
+	}
+
+	@Override
+	public boolean isYDeadzone() {
+		return yAxis.isDeadzone();
+	}
+
+	@Override
 	public boolean isConnected(ControllerManager manager) {
 		return xAxis.isConnected(manager) && yAxis.isConnected(manager);
 	}

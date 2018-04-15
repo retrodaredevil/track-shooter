@@ -98,6 +98,15 @@ public abstract class JoystickPart extends ControllerPart{
 	public abstract double getY();
 
 	/**
+	 * @return isXDeadzone() && isYDeadzone();
+	 */
+	public boolean isDeadzone(){
+		return isXDeadzone() && isYDeadzone();
+	}
+	public abstract boolean isXDeadzone();
+	public abstract boolean isYDeadzone();
+
+	/**
 	 * This method is a util method that assumes that x is -1 to 1 and y is -1 to 1 meaning that an (x, y) value of
 	 * (1, 1). This method scales the passed x and y values accordingly so that when something like (1, 1) is passed,
 	 * it is scaled down to a magnitude of 1 so it is then (1/sqrt(2), 1/sqrt(2)). When (1, 0) is passed, it is not
