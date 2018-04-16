@@ -45,7 +45,7 @@ public class GameScreen extends ScreenAdapter {
 
 		Player player = new Player();
 		player.setEntityController(new PlayerController(player, controller));
-		world.getEntities().add(player);
+		world.addEntity(player);
 	}
 
 	@Override

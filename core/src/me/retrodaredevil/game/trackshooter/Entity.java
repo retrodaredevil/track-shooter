@@ -2,11 +2,12 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public interface Entity extends Renderable, Updateable, Controlable {
 
 	/**
-	 * @return The location of the entity. This should not be altered at all
+	 * @return The location of the entity. Feel free to alter it as you please
 	 */
 	Vector2 getLocation();
 	void setLocation(Vector2 location);
@@ -31,5 +32,17 @@ public interface Entity extends Renderable, Updateable, Controlable {
 	 * @return The move component currently being used by this entity
 	 */
 	MoveComponent getMoveComponent();
+
+	boolean shouldRemove(World world);
+
+	/**
+	 * Called when the Entity is going to be removed
+	 *
+	 * Should only be called by the World instance. This should be called after the entity has been removed
+	 * @param world
+	 */
+	void afterRemove(World world);
+
+	boolean isRemoved();
 
 }

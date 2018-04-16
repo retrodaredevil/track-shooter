@@ -34,6 +34,13 @@ public abstract class InputPart extends ControllerPart{
 		return getPosition() > this.config.buttonDownDeadzone;
 	}
 
+	public boolean isPressed(){
+		return isDown() && (previousPosition == null || previousPosition <= this.config.buttonDownDeadzone);
+	}
+	public boolean isReleased(){
+		return !isDown() && (previousPosition != null && previousPosition > this.config.buttonDownDeadzone);
+	}
+
 	/**
 	 * @return true if the current getValue() is in a deadzone or close enough to 0
 	 */

@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.render;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -37,9 +39,10 @@ public class ImageRenderComponent implements RenderComponent{
 		if(image.getStage() != stage){
 			stage.addActor(image);
 		}
-		image.setPosition(entity.getLocation().x - (image.getWidth() / 2f), entity.getLocation().y - (image.getHeight() / 2f));
-		image.setRotation(entity.getRotation() - 90);
-//		updateBounds();
+		Vector2 location = entity.getLocation();
+		image.setPosition(location.x - image.getOriginX(), location.y - image.getOriginY());
+		int rotation = (int) entity.getRotation() - 90;
+		image.setRotation(rotation);
 	}
 
 	/**
@@ -66,5 +69,6 @@ public class ImageRenderComponent implements RenderComponent{
 
 	@Override
 	public void dispose() {
+		image.remove();
 	}
 }
