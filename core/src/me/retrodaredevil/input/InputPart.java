@@ -53,9 +53,14 @@ public abstract class InputPart extends ControllerPart{
 			case ANALOG:
 				deadzone = config.analogDeadzone;
 				break;
-			default: // usually digital
+			case DIGITAL:
 				deadzone = config.digitalDeadzone;
 				break;
+			case FULL_DIGITAL:
+				deadzone = config.fullDigitalDeadzone;
+				break;
+			default: // usually digital
+				throw new UnsupportedOperationException("We didn't account for AxisType: " + getAxisType());
 		}
 		return Math.abs(position) < deadzone;
 	}

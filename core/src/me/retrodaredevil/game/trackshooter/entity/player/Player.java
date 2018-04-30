@@ -1,11 +1,11 @@
-package me.retrodaredevil.game.trackshooter.player;
+package me.retrodaredevil.game.trackshooter.entity.player;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import me.retrodaredevil.game.trackshooter.Bullet;
-import me.retrodaredevil.game.trackshooter.BulletShooter;
-import me.retrodaredevil.game.trackshooter.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.SimpleEntity;
+import me.retrodaredevil.game.trackshooter.entity.Bullet;
+import me.retrodaredevil.game.trackshooter.entity.BulletShooter;
+import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class Player extends SimpleEntity implements BulletShooter {
-	private static final int MAX_BULLETS = 3;
+	private static final int MAX_BULLETS = 2;
 
 	private List<Bullet> activeBullets = new ArrayList<>();
 

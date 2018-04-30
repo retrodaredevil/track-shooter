@@ -1,7 +1,7 @@
 package me.retrodaredevil.game.trackshooter.render;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import me.retrodaredevil.game.trackshooter.Entity;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class WorldRenderComponent implements RenderComponent {

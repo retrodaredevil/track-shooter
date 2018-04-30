@@ -1,9 +1,10 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.entity;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 
 public class Bullet extends SimpleEntity {
@@ -19,7 +20,7 @@ public class Bullet extends SimpleEntity {
 	public Bullet(Entity shooter, Vector2 start, Vector2 velocity, float rotation){
 		this.shooter = shooter;
 		this.hitbox.setSize(0.25f, 0.25f);
-		setMoveComponent(new VelocityMoveComponent(this, velocity));
+		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
 		setRenderComponent(new ImageRenderComponent(new Image(new Texture("bullet.png")), this, .5f, .5f));
 		setLocation(start);
 		setRotation(rotation);

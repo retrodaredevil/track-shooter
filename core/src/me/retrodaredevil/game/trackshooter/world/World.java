@@ -1,8 +1,7 @@
 package me.retrodaredevil.game.trackshooter.world;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
-import me.retrodaredevil.game.trackshooter.Entity;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;

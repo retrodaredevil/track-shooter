@@ -11,4 +11,7 @@ public class ControlConfig {
 	public double fullAnalogDeadzone = .004;
 	/** Not used often if at all. Used for checking if in deadzone and should not be used for anything analog */
 	public double digitalDeadzone = .001;
+	public double fullDigitalDeadzone = digitalDeadzone;
+
+	// TODO public boolean scaleFromDeadzone; ex: is deadzone is .001, .001 is 0 and everything is LERPed accordingly
 }

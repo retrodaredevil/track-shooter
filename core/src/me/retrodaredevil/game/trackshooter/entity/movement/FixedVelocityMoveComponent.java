@@ -1,9 +1,10 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class VelocityMoveComponent extends MoveComponent {
+public class FixedVelocityMoveComponent implements MoveComponent {
 
 	private Entity entity;
 	private Vector2 velocity;
@@ -13,7 +14,7 @@ public class VelocityMoveComponent extends MoveComponent {
 	 * @param entity The entity to move
 	 * @param velocity The amount to move per second. Should not be altered after being passed to constructor
 	 */
-	public VelocityMoveComponent(Entity entity, Vector2 velocity){
+	public FixedVelocityMoveComponent(Entity entity, Vector2 velocity){
 		this.entity = entity;
 		this.velocity = velocity;
 	}
@@ -23,5 +24,10 @@ public class VelocityMoveComponent extends MoveComponent {
 		Vector2 current = entity.getLocation();
 		current.add(velocity.x * delta, velocity.y * delta);
 		entity.setLocation(current);
+	}
+
+	@Override
+	public MoveComponent getNextComponent() {
+		return this;
 	}
 }

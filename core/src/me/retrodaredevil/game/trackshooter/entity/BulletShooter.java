@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.entity;
 
 import me.retrodaredevil.game.trackshooter.world.World;
 

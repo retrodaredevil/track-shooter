@@ -1,10 +1,25 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.entity;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
+import me.retrodaredevil.game.trackshooter.Renderable;
+import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public interface Entity extends Renderable, Updateable, Controlable {
+public interface Entity extends Renderable, Updateable {
+
+	/**
+	 *
+	 * @return The EntityController that is currently controlling the entity
+	 */
+	EntityController getEntityController();
+
+	/**
+	 *
+	 * @param controller The EntityController to set to control the entity
+	 */
+	void setEntityController(EntityController controller);
 
 	/**
 	 * @return The location of the entity. Feel free to alter it as you please
