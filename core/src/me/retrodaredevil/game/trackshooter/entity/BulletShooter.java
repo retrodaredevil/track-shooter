@@ -2,6 +2,8 @@ package me.retrodaredevil.game.trackshooter.entity;
 
 import me.retrodaredevil.game.trackshooter.world.World;
 
+import java.util.Collection;
+
 public interface BulletShooter extends Entity {
 
 	/**
@@ -11,4 +13,7 @@ public interface BulletShooter extends Entity {
 	 * @return The created Bullet or null if it can't shoot one at the moment
 	 */
 	Bullet shootBullet(World world);
+
+	Collection<Bullet> getOnScreenBullets();
+
 }

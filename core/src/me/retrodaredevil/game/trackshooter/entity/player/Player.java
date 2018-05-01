@@ -2,18 +2,16 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import me.retrodaredevil.game.trackshooter.entity.Bullet;
-import me.retrodaredevil.game.trackshooter.entity.BulletShooter;
+import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
 
-public class Player extends SimpleEntity implements BulletShooter {
+public class Player extends SimpleEntity implements BulletShooter, Hittable {
 	private static final int MAX_BULLETS = 2;
 
 	private List<Bullet> activeBullets = new ArrayList<>();
@@ -26,14 +24,12 @@ public class Player extends SimpleEntity implements BulletShooter {
 	@Override
 	public void update(float delta, World world) {
 		super.update(delta, world);
-		if(!activeBullets.isEmpty()){
-			for(Iterator<Bullet> it = activeBullets.iterator(); it.hasNext();){
-				Bullet bullet = it.next();
-				if(bullet.isRemoved()){
-					it.remove();
-				}
-			}
-		}
+		World.updateEntityList(activeBullets);
+	}
+
+	@Override
+	public void onHit(World world, Entity other) {
+		System.out.println("player is hit");
 	}
 
 	@Override
@@ -45,5 +41,10 @@ public class Player extends SimpleEntity implements BulletShooter {
 		world.addEntity(bullet);
 		activeBullets.add(bullet);
 		return bullet;
+	}
+
+	@Override
+	public Collection<Bullet> getOnScreenBullets() {
+		return activeBullets;
 	}
 }

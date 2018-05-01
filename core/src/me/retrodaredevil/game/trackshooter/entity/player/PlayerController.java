@@ -24,7 +24,7 @@ public class PlayerController implements EntityController{
 		if(move instanceof OnTrackMoveComponent){
 			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
 			JoystickPart movementJoy = controller.leftJoy();
-			if(!movementJoy.isXDeadzone()) {
+			if(!movementJoy.isDeadzone()) {
 				trackMove.setVelocity((float) (controller.leftJoy().getX() * VELOCITY_PER_SECOND));
 			} else {
 				trackMove.setVelocity(0);
@@ -36,7 +36,7 @@ public class PlayerController implements EntityController{
 			if(rotateJoy.isDeadzone()){
 				desired = 0;
 			}
-			trackMove.setDesiredRotationalVelocity(desired);
+			trackMove.setDesiredRotationalVelocity(desired, 10, 270);
 		}
 		if (controller.rightTrigger().isPressed()) {
 			player.shootBullet(world);

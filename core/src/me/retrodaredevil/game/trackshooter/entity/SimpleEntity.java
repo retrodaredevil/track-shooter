@@ -19,9 +19,14 @@ public class SimpleEntity implements Entity {
 
 	private EntityController entityController = null;
 
-	protected final Rectangle hitbox = new Rectangle(0, 0, 1, 1); // must call getHitbox() to update position
+	private final Rectangle hitbox = new Rectangle(0, 0, 1, 1); // must call getHitbox() to update position
 
 	protected SimpleEntity(){
+	}
+
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "{hitbox:" + this.getHitbox().toString() + "}";
 	}
 
 	@Override
@@ -87,7 +92,7 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return !world.getBounds().contains(this.getHitbox());
+		return !world.getBounds().overlaps(this.getHitbox());
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
+import me.retrodaredevil.game.trackshooter.entity.enemies.Shark;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -46,6 +47,9 @@ public class GameScreen extends ScreenAdapter {
 		Player player = new Player();
 		player.setEntityController(new PlayerController(player, controller));
 		world.addEntity(player);
+
+		Shark shark = new Shark();
+		world.addEntity(shark);
 	}
 
 	@Override
