@@ -13,7 +13,7 @@ import java.util.*;
 public class World implements Updateable, Renderable {
 
 	private Track track;
-	private List<Entity> entities = new ArrayList<>();
+	private final List<Entity> entities = new ArrayList<>();
 	private ListIterator<Entity> currentIterator = null;
 
 	private CollisionHandler collisionHandler;
@@ -31,15 +31,15 @@ public class World implements Updateable, Renderable {
 
 
 	@Override
-	public void update(float delta, World world) {
-		assert world == this || world == null;
+	public void update(float delta, World theWorld) {
+		assert theWorld == this || theWorld == null;
 
 		for(currentIterator = entities.listIterator(); currentIterator.hasNext(); ){
 			Entity entity = currentIterator.next();
 			entity.update(delta, this);
 			if(entity.shouldRemove(this)){
-				entity.afterRemove(this);
 				currentIterator.remove();
+				entity.afterRemove(this);
 			}
 		}
 		currentIterator = null;

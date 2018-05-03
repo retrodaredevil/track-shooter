@@ -14,7 +14,7 @@ import java.util.List;
 public class Player extends SimpleEntity implements BulletShooter, Hittable {
 	private static final int MAX_BULLETS = 2;
 
-	private List<Bullet> activeBullets = new ArrayList<>();
+	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
 
 	public Player(){
 		setMoveComponent(new OnTrackMoveComponent(this));
@@ -24,7 +24,6 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 	@Override
 	public void update(float delta, World world) {
 		super.update(delta, world);
-		World.updateEntityList(activeBullets);
 	}
 
 	@Override
@@ -34,6 +33,7 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 
 	@Override
 	public Bullet shootBullet(World world) {
+		World.updateEntityList(activeBullets);
 		if(activeBullets.size() >= MAX_BULLETS){
 			return null;
 		}
@@ -43,8 +43,4 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 		return bullet;
 	}
 
-	@Override
-	public Collection<Bullet> getOnScreenBullets() {
-		return activeBullets;
-	}
 }

@@ -36,17 +36,22 @@ public class Bullet extends SimpleEntity implements Hittable {
 		return new Bullet(entity, entity.getLocation(), velocity, rotation);
 	}
 
+	@Override
 	public Entity getShooter(){
 		return shooter;
 	}
 
 	@Override
 	public void onHit(World world, Entity other) {
+		if(hit){
+			System.out.println("Someone didn't remove me!");
+		}
 		this.hit = true;
+		System.out.println(hashCode() + " bullet hit: " + other);
 	}
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return hit || super.shouldRemove(world);
+		return super.shouldRemove(world) || hit;
 	}
 }

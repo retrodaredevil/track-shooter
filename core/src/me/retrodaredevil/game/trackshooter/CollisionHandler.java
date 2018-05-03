@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Rectangle;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.Hittable;
@@ -11,36 +13,65 @@ import java.util.Collection;
 import java.util.List;
 
 public class CollisionHandler implements Updateable {
+//	private final List<Hittable> friendly = new LinkedList<>(), enemies = new LinkedList<>(),
+//			friendBullets = new LinkedList<>(), enemyBullets = new LinkedList<>();
 	@Override
 	public void update(float delta, World world) {
-		Collection<Entity> entities = new ArrayList<>(world.getEntities()); // cloned version of current entities
+//		long start = System.nanoTime();
+//		friendly.clear();
+//		enemies.clear();
+//		friendBullets.clear();
+//		enemyBullets.clear();
+		final Collection<Entity> entities = world.getEntities();
 
-		List<Hittable> friendly = new ArrayList<>();
-		List<Hittable> enemies = new ArrayList<>();
+		List<Hittable> friendly = new ArrayList<>(), enemies = new ArrayList<>(),
+				friendBullets = new ArrayList<>(), enemyBullets = new ArrayList<>();
 
 		for(Entity e : entities){
-			if(e instanceof Player){
+			assert !e.shouldRemove(world);
+			if(e instanceof Player) {
 				friendly.add((Hittable) e);
-			} else if (e instanceof Bullet) {
-				if(((Bullet) e).getShooter() instanceof Player){
-					friendly.add((Hittable) e);
+			} else if(e instanceof Bullet){
+				if(e.getShooter() instanceof Player){
+					friendBullets.add((Hittable) e);
 				} else {
-					enemies.add((Hittable) e);
+					enemyBullets.add((Hittable) e);
 				}
 			} else if (e instanceof Hittable){
 				enemies.add((Hittable) e);
 			}
 		}
-//		Gdx.app.debug("friendly", friendly.toString());
-//		Gdx.app.debug("enemies", enemies.toString());
-		for(Hittable friend : friendly){
-			for(Hittable enemy : enemies){
-				if(friend.getHitbox().overlaps(enemy.getHitbox())){
-					friend.onHit(world, enemy);
-					enemy.onHit(world, friend);
-					System.out.println("worked");
+		if(!enemyBullets.isEmpty() || !enemies.isEmpty()) {
+			for (Hittable friend : friendly) {
+				Rectangle hitbox = friend.getHitbox();
+				for (Hittable enemyBullet : enemyBullets) {
+					if (hitbox.overlaps(enemyBullet.getHitbox())) { // for player - enemy bullet collisions
+						friend.onHit(world, enemyBullet);
+						enemyBullet.onHit(world, friend);
+					}
+				}
+				for (Hittable enemy : enemies) {
+					Rectangle enemyHitbox = enemy.getHitbox();
+					if (hitbox.overlaps(enemyHitbox)) { // for player - enemy collisions
+						friend.onHit(world, enemy);
+						enemy.onHit(world, friend);
+					}
 				}
 			}
 		}
+		if(!enemies.isEmpty()) {
+			for (Hittable friendBullet : friendBullets) {
+				for (Hittable enemy : enemies) {
+					if (enemy.getHitbox().overlaps(friendBullet.getHitbox())) { // for player bullet - enemy collisions
+						enemy.onHit(world, friendBullet);
+						friendBullet.onHit(world, enemy);
+					}
+				}
+			}
+		}
+//		long end = System.nanoTime();
+//		long took = end - start;
+//		Gdx.app.debug("took", "" + took);
+
 	}
 }

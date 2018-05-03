@@ -60,4 +60,11 @@ public interface Entity extends Renderable, Updateable {
 
 	boolean isRemoved();
 
+	/**
+	 * If this entity was spawned because of another entity, that entity will be returned. However, it may be null
+	 * for most entities
+	 * @return The entity that caused the spawning of this entity or null if there is none
+	 */
+	Entity getShooter();
+
 }

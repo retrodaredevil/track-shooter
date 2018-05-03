@@ -14,6 +14,4 @@ public interface BulletShooter extends Entity {
 	 */
 	Bullet shootBullet(World world);
 
-	Collection<Bullet> getOnScreenBullets();
-
 }

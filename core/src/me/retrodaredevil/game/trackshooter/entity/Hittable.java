@@ -14,7 +14,7 @@ public interface Hittable extends Entity {
 	 * simple and this method will be called intelligently by a CollisionHandler. ex: two bullets cannot collide so
 	 * CollisionHandler should not call Bullet#onHit(otherBullet)
 	 *
-	 * @param world
+	 * @param world The World object
 	 * @param other The other entity this has collided with
 	 */
 	void onHit(World world, Entity other);
