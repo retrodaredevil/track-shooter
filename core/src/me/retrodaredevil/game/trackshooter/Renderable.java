@@ -1,9 +1,11 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.sun.istack.internal.Nullable;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 
 public interface Renderable {
-	@Nullable
+	/**
+	 *
+	 * @return The RenderComponent for this object or null if there is not currently one
+	 */
 	RenderComponent getRenderComponent();
 }

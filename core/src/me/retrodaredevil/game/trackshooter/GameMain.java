@@ -13,5 +13,9 @@ public class GameMain extends Game {
 		setScreen(new GameScreen());
 	}
 
-
+	@Override
+	public void render() {
+		super.render();
+		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
+	}
 }

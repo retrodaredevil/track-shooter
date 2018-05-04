@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 
 	public Player(){
 		setMoveComponent(new OnTrackMoveComponent(this));
-		setRenderComponent(new ImageRenderComponent(new Image(new Texture("player.png")), this, 1.0f, 1.0f));
+		setRenderComponent(new ImageRenderComponent(new Image(new Texture("player.png")), this, .8f, .8f));
 	}
 
 	@Override
@@ -37,7 +38,7 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 		if(activeBullets.size() >= MAX_BULLETS){
 			return null;
 		}
-		Bullet bullet = Bullet.createFromEntity(this);
+		Bullet bullet = Bullet.createFromEntity(this, Constants.BULLET_SPEED);
 		world.addEntity(bullet);
 		activeBullets.add(bullet);
 		return bullet;

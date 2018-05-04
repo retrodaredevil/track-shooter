@@ -31,14 +31,17 @@ public class PlayerController implements EntityController{
 			}
 
 			JoystickPart rotateJoy = controller.rightJoy();
-			float desired = (float) (ROTATE_PER_SECOND * rotateJoy.getX());
+			double x = rotateJoy.getX();
+//			x = Math.signum(x) * Math.pow(Math.abs(x), 1.2);
+
+			float desired = (float) (ROTATE_PER_SECOND * x);
 			desired *= -1;
 			if(rotateJoy.isDeadzone()){
 				desired = 0;
 			}
-			trackMove.setDesiredRotationalVelocity(desired, 10, 270);
+			trackMove.setDesiredRotationalVelocity(desired, 15, 270);
 		}
-		if (controller.rightTrigger().isPressed()) {
+		if (controller.rightTrigger().isPressed() || controller.rightBumper().isPressed()) {
 			player.shootBullet(world);
 		}
 	}

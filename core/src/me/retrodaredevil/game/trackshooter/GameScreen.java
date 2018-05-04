@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.trackshooter.entity.enemies.Shark;
+import me.retrodaredevil.game.trackshooter.entity.enemies.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -38,7 +39,7 @@ public class GameScreen extends ScreenAdapter {
 				.connect(new Vector2(0, 5))
 				.connect(uLeft)
 				.build(true);
-		this.world = new World(new Track(parts), 16, 16);
+		this.world = new World(new Track(parts), 18, 18);
 		this.stage = new Stage(new WorldViewport(world));
 
 		StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().get(0));
@@ -49,7 +50,13 @@ public class GameScreen extends ScreenAdapter {
 		world.addEntity(player);
 
 		Shark shark = new Shark();
+		shark.setEntityController(new SharkAIController(shark, player, 4));
 		world.addEntity(shark);
+
+		Shark shark2 = new Shark();
+		shark2.setLocation(world.getTrack().getDesiredLocation(10));
+		shark2.setEntityController(new SharkAIController(shark2, player, -4));
+		world.addEntity(shark2);
 	}
 
 	@Override

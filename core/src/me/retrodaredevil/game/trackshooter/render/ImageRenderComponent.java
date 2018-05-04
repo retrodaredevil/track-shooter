@@ -8,8 +8,8 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 
 public class ImageRenderComponent implements RenderComponent{
 
-	private Image image;
-	private Entity entity;
+	protected Image image;
+	protected Entity entity;
 
 	private float width;
 	private float height;

@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter.util;
 
 public class VelocityHandler implements VelocitySetter {
 
-	private final float velocitySetZeroDeadband;
+	private final float velocitySetGotoDeadband;
 
 	private float velocity = 0;
 	private float desiredVelocity = 0;
@@ -11,22 +11,25 @@ public class VelocityHandler implements VelocitySetter {
 
 	/**
 	 *
-	 * @param velocitySetZeroDeadband When |velocity - desiredVelocity| is less than this,
+	 * @param velocitySetGotoDeadband When |velocity - desiredVelocity| is less than this,
 	 *                                it will set velocity to the desired velocity
 	 */
-	public VelocityHandler(float velocitySetZeroDeadband){
-		this.velocitySetZeroDeadband = velocitySetZeroDeadband;
+	public VelocityHandler(float velocitySetGotoDeadband){
+		this.velocitySetGotoDeadband = velocitySetGotoDeadband;
 	}
 
 
 	public void update(float delta){
 		float change = desiredVelocity - velocity;
 
-		if(Math.abs(change) < velocitySetZeroDeadband){
+		if(Math.abs(change) < velocitySetGotoDeadband){
 			velocity = desiredVelocity;
 		} else {
 			change *= accelerationMultiplier;
 			velocity += change * delta;
+			if(Math.signum(desiredVelocity - velocity) != Math.signum(change)){
+				velocity = desiredVelocity;
+			}
 		}
 
 		if(velocity > maxVelocity){

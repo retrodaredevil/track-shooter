@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -11,7 +12,7 @@ public class OnTrackMoveComponent implements MoveComponent, RotationalVelocityMo
 	private float distance = 0; // total distance
 	private float velocity = 0; // per second
 
-	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(10);
+	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 
 
 	public OnTrackMoveComponent(Entity entity){

@@ -22,17 +22,17 @@ public class Bullet extends SimpleEntity implements Hittable {
 	 */
 	public Bullet(Entity shooter, Vector2 start, Vector2 velocity, float rotation){
 		this.shooter = shooter;
-		getHitbox().setSize(0.25f, 0.25f);
+		setHitboxSize(.25f, .25f);
 		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
 		setRenderComponent(new ImageRenderComponent(new Image(new Texture("bullet.png")), this, .5f, .5f));
 		setLocation(start);
 		setRotation(rotation);
 	}
 
-	public static Bullet createFromEntity(Entity entity){
+	public static Bullet createFromEntity(Entity entity, float speed){
 		float rotation = entity.getRotation();
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
-		velocity.scl(22);
+		velocity.scl(speed);
 		return new Bullet(entity, entity.getLocation(), velocity, rotation);
 	}
 
@@ -47,7 +47,6 @@ public class Bullet extends SimpleEntity implements Hittable {
 			System.out.println("Someone didn't remove me!");
 		}
 		this.hit = true;
-		System.out.println(hashCode() + " bullet hit: " + other);
 	}
 
 	@Override

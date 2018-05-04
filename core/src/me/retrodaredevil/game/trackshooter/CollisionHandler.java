@@ -43,14 +43,23 @@ public class CollisionHandler implements Updateable {
 		}
 		if(!enemyBullets.isEmpty() || !enemies.isEmpty()) {
 			for (Hittable friend : friendly) {
+				if(friend.shouldRemove(world)){
+					continue;
+				}
 				Rectangle hitbox = friend.getHitbox();
 				for (Hittable enemyBullet : enemyBullets) {
+					if(enemyBullet.shouldRemove(world)){
+						continue;
+					}
 					if (hitbox.overlaps(enemyBullet.getHitbox())) { // for player - enemy bullet collisions
 						friend.onHit(world, enemyBullet);
 						enemyBullet.onHit(world, friend);
 					}
 				}
 				for (Hittable enemy : enemies) {
+					if(enemy.shouldRemove(world)){
+						continue;
+					}
 					Rectangle enemyHitbox = enemy.getHitbox();
 					if (hitbox.overlaps(enemyHitbox)) { // for player - enemy collisions
 						friend.onHit(world, enemy);
@@ -60,8 +69,14 @@ public class CollisionHandler implements Updateable {
 			}
 		}
 		if(!enemies.isEmpty()) {
-			for (Hittable friendBullet : friendBullets) {
+			friendBulletLoop : for (Hittable friendBullet : friendBullets) {
 				for (Hittable enemy : enemies) {
+					if(friendBullet.shouldRemove(world)){
+						continue friendBulletLoop;
+					}
+					if(enemy.shouldRemove(world)){
+						continue;
+					}
 					if (enemy.getHitbox().overlaps(friendBullet.getHitbox())) { // for player bullet - enemy collisions
 						enemy.onHit(world, friendBullet);
 						friendBullet.onHit(world, enemy);

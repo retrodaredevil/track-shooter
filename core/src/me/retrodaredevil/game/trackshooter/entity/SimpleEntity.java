@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SimpleEntity implements Entity {
@@ -11,16 +12,21 @@ public class SimpleEntity implements Entity {
 	private float rotation = 0; // in degrees
 
 	/** Normally changed only in afterRemove() so either set this to true or call super of afterRemove() */
-	protected boolean removed = false;
+	private boolean removed = false;
 
 	private MoveComponent moveComponent = null;
 	private RenderComponent renderComponent = null;
 
 	private EntityController entityController = null;
 
-	private final Rectangle hitbox = new Rectangle(0, 0, 1, 1); // also stores location data
+	private final Rectangle hitbox; // also stores location data but must retrieve using HitboxUtil
 
 	protected SimpleEntity(){
+		hitbox = HitboxUtil.createHitbox(0, 0, 1, 1);
+	}
+
+	protected void setHitboxSize(float width, float height){
+		HitboxUtil.hitboxSetSize(hitbox, width, height);
 	}
 
 	@Override
@@ -31,14 +37,20 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public Vector2 getLocation() {
-		return new Vector2(hitbox.x, hitbox.y);
+		return hitbox.getCenter(new Vector2());
 	}
 
 	@Override
 	public void setLocation(Vector2 location) {
-		hitbox.setPosition(location);
+		hitbox.setCenter(location);
 	}
 
+	/**
+	 * Note, you should NEVER edit the values of this hitbox unless you use HitboxUtil and you know what you are doing
+	 * Also, the x and y values are probably not the actual location values
+	 *
+	 * @return The hitbox of the entity
+	 */
 	@Override
 	public Rectangle getHitbox() {
 		return hitbox;
@@ -96,9 +108,6 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public boolean shouldRemove(World world) {
-		if(removed){
-			throw new IllegalStateException("Already removed entity!");
-		}
 		return !world.getBounds().overlaps(this.getHitbox());
 	}
 

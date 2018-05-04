@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.Renderable;
@@ -11,6 +12,7 @@ import me.retrodaredevil.game.trackshooter.render.WorldRenderComponent;
 import java.util.*;
 
 public class World implements Updateable, Renderable {
+	private static final Vector2 temp = new Vector2();
 
 	private Track track;
 	private final List<Entity> entities = new ArrayList<>();
@@ -19,7 +21,8 @@ public class World implements Updateable, Renderable {
 	private CollisionHandler collisionHandler;
 
 	protected RenderComponent renderComponent;
-	protected Rectangle bounds;
+	private final Rectangle bounds;
+	private final Rectangle largeBounds = new Rectangle(); // shouldn't be referenced without getLargeBounds()
 
 	public World(Track track, float width, float height){
 		this.track = track;
@@ -68,6 +71,12 @@ public class World implements Updateable, Renderable {
 	public Rectangle getBounds(){
 		return bounds;
 	}
+
+//	public Rectangle getLargeBounds(){ maybe use in future?
+//		largeBounds.setSize(getBounds().getWidth() * 1.5f, getBounds().getHeight() * 1.5f);
+//		largeBounds.setCenter(getBounds().getCenter(temp));
+//		return largeBounds;
+//	}
 
 	@Override
 	public RenderComponent getRenderComponent() {
