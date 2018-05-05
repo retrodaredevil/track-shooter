@@ -3,33 +3,29 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PointTargetMoveComponent implements MoveComponent {
 	private static final Vector2 temp = new Vector2();
 
-	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
+//	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 	private Entity entity;
 	private final Vector2 target;
 
 	private float speed;
-	private float rotationalSpeed;
+	private float rotationalSpeedMultiplier;
 
-	private final float rotationalAccelerationMultiplier;
-	private final float maxRotationalVelocity;
+//	private final float rotationalAccelerationMultiplier;
+//	private final float maxRotationalVelocity;
 
 	private float rotationalChange;
 
-	public PointTargetMoveComponent(Entity entity, Vector2 target, float speed, float rotationalSpeed, float rotationalAccelerationMultiplier, float maxRotationalVelocity){
+	public PointTargetMoveComponent(Entity entity, Vector2 target, float speed, float rotationalSpeedMultiplier){
 		this.entity = entity;
 		this.target = target.cpy();
 		this.speed = speed;
-		this.rotationalSpeed = rotationalSpeed;
-		this.rotationalAccelerationMultiplier = rotationalAccelerationMultiplier;
-		this.maxRotationalVelocity = maxRotationalVelocity;
+		this.rotationalSpeedMultiplier = rotationalSpeedMultiplier;
 	}
 
 	public void setTarget(Vector2 target){
@@ -85,9 +81,9 @@ public class PointTargetMoveComponent implements MoveComponent {
 			}
 		}
 		this.rotationalChange = change;
-		rotationalVelocityHandler.setDesiredRotationalVelocity(change, rotationalAccelerationMultiplier, maxRotationalVelocity);
-		rotationalVelocityHandler.update(delta);
-		entity.setRotation(entity.getRotation() + rotationalVelocityHandler.getVelocity() * delta * rotationalSpeed);
+//		rotationalVelocityHandler.setDesiredRotationalVelocity(change, rotationalAccelerationMultiplier, maxRotationalVelocity);
+//		rotationalVelocityHandler.update(delta);
+		entity.setRotation(entity.getRotation() + change * delta * rotationalSpeedMultiplier);
 
 		float rotation = entity.getRotation();
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));

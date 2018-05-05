@@ -14,6 +14,8 @@ public class ImageRenderComponent implements RenderComponent{
 	private float width;
 	private float height;
 
+	private int facingDirection = 90;
+
 	/**
 	 * Note this assumes that the image is facing up and it rotates it accordingly.
 	 *
@@ -29,6 +31,14 @@ public class ImageRenderComponent implements RenderComponent{
 		this.height = height;
 		updateBounds();
 	}
+
+	/**
+	 *
+	 * @param facingDirection The direction the image is facing.
+	 */
+	public void setFacingDirection(int facingDirection){
+		this.facingDirection = facingDirection;
+	}
 	@Override
 	public void render(float delta, Stage stage) {
 		if(image.getStage() != stage){
@@ -36,7 +46,7 @@ public class ImageRenderComponent implements RenderComponent{
 		}
 		Vector2 location = entity.getLocation();
 		image.setPosition(location.x - image.getOriginX(), location.y - image.getOriginY());
-		int rotation = (int) entity.getRotation() - 90;
+		int rotation = (int) entity.getRotation() - facingDirection;
 		image.setRotation(rotation);
 	}
 

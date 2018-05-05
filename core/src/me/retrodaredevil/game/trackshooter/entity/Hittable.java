@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity;
 
+import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public interface Hittable extends Entity {
@@ -16,6 +17,8 @@ public interface Hittable extends Entity {
 	 *
 	 * @param world The World object
 	 * @param other The other entity this has collided with
+	 * @throws CannotHitException This is thrown when the caller has passed an entity that this cannot handle or
+	 *                            doesn't know how to handle.
 	 */
-	void onHit(World world, Entity other);
+	void onHit(World world, Entity other) throws CannotHitException;
 }

@@ -6,6 +6,7 @@ import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.Hittable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.entity.powerup.Powerup;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;
@@ -29,16 +30,19 @@ public class CollisionHandler implements Updateable {
 
 		for(Entity e : entities){
 			assert !e.shouldRemove(world);
-			if(e instanceof Player) {
-				friendly.add((Hittable) e);
-			} else if(e instanceof Bullet){
-				if(e.getShooter() instanceof Player){
-					friendBullets.add((Hittable) e);
+			if(e instanceof Hittable) {
+				Hittable h = (Hittable) e;
+				if (e instanceof Player) {
+					friendly.add(h);
+				} else if (e instanceof Bullet) {
+					if (e.getShooter() instanceof Player) {
+						friendBullets.add(h);
+					} else {
+						enemyBullets.add(h);
+					}
 				} else {
-					enemyBullets.add((Hittable) e);
+					enemies.add(h);
 				}
-			} else if (e instanceof Hittable){
-				enemies.add((Hittable) e);
 			}
 		}
 		if(!enemyBullets.isEmpty() || !enemies.isEmpty()) {
@@ -71,7 +75,7 @@ public class CollisionHandler implements Updateable {
 		if(!enemies.isEmpty()) {
 			friendBulletLoop : for (Hittable friendBullet : friendBullets) {
 				for (Hittable enemy : enemies) {
-					if(friendBullet.shouldRemove(world)){
+					if(friendBullet.shouldRemove(world) || enemy instanceof Powerup){
 						continue friendBulletLoop;
 					}
 					if(enemy.shouldRemove(world)){

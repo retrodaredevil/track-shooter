@@ -33,23 +33,28 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	@Override
 	public void render(float delta, Stage stage) {
 		MoveComponent moveComponent = entity.getMoveComponent();
+		boolean animate = false;
 		if(moveComponent instanceof PointTargetMoveComponent){
 			PointTargetMoveComponent targetMove = (PointTargetMoveComponent) moveComponent;
 			float change = targetMove.getRotationalChange();
 			if(Math.abs(change) < 20){
-				final long FULL_CYCLE = 1500;
-				int frame = (int) ((System.currentTimeMillis() % FULL_CYCLE) / (FULL_CYCLE / 4L));
-				if(frame == 3){
-					frame = 1;
-				}
-				image.setDrawable(frames[frame]);
+				animate = true;
 			} else if(change > 0){
 				image.setDrawable(frames[LEFT_FRAME]);
 			} else {
 				image.setDrawable(frames[RIGHT_FRAME]);
 			}
 		} else {
-			image.setDrawable(frames[STRAIGHT_FRAME]);
+			animate = true;
+//			image.setDrawable(frames[STRAIGHT_FRAME]);
+		}
+		if(animate){
+			final long FULL_CYCLE = 1500;
+			int frame = (int) ((System.currentTimeMillis() % FULL_CYCLE) / (FULL_CYCLE / 4L));
+			if(frame == 3){
+				frame = 1;
+			}
+			image.setDrawable(frames[frame]);
 		}
 		super.render(delta, stage);
 

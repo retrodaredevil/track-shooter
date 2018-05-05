@@ -1,18 +1,20 @@
 package me.retrodaredevil.game.trackshooter.entity;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.powerup.Powerup;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.util.CannotHitException;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Bullet extends SimpleEntity implements Hittable {
 
 	private Entity shooter;
 
-	private boolean hit = false;
+	private Entity hitEntity = null; // right now this is just used to check if it's null. Maybe use in future
 
 	/**
 	 *
@@ -24,7 +26,7 @@ public class Bullet extends SimpleEntity implements Hittable {
 		this.shooter = shooter;
 		setHitboxSize(.25f, .25f);
 		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
-		setRenderComponent(new ImageRenderComponent(new Image(new Texture("bullet.png")), this, .5f, .5f));
+		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 		setLocation(start);
 		setRotation(rotation);
 	}
@@ -41,16 +43,20 @@ public class Bullet extends SimpleEntity implements Hittable {
 		return shooter;
 	}
 
+
 	@Override
-	public void onHit(World world, Entity other) {
-		if(hit){
-			System.out.println("Someone didn't remove me!");
+	public void onHit(World world, Entity other) throws CannotHitException{
+		if(hitEntity != null){
+			throw new IllegalStateException("I hit something twice!!");
 		}
-		this.hit = true;
+		if(other instanceof Bullet || other == shooter || other instanceof Powerup){
+			throw new CannotHitException(other, this);
+		}
+		this.hitEntity = other;
 	}
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hit;
+		return super.shouldRemove(world) || hitEntity != null;
 	}
 }

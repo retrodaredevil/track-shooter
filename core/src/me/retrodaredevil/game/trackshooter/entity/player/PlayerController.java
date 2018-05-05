@@ -39,7 +39,7 @@ public class PlayerController implements EntityController{
 			if(rotateJoy.isDeadzone()){
 				desired = 0;
 			}
-			trackMove.setDesiredRotationalVelocity(desired, 15, 270);
+			trackMove.setDesiredRotationalVelocity(desired, 20, 270);
 		}
 		if (controller.rightTrigger().isPressed() || controller.rightBumper().isPressed()) {
 			player.shootBullet(world);

@@ -11,8 +11,10 @@ import me.retrodaredevil.game.trackshooter.entity.enemies.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
+import me.retrodaredevil.game.trackshooter.entity.powerup.Cherry;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.LineTrackPart;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.TrackPart;
@@ -57,6 +59,11 @@ public class GameScreen extends ScreenAdapter {
 		shark2.setLocation(world.getTrack().getDesiredLocation(10));
 		shark2.setEntityController(new SharkAIController(shark2, player, -4));
 		world.addEntity(shark2);
+
+		Cherry cherry = new Cherry(world.getTrack().getTotalDistance() * .5f);
+		world.addEntity(cherry);
+
+		Resources.INTRO.play();
 	}
 
 	@Override
