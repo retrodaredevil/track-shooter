@@ -5,6 +5,8 @@ import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
+import me.retrodaredevil.game.trackshooter.util.EntityUtil;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Fruit extends SimpleEntity implements Powerup {
@@ -32,6 +34,11 @@ public class Fruit extends SimpleEntity implements Powerup {
 		Player player = (Player) other;
 		player.getScoreObject().onKill(this, player, points);
 		eaten = true;
+		displayScore(world);
+	}
+
+	protected void displayScore(World world){
+		EntityUtil.displayScore(world, this.getLocation(), Resources.ODD_BONUS_REGIONS[0]);
 	}
 
 	@Override

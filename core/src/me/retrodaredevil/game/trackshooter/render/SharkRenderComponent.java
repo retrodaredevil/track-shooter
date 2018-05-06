@@ -22,12 +22,13 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	 * @param width The width of the image
 	 * @param height The height of the image
 	 */
-	public SharkRenderComponent(TextureRegion[] frames, Entity entity, float width, float height){
+	public SharkRenderComponent(TextureRegionDrawable[] frames, Entity entity, float width, float height){
 		super(new Image(), entity, width, height);
-		this.frames = new TextureRegionDrawable[frames.length];
-		for(int i = 0; i < frames.length; i++){
-			this.frames[i] = new TextureRegionDrawable(frames[i]);
-		}
+//		this.frames = new TextureRegionDrawable[frames.length];
+//		for(int i = 0; i < frames.length; i++){
+//			this.frames[i] = new TextureRegionDrawable(frames[i]);
+//		}
+		this.frames = frames;
 
 	}
 	@Override
@@ -37,7 +38,7 @@ public class SharkRenderComponent extends ImageRenderComponent {
 		if(moveComponent instanceof PointTargetMoveComponent){
 			PointTargetMoveComponent targetMove = (PointTargetMoveComponent) moveComponent;
 			float change = targetMove.getRotationalChange();
-			if(Math.abs(change) < 20){
+			if(Math.abs(change) < 40){
 				animate = true;
 			} else if(change > 0){
 				image.setDrawable(frames[LEFT_FRAME]);
@@ -49,7 +50,7 @@ public class SharkRenderComponent extends ImageRenderComponent {
 //			image.setDrawable(frames[STRAIGHT_FRAME]);
 		}
 		if(animate){
-			final long FULL_CYCLE = 1500;
+			final long FULL_CYCLE = 800;
 			int frame = (int) ((System.currentTimeMillis() % FULL_CYCLE) / (FULL_CYCLE / 4L));
 			if(frame == 3){
 				frame = 1;

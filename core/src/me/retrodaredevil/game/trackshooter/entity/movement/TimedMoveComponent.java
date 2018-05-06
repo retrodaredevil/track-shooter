@@ -8,7 +8,7 @@ public class TimedMoveComponent implements ChainMoveComponent {
 	private Long startTime;
 	private long time;
 
-	TimedMoveComponent(long time){
+	public TimedMoveComponent(long time){
 		this.time = time;
 	}
 

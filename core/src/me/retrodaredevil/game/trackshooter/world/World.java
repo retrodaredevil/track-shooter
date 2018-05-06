@@ -22,7 +22,7 @@ public class World implements Updateable, Renderable {
 
 	protected RenderComponent renderComponent;
 	private final Rectangle bounds;
-	private final Rectangle largeBounds = new Rectangle(); // shouldn't be referenced without getLargeBounds()
+//	private final Rectangle largeBounds = new Rectangle(); // shouldn't be referenced without getLargeBounds()
 
 	public World(Track track, float width, float height){
 		this.track = track;

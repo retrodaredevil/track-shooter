@@ -1,58 +1,38 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.Hittable;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
-import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.PointTargetMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.SpinMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.*;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.SharkRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
+import me.retrodaredevil.game.trackshooter.util.EntityUtil;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Shark extends SimpleEntity implements Hittable {
-	private static final int POINTS = 100; // 100 points for killing a Shark
-
-	private static TextureRegion[] regions = null;
+	private static final int POINTS = 200; // 100 points for killing a Shark
 
 	private int lives = 3;
 
-	public Shark(){
-		updateTextureRegions();
-		setRenderComponent(new SharkRenderComponent(regions, this, 1.0f, 1.0f));
+	public Shark(long pause){
+		setRenderComponent(new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f));
 
-		setMoveComponent(new PointTargetMoveComponent(this, new Vector2(0, 0), 5, 1));
+		ChainMoveComponent pauseComponent = new TimedMoveComponent(pause);
+		pauseComponent.setNextComponent(new PointTargetMoveComponent(this, new Vector2(0, 0), 5, 2));
+		setMoveComponent(pauseComponent);
 
 		setHitboxSize(.7f, .7f);
 //		setHitboxSize(1, 1);
 	}
-	private static void updateTextureRegions(){
-
-		Texture texture = Resources.SHARK_TEXTURE;
-		int width;
-		int height;
-		if(texture.getWidth() > texture.getHeight()){
-			width = texture.getWidth() / 3;
-			height = texture.getHeight();
-		} else {
-			width = texture.getWidth();
-			height = texture.getHeight() / 3;
-		}
-		TextureRegion[][] regions2d = TextureRegion.split(texture, width, height);
-		regions = new TextureRegion[regions2d.length * regions2d[0].length];
-		int index = 0;
-		for(TextureRegion[] nestRegion : regions2d) for(TextureRegion region : nestRegion){
-			regions[index] = region;
-			index++;
-		}
+	public Shark(){
+		this(0);
 	}
 
 	@Override
@@ -62,15 +42,22 @@ public class Shark extends SimpleEntity implements Hittable {
 		}
 		Gdx.app.debug("hit by", other.toString() + " at " + Gdx.app.getGraphics().getFrameId());
 		MoveComponent wantedComponent = getMoveComponent();
+		boolean spinning = false;
 		if(wantedComponent instanceof SpinMoveComponent){
+			spinning = true;
 			wantedComponent = wantedComponent.getNextComponent();
 		}
 		SpinMoveComponent spin = new SpinMoveComponent(this, 1000, 360 * (1.75f + .5f * MathUtils.random()));
 		spin.setNextComponent(wantedComponent);
 		this.setMoveComponent(spin);
+		if(spinning){
+			return;
+		}
 		lives--;
 
 		if(lives <= 0) {
+			EntityUtil.displayScore(world, this.getLocation(), Resources.EVEN_BONUS_REGIONS[0]);
+
 			Player player = null;
 			if (other instanceof Player) {
 				player = (Player) other;

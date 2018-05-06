@@ -19,9 +19,12 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
 	private Score score;
 
+	private boolean hit = false;
+
 	public Player(){
 		setMoveComponent(new OnTrackMoveComponent(this));
 		setRenderComponent(new ImageRenderComponent(new Image(Resources.PLAYER_TEXTURE), this, .8f, .8f));
+		setHitboxSize(.7f, .7f);
 		score = new PlayerScore(this);
 	}
 
@@ -43,6 +46,12 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 			return;
 		}
 		System.out.println("player is hit");
+		hit = true;
+	}
+
+	@Override
+	public boolean shouldRemove(World world) {
+		return super.shouldRemove(world) || hit;
 	}
 
 	@Override

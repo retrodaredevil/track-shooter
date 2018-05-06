@@ -34,10 +34,11 @@ public class ImageRenderComponent implements RenderComponent{
 
 	/**
 	 *
-	 * @param facingDirection The direction the image is facing.
+	 * @param facingDirection The direction the image is facing. By default 90
 	 */
-	public void setFacingDirection(int facingDirection){
+	public ImageRenderComponent setFacingDirection(int facingDirection){
 		this.facingDirection = facingDirection;
+		return this;
 	}
 	@Override
 	public void render(float delta, Stage stage) {

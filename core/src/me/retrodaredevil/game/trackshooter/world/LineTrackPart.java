@@ -14,10 +14,10 @@ public class LineTrackPart extends TrackPart {
 	private final float distance;
 	protected RenderComponent renderComponent;
 
-	public LineTrackPart(Vector2 start, Vector2 end){
+	public LineTrackPart(Vector2 start, Vector2 end, Color color){
 		super(start, end);
 		distance = start.dst(end);
-		renderComponent = new LineRenderComponent(start, end, Color.GRAY, 3, renderer);
+		renderComponent = new LineRenderComponent(start, end, color, 3, renderer);
 	}
 	@Override
 	public float getDistance() {
@@ -38,18 +38,20 @@ public class LineTrackPart extends TrackPart {
 		private final Vector2 first;
 		private Vector2 previous;
 		private Collection<LineTrackPart> parts = new ArrayList<LineTrackPart>();
-		public LineTrackPartBuilder(Vector2 start){
+		private Color color;
+		public LineTrackPartBuilder(Color color, Vector2 start){
+			this.color = color;
 			this.first = start;
 			this.previous = start;
 		}
 		public LineTrackPartBuilder connect(Vector2 point){
-			parts.add(new LineTrackPart(previous, point));
+			parts.add(new LineTrackPart(previous, point, color));
 			previous = point;
 			return this;
 		}
 		public Collection<LineTrackPart> build(boolean connectToFirst){
 			if(connectToFirst){
-				parts.add(new LineTrackPart(previous, first));
+				parts.add(new LineTrackPart(previous, first, color));
 			}
 			return parts;
 		}
