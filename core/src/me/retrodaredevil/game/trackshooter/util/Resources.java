@@ -25,7 +25,9 @@ public final class Resources {
 
 
 	// Sounds
-	public static final Sound INTRO = Gdx.audio.newSound(Gdx.files.internal("intro.ogg"));
+//	public static final Sound INTRO = Gdx.audio.newSound(Gdx.files.internal("intro.ogg"));
+	// thanks http://www.freesfx.co.uk/soundeffects/lasers_weapons/
+	public static final Sound BULLET_SOUND = Gdx.audio.newSound(Gdx.files.internal("bullet_sound.mp3"));
 
 
 	// initializer

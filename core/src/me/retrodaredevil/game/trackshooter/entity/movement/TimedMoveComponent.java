@@ -2,34 +2,42 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class TimedMoveComponent implements ChainMoveComponent {
+public class TimedMoveComponent extends SimpleMoveComponent{
 
-	private MoveComponent nextComponent = null;
 	private Long startTime;
 	private long time;
 
-	public TimedMoveComponent(long time){
+	public TimedMoveComponent(long time, MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
+		super(nextComponent, canHaveNext, canRecycle);
 		this.time = time;
 	}
+	public TimedMoveComponent(long time, MoveComponent nextComponent){
+		this(time, nextComponent, true, true);
 
-	@Override
-	public MoveComponent getNextComponent() {
-		if(startTime == null || startTime + time > System.currentTimeMillis()){
-			return this;
-		}
-		return nextComponent != null ? nextComponent : this;
+	}
+
+	public TimedMoveComponent(long time){
+		this(time, null);
 	}
 
 	@Override
-	public <T extends MoveComponent> T setNextComponent(T nextComponent) {
-		this.nextComponent = nextComponent;
-		return nextComponent;
+	protected void onStart(World world) {
+		startTime = System.currentTimeMillis();
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		if(startTime == null){
-			startTime = System.currentTimeMillis();
-		}
+	protected void onEnd() {
+		startTime = null;
+	}
+
+	@Override
+	public boolean isDone() {
+		done = startTime != null && startTime + time <= System.currentTimeMillis();
+		return super.isDone();
+	}
+
+	@Override
+	protected void onUpdate(float delta, World world) {
+		assert startTime != null : "start wasn't called";
 	}
 }

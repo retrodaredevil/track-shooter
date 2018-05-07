@@ -7,14 +7,12 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class StandardUSBControllerInput extends StandardControllerInput {
-	private final InputPart leftXAxis, leftYAxis,
-			rightXAxis, rightYAxis,
-			dXAxis, dYAxis;
 
 	private final InputPart start, select,
 			faceUp, faceDown, faceLeft, faceRight,
 			leftBumper, rightBumper,
-			leftTrigger, rightTrigger;
+			leftTrigger, rightTrigger,
+			leftStick, rightStick;
 
 	private final JoystickPart dPad, leftJoy, rightJoy;
 	private final Joysticks joysticks;
@@ -22,14 +20,14 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	private final Collection<ControllerPart> parts;
 
 	public StandardUSBControllerInput(Controller controller){
-		leftXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 0);
-		leftYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 1, true);
+		InputPart leftXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 0);
+		InputPart leftYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 1, true);
 
-		rightXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 2);
-		rightYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 3, true);
+		InputPart rightXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 2);
+		InputPart rightYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 3, true);
 
-		dXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 4);
-		dYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 5, true);
+		InputPart dXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 4);
+		InputPart dYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 5, true);
 
 		start = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 9);
 		select = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 8);
@@ -45,6 +43,9 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 		leftTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 6);
 		rightTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 7);
 
+		leftStick = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 10);
+		rightStick = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 11);
+
 		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis);
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
 		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
@@ -54,7 +55,7 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 		parts = Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
 				start, select, faceUp, faceDown, faceLeft, faceRight,
 				leftBumper, rightBumper, leftTrigger, rightTrigger,
-				dPad, leftJoy, rightJoy);
+				dPad, leftJoy, rightJoy, leftStick, rightStick);
 	}
 
 	@Override
@@ -70,6 +71,16 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	@Override
 	public JoystickPart rightJoy() {
 		return rightJoy;
+	}
+
+	@Override
+	public InputPart leftStick() {
+		return leftStick;
+	}
+
+	@Override
+	public InputPart rightStick() {
+		return rightStick;
 	}
 
 	@Override

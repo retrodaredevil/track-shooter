@@ -49,6 +49,9 @@ public class LineTrackPart extends TrackPart {
 			previous = point;
 			return this;
 		}
+		public LineTrackPartBuilder connect(float x, float y){
+			return this.connect(new Vector2(x, y));
+		}
 		public Collection<LineTrackPart> build(boolean connectToFirst){
 			if(connectToFirst){
 				parts.add(new LineTrackPart(previous, first, color));

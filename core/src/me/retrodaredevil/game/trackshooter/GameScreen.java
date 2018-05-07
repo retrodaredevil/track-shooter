@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
@@ -18,23 +19,22 @@ import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.*;
 import me.retrodaredevil.input.ControllerManager;
 
-import java.util.Collection;
-
 public class GameScreen extends ScreenAdapter {
 
+	private Player player;
 	private Stage stage;
 	private World world;
 
 	private ControllerManager controllerManager = new ControllerManager();
 
 	public GameScreen(){
-		this.world = new World(Tracks.newCircleTrack(), 18, 18);
+		this.world = new World(Tracks.newKingdomTrack(), 18, 18);
 		this.stage = new Stage(new WorldViewport(world));
 
 		StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().get(0));
 		controllerManager.addController(controller);
 
-		Player player = new Player();
+		player = new Player();
 		player.setEntityController(new PlayerController(player, controller));
 		world.addEntity(player);
 
@@ -56,7 +56,7 @@ public class GameScreen extends ScreenAdapter {
 		Cherry cherry = new Cherry(world.getTrack().getTotalDistance() * .5f);
 		world.addEntity(cherry);
 
-		Resources.INTRO.play();
+//		Resources.INTRO.play();
 	}
 
 	@Override

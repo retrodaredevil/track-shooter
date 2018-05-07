@@ -1,12 +1,11 @@
 package me.retrodaredevil.game.trackshooter.render;
 
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.PointTargetMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 
 public class SharkRenderComponent extends ImageRenderComponent {
 	private static final int LEFT_FRAME = 2, RIGHT_FRAME = 0, STRAIGHT_FRAME = 1;
@@ -35,8 +34,8 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	public void render(float delta, Stage stage) {
 		MoveComponent moveComponent = entity.getMoveComponent();
 		boolean animate = false;
-		if(moveComponent instanceof PointTargetMoveComponent){
-			PointTargetMoveComponent targetMove = (PointTargetMoveComponent) moveComponent;
+		if(moveComponent instanceof SmoothTravelMoveComponent){
+			SmoothTravelMoveComponent targetMove = (SmoothTravelMoveComponent) moveComponent;
 			float change = targetMove.getRotationalChange();
 			if(Math.abs(change) < 40){
 				animate = true;

@@ -10,6 +10,9 @@ public abstract class StandardControllerInput extends ControllerInput {
 	public abstract JoystickPart leftJoy();
 	public abstract JoystickPart rightJoy();
 
+	public abstract InputPart leftStick();
+	public abstract InputPart rightStick();
+
 	public abstract InputPart start();
 	public abstract InputPart select();
 

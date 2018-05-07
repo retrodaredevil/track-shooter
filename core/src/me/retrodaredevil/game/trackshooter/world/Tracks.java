@@ -27,4 +27,30 @@ public final class Tracks {
 		Collection<? extends TrackPart> parts = Collections.singletonList(new CircleTrackPart(7, Color.GRAY));
 		return new Track(new ArrayList<>(parts));
 	}
+
+	public static Track newKingdomTrack(){
+		Collection<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(Color.GRAY,
+				new Vector2(-7, -7))
+				.connect(-5, -7)
+				.connect(-5, -6)
+				.connect(5, -6)
+				.connect(5, -7)
+				.connect(7, -7)
+				.connect(7, -5)
+				.connect(6, -5)
+				.connect(6, 5)
+				.connect(7, 5)
+				.connect(7, 7)
+				.connect(5, 7)
+				.connect(5, 6)
+				.connect(-5, 6)
+				.connect(-5, 7)
+				.connect(-7, 7)
+				.connect(-7, 5)
+				.connect(-6, 5)
+				.connect(-6, -5)
+				.connect(-7, -5)
+				.build(true);
+		return new Track(parts);
+	}
 }

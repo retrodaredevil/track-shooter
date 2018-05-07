@@ -71,7 +71,14 @@ public class SimpleEntity implements Entity {
 		return moveComponent;
 	}
 
-	protected void setMoveComponent(MoveComponent moveComponent){ this.moveComponent = moveComponent; }
+	protected void setMoveComponent(MoveComponent moveComponent){
+		if(this.moveComponent != moveComponent){
+			if(this.moveComponent != null){
+				this.moveComponent.end();
+			}
+		}
+		this.moveComponent = moveComponent;
+	}
 
 	@Override
 	public RenderComponent getRenderComponent() {
@@ -97,7 +104,11 @@ public class SimpleEntity implements Entity {
 		}
 		if (moveComponent != null) {
 			moveComponent.update(delta, world);
-			moveComponent = moveComponent.getNextComponent();
+			if(moveComponent.isDone()){
+				MoveComponent next = moveComponent.getNextComponent();
+				moveComponent.end();
+				moveComponent = next;
+			}
 		}
 	}
 

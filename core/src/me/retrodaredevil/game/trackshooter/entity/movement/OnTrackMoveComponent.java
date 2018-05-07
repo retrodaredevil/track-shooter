@@ -6,7 +6,7 @@ import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class OnTrackMoveComponent implements MoveComponent, RotationalVelocityMoveComponent {
+public class OnTrackMoveComponent extends SimpleMoveComponent implements RotationalVelocityMoveComponent {
 	private Entity entity;
 
 	private float distance = 0; // total distance
@@ -16,11 +16,16 @@ public class OnTrackMoveComponent implements MoveComponent, RotationalVelocityMo
 
 
 	public OnTrackMoveComponent(Entity entity){
+		super(null, false, true);
 		this.entity = entity;
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	protected void onStart(World world) {
+	}
+
+	@Override
+	public void onUpdate(float delta, World world) {
 		this.distance += delta * this.velocity;
 
 		entity.setLocation(world.getTrack().getDesiredLocation(distance));
@@ -30,8 +35,7 @@ public class OnTrackMoveComponent implements MoveComponent, RotationalVelocityMo
 	}
 
 	@Override
-	public MoveComponent getNextComponent() {
-		return this;
+	protected void onEnd() {
 	}
 
 	public void pointToCenter(){

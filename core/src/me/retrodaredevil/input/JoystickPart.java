@@ -1,7 +1,5 @@
 package me.retrodaredevil.input;
 
-import java.awt.geom.Point2D;
-
 import static java.lang.Math.*;
 
 public abstract class JoystickPart extends ControllerPart{
@@ -117,11 +115,11 @@ public abstract class JoystickPart extends ControllerPart{
 	 * @param y The y value of the joystick
 	 * @param angleDegrees If the atan2 of y, x or atan of y/x has already been calculated, this will use that value
 	 *                     instead of calculating it essentially increasing performance
-	 * @return The scaled point
+	 * @return The number you should scale x and y by
 	 */
-	public static Point2D getScaled(double x, double y, Double angleDegrees){
+	public static double getScaled(double x, double y, Double angleDegrees){
 		if(x == 0 && y == 0){
-			return new Point2D.Double(0, 0);
+			return 0;
 		}
 
 		double angle; // in degrees
@@ -143,9 +141,7 @@ public abstract class JoystickPart extends ControllerPart{
 		} else if (angle < -46){
 			angle = -90 - angle;
 		}
-//		angle = ((angle - 45) % 45) - 45;
-		double scale = cos(toRadians(angle));
-		return new Point2D.Double(x * scale, y * scale);
+		return cos(toRadians(angle));
 	}
 
 	public enum JoystickType{

@@ -6,7 +6,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class PointTargetMoveComponent implements MoveComponent {
+public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 	private static final Vector2 temp = new Vector2();
 
 //	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
@@ -21,7 +21,8 @@ public class PointTargetMoveComponent implements MoveComponent {
 
 	private float rotationalChange;
 
-	public PointTargetMoveComponent(Entity entity, Vector2 target, float speed, float rotationalSpeedMultiplier){
+	public SmoothTravelMoveComponent(Entity entity, Vector2 target, float speed, float rotationalSpeedMultiplier){
+		super(null, false, true);
 		this.entity = entity;
 		this.target = target.cpy();
 		this.speed = speed;
@@ -59,13 +60,14 @@ public class PointTargetMoveComponent implements MoveComponent {
 		return rotationalChange;
 	}
 
-	@Override
-	public MoveComponent getNextComponent() {
-		return this;
-	}
 
 	@Override
-	public void update(float delta, World world) {
+	protected void onStart(World world) {
+	}
+
+
+	@Override
+	protected void onUpdate(float delta, World world) {
 		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
 		float currentAngle = entity.getRotation();
 
@@ -89,6 +91,10 @@ public class PointTargetMoveComponent implements MoveComponent {
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
 		velocity.scl(delta * speed);
 		entity.setLocation(entity.getLocation().add(velocity));
+	}
+	@Override
+	protected void onEnd(){
+
 	}
 
 }

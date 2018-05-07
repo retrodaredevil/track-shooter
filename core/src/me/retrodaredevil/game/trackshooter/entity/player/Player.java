@@ -63,6 +63,7 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 		Bullet bullet = Bullet.createFromEntity(this, Constants.BULLET_SPEED);
 		world.addEntity(bullet);
 		activeBullets.add(bullet);
+		Resources.BULLET_SOUND.play(1, 4, 0);
 		return bullet;
 	}
 

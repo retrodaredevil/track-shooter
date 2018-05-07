@@ -10,6 +10,7 @@ import me.retrodaredevil.input.StandardControllerInput;
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
 	private static final float ROTATE_PER_SECOND = 360;
+	private static final boolean ALLOW_INSTANT_CENTER = true;
 
 	private Player player;
 	private StandardControllerInput controller;
@@ -24,24 +25,30 @@ public class PlayerController implements EntityController{
 		if(move instanceof OnTrackMoveComponent){
 			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
 			JoystickPart movementJoy = controller.leftJoy();
-			if(!movementJoy.isDeadzone()) {
-				trackMove.setVelocity((float) (controller.leftJoy().getX() * VELOCITY_PER_SECOND));
+			boolean slow = controller.leftStick().isDown();
+			if(!movementJoy.isDeadzone() || slow) {
+				float mult = slow ? .5f : 1;
+				trackMove.setVelocity((float) (controller.leftJoy().getX() * VELOCITY_PER_SECOND * mult));
 			} else {
 				trackMove.setVelocity(0);
 			}
 
-			JoystickPart rotateJoy = controller.rightJoy();
-			double x = rotateJoy.getX();
+			if(ALLOW_INSTANT_CENTER && controller.leftTrigger().isDown()){
+				trackMove.pointToCenter();
+			} else {
+				JoystickPart rotateJoy = controller.rightJoy();
+				double x = rotateJoy.getX();
 //			x = Math.signum(x) * Math.pow(Math.abs(x), 1.2);
 
-			float desired = (float) (ROTATE_PER_SECOND * x);
-			desired *= -1;
-			if(rotateJoy.isDeadzone()){
-				desired = 0;
+				float desired = (float) (ROTATE_PER_SECOND * x);
+				desired *= -1;
+				if (rotateJoy.isDeadzone() && !controller.rightStick().isDown()) {
+					desired = 0;
+				}
+				trackMove.setDesiredRotationalVelocity(desired, 20, 270);
 			}
-			trackMove.setDesiredRotationalVelocity(desired, 20, 270);
 		}
-		if (controller.rightTrigger().isPressed() || controller.rightBumper().isPressed()) {
+		if (controller.rightTrigger().isPressed() || controller.rightBumper().isPressed() || controller.leftBumper().isPressed()) {
 			player.shootBullet(world);
 		}
 	}

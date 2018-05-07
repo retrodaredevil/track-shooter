@@ -3,7 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.enemies;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.PointTargetMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SharkAIController implements EntityController {
@@ -31,8 +31,8 @@ public class SharkAIController implements EntityController {
 	@Override
 	public void update(float delta, World world) {
 		MoveComponent moveComponent = shark.getMoveComponent();
-		if(moveComponent instanceof PointTargetMoveComponent){
-			PointTargetMoveComponent pointMove = (PointTargetMoveComponent) moveComponent;
+		if(moveComponent instanceof SmoothTravelMoveComponent){
+			SmoothTravelMoveComponent pointMove = (SmoothTravelMoveComponent) moveComponent;
 			long time = System.currentTimeMillis();
 			double offset = time / 1000D;
 			offset %= world.getTrack().getTotalDistance();
