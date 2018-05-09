@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -21,12 +22,39 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 
 	private float rotationalChange;
 
-	public SmoothTravelMoveComponent(Entity entity, Vector2 target, float speed, float rotationalSpeedMultiplier){
-		super(null, false, true);
+	/**
+	 *
+	 * @param entity The entity that this move component will control
+	 * @param initialTarget The point that entity will target until setTarget() is called. Feel free to mutate it after passing it.
+	 * @param speed The speed in units/second
+	 * @param rotationalSpeedMultiplier The rotational speed multiplier in rotations/second
+	 */
+	public SmoothTravelMoveComponent(Entity entity, Vector2 initialTarget, float speed, float rotationalSpeedMultiplier,
+	                                 MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
+		super(nextComponent, canHaveNext, canRecycle);
 		this.entity = entity;
-		this.target = target.cpy();
+		this.target = initialTarget.cpy();
 		this.speed = speed;
 		this.rotationalSpeedMultiplier = rotationalSpeedMultiplier;
+	}
+
+	/**
+	 * Creates a SmoothTravelMoveComponent that is not able to have a next component and is able to be recycled
+	 * @param entity The entity that this move component will control
+	 * @param initialTarget The point that entity will target until setTarget() is called
+	 * @param speed The speed in units/second
+	 * @param rotationalSpeedMultiplier The rotational speed multiplier in rotations/second
+	 */
+	public SmoothTravelMoveComponent(Entity entity, Vector2 initialTarget, float speed, float rotationalSpeedMultiplier){
+		this(entity, initialTarget, speed, rotationalSpeedMultiplier, null, false, true);
+	}
+
+	/**
+	 * NOTE: The returned value is able to be mutated but should NEVER be mutated (clone it with .cpy() if you want to alter it)
+	 * @return The target Vector2 that this instance uses.
+	 */
+	public Vector2 getTarget(){
+		return target;
 	}
 
 	public void setTarget(Vector2 target){
@@ -71,21 +99,10 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
 		float currentAngle = entity.getRotation();
 
-		float change = desiredAngle - currentAngle;
-		change %= 360;
-		if(Math.abs(change) > 180){
-			// 270 -> -90
-			// -181 -> 179
-			if(change < 0){
-				change += 360;
-			} else {
-				change -= 360;
-			}
-		}
-		this.rotationalChange = change;
+		this.rotationalChange = MathUtil.minChange(desiredAngle, currentAngle, 360);
 //		rotationalVelocityHandler.setDesiredRotationalVelocity(change, rotationalAccelerationMultiplier, maxRotationalVelocity);
 //		rotationalVelocityHandler.update(delta);
-		entity.setRotation(entity.getRotation() + change * delta * rotationalSpeedMultiplier);
+		entity.setRotation(entity.getRotation() + rotationalChange * delta * rotationalSpeedMultiplier);
 
 		float rotation = entity.getRotation();
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));

@@ -10,7 +10,7 @@ public class Cherry extends Fruit {
 	public Cherry(float startingTrackDistance) {
 		super(100, 1.5f, startingTrackDistance);
 		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(new Image(Resources.CHERRY_TEXTURE),
-				this, 1, 1, 250, new Vector2(0, .03f));
+				this, .8f, .8f, 250, new Vector2(0, .03f));
 		renderComponent.setFacingDirection(0);
 		setRenderComponent(renderComponent);
 	}

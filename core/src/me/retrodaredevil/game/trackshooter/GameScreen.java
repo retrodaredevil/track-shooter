@@ -44,7 +44,7 @@ public class GameScreen extends ScreenAdapter {
 		for(int i = 0; i < amount; i++){
 			int sign = ((i % 2) * 2) - 1;
 			float trackDistanceAway = sign * ((i / 2) * spacing);
-			Shark shark = new Shark(i * 800);
+			Shark shark = new Shark(i * 800, new Vector2(), 0);
 			shark.setEntityController(new SharkAIController(shark, player, trackDistanceAway, sign));
 			Vector2 location = positions[i];
 			shark.setLocation(location);

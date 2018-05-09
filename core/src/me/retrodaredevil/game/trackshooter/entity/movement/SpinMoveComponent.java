@@ -19,6 +19,9 @@ public class SpinMoveComponent extends TimedMoveComponent {
 		this.entity = entity;
 		this.spinPerSecond = spinPerSecond;
 	}
+	public float getSpinPerSecond(){
+		return spinPerSecond;
+	}
 
 	@Override
 	public void update(float delta, World world) {

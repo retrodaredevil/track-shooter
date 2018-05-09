@@ -39,9 +39,17 @@ public class World implements Updateable, Renderable {
 
 		for(currentIterator = entities.listIterator(); currentIterator.hasNext(); ){
 			Entity entity = currentIterator.next();
+			assert !entity.isRemoved();
 			entity.update(delta, this);
 			if(entity.shouldRemove(this)){
-				currentIterator.remove();
+				try {
+					currentIterator.remove();
+				} catch(IllegalStateException ex){
+					while(currentIterator.previous() != entity); // if the call to update called currentIterator.add(), this gets it back to entity
+
+					currentIterator.remove();
+					System.out.println("This code fixed adding in update and removing afterwards. Yay!");
+				}
 				entity.afterRemove(this);
 			}
 		}
