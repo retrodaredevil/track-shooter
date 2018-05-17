@@ -14,9 +14,10 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Shark extends SimpleEntity implements Hittable, Enemy {
 	private static final int POINTS = 200; // 200 points for killing a Shark
+	private static final float VELOCITY_SPEED = 5; // units per second
 
 	private int lives = 3;
-	private int spinLives = 40; // hitting many times while spinning worth double points
+	private int spinLives = 40; // hitting many times while spinning is hard and is worth double points
 
 	private final Vector2 startingPosition;
 	private final float startingRotation;
@@ -25,7 +26,7 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 		this.startingPosition = startingPosition.cpy();
 		this.startingRotation = startingRotation;
 		setRenderComponent(new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f));
-		setMoveComponent(new TimedMoveComponent(pause, new SmoothTravelMoveComponent(this, new Vector2(0, 0), 5, 2)));
+		setMoveComponent(new TimedMoveComponent(pause, new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, 2)));
 		setHitboxSize(.7f, .7f);
 	}
 
@@ -39,7 +40,23 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 			return true;
 		}
 		MoveComponent moveComponent = getMoveComponent();
+		if(moveComponent == null){
+			setMoveComponent(createDirectTravel());
+		} else {
+			if (moveComponent instanceof SmoothTravelMoveComponent) {
+				SmoothTravelMoveComponent smoothTravel = (SmoothTravelMoveComponent) moveComponent;
+				smoothTravel.setTarget(startingPosition);
+			}
+			if (location.dst2(startingPosition) < 4) { // if it's less than 2 units away from the starting position
+				if (!(moveComponent instanceof DirectTravelMoveComponent) && !(moveComponent.getNextComponent() instanceof DirectTravelMoveComponent)) {
+					moveComponent.setNextComponent(createDirectTravel());
+				}
+			}
+		}
 		return false;
+	}
+	private MoveComponent createDirectTravel(){
+		return new DirectTravelMoveComponent(this, startingPosition, VELOCITY_SPEED, startingRotation, 360);
 	}
 
 	@Override

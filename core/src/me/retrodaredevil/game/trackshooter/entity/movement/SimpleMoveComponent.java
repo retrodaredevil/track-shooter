@@ -10,13 +10,21 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public abstract class SimpleMoveComponent implements MoveComponent {
 
 	private MoveComponent nextComponent;
-	private final boolean canHaveNext;
+	private final boolean canHaveNext; // if false, isDone() should not return true
 	private final boolean canRecycle;
 
 	protected boolean done = false; // set back to false when starting
 	private boolean active = false;
 	private boolean oneWayDone = false; // never set back to false, only set to true when end() called
 
+	/**
+	 *
+	 * @param nextComponent The next MoveComponent or null. (Only not null if canHaveNext == true)
+	 * @param canHaveNext If true, this instance can have a "next component" and can be "done." If false, isDone()
+	 *                    should not return true and setNextComponent() will result in an exception
+	 * @param canRecycle true if this should be allowed to end and start again. If false, this will throw an exception
+	 *                   if end() is called and update() is called again
+	 */
 	protected SimpleMoveComponent(MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
 		this.nextComponent = nextComponent;
 		this.canHaveNext = canHaveNext;
@@ -57,6 +65,9 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 	 */
 	@Override
 	public boolean isDone() {
+		if(!canHaveNext){
+			return false;
+		}
 		return done;
 	}
 

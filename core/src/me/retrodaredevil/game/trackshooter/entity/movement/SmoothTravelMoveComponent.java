@@ -46,7 +46,8 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 	 * @param rotationalSpeedMultiplier The rotational speed multiplier in rotations/second
 	 */
 	public SmoothTravelMoveComponent(Entity entity, Vector2 initialTarget, float speed, float rotationalSpeedMultiplier){
-		this(entity, initialTarget, speed, rotationalSpeedMultiplier, null, false, true);
+		this(entity, initialTarget, speed, rotationalSpeedMultiplier,
+				null, false, true);
 	}
 
 	/**

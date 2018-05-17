@@ -29,4 +29,20 @@ public abstract class SimpleLevel implements Level {
 	}
 	protected abstract void onUpdate(float delta, World world);
 	protected abstract void onStart(World world);
+
+	protected boolean isStarted(){
+		return startTime != null;
+	}
+
+	/**
+	 * Note that instead of testing this for -1, you should use isStarted()
+	 *
+	 * @return The amount of time since this onStart() was called or -1 if it hasn't started yet.
+	 */
+	protected long getActiveTime(){
+		if(startTime == null){
+			return -1;
+		}
+		return System.currentTimeMillis() - startTime;
+	}
 }

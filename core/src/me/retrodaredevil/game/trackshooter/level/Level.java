@@ -19,7 +19,8 @@ public interface Level extends Updateable {
 	/**
 	 * Should continue/begin the process of returning all enemies to their starting positions
 	 * (position they should start at after the player dies)
-	 * @return
+	 *
+	 * @return true if all the ships currently on screen have flown in and gone to their starting positions
 	 */
 	boolean resetAll();
 }
