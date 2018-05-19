@@ -7,7 +7,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * never override update(), start, or end() always use onUpdate(), onStart(), onEnd(). You may optionally override
  * isDone(), but should still call super.
  */
-public abstract class SimpleMoveComponent implements MoveComponent {
+abstract class SimpleMoveComponent implements MoveComponent {
 
 	private MoveComponent nextComponent;
 	private final boolean canHaveNext; // if false, isDone() should not return true
@@ -59,6 +59,20 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 	}
 
 	/**
+	 *
+	 * @return returns true if this ended using isDone()
+	 */
+	protected boolean endedPeacefully(){
+		if(!canHaveNext){
+			throw new IllegalStateException("This cannot have a next MoveComponent, so it cannot be end.");
+		}
+		if(active){
+			throw new IllegalStateException("You cannot call endedPeacefully() when this is active.");
+		}
+		return done;
+	}
+
+	/**
 	 * For subclass implementations: When overriding, it is recommended that you set done to whatever you would like
 	 * then return super.isDone()
 	 * @return Whether or not this MoveComponent is done
@@ -69,6 +83,10 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 			return false;
 		}
 		return done;
+	}
+
+	public boolean isActive(){
+		return active;
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import me.retrodaredevil.game.trackshooter.Updateable;
-import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
  * This can have many implementations and is used for being able to call methods that will move an Entity.
@@ -17,6 +16,16 @@ public interface MoveComponent extends Updateable {
 
 
 	/**
+	 * NOTE the return value is meant for chaining meaning DO NOT do this:
+	 * <p>
+	 * aMoveComponent = firstMoveComponent.setNextMoveComponent(secondMoveComponent).setNextComponent(thirdMoveComponent);
+	 * <p>
+	 * <p>
+	 * Instead use:
+	 * <p>
+	 * firstMoveComponent.setNextMoveComponent(secondMoveComponent).setNextComponent(thirdMoveComponent);
+	 * <p>
+	 * aMoveComponent = firstMoveComponent;
 	 * @return Will return the next MoveComponent or null if there is no next MoveComponent
 	 */
 	MoveComponent getNextComponent();

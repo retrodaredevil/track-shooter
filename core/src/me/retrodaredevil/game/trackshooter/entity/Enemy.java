@@ -2,8 +2,17 @@ package me.retrodaredevil.game.trackshooter.entity;
 
 public interface Enemy extends Entity {
 	/**
-	 * This should continue/begin the process of going back to this Enemy's starting position
-	 * @return
+	 * Should start the process of going to the starting position
 	 */
-	boolean goToStart();
+	void goToStart();
+
+	/**
+	 *
+	 * @return true if the Enemy is trying to go to its starting position, false otherwise
+	 */
+	boolean isGoingToStart();
+
+
+	void goNormalMode();
+
 }

@@ -12,7 +12,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 
 //	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 	private Entity entity;
-	private final Vector2 target;
+	private final Vector2 target = new Vector2();
 
 	private float speed;
 	private float rotationalSpeedMultiplier;
@@ -33,7 +33,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 	                                 MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
 		super(nextComponent, canHaveNext, canRecycle);
 		this.entity = entity;
-		this.target = initialTarget.cpy();
+		this.target.set(initialTarget);
 		this.speed = speed;
 		this.rotationalSpeedMultiplier = rotationalSpeedMultiplier;
 	}

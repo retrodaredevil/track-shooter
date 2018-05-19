@@ -3,9 +3,12 @@ package me.retrodaredevil.game.trackshooter.world;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
-import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.level.Level;
+import me.retrodaredevil.game.trackshooter.level.LevelGetter;
+import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldRenderComponent;
 
@@ -14,21 +17,26 @@ import java.util.*;
 public class World implements Updateable, Renderable {
 	private static final Vector2 temp = new Vector2();
 
-	private Track track;
+
+	private final LevelGetter levelGetter;
+	private Level level;
+
 	private final List<Entity> entities = new ArrayList<>();
 	private ListIterator<Entity> currentIterator = null;
 
 	private CollisionHandler collisionHandler;
-
-	protected RenderComponent renderComponent;
 	private final Rectangle bounds;
 //	private final Rectangle largeBounds = new Rectangle(); // shouldn't be referenced without getLargeBounds()
 
-	public World(Track track, float width, float height){
-		this.track = track;
+	protected RenderComponent renderComponent;
+
+	public World(LevelGetter levelGetter, float width, float height){
+		this.levelGetter = levelGetter;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler();
+
+		this.level = levelGetter.nextLevel();
 
 	}
 
@@ -36,6 +44,9 @@ public class World implements Updateable, Renderable {
 	@Override
 	public void update(float delta, World theWorld) {
 		assert theWorld == this || theWorld == null;
+		if(level == null || level.isDone()){
+			level = levelGetter.nextLevel();
+		}
 
 		for(currentIterator = entities.listIterator(); currentIterator.hasNext(); ){
 			Entity entity = currentIterator.next();
@@ -55,10 +66,17 @@ public class World implements Updateable, Renderable {
 		}
 		currentIterator = null;
 		this.collisionHandler.update(delta, this);
+		this.level.update(delta, this);
+		if(level.getMode() == LevelMode.STANDBY){
+			level.setMode(LevelMode.NORMAL);
+		}
 	}
 
 	public Track getTrack(){
-		return track;
+		return level.getTrack();
+	}
+	public Level getLevel(){
+		return level;
 	}
 
 	/**

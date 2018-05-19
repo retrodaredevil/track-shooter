@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.level;
 
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.world.Track;
 
 public interface Level extends Updateable {
 
@@ -10,6 +11,8 @@ public interface Level extends Updateable {
 	 */
 	int getNumber();
 
+	Track getTrack();
+
 	/**
 	 *
 	 * @return true if all the enemies from this level are killed, false otherwise
@@ -17,10 +20,14 @@ public interface Level extends Updateable {
 	boolean isDone();
 
 	/**
-	 * Should continue/begin the process of returning all enemies to their starting positions
-	 * (position they should start at after the player dies)
-	 *
-	 * @return true if all the ships currently on screen have flown in and gone to their starting positions
+	 * Sets the mode of the level
+	 * @param mode The mode to set
 	 */
-	boolean resetAll();
+	void setMode(LevelMode mode);
+
+	/**
+	 *
+	 * @return The current LevelMode. Will never be null
+	 */
+	LevelMode getMode();
 }

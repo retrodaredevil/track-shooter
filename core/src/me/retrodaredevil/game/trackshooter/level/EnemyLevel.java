@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.level;
 
+import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
+import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;
@@ -8,27 +10,53 @@ import java.util.List;
 
 /**
  * The most basic level. It has enemies!
+ * <p>
+ * When implementing, you should override onStart() and call addEnemy() for each enemy you want to add. Also remember
+ * to call super.onStart()
  */
-public class EnemyLevel extends SimpleLevel {
+public abstract class EnemyLevel extends SimpleLevel {
 
 	private List<Enemy> enemyList = new ArrayList<>();
-	private boolean resetting = false;
+	private boolean reset = false;
 
-	protected EnemyLevel(int number) {
-		super(number);
+	public EnemyLevel(int number, Track track) {
+		super(number, track);
+	}
+
+	@Override
+	protected void onStart(World world) {
+	}
+
+	protected void addEnemy(World world, Enemy enemy){
+		world.addEntity(enemy);
+		enemyList.add(enemy);
 	}
 
 	@Override
 	protected void onUpdate(float delta, World world) {
 		World.updateEntityList(enemyList); // remove removed enemies
+
+		if(getMode() == LevelMode.RESET){
+			if(reset){
+				for(Enemy enemy : enemyList){
+					enemy.goToStart();
+				}
+				reset = false;
+			} else {
+				boolean resetDone = true;
+				for (Enemy enemy : enemyList) {
+					if (enemy.isGoingToStart()) {
+						resetDone = false;
+					}
+				}
+				if (resetDone) {
+					System.out.println("they are done");
+					setMode(LevelMode.STANDBY);
+				}
+			}
+		}
 	}
 
-	@Override
-	protected void onStart(World world) {
-//		for(Enemy enemy : enemyList){
-//
-//		}
-	}
 
 	@Override
 	public boolean isDone() {
@@ -36,14 +64,16 @@ public class EnemyLevel extends SimpleLevel {
 	}
 
 	@Override
-	public boolean resetAll() {
-		boolean done = true;
-		for(Enemy enemy : enemyList){
-			if(!enemy.goToStart()){
-				done = false;
+	protected void onModeChange(LevelMode mode, LevelMode previousMode) {
+		Gdx.app.debug("mode", mode.toString());
+		if(mode == LevelMode.RESET) {
+			System.out.println("resetting");
+			reset = true;
+		} else if(mode == LevelMode.NORMAL){
+			for(Enemy enemy : enemyList){
+				enemy.goNormalMode();
 			}
 		}
-		resetting = !done;
-		return done;
 	}
+
 }

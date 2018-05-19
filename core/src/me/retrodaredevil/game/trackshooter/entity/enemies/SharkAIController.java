@@ -19,7 +19,7 @@ public class SharkAIController implements EntityController {
 	 * @param shark The Shark entity for this controller to control
 	 * @param target The entity that the Shark should base its track distance off of
 	 * @param trackDistanceAway The amount of distance away on the track the shark should target from
-	 * @param timeMultiplier The how much distance should the target distance change by each second
+	 * @param timeMultiplier The how much distance should the target distance change each second
 	 */
 	public SharkAIController(Shark shark, Entity target, float trackDistanceAway, float timeMultiplier){
 		this.shark = shark;

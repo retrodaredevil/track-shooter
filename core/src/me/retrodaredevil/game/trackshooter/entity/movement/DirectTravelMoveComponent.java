@@ -9,7 +9,7 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	private static final Vector2 temp = new Vector2();
 
 	private Entity entity;
-	private Vector2 target;
+	private final Vector2 target = new Vector2();
 	private float speed;
 	private Float desiredRotation;
 	private float turnVelocity;
@@ -25,10 +25,11 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	                                    MoveComponent moveComponent, boolean canHaveNext, boolean canRecycle) {
 		super(moveComponent, canHaveNext, canRecycle);
 		this.entity = entity;
-		this.target = target.cpy();
+		this.target.set(target);
 		this.speed = speed;
 		this.desiredRotation = desiredRotation;
 		this.turnVelocity = turnVelocity;
+
 	}
 	public DirectTravelMoveComponent(Entity entity, Vector2 target, float speed, Float desiredRotation, float turnVelocity){
 		this(entity, target, speed, desiredRotation, turnVelocity, null, false, true);
@@ -46,17 +47,23 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	@Override
 	protected void onUpdate(float delta, World world) {
 		if(desiredRotation != null){
-			float change = MathUtil.minChange(entity.getRotation(), desiredRotation, 360);
-			if(turnVelocity == 0 || Math.abs(change) <= turnVelocity){
+			float change = MathUtil.minChange(desiredRotation, entity.getRotation(), 360);
+			if(turnVelocity == 0 || Math.abs(change) <= turnVelocity * delta){
 				entity.setRotation(desiredRotation);
 			} else {
 				entity.setRotation(entity.getRotation() + (delta * Math.signum(change) * turnVelocity));
 			}
 		}
+		final float moveAmount = speed * delta;
+
 		Vector2 location = entity.getLocation();
 		Vector2 away = temp.set(target).sub(location); // target - current
+		if(away.len2() < moveAmount * moveAmount){ // we don't want to move past the target
+			entity.setLocation(target);
+			return;
+		}
 		away.nor();
-		away.scl(speed * delta);
+		away.scl(moveAmount);
 		entity.setLocation(away.add(location));
 
 	}

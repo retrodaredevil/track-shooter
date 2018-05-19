@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -75,10 +74,10 @@ public class CollisionHandler implements Updateable {
 		if(!enemies.isEmpty()) {
 			friendBulletLoop : for (Hittable friendBullet : friendBullets) {
 				for (Hittable enemy : enemies) {
-					if(friendBullet.shouldRemove(world) || enemy instanceof Powerup){
+					if(friendBullet.shouldRemove(world)){
 						continue friendBulletLoop;
 					}
-					if(enemy.shouldRemove(world)){
+					if(enemy.shouldRemove(world) || enemy instanceof Powerup){
 						continue;
 					}
 					if (enemy.getHitbox().overlaps(friendBullet.getHitbox())) { // for player bullet - enemy collisions

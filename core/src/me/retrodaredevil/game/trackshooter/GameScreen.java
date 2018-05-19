@@ -4,19 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
-import me.retrodaredevil.game.trackshooter.entity.enemies.Shark;
-import me.retrodaredevil.game.trackshooter.entity.enemies.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Cherry;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
-import me.retrodaredevil.game.trackshooter.util.Resources;
-import me.retrodaredevil.game.trackshooter.world.*;
+import me.retrodaredevil.game.trackshooter.world.World;
 import me.retrodaredevil.input.ControllerManager;
 
 public class GameScreen extends ScreenAdapter {
@@ -28,33 +23,20 @@ public class GameScreen extends ScreenAdapter {
 	private ControllerManager controllerManager = new ControllerManager();
 
 	public GameScreen(){
-		this.world = new World(Tracks.newKingdomTrack(), 18, 18);
+		this.player = new Player();
+		this.world = new World(new GameLevelGetter(player), 18, 18);
 		this.stage = new Stage(new WorldViewport(world));
 
 		StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().get(0));
 		controllerManager.addController(controller);
 
-		player = new Player();
 		player.setEntityController(new PlayerController(player, controller));
 		world.addEntity(player);
 
-		final Vector2[] positions = new Vector2[] { new Vector2(1, 1), new Vector2(-1, 1), new Vector2(-1, -1), new Vector2(1, -1)};
-		final int amount = 4;
-		final float spacing = world.getTrack().getTotalDistance() / amount;
-		for(int i = 0; i < amount; i++){
-			int sign = ((i % 2) * 2) - 1;
-			float trackDistanceAway = sign * ((i / 2) * spacing);
-			Shark shark = new Shark(i * 800, new Vector2(), 0);
-			shark.setEntityController(new SharkAIController(shark, player, trackDistanceAway, sign));
-			Vector2 location = positions[i];
-			shark.setLocation(location);
-			shark.setRotation(location.angle());
-			world.addEntity(shark);
-
-		}
 
 		Cherry cherry = new Cherry(world.getTrack().getTotalDistance() * .5f);
 		world.addEntity(cherry);
+//		System.out.println("initial entities: " + world.getEntities());
 
 //		Resources.INTRO.play();
 	}

@@ -72,10 +72,8 @@ public class SimpleEntity implements Entity {
 	}
 
 	protected void setMoveComponent(MoveComponent moveComponent){
-		if(this.moveComponent != moveComponent){
-			if(this.moveComponent != null){
-				this.moveComponent.end();
-			}
+		if(this.moveComponent != moveComponent && this.moveComponent != null){
+			this.moveComponent.end();
 		}
 		this.moveComponent = moveComponent;
 	}
