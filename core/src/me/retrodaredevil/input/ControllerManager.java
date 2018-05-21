@@ -16,6 +16,7 @@ public class ControllerManager {
 	}
 	public void update(){
 		for(ControllerInput controller : controllers){
+			assert controller.getParent() == null;
 			controller.update(this.config);
 		}
 	}

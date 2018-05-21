@@ -29,6 +29,7 @@ public class Bullet extends SimpleEntity implements Hittable {
 		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 		setLocation(start);
 		setRotation(rotation);
+		canRespawn = false;
 	}
 
 	public static Bullet createFromEntity(Entity entity, float speed){

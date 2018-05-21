@@ -1,5 +1,8 @@
 package me.retrodaredevil.input;
 
+/**
+ * NOTE: For all deadzones, they will return true if the position is less than OR equal to the deadzone
+ */
 public class ControlConfig {
 	/** Should be used for all isDown() calls */
 	public double buttonDownDeadzone = .5;
@@ -12,6 +15,8 @@ public class ControlConfig {
 	/** Not used often if at all. Used for checking if in deadzone and should not be used for anything analog */
 	public double digitalDeadzone = .001;
 	public double fullDigitalDeadzone = digitalDeadzone;
+
+	public double mouseDeadzone = 0;
 
 	// TODO public boolean scaleFromDeadzone; ex: is deadzone is .001, .001 is 0 and everything is LERPed accordingly
 }

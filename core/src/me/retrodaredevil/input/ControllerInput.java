@@ -19,7 +19,8 @@ public abstract class ControllerInput extends ControllerPart{
 		super.update(config);
 		for(ControllerPart part : getAllParts()){
 			ControllerPart parent = part.getParent();
-			if(parent == null || parent == this){
+			assert parent != null : part.toString() + " doesn't have a parent.";
+			if(parent == this){
 				part.update(config);
 				part.lateUpdate();
 			}

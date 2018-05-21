@@ -28,7 +28,7 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 
 		setRenderComponent(new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f));
 		setHitboxSize(.7f, .7f);
-
+		canRespawn = false;
 	}
 
 	@Override

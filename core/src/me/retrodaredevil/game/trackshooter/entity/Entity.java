@@ -54,9 +54,18 @@ public interface Entity extends Renderable, Updateable {
 	 * Called when the Entity is going to be removed
 	 *
 	 * Should only be called by the World instance. This should be called after the entity has been removed
-	 * @param world
+	 * @param world The world this entity will be removed from
+	 *
 	 */
 	void afterRemove(World world);
+
+	/**
+	 * Called when the Entity is going to be added
+	 *
+	 * Should only be called by the World instance. This will be called before the Entity is added to the entities list
+	 * @param world The world to be added to
+	 */
+	void beforeSpawn(World world);
 
 	boolean isRemoved();
 

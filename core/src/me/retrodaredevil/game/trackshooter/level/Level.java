@@ -30,4 +30,11 @@ public interface Level extends Updateable {
 	 * @return The current LevelMode. Will never be null
 	 */
 	LevelMode getMode();
+
+	/**
+	 *
+	 * @return The time in milliseconds that represents how long the current mode has been going on. If getMode() == null,
+	 *         this should throw an IllegalStateException
+	 */
+	long getModeTime();
 }

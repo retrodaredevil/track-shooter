@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends SimpleEntity implements BulletShooter, Hittable {
-	private static final int MAX_BULLETS = 2;
+	private static final int MAX_BULLETS = 3;
 
 	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
 	private Score score;
@@ -23,9 +23,16 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 
 	public Player(){
 		setMoveComponent(new OnTrackMoveComponent(this));
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.PLAYER_TEXTURE), this, .8f, .8f));
 		setHitboxSize(.7f, .7f);
 		score = new PlayerScore(this);
+		canRespawn = true;
+	}
+
+	@Override
+	public void beforeSpawn(World world) {
+		super.beforeSpawn(world);
+		hit = false;
+		setRenderComponent(new ImageRenderComponent(new Image(Resources.PLAYER_TEXTURE), this, .8f, .8f));
 	}
 
 	public Score getScoreObject(){

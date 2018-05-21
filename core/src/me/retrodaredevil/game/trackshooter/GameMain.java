@@ -6,7 +6,6 @@ import com.badlogic.gdx.Gdx;
 
 public class GameMain extends Game {
 
-
 	@Override
 	public void create () {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);

@@ -9,6 +9,10 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SimpleEntity implements Entity {
 
+	private int spawnTimes = 0;
+	/** If you do not want this entity to support respawning, set this to false so the program will crash when that happens. */
+	protected boolean canRespawn = true;
+
 	private float rotation = 0; // in degrees
 
 	/** Normally changed only in afterRemove() so either set this to true or call super of afterRemove() */
@@ -122,9 +126,21 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public void afterRemove(World world) {
+		if(this.removed){
+			throw new IllegalStateException(this.toString() + " is already removed!");
+		}
 		this.removed = true;
 		if (renderComponent != null) {
 			renderComponent.dispose();
+		}
+	}
+
+	@Override
+	public void beforeSpawn(World world) {
+		this.removed = false;
+		spawnTimes++;
+		if(!canRespawn && spawnTimes > 1){
+			throw new IllegalStateException(this.toString() + " cannot respawn");
 		}
 	}
 

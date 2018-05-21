@@ -13,6 +13,7 @@ public abstract class SimpleLevel implements Level {
 	private Long startTime = null;
 
 	private LevelMode mode = null;
+	private Long modeStartTime = null;
 
 	protected SimpleLevel(int number, Track track){
 		this.number = number;
@@ -48,12 +49,21 @@ public abstract class SimpleLevel implements Level {
 		if(mode != this.mode){
 			LevelMode previousMode = this.mode;
 			this.mode = mode;
+			modeStartTime = System.currentTimeMillis();
 			onModeChange(mode, previousMode);
 		}
 	}
 	@Override
 	public LevelMode getMode() {
 		return mode;
+	}
+
+	@Override
+	public long getModeTime() {
+		if(modeStartTime == null || getMode() == null){
+			throw new IllegalStateException();
+		}
+		return System.currentTimeMillis() - modeStartTime;
 	}
 
 	@Override

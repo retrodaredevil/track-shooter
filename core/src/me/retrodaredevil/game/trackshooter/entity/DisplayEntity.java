@@ -9,6 +9,7 @@ public class DisplayEntity extends TimedEntity {
 		super(time);
 		setHitboxSize(0, 0);
 		setLocation(position);
+		canRespawn = false;
 	}
 
 	@Override

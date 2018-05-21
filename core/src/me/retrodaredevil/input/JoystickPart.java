@@ -145,6 +145,6 @@ public abstract class JoystickPart extends ControllerPart{
 	}
 
 	public enum JoystickType{
-		NORMAL, POV
+		NORMAL, POV, MOUSE
 	}
 }

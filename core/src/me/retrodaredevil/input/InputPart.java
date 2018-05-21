@@ -62,7 +62,7 @@ public abstract class InputPart extends ControllerPart{
 			default: // usually digital
 				throw new UnsupportedOperationException("We didn't account for AxisType: " + getAxisType());
 		}
-		return Math.abs(position) < deadzone;
+		return Math.abs(position) <= deadzone;
 	}
 
 	/**
@@ -96,6 +96,14 @@ public abstract class InputPart extends ControllerPart{
 	@Override
 	public void update(ControlConfig config) {
 		super.update(config);
+		positionUpdate();
+	}
+
+	/**
+	 * Calls in update(). This is meant to be overridden if the default behaviour of calling calculatePosition() is not
+	 * needed and you would like to handle isPressed() by yourself
+	 */
+	protected void positionUpdate(){
 		if(this.position != null){
 			this.previousPosition = this.position;
 		}

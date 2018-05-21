@@ -8,7 +8,6 @@ import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
-import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldRenderComponent;
 
@@ -55,21 +54,18 @@ public class World implements Updateable, Renderable {
 			if(entity.shouldRemove(this)){
 				try {
 					currentIterator.remove();
-				} catch(IllegalStateException ex){
+				} catch(IllegalStateException ex){ // very rare case that doesn't happen often
 					while(currentIterator.previous() != entity); // if the call to update called currentIterator.add(), this gets it back to entity
 
 					currentIterator.remove();
 					System.out.println("This code fixed adding in update and removing afterwards. Yay!");
 				}
-				entity.afterRemove(this);
+				entity.afterRemove(this); // TODO change willRespawn
 			}
 		}
 		currentIterator = null;
 		this.collisionHandler.update(delta, this);
 		this.level.update(delta, this);
-		if(level.getMode() == LevelMode.STANDBY){
-			level.setMode(LevelMode.NORMAL);
-		}
 	}
 
 	public Track getTrack(){
@@ -88,6 +84,8 @@ public class World implements Updateable, Renderable {
 		return entities;
 	}
 	public void addEntity(Entity entity){
+		entity.beforeSpawn(this);
+//		System.out.println("adding: " + entity + " isRemoved(): " + entity.isRemoved());
 		if(currentIterator != null){
 			currentIterator.add(entity);
 		} else {

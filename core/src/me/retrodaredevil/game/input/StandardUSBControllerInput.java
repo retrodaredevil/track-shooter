@@ -55,7 +55,12 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 		parts = Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
 				start, select, faceUp, faceDown, faceLeft, faceRight,
 				leftBumper, rightBumper, leftTrigger, rightTrigger,
-				dPad, leftJoy, rightJoy, leftStick, rightStick);
+				leftStick, rightStick,
+				dPad, leftJoy, rightJoy);
+
+		// the axises already have parents and we don't want to change them
+		setParentsToThis(parts, false, true);
+
 	}
 
 	@Override
