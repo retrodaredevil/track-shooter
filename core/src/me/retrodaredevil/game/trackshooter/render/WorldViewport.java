@@ -1,23 +1,28 @@
 package me.retrodaredevil.game.trackshooter.render;
 
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class WorldViewport extends FitViewport {
+//	private static final Vector2 temp = new Vector2();
 
 	private World world;
+	private Entity follow;
 
 
-	public WorldViewport(World world, OrthographicCamera camera){
+	public WorldViewport(World world, OrthographicCamera camera, Entity follow){
 		super(world.getBounds().getWidth(), world.getBounds().getHeight(), camera);
 		this.world = world;
+		this.follow = follow;
+		Gdx.app.debug("up", camera.up.toString());
+		Gdx.app.debug("direction", camera.direction.toString());
 	}
-	public WorldViewport(World world){
-		this(world, new OrthographicCamera());
+	public WorldViewport(World world, Entity follow){
+		this(world, new OrthographicCamera(), follow);
 	}
 
 	@Override
@@ -33,8 +38,17 @@ public class WorldViewport extends FitViewport {
 	@Override
 	public void apply(boolean centerCamera) {
 		if(centerCamera) {
-			Camera camera = getCamera();
-			camera.position.set(0, 0, 0);
+			OrthographicCamera camera = (OrthographicCamera) getCamera();
+			if(follow != null){
+				final float forwardAmount = 7;
+				float angle = follow.getRotation();
+				camera.position.set(follow.getLocation().add(MathUtils.cosDeg(angle) * forwardAmount, MathUtils.sinDeg(angle) * forwardAmount), camera.position.z);
+				camera.up.set(0, 1, 0);
+				camera.direction.set(0, 0, -1);
+				camera.rotate(-angle + 90);
+			} else {
+				camera.position.set(0, 0, 0);
+			}
 		}
 		super.apply(false);
 	}

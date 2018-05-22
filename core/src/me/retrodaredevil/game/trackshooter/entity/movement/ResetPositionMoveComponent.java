@@ -21,6 +21,7 @@ public abstract class ResetPositionMoveComponent extends NestedComponentMoveComp
 	@Override
 	protected void onStart(World world) {
 		super.onStart(world);
+
 	}
 
 	@Override

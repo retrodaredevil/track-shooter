@@ -61,8 +61,10 @@ public interface Entity extends Renderable, Updateable {
 
 	/**
 	 * Called when the Entity is going to be added
-	 *
+	 * <p>
 	 * Should only be called by the World instance. This will be called before the Entity is added to the entities list
+	 * <p>
+	 * Should be overridden to reset RenderComponent and to possibly reset lives or one-way-flags if necessary
 	 * @param world The world to be added to
 	 */
 	void beforeSpawn(World world);

@@ -48,7 +48,7 @@ public class PlayerController implements EntityController{
 				if (rotateJoy.isDeadzone()) {
 					desired = 0;
 				}
-				trackMove.setDesiredRotationalVelocity(desired, 20, 270);
+				trackMove.setDesiredRotationalVelocity(desired, 60, 270);
 			}
 		}
 		if (gameInput.fireButton().isPressed()) {

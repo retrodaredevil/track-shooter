@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
+import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
@@ -25,10 +26,14 @@ abstract class NestedComponentMoveComponent extends SimpleMoveComponent {
 
 	@Override
 	protected void onStart(World world) {
+		if(getNestedMoveComponent() != null){
+			Gdx.app.log("warning", getClass().getSimpleName() + " is starting when it already has a Nested Move Component. Just a warning");
+		}
 	}
 
 	@Override
 	protected void onEnd() {
+		setNestedMoveComponent(null);
 	}
 
 	@Override

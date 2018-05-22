@@ -34,7 +34,12 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 	@Override
 	public void goToStart() {
 		resetPosition.setNextComponent(null);
-		setMoveComponent(resetPosition);
+		MoveComponent moveComponent = getMoveComponent();
+		if(moveComponent != null && moveComponent.canHaveNext()){
+			moveComponent.setNextComponent(resetPosition);
+		} else {
+			setMoveComponent(resetPosition);
+		}
 	}
 
 	@Override
@@ -45,7 +50,25 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 
 	@Override
 	public boolean isGoingToStart() {
-		return resetPosition.isActive();
+		if(resetPosition.isActive()){
+			return true;
+		}
+		MoveComponent component = getMoveComponent();
+		if(component == null){
+			return false;
+		}
+		if(component == resetPosition){ // can happen for one frame
+			return true;
+		}
+		while(true){
+			component = component.getNextComponent();
+			if(component == resetPosition){
+				return true;
+			} else if(component == null){
+				break;
+			}
+		}
+		return false;
 	}
 
 	@Override

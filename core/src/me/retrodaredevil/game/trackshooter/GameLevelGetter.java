@@ -43,8 +43,9 @@ public class GameLevelGetter implements LevelGetter {
 					float angle = 45 + 90 * i;
 					Shark shark = new Shark(location, angle);
 					shark.setEntityController(new SharkAIController(shark, player, trackDistanceAway, sign));
-					shark.setLocation(temp.set(location).scl(6));
-					shark.setRotation(angle + 90);
+					// start in the start position
+					shark.setLocation(location);
+					shark.setRotation(angle);
 
 					addEnemy(world, shark);
 				}

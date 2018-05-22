@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Powerup;
+import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.Constants;
@@ -52,17 +53,20 @@ public class Player extends SimpleEntity implements BulletShooter, Hittable {
 		if(other instanceof Powerup){
 			return;
 		}
-		System.out.println("player is hit");
 		hit = true;
+		score.onDeath(other);
 	}
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hit;
+		return super.shouldRemove(world) || hit || score.getLives() <= 0;
 	}
 
 	@Override
 	public Bullet shootBullet(World world) {
+		if(world.getLevel().getMode() != LevelMode.NORMAL){
+			return null;
+		}
 		World.updateEntityList(activeBullets);
 		if(activeBullets.size() >= MAX_BULLETS){
 			return null;

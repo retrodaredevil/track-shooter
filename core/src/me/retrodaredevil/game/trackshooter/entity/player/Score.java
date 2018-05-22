@@ -5,6 +5,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 public interface Score {
 
 	int getScore();
+	int getLives();
 
 	/**
 	 * This should not be called in the player class and is used when an entity realizes the player has caused their
@@ -15,4 +16,9 @@ public interface Score {
 	 */
 	void onKill(Entity killed, Entity killerSource, int points);
 
+	/**
+	 *
+	 * @param other the entity causing the death
+	 */
+	void onDeath(Entity other);
 }

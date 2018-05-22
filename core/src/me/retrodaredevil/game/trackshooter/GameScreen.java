@@ -29,7 +29,7 @@ public class GameScreen extends ScreenAdapter {
 	public GameScreen(){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
-		this.stage = new Stage(new WorldViewport(world));
+		this.stage = new Stage(new WorldViewport(world, player));
 
 		GameInput gameInput;
 		if(Controllers.getControllers().size > 0){
@@ -61,22 +61,28 @@ public class GameScreen extends ScreenAdapter {
 	private void doUpdate(float delta){
 		controllerManager.update();
 		world.update(delta, world);
+		stage.getViewport().apply(true);
+
 
 		Level level = world.getLevel();
 		LevelMode mode = level.getMode();
+
+		if(player.getScoreObject().getLives() <= 0){
+			if(mode == LevelMode.NORMAL) {
+				level.setMode(LevelMode.RESET);
+			}
+			return;
+		}
 		if(player.isRemoved() && mode == LevelMode.NORMAL){
 			level.setMode(LevelMode.RESET);
 		}
 		if(mode == LevelMode.STANDBY){
 			long time = level.getModeTime();
-//			System.out.println(time);
 			if(player.isRemoved()){
 				if(time > 750){
-					System.out.println("adding player!");
 					world.addEntity(player);
 				}
 			} else if(time > 1500){
-				System.out.println("working!!");
 				level.setMode(LevelMode.NORMAL);
 			}
 		}
