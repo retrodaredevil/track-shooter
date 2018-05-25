@@ -13,6 +13,14 @@ public abstract class TrackPart implements Renderable {
 		this.end = end;
 	}
 
+	/**
+	 *
+	 * @param angleDegrees The desired direction to travel
+	 * @param distance The distance/location of whatever is on the track
+	 * @return A value between -1 and 1 where a value > 0 means the direction corresponds to an increasing track distance
+	 */
+	public abstract float getMovePercent(float angleDegrees, float distance);
+
 	public abstract float getDistance();
 
 	/**

@@ -38,9 +38,8 @@ public interface MoveComponent extends Updateable {
 	boolean canHaveNext();
 
 	/**
-	 * Called after isDone() returns true, or when something else caused this to stop
-	 * SHOULD NOT be called just because you want to end this MoveComponent and move onto the next one. However, if you
-	 * are going to force this one to end (for whatever reason), this should be called
+	 * Called after isDone() returns true, or when something else caused this to stop.
+	 * If something else causes this to stop, you should still call this.
 	 */
 	void end();
 

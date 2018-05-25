@@ -29,7 +29,7 @@ public class GameScreen extends ScreenAdapter {
 	public GameScreen(){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
-		this.stage = new Stage(new WorldViewport(world, player));
+		this.stage = new Stage(new WorldViewport(world, null));
 
 		GameInput gameInput;
 		if(Controllers.getControllers().size > 0){
@@ -54,7 +54,16 @@ public class GameScreen extends ScreenAdapter {
 
 	@Override
 	public void render(float delta) {
-		doUpdate(delta);
+		if(delta > 1){
+			System.out.println("Delta is high: " + delta);
+			delta = Math.min(delta, .1f); //
+			float virtualDelta = 1f / 30f; // seems like it's 30 fps now
+			for(int i = 0; i < delta / virtualDelta; i++){
+				doUpdate(virtualDelta);
+			}
+		} else {
+			doUpdate(delta);
+		}
 		doRender(delta);
 
 	}

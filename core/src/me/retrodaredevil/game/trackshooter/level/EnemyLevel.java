@@ -50,7 +50,6 @@ public abstract class EnemyLevel extends SimpleLevel {
 					}
 				}
 				if (resetDone) {
-					System.out.println("they are done");
 					setMode(LevelMode.STANDBY);
 				}
 			}

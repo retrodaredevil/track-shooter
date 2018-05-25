@@ -9,7 +9,8 @@ public class HighestPositionInputPart extends InputPart {
 
 	/**
 	 *
-	 * @param parts The input parts to use. Each part's parent must be null
+	 * @param parts The input parts to use. If a part's parent is null, it will automatically be handled by this, otherwise,
+	 *              each part that already has a parent must update its position
 	 */
 	public HighestPositionInputPart(InputPart... parts){
 		super(autoAxisTypeHelper(parts));

@@ -5,8 +5,8 @@ import static java.lang.Math.*;
 public abstract class JoystickPart extends ControllerPart{
 	private JoystickType type;
 
-	protected double angleDegrees;
-	protected double magnitude;
+	protected Double angleDegrees;
+	protected Double magnitude;
 
 	public JoystickPart(JoystickType type){
 		this.type = type;
@@ -23,57 +23,57 @@ public abstract class JoystickPart extends ControllerPart{
 	@Override
 	public void update(ControlConfig config) {
 		super.update(config);
+		if(config.cacheAngleAndMagnitudeInUpdate){
+			double x = getX();
+			double y = getY();
+			angleDegrees = calculateAngle(x, y);
+			magnitude = calculateMagnitude(x, y);
+		} else {
+			angleDegrees = null;
+			magnitude = null;
+		}
 	}
 
-	@Override
-	public void lateUpdate() {
-		super.lateUpdate();
-		applyCalculations();
-	}
-
-	/**
-	 * This method is called in update() if you override getAngle() and getMagnitude() and you do not use
-	 * calculateAngle() or calculateMagnitude(), you should override this with a blank method so no unnecessary
-	 * calculations are done
-	 *
-	 * You can optionally override this but it is not recommended
-	 */
-	protected void applyCalculations(){
-		double x = getX();
-		double y = getY();
-		this.angleDegrees = calculateAngle(x, y);
-		this.magnitude = calculateMagnitude(x, y);
-	}
-	/** used to calculate angleDegrees. You can optionally override this but it is not recommended */
 	protected double calculateAngle(double x, double y){
 		if(y == 0){
 			return x >= 0 ? 0 : 180;
 		} else if(x == 0){
 			return y > 0 ? 90 : 270;
-		} else if(abs(x) == 1 && abs(y) == 1){
-			if(x == 1){
-				return y == 1 ? 45 : 360 - 45;
-			} else { // x must be -1
-				return y == 1 ? 90 + 45 : 180 + 45;
+		} else if(abs(x) == abs(y)){
+//			return x > 0 ? y > 0 ? 45 : 360 - 45 : y > 0 ? 90 + 45 : 180 + 45; you're welcome that I didn't use this
+			if(x > 0){
+				return y > 0 ? 45 : 360 - 45;
+			} else {
+				return y > 0 ? 90 + 45 : 180 + 45;
 			}
 		}
-		return toDegrees(atan2(y, x));
+		double r = toDegrees(atan2(y, x));
+		if(r < 0){
+			r += 360;
+		}
+		return r;
 	}
-	/** Used to calculate magnitude. You can optionally override this but it is not recommended */
 	protected double calculateMagnitude(double x, double y){
 		return hypot(x, y);
 	}
 
 	/**
-	 * @return The angle the joystick is pointing. If getMagnitude() is 0, then this value may not be accurate
+	 * The returned value will be 0 (inclusive) to 360 (exclusive)
+	 * @return The angle the joystick is pointing in degrees. If getMagnitude() is 0, then this value may not be accurate
 	 */
 	public double getAngle(){
+		if(angleDegrees == null){
+			angleDegrees = calculateAngle(getX(), getY());
+		}
 		return angleDegrees;
 	}
 	/**
 	 * @return The magnitude of the joystick
 	 */
 	public double getMagnitude(){
+		if(magnitude == null){
+			magnitude = calculateMagnitude(getX(), getY());
+		}
 		return magnitude;
 	}
 
@@ -81,7 +81,7 @@ public abstract class JoystickPart extends ControllerPart{
 	 * When implementing: You should try to cache the value in update() for this so if this method is called 100 times
 	 * per frame, it won't affect performance.
 	 *
-	 * @return The X value of the joystick -1 to 1
+	 * @return The X value of the joystick -1 to 1. Or greater if getJoystickType() == MOUSE
 	 */
 	public abstract double getX();
 
@@ -91,7 +91,7 @@ public abstract class JoystickPart extends ControllerPart{
 	 *
 	 * NOTE: When joystick is up, this is positive, when joystick is down, this is negative
 	 *
-	 * @return The Y value of the joystick -1 to 1
+	 * @return The Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
 	 */
 	public abstract double getY();
 
@@ -109,13 +109,15 @@ public abstract class JoystickPart extends ControllerPart{
 	 * (1, 1). This method scales the passed x and y values accordingly so that when something like (1, 1) is passed,
 	 * it is scaled down to a magnitude of 1 so it is then (1/sqrt(2), 1/sqrt(2)). When (1, 0) is passed, it is not
 	 * scaled at all
-	 *
+	 * <p>
+	 * <p>
+	 * How this works: Takes the cosine of the smallest distance to the closest 45 degree angle. Ex: 45, 135, etc
 	 *
 	 * @param x The x value of the joystick
 	 * @param y The y value of the joystick
 	 * @param angleDegrees If the atan2 of y, x or atan of y/x has already been calculated, this will use that value
 	 *                     instead of calculating it essentially increasing performance
-	 * @return The number you should scale x and y by
+	 * @return The number you should scale x and y by (or the magnitude by)
 	 */
 	public static double getScaled(double x, double y, Double angleDegrees){
 		if(x == 0 && y == 0){
@@ -126,20 +128,15 @@ public abstract class JoystickPart extends ControllerPart{
 		if(angleDegrees == null){
 			angle = toDegrees(atan(y / x));
 		} else {
-			angle = angleDegrees % 360;
-			angle = angle < 0 ? angle + 360 : angle;
-
-			if(angle > 90){
-				angle -= 180;
-			} else if(angle < -90){
-				angle += 180;
-			}
+			angle = angleDegrees % 90;
 		}
 		// angle is between -90 and 90
+		if(angle < 0){
+			angle = -angle;
+		}
+		// angle is between 0 and 90
 		if(angle > 45){
-			angle = 45 - (angle - 45); // = 90 - angle
-		} else if (angle < -46){
-			angle = -90 - angle;
+			angle = 90 - angle;
 		}
 		return cos(toRadians(angle));
 	}

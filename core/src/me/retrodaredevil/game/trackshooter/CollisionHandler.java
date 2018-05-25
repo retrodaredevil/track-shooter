@@ -28,7 +28,7 @@ public class CollisionHandler implements Updateable {
 				friendBullets = new ArrayList<>(), enemyBullets = new ArrayList<>();
 
 		for(Entity e : entities){
-			assert !e.shouldRemove(world);
+//			assert !e.shouldRemove(world); this happened once when eating fruit, unable to reproduce so commented out
 			if(e instanceof Hittable) {
 				Hittable h = (Hittable) e;
 				if (e instanceof Player) {

@@ -36,7 +36,8 @@ public class ControllerInputPart extends InputPart {
 		if(fullAnalog || type == AxisType.ANALOG){
 			double value = controller.getAxis(this.code);
 			double mult = inverted ? -1 : 1;
-			return fullAnalog ? value * mult : ((value + 1.0) / 2.0) * mult;
+			value *= mult;
+			return fullAnalog ? value : ((value + 1.0) / 2.0);
 		}
 		return controller.getButton(this.code) == !inverted ? 1 : 0;
 	}

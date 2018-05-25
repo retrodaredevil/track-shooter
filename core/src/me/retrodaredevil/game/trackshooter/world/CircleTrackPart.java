@@ -17,6 +17,17 @@ public class CircleTrackPart extends TrackPart {
 	}
 
 	@Override
+	public float getMovePercent(float angleDegrees, float distance) {
+		float angle = distance * 360.0f / getDistance(); // the angle to go up on the circle
+		angle += 90;
+//		if(Gdx.input.isKeyPressed(Input.Keys.ENTER)){
+//			Gdx.app.debug("here", "" + angle);
+//		}
+
+		return LineTrackPart.getAnglePercent(angle, angleDegrees);
+	}
+
+	@Override
 	public float getDistance() {
 		return radius * MathUtils.PI2;
 	}

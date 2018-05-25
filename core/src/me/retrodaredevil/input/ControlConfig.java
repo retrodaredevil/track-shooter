@@ -18,5 +18,9 @@ public class ControlConfig {
 
 	public double mouseDeadzone = 0;
 
+	/** true if the angle and magnitude of a joystick should be calculated in lateUpdate(), otherwise it will only be
+	 * cached once one of those methods are called. */
+	public boolean cacheAngleAndMagnitudeInUpdate = false;
+
 	// TODO public boolean scaleFromDeadzone; ex: is deadzone is .001, .001 is 0 and everything is LERPed accordingly
 }

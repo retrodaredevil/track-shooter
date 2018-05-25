@@ -1,6 +1,9 @@
 package me.retrodaredevil.game.trackshooter.util;
 
+import com.badlogic.gdx.math.Vector2;
+
 public final class MathUtil {
+	private static final Vector2 temp = new Vector2();
 
 	/**
 	 *
@@ -50,5 +53,9 @@ public final class MathUtil {
 	 */
 	public static float minDistance(float a, float b, float wrap){
 		return Math.abs(minChange(a, b, wrap));
+	}
+
+	public static float angle(Vector2 start, Vector2 end){
+		return temp.set(end).sub(start).angle();
 	}
 }

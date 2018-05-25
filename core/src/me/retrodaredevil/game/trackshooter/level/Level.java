@@ -37,4 +37,11 @@ public interface Level extends Updateable {
 	 *         this should throw an IllegalStateException
 	 */
 	long getModeTime();
+
+	/**
+	 * Note: If this level hasn't started yet, this should return -1
+	 *
+	 * @return The total amount of time in milliseconds since this level began
+	 */
+	long getLevelTime();
 }

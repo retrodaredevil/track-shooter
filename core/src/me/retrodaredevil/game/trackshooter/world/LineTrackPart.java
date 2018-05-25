@@ -5,20 +5,37 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.render.LineRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 
 public class LineTrackPart extends TrackPart {
 	private static final ShapeRenderer renderer = new ShapeRenderer();
 	private final float distance;
+	private final float angle;
 	protected RenderComponent renderComponent;
 
 	public LineTrackPart(Vector2 start, Vector2 end, Color color){
 		super(start, end);
 		distance = start.dst(end);
+		angle = MathUtil.angle(start, end);
 		renderComponent = new LineRenderComponent(start, end, color, 3, renderer);
 	}
+
+	@Override
+	public float getMovePercent(float angleDegrees, float distance) {
+		return getAnglePercent(angle, angleDegrees);
+	}
+	public static float getAnglePercent(float anglePart, float desiredAngle){
+
+		float positive = MathUtil.minDistance(anglePart, desiredAngle, 360);
+		float negative = MathUtil.minDistance(anglePart, desiredAngle + 180, 360);
+		int sign = positive >= negative ? 1 : -1;
+		float bigger = Math.max(positive, negative);
+		return sign * (90 - bigger) / 90.0f;
+	}
+
 	@Override
 	public float getDistance() {
 		return distance;
@@ -37,7 +54,7 @@ public class LineTrackPart extends TrackPart {
 	public static class LineTrackPartBuilder{
 		private final Vector2 first;
 		private Vector2 previous;
-		private Collection<LineTrackPart> parts = new ArrayList<LineTrackPart>();
+		private List<LineTrackPart> parts = new ArrayList<>();
 		private Color color;
 		public LineTrackPartBuilder(Color color, Vector2 start){
 			this.color = color;
@@ -52,7 +69,7 @@ public class LineTrackPart extends TrackPart {
 		public LineTrackPartBuilder connect(float x, float y){
 			return this.connect(new Vector2(x, y));
 		}
-		public Collection<LineTrackPart> build(boolean connectToFirst){
+		public List<LineTrackPart> build(boolean connectToFirst){
 			if(connectToFirst){
 				parts.add(new LineTrackPart(previous, first, color));
 			}

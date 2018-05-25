@@ -9,8 +9,10 @@ import me.retrodaredevil.input.JoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
-	private static final float ROTATE_PER_SECOND = 360;
-	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f;
+	private static final float ACCEL_ROTATE_PER_SECOND = -360; // target rotate velocity used for calculating accelerating but capped at max
+	private static final float MAX_ROTATE_PER_SECOND = 270; // max abs rotate velocity
+	private static final float FULL_SPEED_IN = 0; // in seconds - amount of time to fully accelerate rotational velocity
+	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f; // how many degrees to change when the mouse is moved one pixel
 
 	private Player player;
 	private GameInput gameInput;
@@ -30,7 +32,15 @@ public class PlayerController implements EntityController{
 			boolean slow = gameInput.slow().isDown();
 			if(!movementJoy.isDeadzone() || slow) {
 				float mult = slow ? .5f : 1;
-				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
+//				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
+				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistance());
+				movePercent = Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent));
+
+				float joyScale = (float) JoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle());
+				trackMove.setVelocity(
+						(float) movementJoy.getMagnitude() * joyScale
+						* movePercent // movePercent is -1, 0 or 1
+						* VELOCITY_PER_SECOND * mult);
 			} else {
 				trackMove.setVelocity(0);
 			}
@@ -41,14 +51,14 @@ public class PlayerController implements EntityController{
 			double x = rotateJoy.getX();
 
 			if(isMouse){
-				player.setRotation(player.getRotation() + (float) x * ROTATION_PER_MOUSE_PIXEL);
+				player.setRotation(player.getRotation() + (float) x * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
+//				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			} else {
-				float desired = (float) (ROTATE_PER_SECOND * x);
-				desired *= -1;
+				float desired = (float) (ACCEL_ROTATE_PER_SECOND * x);
 				if (rotateJoy.isDeadzone()) {
 					desired = 0;
 				}
-				trackMove.setDesiredRotationalVelocity(desired, 60, 270);
+				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
 			}
 		}
 		if (gameInput.fireButton().isPressed()) {

@@ -1,7 +1,11 @@
 package me.retrodaredevil.game.trackshooter.level;
 
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A very abstract class that helps out with start time, and level number
@@ -14,6 +18,10 @@ public abstract class SimpleLevel implements Level {
 
 	private LevelMode mode = null;
 	private Long modeStartTime = null;
+
+	private List<Entity> entityList = new ArrayList<>(); // list of entities handled by the level
+
+	private List<LevelFunction> functions = new ArrayList<>();
 
 	protected SimpleLevel(int number, Track track){
 		this.number = number;
@@ -34,7 +42,15 @@ public abstract class SimpleLevel implements Level {
 			onStart(world);
 		}
 		assert mode != null;
+		World.updateEntityList(entityList);
 		onUpdate(delta, world);
+//		for(Iterator<LevelFunction> it = functions.listIterator(); it.hasNext(); ){
+//			LevelFunction function = it.next();
+//			boolean done = function.update(delta, world);
+//			if (done) {
+//				it.remove();
+//			}
+//		}
 	}
 	protected abstract void onUpdate(float delta, World world);
 	protected abstract void onStart(World world);
@@ -78,12 +94,8 @@ public abstract class SimpleLevel implements Level {
 	 */
 	protected abstract void onModeChange(LevelMode mode, LevelMode previousMode);
 
-	/**
-	 * Note that instead of testing this for -1, you should use isStarted()
-	 *
-	 * @return The amount of time since this onStart() was called or -1 if it hasn't started yet.
-	 */
-	protected long getActiveTime(){
+	@Override
+	public long getLevelTime(){
 		if(startTime == null){
 			return -1;
 		}
