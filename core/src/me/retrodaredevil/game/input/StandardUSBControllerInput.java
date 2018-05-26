@@ -1,7 +1,7 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
-import me.retrodaredevil.input.*;
+import me.retrodaredevil.controller.*;
 
 import java.util.Arrays;
 import java.util.Collection;

@@ -1,9 +1,9 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
-import me.retrodaredevil.input.ControlConfig;
-import me.retrodaredevil.input.ControllerManager;
-import me.retrodaredevil.input.MouseJoystick;
+import me.retrodaredevil.controller.ControlConfig;
+import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.MouseJoystick;
 
 public class GdxMouseJoystick extends MouseJoystick {
 	private Double lastX = null;

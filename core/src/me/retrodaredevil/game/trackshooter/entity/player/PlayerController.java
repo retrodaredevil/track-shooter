@@ -5,7 +5,7 @@ import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.input.JoystickPart;
+import me.retrodaredevil.controller.JoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;

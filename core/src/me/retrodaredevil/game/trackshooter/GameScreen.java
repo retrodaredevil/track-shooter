@@ -15,7 +15,7 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.input.ControllerManager;
+import me.retrodaredevil.controller.ControllerManager;
 
 public class GameScreen extends ScreenAdapter {
 

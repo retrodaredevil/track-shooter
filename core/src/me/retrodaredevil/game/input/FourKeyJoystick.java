@@ -1,10 +1,10 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Input;
-import me.retrodaredevil.input.ButtonDPad;
-import me.retrodaredevil.input.ControlConfig;
-import me.retrodaredevil.input.ControllerManager;
-import me.retrodaredevil.input.InputPart;
+import me.retrodaredevil.controller.ButtonDPad;
+import me.retrodaredevil.controller.ControlConfig;
+import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.InputPart;
 
 public class FourKeyJoystick extends ButtonDPad {
 

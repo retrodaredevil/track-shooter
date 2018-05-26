@@ -1,8 +1,8 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
-import me.retrodaredevil.input.ControllerManager;
-import me.retrodaredevil.input.InputPart;
+import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.InputPart;
 
 public class KeyInputPart extends InputPart {
 	private int code;

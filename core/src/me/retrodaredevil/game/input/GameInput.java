@@ -1,8 +1,8 @@
 package me.retrodaredevil.game.input;
 
-import me.retrodaredevil.input.ControllerInput;
-import me.retrodaredevil.input.InputPart;
-import me.retrodaredevil.input.JoystickPart;
+import me.retrodaredevil.controller.ControllerInput;
+import me.retrodaredevil.controller.InputPart;
+import me.retrodaredevil.controller.JoystickPart;
 
 public abstract class GameInput extends ControllerInput {
 	public abstract JoystickPart mainJoystick();

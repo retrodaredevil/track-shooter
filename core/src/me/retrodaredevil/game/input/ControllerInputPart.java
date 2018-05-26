@@ -1,8 +1,8 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
-import me.retrodaredevil.input.ControllerManager;
-import me.retrodaredevil.input.InputPart;
+import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.InputPart;
 
 public class ControllerInputPart extends InputPart {
 	private Controller controller;
@@ -39,7 +39,7 @@ public class ControllerInputPart extends InputPart {
 			value *= mult;
 			return fullAnalog ? value : ((value + 1.0) / 2.0);
 		}
-		return controller.getButton(this.code) == !inverted ? 1 : 0;
+		return (controller.getButton(this.code) == !inverted) ? 1 : 0;
 	}
 
 	@Override
