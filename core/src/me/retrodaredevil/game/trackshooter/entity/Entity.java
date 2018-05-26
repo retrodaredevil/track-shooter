@@ -48,6 +48,12 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	MoveComponent getMoveComponent();
 
+	/**
+	 * Note: This method may be called multiple times before the entity is actually removed.
+	 *
+	 * @param world The World the entity is being removed from
+	 * @return true if the entity should be removed
+	 */
 	boolean shouldRemove(World world);
 
 	/**

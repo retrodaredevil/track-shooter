@@ -8,6 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
+import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.Tracks;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -34,6 +35,7 @@ public class GameLevelGetter implements LevelGetter {
 			@Override
 			protected void onStart(World world) {
 				super.onStart(world);
+				addFunction(new FruitFunction());
 
 //				final Vector2[] positions = new Vector2[] { new Vector2(1, 1), new Vector2(-1, 1), new Vector2(-1, -1), new Vector2(1, -1)};
 				final int amount = 4 + (levelNumber / 2);

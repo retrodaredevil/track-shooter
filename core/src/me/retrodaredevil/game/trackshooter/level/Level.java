@@ -1,7 +1,9 @@
 package me.retrodaredevil.game.trackshooter.level;
 
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.Track;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public interface Level extends Updateable {
 
@@ -12,6 +14,16 @@ public interface Level extends Updateable {
 	int getNumber();
 
 	Track getTrack();
+
+
+	/**
+	 * Adds an entity to the World for the World to handle. If that entity is an instanceof a RemovableEntity, it will
+	 * be removed when this level is finished.
+	 *
+	 * @param world The world to add the entity to
+	 * @param entity The entity to add to the world and to the level
+	 */
+	void addEntity(World world, Entity entity);
 
 	/**
 	 *

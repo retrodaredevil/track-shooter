@@ -14,6 +14,7 @@ public class Fruit extends SimpleEntity implements Powerup {
 	private int points;
 
 	private boolean eaten = false;
+	private boolean forceRemove = false;
 
 	public Fruit(int points, float velocity, float startingTrackDistance){
 		super();
@@ -24,6 +25,7 @@ public class Fruit extends SimpleEntity implements Powerup {
 		trackMove.setDistance(startingTrackDistance);
 		trackMove.setVelocity(velocity);
 		setMoveComponent(trackMove);
+		canRespawn = false;
 	}
 
 	@Override
@@ -43,6 +45,11 @@ public class Fruit extends SimpleEntity implements Powerup {
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || eaten;
+		return super.shouldRemove(world) || eaten || forceRemove;
+	}
+
+	@Override
+	public void setToRemove() {
+		forceRemove = true;
 	}
 }

@@ -10,7 +10,6 @@ import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
-import me.retrodaredevil.game.trackshooter.entity.powerup.Cherry;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -45,8 +44,6 @@ public class GameScreen extends ScreenAdapter {
 		world.addEntity(player);
 
 
-		Cherry cherry = new Cherry(world.getTrack().getTotalDistance() * .5f);
-		world.addEntity(cherry);
 //		System.out.println("initial entities: " + world.getEntities());
 
 //		Resources.INTRO.play();

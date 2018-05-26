@@ -22,7 +22,7 @@ public class DefaultGameInput extends GameInput {
 	public DefaultGameInput(StandardUSBControllerInput controller){
 		mainJoystick = controller.leftJoy();
 		rotateJoystick = controller.rightJoy();
-		fireButton = controller.rightTrigger();
+		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper());
 		slow = controller.leftStick();
 		joysticks = new Joysticks(mainJoystick, rotateJoystick);
 
@@ -74,7 +74,11 @@ public class DefaultGameInput extends GameInput {
 
 	@Override
 	public boolean isConnected(ControllerManager manager) {
-		return mainJoystick.isConnected(manager) && rotateJoystick.isConnected(manager) && fireButton.isConnected(manager)
-				&& (reliesOn == null || reliesOn.isConnected(manager));
+		for(ControllerPart part : parts){
+			if(!part.isConnected(manager)){
+				return false;
+			}
+		}
+		return reliesOn == null || reliesOn.isConnected(manager);
 	}
 }

@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter.level;
 
-import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -27,13 +26,12 @@ public abstract class EnemyLevel extends SimpleLevel {
 	protected void onStart(World world) {
 	}
 
-	protected void addEnemy(World world, Enemy enemy){
-		world.addEntity(enemy);
-		enemyList.add(enemy);
+	@Override
+	protected void onEnd(World world) {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected boolean onUpdate(float delta, World world) {
 		World.updateEntityList(enemyList); // remove removed enemies
 
 		if(getMode() == LevelMode.RESET){
@@ -54,19 +52,18 @@ public abstract class EnemyLevel extends SimpleLevel {
 				}
 			}
 		}
+		return enemyList.isEmpty(); // will be done if all the enemies are killed
 	}
 
-
-	@Override
-	public boolean isDone() {
-		return isStarted() && enemyList.isEmpty();
+	protected void addEnemy(World world, Enemy enemy){
+		addEntity(world, enemy); // allow the level to handle the entity
+		enemyList.add(enemy); // we need to handle enemies ourselves
 	}
 
 	@Override
 	protected void onModeChange(LevelMode mode, LevelMode previousMode) {
-		Gdx.app.debug("mode", mode.toString());
+//		Gdx.app.debug("mode", mode.toString());
 		if(mode == LevelMode.RESET) {
-			System.out.println("resetting");
 			reset = true;
 		} else if(mode == LevelMode.NORMAL){
 			for(Enemy enemy : enemyList){

@@ -15,7 +15,7 @@ public class SimpleEntity implements Entity {
 
 	private float rotation = 0; // in degrees
 
-	/** Normally changed only in afterRemove() so either set this to true or call super of afterRemove() */
+	/** Changed only in afterRemove() */
 	private boolean removed = false;
 
 	private MoveComponent moveComponent = null;

@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
@@ -14,14 +13,14 @@ import me.retrodaredevil.game.trackshooter.render.WorldRenderComponent;
 import java.util.*;
 
 public class World implements Updateable, Renderable {
-	private static final Vector2 temp = new Vector2();
+//	private static final Vector2 temp = new Vector2();
 
 
 	private final LevelGetter levelGetter;
 	private Level level;
 
+	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
 	private final List<Entity> entities = new ArrayList<>();
-	private ListIterator<Entity> currentIterator = null;
 
 	private CollisionHandler collisionHandler;
 	private final Rectangle bounds;
@@ -47,23 +46,20 @@ public class World implements Updateable, Renderable {
 			level = levelGetter.nextLevel();
 		}
 
-		for(currentIterator = entities.listIterator(); currentIterator.hasNext(); ){
-			Entity entity = currentIterator.next();
+		while(!entitiesToAdd.isEmpty()){
+			Entity entity = entitiesToAdd.poll();
+			entity.beforeSpawn(this);
+			entities.add(entity);
+		}
+		for(Iterator<Entity> it = entities.listIterator(); it.hasNext(); ){
+			Entity entity = it.next();
 			assert !entity.isRemoved();
 			entity.update(delta, this);
 			if(entity.shouldRemove(this)){
-				try {
-					currentIterator.remove();
-				} catch(IllegalStateException ex){ // very rare case that doesn't happen often
-					while(currentIterator.previous() != entity); // if the call to update called currentIterator.add(), this gets it back to entity
-
-					currentIterator.remove();
-					System.out.println("This code fixed adding in update and removing afterwards. Yay!");
-				}
+				it.remove();
 				entity.afterRemove(this); // TODO change willRespawn
 			}
 		}
-		currentIterator = null;
 		this.collisionHandler.update(delta, this);
 		this.level.update(delta, this);
 	}
@@ -84,13 +80,7 @@ public class World implements Updateable, Renderable {
 		return entities;
 	}
 	public void addEntity(Entity entity){
-		entity.beforeSpawn(this);
-//		System.out.println("adding: " + entity + " isRemoved(): " + entity.isRemoved());
-		if(currentIterator != null){
-			currentIterator.add(entity);
-		} else {
-			entities.add(entity);
-		}
+		entitiesToAdd.add(entity);
 	}
 	public Rectangle getBounds(){
 		return bounds;

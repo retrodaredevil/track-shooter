@@ -13,6 +13,5 @@ public class Cherry extends Fruit {
 				this, .8f, .8f, 250, new Vector2(0, .03f));
 		renderComponent.setFacingDirection(0);
 		setRenderComponent(renderComponent);
-		canRespawn = false;
 	}
 }
