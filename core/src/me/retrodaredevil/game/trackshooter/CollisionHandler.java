@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Rectangle;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -7,9 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class CollisionHandler implements Updateable {
 	/*
@@ -22,78 +21,54 @@ public class CollisionHandler implements Updateable {
 //			friendBullets = new LinkedList<>(), enemyBullets = new LinkedList<>();
 	@Override
 	public void update(float delta, World world) {
-//		long start = System.nanoTime();
-//		friendly.clear();
-//		enemies.clear();
-//		friendBullets.clear();
-//		enemyBullets.clear();
+		long start = System.nanoTime();
 		final Collection<Entity> entities = world.getEntities();
 
-		List<Entity> friendly = new ArrayList<>(), enemies = new ArrayList<>(),
-				friendBullets = new ArrayList<>(), enemyBullets = new ArrayList<>();
+		List<Entity> possiblyCollides = new ArrayList<>();
 
+		// This map represents all the entities that should be checked for each entity of a certain CollisionIdentity
+		Map<CollisionIdentity, List<Entity>> collisionMap = new HashMap<>();
 		for(Entity e : entities){
-//			assert !e.shouldRemove(world); this happened once when eating fruit, unable to reproduce so commented out
-			CollisionIdentity identity = e.getCollisionIdentity();
-			if(identity.canCollide()) {
-				if (identity == CollisionIdentity.FRIENDLY) {
-					friendly.add(e);
-				} else if (identity == CollisionIdentity.FRIENDLY_PROJECTILE) {
-					friendBullets.add(e);
-				} else if (identity == CollisionIdentity.ENEMY_PROJECTILE || identity == CollisionIdentity.POWERUP) {
-					enemyBullets.add(e);
-				} else {
-					assert identity == CollisionIdentity.ENEMY : "Unknown CollisionIdentity that isn't UNKNOWN: " + identity;
-					enemies.add(e);
+			CollisionIdentity collisionIdentity = e.getCollisionIdentity();
+			if(!collisionIdentity.canCollide()){
+				continue;
+			}
+			possiblyCollides.add(e);
+
+			for(CollisionIdentity element : CollisionIdentity.values()){
+
+				if(collisionIdentity.triggersCollision(element)){
+					List<Entity> collisionList = collisionMap.get(element);
+					if(collisionList == null){
+						collisionList = new ArrayList<>();
+					}
+					collisionList.add(e);
+					collisionMap.put(element, collisionList);
 				}
+
 			}
 		}
-		if(!enemyBullets.isEmpty() || !enemies.isEmpty()) {
-			for (Entity friend : friendly) {
-				if(friend.shouldRemove(world)){
-					continue;
-				}
-				Rectangle hitbox = friend.getHitbox();
-				for (Entity enemyBullet : enemyBullets) {
-					if(enemyBullet.shouldRemove(world)){
+		outerLoop : for(Entity e : possiblyCollides){
+			List<Entity> collidesWith = collisionMap.get(e.getCollisionIdentity());
+			if(collidesWith != null){
+				for(Entity test : collidesWith){
+					if(e.shouldRemove(world)){
+						continue outerLoop;
+					}
+					if(test.shouldRemove(world)){
 						continue;
 					}
-					if (hitbox.overlaps(enemyBullet.getHitbox())) { // for player - enemy bullet collisions
-						friend.onHit(world, enemyBullet);
-						enemyBullet.onHit(world, friend);
-					}
-				}
-				for (Entity enemy : enemies) {
-					if(enemy.shouldRemove(world)){
-						continue;
-					}
-					Rectangle enemyHitbox = enemy.getHitbox();
-					if (hitbox.overlaps(enemyHitbox)) { // for player - enemy collisions
-						friend.onHit(world, enemy);
-						enemy.onHit(world, friend);
+					if (test.getHitbox().overlaps(e.getHitbox())) { // for player bullet - enemy collisions
+						test.onHit(world, e);
+						e.onHit(world, test);
 					}
 				}
 			}
 		}
-		if(!enemies.isEmpty()) {
-			friendBulletLoop : for (Entity friendBullet : friendBullets) {
-				for (Entity enemy : enemies) {
-					if(friendBullet.shouldRemove(world)){
-						continue friendBulletLoop;
-					}
-					if(enemy.shouldRemove(world)){
-						continue;
-					}
-					if (enemy.getHitbox().overlaps(friendBullet.getHitbox())) { // for player bullet - enemy collisions
-						enemy.onHit(world, friendBullet);
-						friendBullet.onHit(world, enemy);
-					}
-				}
-			}
-		}
-//		long end = System.nanoTime();
-//		long took = end - start;
-//		Gdx.app.debug("took", "" + took);
+
+		long end = System.nanoTime();
+		long took = end - start;
+		Gdx.app.debug("took", "" + took);
 
 	}
 }
