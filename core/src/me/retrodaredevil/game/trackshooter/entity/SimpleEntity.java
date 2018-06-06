@@ -2,21 +2,31 @@ package me.retrodaredevil.game.trackshooter.entity;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SimpleEntity implements Entity {
+//	private static final Vector2 temp = new Vector2();
 
-	private int spawnTimes = 0;
 	/** If you do not want this entity to support respawning, set this to false so the program will crash when that happens. */
 	protected boolean canRespawn = true;
+	/** If you want to be able to remove this entity at will, set this to true */
+	protected boolean canSetToRemove = false;
+	protected CollisionIdentity collisionIdentity = CollisionIdentity.UNKNOWN;
+
+
+	private int spawnTimes = 0; // the amount of times the entity has spawned
 
 	private float rotation = 0; // in degrees
 
 	/** Changed only in afterRemove() */
 	private boolean removed = false;
+	/** Changed in setToRemove() */
+	private boolean forceRemove = false;
 
 	private MoveComponent moveComponent = null;
 	private RenderComponent renderComponent = null;
@@ -47,6 +57,32 @@ public class SimpleEntity implements Entity {
 	@Override
 	public void setLocation(Vector2 location) {
 		hitbox.setCenter(location);
+	}
+	@Override
+	public void setLocation(float x, float y){
+		hitbox.setCenter(x, y);
+	}
+
+	@Override
+	public void setLocation(float x, float y, float rotation){
+		setLocation(x, y);
+		setRotation(rotation);
+	}
+
+	@Override
+	public void setLocation(Vector2 location, float rotation) {
+		setLocation(location);
+		setRotation(rotation);
+	}
+
+	@Override
+	public float getX() {
+		return hitbox.x + (hitbox.width / 2.0f);
+	}
+
+	@Override
+	public float getY() {
+		return hitbox.y + (hitbox.height / 2.0f);
 	}
 
 	/**
@@ -120,8 +156,23 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
+	public void beforeSpawn(World world) {
+		this.removed = false;
+		spawnTimes++;
+		if(!canRespawn && spawnTimes > 1){
+			throw new IllegalStateException(this.toString() + " cannot respawn");
+		}
+	}
+	/**
+	 * By default returns false. It is recommended to call this and isInBounds()
+	 */
+	@Override
 	public boolean shouldRemove(World world) {
-		return !world.getBounds().overlaps(this.getHitbox());
+		return forceRemove;
+	}
+
+	protected boolean isInBounds(World world){
+		return world.getBounds().overlaps(this.getHitbox());
 	}
 
 	@Override
@@ -136,16 +187,31 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		this.removed = false;
-		spawnTimes++;
-		if(!canRespawn && spawnTimes > 1){
-			throw new IllegalStateException(this.toString() + " cannot respawn");
-		}
-	}
-
-	@Override
 	public boolean isRemoved() {
 		return removed;
 	}
+
+	@Override
+	public boolean canSetToRemove() {
+		return canSetToRemove;
+	}
+
+	@Override
+	public void setToRemove() {
+		if(!canSetToRemove){
+			throw new IllegalStateException(this + " cannot be forcibly removed.");
+		}
+		this.forceRemove = true;
+	}
+
+	@Override
+	public void onHit(World world, Entity other) throws CannotHitException {
+		throw new CannotHitException(other, this);
+	}
+
+	@Override
+	public CollisionIdentity getCollisionIdentity() {
+		return collisionIdentity;
+	}
+
 }

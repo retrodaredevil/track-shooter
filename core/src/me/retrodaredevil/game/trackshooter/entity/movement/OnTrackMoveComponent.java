@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
-import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
@@ -39,7 +38,8 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Rotatio
 	}
 
 	public void pointToCenter(){
-		float angle = Vector2.Zero.cpy().sub(entity.getLocation()).angle();
+//		float angle = Vector2.Zero.cpy().sub(entity.getLocation()).angle();
+		float angle = entity.getLocation().scl(-1).angle();
 		entity.setRotation(angle);
 	}
 	public void setDistance(float distance, boolean zeroVelocity){

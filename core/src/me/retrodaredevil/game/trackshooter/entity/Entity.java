@@ -2,9 +2,11 @@ package me.retrodaredevil.game.trackshooter.entity;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public interface Entity extends Renderable, Updateable {
@@ -26,6 +28,11 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	Vector2 getLocation();
 	void setLocation(Vector2 location);
+	float getX();
+	float getY();
+	void setLocation(float x, float y);
+	void setLocation(float x, float y, float rotation);
+	void setLocation(Vector2 location, float rotation);
 
 	/**
 	 * NOTE: 90 is straight up, 0 is right
@@ -70,7 +77,7 @@ public interface Entity extends Renderable, Updateable {
 	 * <p>
 	 * Should only be called by the World instance. This will be called before the Entity is added to the entities list
 	 * <p>
-	 * Should be overridden to reset RenderComponent and to possibly reset lives or one-way-flags if necessary
+	 * Should be overridden to reset RenderComponent and to possibly reset health/lives or one-way-flags if necessary
 	 * @param world The world to be added to
 	 */
 	void beforeSpawn(World world);
@@ -83,5 +90,42 @@ public interface Entity extends Renderable, Updateable {
 	 * @return The entity that caused the spawning of this entity or null if there is none
 	 */
 	Entity getShooter();
+
+	/**
+	 * This method should be used to react to being hit, it should not try to send messages to other. other should be
+	 * used to determine what should happen to this instance.
+	 * <p>
+	 * For instance, bob collides with pete. bob.onHit(pete) and pete.onHit(bob) are called.
+	 * pete should not try to kill bob, bob will determine if pete should kill bob.
+	 * <p>
+	 * This should also not be called for every Entity that collides with this. Implementations of this should be kept
+	 * simple and this method will be called intelligently by a CollisionHandler. ex: two bullets cannot collide so
+	 * CollisionHandler should not call Bullet#onHit(otherBullet)
+	 *
+	 * @param world The World object
+	 * @param other The other entity this has collided with
+	 * @throws CannotHitException This is thrown when the caller has passed an entity that this cannot handle or
+	 *                            doesn't know how to handle.
+	 */
+	void onHit(World world, Entity other) throws CannotHitException;
+
+	/**
+	 *
+	 * @return The CollisionIdentity for this instance
+	 */
+	CollisionIdentity getCollisionIdentity();
+
+	/**
+	 *
+	 * @return true if you are allowed to call setToRemove()
+	 */
+	boolean canSetToRemove();
+	/**
+	 * NOTE: Make sure to check if this is allowed with canSetToRemove()
+	 * <p>
+	 * <p>
+	 * Once this is called, it should make the next time (and every time after) shouldRemove() is called return true essentially removing this
+	 */
+	void setToRemove();
 
 }

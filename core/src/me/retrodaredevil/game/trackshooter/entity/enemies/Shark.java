@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.entity.enemies;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.*;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -11,7 +12,7 @@ import me.retrodaredevil.game.trackshooter.util.EntityUtil;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class Shark extends SimpleEntity implements Hittable, Enemy {
+public class Shark extends SimpleEntity implements Enemy, Entity {
 	private static final int POINTS = 200; // 200 points for killing a Shark
 	private static final float VELOCITY_SPEED = 5; // units per second
 	private static final float ROTATIONAL_SPEED = 2; // rotations per second
@@ -29,6 +30,7 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 		setRenderComponent(new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f));
 		setHitboxSize(.7f, .7f);
 		canRespawn = false;
+		collisionIdentity = CollisionIdentity.ENEMY;
 	}
 
 	@Override
@@ -73,7 +75,9 @@ public class Shark extends SimpleEntity implements Hittable, Enemy {
 
 	@Override
 	public void onHit(World world, Entity other) throws CannotHitException {
-		if(other.getShooter() == this || (!(other instanceof Bullet) && !(other instanceof Player))){
+		CollisionIdentity identity = other.getCollisionIdentity();
+		if(other.getShooter() == this || identity == CollisionIdentity.POWERUP || identity == CollisionIdentity.ENEMY_PROJECTILE
+				|| identity == CollisionIdentity.ENEMY){
 			throw new CannotHitException(other, this);
 		}
 //		Gdx.app.debug("hit by", other.toString() + " at " + Gdx.app.getGraphics().getFrameId());

@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.level;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.RemovableEntity;
 import me.retrodaredevil.game.trackshooter.level.functions.LevelFunction;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -66,8 +65,8 @@ public abstract class SimpleLevel implements Level {
 	}
 	private void end(World world){
 		for(Entity entity : entityList){
-			if(entity instanceof RemovableEntity){
-				((RemovableEntity) entity).setToRemove();
+			if(entity.canSetToRemove()){
+				entity.setToRemove();
 			}
 		}
 		for(LevelFunction function : functions){

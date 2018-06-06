@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.powerup;
 
+import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
@@ -9,12 +10,11 @@ import me.retrodaredevil.game.trackshooter.util.EntityUtil;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class Fruit extends SimpleEntity implements Powerup {
+public class Fruit extends SimpleEntity implements PowerupEntity {
 
 	private int points;
 
 	private boolean eaten = false;
-	private boolean forceRemove = false;
 
 	public Fruit(int points, float velocity, float startingTrackDistance){
 		super();
@@ -26,6 +26,8 @@ public class Fruit extends SimpleEntity implements Powerup {
 		trackMove.setVelocity(velocity);
 		setMoveComponent(trackMove);
 		canRespawn = false;
+		canSetToRemove = true;
+		collisionIdentity = CollisionIdentity.POWERUP;
 	}
 
 	@Override
@@ -45,11 +47,7 @@ public class Fruit extends SimpleEntity implements Powerup {
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || eaten || forceRemove;
+		return super.shouldRemove(world) || eaten;
 	}
 
-	@Override
-	public void setToRemove() {
-		forceRemove = true;
-	}
 }

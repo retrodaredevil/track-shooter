@@ -3,9 +3,8 @@ package me.retrodaredevil.game.trackshooter;
 import com.badlogic.gdx.math.Rectangle;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.Hittable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.entity.powerup.Powerup;
+import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;
@@ -13,7 +12,13 @@ import java.util.Collection;
 import java.util.List;
 
 public class CollisionHandler implements Updateable {
-//	private final List<Hittable> friendly = new LinkedList<>(), enemies = new LinkedList<>(),
+	/*
+	Future references if we change how collision handling works:
+	 * https://stackoverflow.com/a/45142822/5434860 good answer on how he dealt with collisions
+	 * https://gamedev.stackexchange.com/a/137345 a visitor pattern (lots of methods)
+	 */
+
+//	private final List<Entity> friendly = new LinkedList<>(), enemies = new LinkedList<>(),
 //			friendBullets = new LinkedList<>(), enemyBullets = new LinkedList<>();
 	@Override
 	public void update(float delta, World world) {
@@ -24,33 +29,32 @@ public class CollisionHandler implements Updateable {
 //		enemyBullets.clear();
 		final Collection<Entity> entities = world.getEntities();
 
-		List<Hittable> friendly = new ArrayList<>(), enemies = new ArrayList<>(),
+		List<Entity> friendly = new ArrayList<>(), enemies = new ArrayList<>(),
 				friendBullets = new ArrayList<>(), enemyBullets = new ArrayList<>();
 
 		for(Entity e : entities){
 //			assert !e.shouldRemove(world); this happened once when eating fruit, unable to reproduce so commented out
-			if(e instanceof Hittable) {
-				Hittable h = (Hittable) e;
-				if (e instanceof Player) {
-					friendly.add(h);
-				} else if (e instanceof Bullet) {
-					if (e.getShooter() instanceof Player) {
-						friendBullets.add(h);
-					} else {
-						enemyBullets.add(h);
-					}
+			CollisionIdentity identity = e.getCollisionIdentity();
+			if(identity.canCollide()) {
+				if (identity == CollisionIdentity.FRIENDLY) {
+					friendly.add(e);
+				} else if (identity == CollisionIdentity.FRIENDLY_PROJECTILE) {
+					friendBullets.add(e);
+				} else if (identity == CollisionIdentity.ENEMY_PROJECTILE || identity == CollisionIdentity.POWERUP) {
+					enemyBullets.add(e);
 				} else {
-					enemies.add(h);
+					assert identity == CollisionIdentity.ENEMY : "Unknown CollisionIdentity that isn't UNKNOWN: " + identity;
+					enemies.add(e);
 				}
 			}
 		}
 		if(!enemyBullets.isEmpty() || !enemies.isEmpty()) {
-			for (Hittable friend : friendly) {
+			for (Entity friend : friendly) {
 				if(friend.shouldRemove(world)){
 					continue;
 				}
 				Rectangle hitbox = friend.getHitbox();
-				for (Hittable enemyBullet : enemyBullets) {
+				for (Entity enemyBullet : enemyBullets) {
 					if(enemyBullet.shouldRemove(world)){
 						continue;
 					}
@@ -59,7 +63,7 @@ public class CollisionHandler implements Updateable {
 						enemyBullet.onHit(world, friend);
 					}
 				}
-				for (Hittable enemy : enemies) {
+				for (Entity enemy : enemies) {
 					if(enemy.shouldRemove(world)){
 						continue;
 					}
@@ -72,12 +76,12 @@ public class CollisionHandler implements Updateable {
 			}
 		}
 		if(!enemies.isEmpty()) {
-			friendBulletLoop : for (Hittable friendBullet : friendBullets) {
-				for (Hittable enemy : enemies) {
+			friendBulletLoop : for (Entity friendBullet : friendBullets) {
+				for (Entity enemy : enemies) {
 					if(friendBullet.shouldRemove(world)){
 						continue friendBulletLoop;
 					}
-					if(enemy.shouldRemove(world) || enemy instanceof Powerup){
+					if(enemy.shouldRemove(world)){
 						continue;
 					}
 					if (enemy.getHitbox().overlaps(friendBullet.getHitbox())) { // for player bullet - enemy collisions

@@ -46,8 +46,11 @@ public class World implements Updateable, Renderable {
 			level = levelGetter.nextLevel();
 		}
 
-		while(!entitiesToAdd.isEmpty()){
+		while(true){
 			Entity entity = entitiesToAdd.poll();
+			if(entity == null){
+				break;
+			}
 			entity.beforeSpawn(this);
 			entities.add(entity);
 		}
@@ -57,7 +60,7 @@ public class World implements Updateable, Renderable {
 			entity.update(delta, this);
 			if(entity.shouldRemove(this)){
 				it.remove();
-				entity.afterRemove(this); // TODO change willRespawn
+				entity.afterRemove(this);
 			}
 		}
 		this.collisionHandler.update(delta, this);
