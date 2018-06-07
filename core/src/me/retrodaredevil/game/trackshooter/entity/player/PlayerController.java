@@ -62,9 +62,7 @@ public class PlayerController implements EntityController{
 			}
 		}
 		if (gameInput.fireButton().isPressed()) {
-			if(player.canShootBullet(world)) {
-				player.shootBullet(world);
-			}
+			player.shootBullet(world, null);
 		}
 	}
 }

@@ -1,10 +1,12 @@
 package me.retrodaredevil.game.trackshooter.level.functions;
 
 import com.badlogic.gdx.math.MathUtils;
-import me.retrodaredevil.game.trackshooter.entity.powerup.Cherry;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Fruit;
+import me.retrodaredevil.game.trackshooter.entity.powerup.SimplePowerup;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.Queue;
@@ -51,10 +53,12 @@ public class FruitFunction implements LevelFunction {
 	 * @return The Fruit to be added to world
 	 */
 	protected Fruit createFruit(World world){
-		return new Cherry(getFruitStartingDistance(world));
-	}
-	protected float getFruitStartingDistance(World world){
-		return world.getTrack().getTotalDistance() * MathUtils.random();
+		int level = world.getLevel().getNumber();
+		Resources.Points points = Resources.Points.P100;
+		if(level > 2){
+			points = Resources.Points.P300;
+		}
+		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(Resources.CHERRY_TEXTURE));
 	}
 
 	@Override

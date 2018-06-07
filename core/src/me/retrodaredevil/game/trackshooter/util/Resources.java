@@ -15,6 +15,7 @@ public final class Resources {
 	public static final TextureRegionDrawable[] SHARK_REGIONS = createRegions(SHARK_TEXTURE.getWidth() <= SHARK_TEXTURE.getHeight(), 3, SHARK_TEXTURE);
 	public static final Texture BULLET_TEXTURE = new Texture("bullet.png");
 	public static final Texture CHERRY_TEXTURE = new Texture("cherry.png");
+	public static final Texture POWERUP_TEXTURE = new Texture("powerup.png");
 	public static final Texture EVEN_BONUS = new Texture("even_bonus.png");
 	/** 200, 400, 800, 1600*/
 	public static final TextureRegionDrawable[] EVEN_BONUS_REGIONS = createRegions(false, 4, EVEN_BONUS);
@@ -54,5 +55,31 @@ public final class Resources {
 			index++;
 		}
 		return regions;
+	}
+	public enum Points {
+		P100(100, ODD_BONUS_REGIONS[0]),
+		P300(300, ODD_BONUS_REGIONS[1]),
+		P500(500, ODD_BONUS_REGIONS[2]),
+		P700(700, ODD_BONUS_REGIONS[3]),
+		P1000(1000, ODD_BONUS_REGIONS[4]),
+
+		P200(200, ODD_BONUS_REGIONS[0]),
+		P400(400, ODD_BONUS_REGIONS[1]),
+		P800(800, ODD_BONUS_REGIONS[2]),
+		P1600(1600, ODD_BONUS_REGIONS[3]),
+		;
+		private int worth;
+		private TextureRegionDrawable regionDrawable;
+
+		Points(int worth, TextureRegionDrawable regionDrawable){
+			this.worth = worth;
+			this.regionDrawable = regionDrawable;
+		}
+		public int getWorth(){
+			return worth;
+		}
+		public TextureRegionDrawable getDrawable(){
+			return regionDrawable;
+		}
 	}
 }

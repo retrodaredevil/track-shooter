@@ -3,11 +3,17 @@ package me.retrodaredevil.game.trackshooter.entity;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
+import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class SimpleEntity implements Entity {
 //	private static final Vector2 temp = new Vector2();
@@ -34,6 +40,8 @@ public class SimpleEntity implements Entity {
 	private EntityController entityController = null;
 
 	private final Rectangle hitbox; // also stores location data but must retrieve using HitboxUtil
+
+	private List<Effect> effects = new ArrayList<>();
 
 	protected SimpleEntity(){
 		hitbox = HitboxUtil.createHitbox(0, 0, 1, 1);
@@ -137,6 +145,13 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public void update(float delta, World world) {
+		for(Iterator<Effect> it = effects.iterator(); it.hasNext(); ){
+			Effect effect = it.next();
+			effect.update(delta, world);
+			if(effect.isDone()){
+				it.remove();
+			}
+		}
 		if (entityController != null) {
 			entityController.update(delta, world);
 		}
@@ -214,4 +229,12 @@ public class SimpleEntity implements Entity {
 		return collisionIdentity;
 	}
 
+	@Override
+	public List<Effect> getEffects() {
+		return effects;
+	}
+	@Override
+	public void addEffect(Effect effect) {
+		effects.add(effect);
+	}
 }

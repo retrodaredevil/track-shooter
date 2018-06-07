@@ -8,8 +8,11 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
+import me.retrodaredevil.game.trackshooter.effect.TripleShotPowerupEffect;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
+import me.retrodaredevil.game.trackshooter.entity.powerup.SimplePowerup;
+import me.retrodaredevil.game.trackshooter.entity.powerup.TripleShotPowerupEntity;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -44,6 +47,7 @@ public class GameScreen extends ScreenAdapter {
 		world.addEntity(player);
 
 
+		world.addEntity(new TripleShotPowerupEntity(2.0f, SimplePowerup.getRandomTrackStarting(world)));
 //		System.out.println("initial entities: " + world.getEntities());
 
 //		Resources.INTRO.play();

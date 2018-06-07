@@ -15,11 +15,10 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class Player extends SimpleEntity implements BulletShooter, Entity {
-	private static final int MAX_BULLETS = 3;
+public class Player extends SimpleEntity implements Entity {
+	private static final int MAX_BULLETS = 4;
 	private static final float TRIPLE_OFFSET = 15;  // degrees
 	private static final float SHOT_GUN_RANGE_DEGREES = 40; // degrees
 	private static final int SHOT_GUN_BULLETS = 5;
@@ -29,12 +28,13 @@ public class Player extends SimpleEntity implements BulletShooter, Entity {
 	private static final float SHOT_GUN_DISTANCE = 7;
 	private static final float SHOT_GUN_RANDOM_EXTEND_RANGE = 5; // can now go a max of this + SHOT_GUN_DISTANCE
 
-	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
+	private Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new HashMap<>();
+//	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
 	private Score score;
 
 	private boolean hit = false;
+	private boolean triplePowerup = false;
 
-	private Bullet.ShotType shotType = Bullet.ShotType.STRAIGHT;
 
 	public Player(){
 		setMoveComponent(new OnTrackMoveComponent(this));
@@ -42,6 +42,10 @@ public class Player extends SimpleEntity implements BulletShooter, Entity {
 		score = new PlayerScore(this);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
+	}
+
+	public void setTriplePowerup(boolean b){
+		this.triplePowerup = b;
 	}
 
 	@Override
@@ -89,11 +93,27 @@ public class Player extends SimpleEntity implements BulletShooter, Entity {
 		return super.shouldRemove(world) || hit || score.getLives() <= 0;
 	}
 
-	@Override
-	public List<Bullet> shootBullet(World world) {
+	private Bullet.ShotType checkNullShotType(Bullet.ShotType shotType){
+		if(shotType == null){
+			shotType = triplePowerup ? Bullet.ShotType.TRIPLE : Bullet.ShotType.STRAIGHT;
+		}
+		return shotType;
+	}
+
+	/**
+	 * @param world The world to shoot the bullets in
+	 * @param shotType The specified shot type or null
+	 * @return A list of all the bullets shot or null if we didn't shoot any
+	 */
+	public List<Bullet> shootBullet(World world, Bullet.ShotType shotType) {
+		shotType = checkNullShotType(shotType);
+		if(!canShootBullet(world, shotType)){
+			return null;
+		}
 		final CollisionIdentity collisionIdentity = CollisionIdentity.FRIENDLY_PROJECTILE;
+
 		List<Bullet> bullets = new ArrayList<>();
-		switch(getShotType()){
+		switch(shotType){
 			case TRIPLE:
 				Bullet bullet = Bullet.createFromEntity(this, Constants.BULLET_SPEED, 0, BULLET_DISTANCE, collisionIdentity);
 				bullets.add(bullet);
@@ -136,31 +156,56 @@ public class Player extends SimpleEntity implements BulletShooter, Entity {
 		for(Bullet bullet : bullets) {
 			world.addEntity(bullet);
 		}
-		activeBullets.add(bullets.get(0));
+//		activeBullets.add(bullets.get(0));
+		List<List<Bullet>> shotsList = activeBulletsMap.get(shotType);
+		if(shotsList == null){
+			shotsList = new ArrayList<>();
+			activeBulletsMap.put(shotType, shotsList);
+		}
+		shotsList.add(bullets);
 		Resources.BULLET_SOUND.play(1, 4, 0);
 		return bullets;
 	}
 
-	@Override
-	public boolean canShootBullet(World world) {
+	private boolean canShootBullet(World world, Bullet.ShotType shotType) {
 		if(world.getLevel().getMode() != LevelMode.NORMAL){
 			return false;
 		}
-		float max = MAX_BULLETS;
-		if(this.shotType == Bullet.ShotType.SHOT_GUN || this.shotType == Bullet.ShotType.FULL){
-			max = 1;
+		updateActive(world);
+		int max;
+		int amount = 0;
+		switch(shotType){
+			case SHOT_GUN: case FULL:
+				max = 1;
+				List<List<Bullet>> shotGunShots = activeBulletsMap.get(Bullet.ShotType.SHOT_GUN);
+				List<List<Bullet>> fullShots = activeBulletsMap.get(Bullet.ShotType.FULL);
+				if(shotGunShots != null)
+					amount += shotGunShots.size(); // combine total shots for each
+				if(fullShots != null)
+					amount += fullShots.size();
+				break;
+			default:
+				max = MAX_BULLETS;
+				List<List<Bullet>> straightShots = activeBulletsMap.get(Bullet.ShotType.STRAIGHT);
+				List<List<Bullet>> tripleShots = activeBulletsMap.get(Bullet.ShotType.TRIPLE);
+				if(straightShots != null)
+					amount += straightShots.size(); // combine total shots for each
+				if(tripleShots != null)
+					amount += tripleShots.size();
+				break;
 		}
-		World.updateEntityList(activeBullets);
-		return activeBullets.size() < max;
+		return amount < max;
 	}
-
-	@Override
-	public void setShotType(Bullet.ShotType shotType) {
-		this.shotType = shotType;
-	}
-
-	@Override
-	public Bullet.ShotType getShotType() {
-		return shotType;
+	private void updateActive(World world){
+		for(Map.Entry<Bullet.ShotType, List<List<Bullet>>> entry : activeBulletsMap.entrySet()){
+			List<List<Bullet>> shotsList = entry.getValue();
+			for(ListIterator<List<Bullet>> it = shotsList.listIterator(); it.hasNext(); ){
+				List<Bullet> shot = it.next();
+				World.updateEntityList(shot);
+				if(shot.isEmpty()){ // remove the shot if all the bullets were removed
+					it.remove();
+				}
+			}
+		}
 	}
 }

@@ -10,9 +10,10 @@ public interface Effect extends Updateable {
 	boolean isDone();
 
 	/**
-	 * NOTE: This is only for display and should not be used in place of isDone()
+	 * NOTE: This is only for display and should not be used in place of isDone()<p>
+	 * As time goes on, the return value goes from 0 to 1. (0% done, 50% done, 100% done etc)
 	 *
-	 * @return A number from 0 to 1 where 0 is done and 1 is not close to done OR 0 is out of ammo and 1 is full ammo etc.
+	 * @return A number from 0 to 1 where 1 is done and 0 is not close to done OR 1 is out of ammo and 0 is full ammo etc.
 	 */
 	float percentDone();
 }

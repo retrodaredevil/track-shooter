@@ -1,11 +1,6 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.math.Rectangle;
-import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.*;
@@ -17,11 +12,9 @@ public class CollisionHandler implements Updateable {
 	 * https://gamedev.stackexchange.com/a/137345 a visitor pattern (lots of methods)
 	 */
 
-//	private final List<Entity> friendly = new LinkedList<>(), enemies = new LinkedList<>(),
-//			friendBullets = new LinkedList<>(), enemyBullets = new LinkedList<>();
 	@Override
 	public void update(float delta, World world) {
-		long start = System.nanoTime();
+//		long start = System.nanoTime();
 		final Collection<Entity> entities = world.getEntities();
 
 		List<Entity> possiblyCollides = new ArrayList<>();
@@ -36,16 +29,14 @@ public class CollisionHandler implements Updateable {
 			possiblyCollides.add(e);
 
 			for(CollisionIdentity element : CollisionIdentity.values()){
-
 				if(collisionIdentity.triggersCollision(element)){
 					List<Entity> collisionList = collisionMap.get(element);
 					if(collisionList == null){
 						collisionList = new ArrayList<>();
+						collisionMap.put(element, collisionList); // only call put() once
 					}
 					collisionList.add(e);
-					collisionMap.put(element, collisionList);
 				}
-
 			}
 		}
 		outerLoop : for(Entity e : possiblyCollides){
@@ -66,9 +57,9 @@ public class CollisionHandler implements Updateable {
 			}
 		}
 
-		long end = System.nanoTime();
-		long took = end - start;
-		Gdx.app.debug("took", "" + took);
+//		long end = System.nanoTime();
+//		long took = end - start;
+//		Gdx.app.debug("took", "" + took);
 
 	}
 }

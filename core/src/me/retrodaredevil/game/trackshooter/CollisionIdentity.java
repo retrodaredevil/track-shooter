@@ -1,5 +1,8 @@
 package me.retrodaredevil.game.trackshooter;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * The idea of this class is to make dealing with collisions easier and less prone to errors. With this alone, you
  * shouldn't have to use instanceof for most things (although you should use that in some cases.) However, just because
@@ -13,24 +16,21 @@ package me.retrodaredevil.game.trackshooter;
 public enum CollisionIdentity {
 
 	// Special identities (referenced in the code more, harder to change)
-	UNKNOWN(false, false),
-	FRIENDLY(false, false), // friendlies don't trigger collisions
-	ENEMY(false, true), // enemy triggers a enemy friendly collision
+	UNKNOWN(),
+	FRIENDLY(), // friendlies don't trigger collisions
+	ENEMY(FRIENDLY), // enemy triggers a enemy friendly collision
 
 	// Regular identities (referenced in the code less, easier to change and add to)
-	FRIENDLY_PROJECTILE(true, false),
-	ENEMY_PROJECTILE(false, true),
-	POWERUP(false, true)
+	FRIENDLY_PROJECTILE(ENEMY),
+	ENEMY_PROJECTILE(FRIENDLY),
+	POWERUP(FRIENDLY)
 	;
 
-	private final boolean triggersWithEnemy;
-	private final boolean triggersWithFriendly;
+	private final List<CollisionIdentity> triggersWith;
 
 
-	CollisionIdentity(boolean triggersWithEnemy, boolean triggersWithFriendly){
-		this.triggersWithEnemy = triggersWithEnemy;
-		this.triggersWithFriendly = triggersWithFriendly;
-
+	CollisionIdentity(CollisionIdentity... triggersWith){
+		this.triggersWith = Arrays.asList(triggersWith);
 	}
 
 	/**
@@ -42,15 +42,14 @@ public enum CollisionIdentity {
 	}
 
 	/**
-	 * NOTE: If a call with a given parameters returns true, then calling it the other way around returns false
+	 * NOTE: If a call with a given parameters returns true, then calling it the other way around returns false:<p>
 	 * if a.triggersCollision(b) then b.triggersCollision(a) == false
 	 *
-	 * @param collisionIdentity
+	 * @param collisionIdentity The CollisionIdentity of the entity to test to see if this colliding with it triggers a collision
 	 * @return true if this colliding with collisionIdentity triggers a collision
 	 */
 	boolean triggersCollision(CollisionIdentity collisionIdentity){
-		return (triggersWithEnemy && collisionIdentity == ENEMY) ||
-				(triggersWithFriendly && collisionIdentity == FRIENDLY);
+		return triggersWith.contains(collisionIdentity);
 	}
 	/**
 	 *
