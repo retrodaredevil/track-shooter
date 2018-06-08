@@ -9,6 +9,8 @@ import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
+import me.retrodaredevil.game.trackshooter.level.functions.PowerupFunction;
+import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.Tracks;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -19,7 +21,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class GameLevelGetter implements LevelGetter {
 //	private static final Vector2 temp = new Vector2();
 
-	private int levelNumber = 0; // still starts at 1
+	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
 	private final Player player;
 
@@ -36,9 +38,13 @@ public class GameLevelGetter implements LevelGetter {
 			protected void onStart(World world) {
 				super.onStart(world);
 				addFunction(new FruitFunction());
+				if(levelNumber % 2 == 1){
+//					System.out.println("Adding triple power function to level #: " + levelNumber);
+					addFunction(new TripleShotPowerupFunction());
+				}
 
 //				final Vector2[] positions = new Vector2[] { new Vector2(1, 1), new Vector2(-1, 1), new Vector2(-1, -1), new Vector2(1, -1)};
-				final int amount = 4 + (levelNumber / 2);
+				final int amount = 4 + (levelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;
 				for(int i = 0; i < amount; i++){
 					int sign = ((i % 2) * 2) - 1;

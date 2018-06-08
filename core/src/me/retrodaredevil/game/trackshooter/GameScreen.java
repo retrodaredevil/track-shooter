@@ -47,7 +47,6 @@ public class GameScreen extends ScreenAdapter {
 		world.addEntity(player);
 
 
-		world.addEntity(new TripleShotPowerupEntity(2.0f, SimplePowerup.getRandomTrackStarting(world)));
 //		System.out.println("initial entities: " + world.getEntities());
 
 //		Resources.INTRO.play();

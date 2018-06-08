@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * The idea of this class is to make dealing with collisions easier and less prone to errors. With this alone, you
@@ -25,20 +24,42 @@ public enum CollisionIdentity {
 	ENEMY_PROJECTILE(FRIENDLY),
 	POWERUP(FRIENDLY)
 	;
+	static{
+		// The reason for putting this here is that when creating an EnumSet, the enum must be fully initialized
+		// example of problem: https://stackoverflow.com/q/24584161/5434860 Credit there for a solution
+		for(CollisionIdentity identity : values()){ // make all triggers that aren't empty EnumSets for performance
+			Set<CollisionIdentity> triggers = identity.triggersWith;
+			if(triggers == null){
+				identity.triggersWith = EnumSet.noneOf(CollisionIdentity.class);
+			} else if(!triggers.isEmpty()) {
+				identity.triggersWith = EnumSet.copyOf(triggers);
+			}
+			// else: triggers is empty and we must have already created an empty collection
+		}
+	}
 
-	private final List<CollisionIdentity> triggersWith;
+	private Set<CollisionIdentity> triggersWith;
 
 
-	CollisionIdentity(CollisionIdentity... triggersWith){
-		this.triggersWith = Arrays.asList(triggersWith);
+	CollisionIdentity(){
+		this.triggersWith = Collections.emptySet();
+	}
+	CollisionIdentity(CollisionIdentity... triggers){
+		triggersWith = new HashSet<>();
+		Collections.addAll(triggersWith, triggers);
 	}
 
 	/**
-	 *
+	 * NOTE: This is not the same as having triggers. Triggers are only one way and this just returns whether or not
+	 * this can collide period.
 	 * @return true if this identity can collide with anything. If it is not possible for this to collide, returns false
 	 */
-	boolean canCollide(){
+	public boolean canCollide(){
 		return this != UNKNOWN;
+	}
+
+	public Collection<CollisionIdentity> getTriggers(){
+		return triggersWith;
 	}
 
 	/**
@@ -48,7 +69,7 @@ public enum CollisionIdentity {
 	 * @param collisionIdentity The CollisionIdentity of the entity to test to see if this colliding with it triggers a collision
 	 * @return true if this colliding with collisionIdentity triggers a collision
 	 */
-	boolean triggersCollision(CollisionIdentity collisionIdentity){
+	public boolean triggersCollision(CollisionIdentity collisionIdentity){
 		return triggersWith.contains(collisionIdentity);
 	}
 	/**
@@ -56,7 +77,7 @@ public enum CollisionIdentity {
 	 * @param collisionIdentity The CollisionIdentity of the entity to test if it can collide with
 	 * @return true if it can collide with the passed CollisionIdentity
 	 */
-	boolean collidesWith(CollisionIdentity collisionIdentity){
+	public boolean collidesWith(CollisionIdentity collisionIdentity){
 		return this.triggersCollision(collisionIdentity) || collisionIdentity.triggersCollision(this);
 	}
 }

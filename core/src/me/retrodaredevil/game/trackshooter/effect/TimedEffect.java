@@ -33,6 +33,9 @@ public abstract class TimedEffect implements Effect {
 			onStart(world);
 //			System.out.println("Effect started. startTime: " + startTime + " timeLast: " + timeLast);
 		}
+		if(resetCount()){
+			startTime = now;
+		}
 		onUpdate(delta, world);
 //		System.out.println("Effect updated. " + now + " percentDone: " + percentDone());
 		if(startTime + timeLast < now){
@@ -40,6 +43,14 @@ public abstract class TimedEffect implements Effect {
 			onEnd(world);
 //			System.out.println("Effect ended");
 		}
+	}
+
+	/**
+	 * Called in TimedEffect's update. If you want to override.
+	 * @return if true, then the start time will be reset, by default false
+	 */
+	protected boolean resetCount(){
+		return false;
 	}
 	protected abstract void onStart(World world);
 	protected abstract void onUpdate(float delta, World world);

@@ -10,10 +10,7 @@ import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class SimpleEntity implements Entity {
 //	private static final Vector2 temp = new Vector2();
@@ -233,6 +230,22 @@ public class SimpleEntity implements Entity {
 	public List<Effect> getEffects() {
 		return effects;
 	}
+
+	@Override
+	public <T extends Effect> Collection<T> getEffects(Class<T> clazz) {
+		Collection<T> r = null;
+		for(Effect effect : effects){
+			if(clazz.isInstance(effect)){ // effect instanceof clazz
+				if(r == null){
+					r = new ArrayList<>();
+				}
+				r.add((T) effect);
+			}
+		}
+
+		return r;
+	}
+
 	@Override
 	public void addEffect(Effect effect) {
 		effects.add(effect);

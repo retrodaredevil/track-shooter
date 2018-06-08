@@ -18,7 +18,6 @@ public class CollisionHandler implements Updateable {
 		final Collection<Entity> entities = world.getEntities();
 
 		List<Entity> possiblyCollides = new ArrayList<>();
-
 		// This map represents all the entities that should be checked for each entity of a certain CollisionIdentity
 		Map<CollisionIdentity, List<Entity>> collisionMap = new HashMap<>();
 		for(Entity e : entities){
@@ -28,15 +27,13 @@ public class CollisionHandler implements Updateable {
 			}
 			possiblyCollides.add(e);
 
-			for(CollisionIdentity element : CollisionIdentity.values()){
-				if(collisionIdentity.triggersCollision(element)){
-					List<Entity> collisionList = collisionMap.get(element);
-					if(collisionList == null){
-						collisionList = new ArrayList<>();
-						collisionMap.put(element, collisionList); // only call put() once
-					}
-					collisionList.add(e);
+			for(CollisionIdentity element : collisionIdentity.getTriggers()){
+				List<Entity> collisionList = collisionMap.get(element);
+				if(collisionList == null){
+					collisionList = new ArrayList<>();
+					collisionMap.put(element, collisionList); // only call put() once
 				}
+				collisionList.add(e);
 			}
 		}
 		outerLoop : for(Entity e : possiblyCollides){

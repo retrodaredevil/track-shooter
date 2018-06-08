@@ -64,5 +64,8 @@ public class PlayerController implements EntityController{
 		if (gameInput.fireButton().isPressed()) {
 			player.shootBullet(world, null);
 		}
+		if(gameInput.activatePowerup().isPressed()){
+			player.activatePowerup(world);
+		}
 	}
 }

@@ -4,9 +4,12 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
-import me.retrodaredevil.game.trackshooter.entity.*;
+import me.retrodaredevil.game.trackshooter.effect.Effect;
+import me.retrodaredevil.game.trackshooter.effect.PowerupActivateListenerEffect;
+import me.retrodaredevil.game.trackshooter.entity.Bullet;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -17,7 +20,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.*;
 
-public class Player extends SimpleEntity implements Entity {
+public class Player extends SimpleEntity {
 	private static final int MAX_BULLETS = 4;
 	private static final float TRIPLE_OFFSET = 15;  // degrees
 	private static final float SHOT_GUN_RANGE_DEGREES = 40; // degrees
@@ -98,6 +101,18 @@ public class Player extends SimpleEntity implements Entity {
 			shotType = triplePowerup ? Bullet.ShotType.TRIPLE : Bullet.ShotType.STRAIGHT;
 		}
 		return shotType;
+	}
+	public void activatePowerup(World world){
+		Collection<PowerupActivateListenerEffect> effects = getEffects(PowerupActivateListenerEffect.class);
+		if(effects == null){
+			return;
+		}
+		for(PowerupActivateListenerEffect effect : effects){
+			boolean didSomething = effect.activatePowerup(world);
+			if(didSomething){
+				break;
+			}
+		}
 	}
 
 	/**

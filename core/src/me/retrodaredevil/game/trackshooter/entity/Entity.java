@@ -117,7 +117,10 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	CollisionIdentity getCollisionIdentity();
 
+	/** @return A Collection of effects that are active on the player. */
 	Collection<Effect> getEffects();
+	/** @return A Collection of effects of the given type that are active on the player OR null if there are none active */
+	<T extends Effect> Collection<T> getEffects(Class<T> clazz);
 	/**
 	 * NOTE: Do not call this method in an Effect's update method as it is probably currently iterating over effects,
 	 * if this functionality is needed in the future, change this comment.

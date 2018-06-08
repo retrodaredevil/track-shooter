@@ -9,4 +9,5 @@ public abstract class GameInput extends ControllerInput {
 	public abstract JoystickPart rotateJoystick();
 	public abstract InputPart fireButton();
 	public abstract InputPart slow();
+	public abstract InputPart activatePowerup();
 }

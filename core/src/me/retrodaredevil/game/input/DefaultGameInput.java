@@ -12,6 +12,7 @@ public class DefaultGameInput extends GameInput {
 	private final JoystickPart rotateJoystick;
 	private final InputPart fireButton;
 	private final InputPart slow;
+	private final InputPart activatePowerup;
 
 	private final Joysticks joysticks;
 
@@ -24,9 +25,10 @@ public class DefaultGameInput extends GameInput {
 		rotateJoystick = controller.rightJoy();
 		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper());
 		slow = controller.leftStick();
+		activatePowerup = controller.faceLeft();
 		joysticks = new Joysticks(mainJoystick, rotateJoystick);
 
-		parts = Collections.emptyList();
+		parts = Collections.emptyList(); // parts are already handled by controller
 
 		reliesOn = controller;
 	}
@@ -36,9 +38,10 @@ public class DefaultGameInput extends GameInput {
 		rotateJoystick = new GdxMouseJoystick();
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
+		activatePowerup = new KeyInputPart(Input.Keys.F);
 		joysticks = new Joysticks(mainJoystick, rotateJoystick);
 
-		parts = Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow);
+		parts = Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow, activatePowerup);
 		setParentsToThis(parts, false, false);
 	}
 
@@ -60,6 +63,11 @@ public class DefaultGameInput extends GameInput {
 	@Override
 	public InputPart slow() {
 		return slow;
+	}
+
+	@Override
+	public InputPart activatePowerup() {
+		return activatePowerup;
 	}
 
 	@Override
