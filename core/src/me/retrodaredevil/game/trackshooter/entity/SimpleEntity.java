@@ -5,9 +5,11 @@ import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
+import me.retrodaredevil.game.trackshooter.item.Item;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
+import me.retrodaredevil.game.trackshooter.util.Util;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.*;
@@ -23,9 +25,6 @@ public class SimpleEntity implements Entity {
 
 
 	private int spawnTimes = 0; // the amount of times the entity has spawned
-
-	private float rotation = 0; // in degrees
-
 	/** Changed only in afterRemove() */
 	private boolean removed = false;
 	/** Changed in setToRemove() */
@@ -33,12 +32,13 @@ public class SimpleEntity implements Entity {
 
 	private MoveComponent moveComponent = null;
 	private RenderComponent renderComponent = null;
-
 	private EntityController entityController = null;
 
 	private final Rectangle hitbox; // also stores location data but must retrieve using HitboxUtil
+	private float rotation = 0; // in degrees
 
 	private List<Effect> effects = new ArrayList<>();
+	private List<Item> items = new ArrayList<>();
 
 	protected SimpleEntity(){
 		hitbox = HitboxUtil.createHitbox(0, 0, 1, 1);
@@ -149,6 +149,13 @@ public class SimpleEntity implements Entity {
 				it.remove();
 			}
 		}
+		for(Iterator<Item> it = items.iterator(); it.hasNext(); ){
+			Item item = it.next();
+			item.update(delta, world);
+			if(item.isUsed()){
+				it.remove();
+			}
+		}
 		if (entityController != null) {
 			entityController.update(delta, world);
 		}
@@ -230,24 +237,25 @@ public class SimpleEntity implements Entity {
 	public List<Effect> getEffects() {
 		return effects;
 	}
-
 	@Override
 	public <T extends Effect> Collection<T> getEffects(Class<T> clazz) {
-		Collection<T> r = null;
-		for(Effect effect : effects){
-			if(clazz.isInstance(effect)){ // effect instanceof clazz
-				if(r == null){
-					r = new ArrayList<>();
-				}
-				r.add((T) effect);
-			}
-		}
-
-		return r;
+		return Util.getElementsOfClass(effects, clazz);
 	}
-
 	@Override
 	public void addEffect(Effect effect) {
 		effects.add(effect);
+	}
+
+	@Override
+	public List<Item> getItems() {
+		return items;
+	}
+	@Override
+	public <T extends Item> Collection<T> getItems(Class<T> clazz) {
+		return Util.getElementsOfClass(items, clazz);
+	}
+	@Override
+	public void addItem(Item item) {
+		items.add(item);
 	}
 }

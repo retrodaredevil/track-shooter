@@ -7,6 +7,7 @@ import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.item.Item;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -23,7 +24,7 @@ public interface Entity extends Renderable, Updateable {
 	/** @param controller The EntityController to set to control the entity */
 	void setEntityController(EntityController controller);
 
-	/** @return A copy of the Entity's location*/
+	/** @return A copy of the SnakePart's location*/
 	Vector2 getLocation();
 	/** @return The x value of the location */
 	float getX();
@@ -64,7 +65,7 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	boolean shouldRemove(World world);
 	/**
-	 * Called when the Entity is going to be removed
+	 * Called when the SnakePart is going to be removed
 	 *
 	 * Should only be called by the World instance. This should be called after the entity has been removed
 	 * @param world The world this entity will be removed from
@@ -72,9 +73,9 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	void afterRemove(World world);
 	/**
-	 * Called when the Entity is going to be added
+	 * Called when the SnakePart is going to be added
 	 * <p>
-	 * Should only be called by the World instance. This will be called before the Entity is added to the entities list
+	 * Should only be called by the World instance. This will be called before the SnakePart is added to the entities list
 	 * <p>
 	 * Should be overridden to reset RenderComponent and to possibly reset health/lives or one-way-flags if necessary
 	 * @param world The world to be added to
@@ -101,7 +102,7 @@ public interface Entity extends Renderable, Updateable {
 	 * For instance, bob collides with pete. bob.onHit(pete) and pete.onHit(bob) are called.
 	 * pete should not try to kill bob, bob will determine if pete should kill bob.
 	 * <p>
-	 * This should also not be called for every Entity that collides with this. Implementations of this should be kept
+	 * This should also not be called for every SnakePart that collides with this. Implementations of this should be kept
 	 * simple and this method will be called intelligently by a CollisionHandler. ex: two bullets cannot collide so
 	 * CollisionHandler should not call Bullet#onHit(otherBullet)
 	 *
@@ -127,4 +128,8 @@ public interface Entity extends Renderable, Updateable {
 	 * @param effect The effect to be added
 	 */
 	void addEffect(Effect effect);
+
+	Collection<Item> getItems();
+	<T extends Item> Collection<T> getItems(Class<T> clazz);
+	void addItem(Item item);
 }

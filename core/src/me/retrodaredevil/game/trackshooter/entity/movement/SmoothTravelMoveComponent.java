@@ -7,7 +7,7 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmoothTravelMoveComponent extends SimpleMoveComponent{
+public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
 	private static final Vector2 temp = new Vector2();
 
 //	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
@@ -115,4 +115,13 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent{
 
 	}
 
+	@Override
+	public float getTravelVelocity() {
+		return speed;
+	}
+
+	@Override
+	public float getRotationalVelocity() {
+		return rotationalChange * rotationalSpeedMultiplier;
+	}
 }

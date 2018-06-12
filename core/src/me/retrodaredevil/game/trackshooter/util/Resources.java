@@ -11,6 +11,8 @@ public final class Resources {
 	// Textures
 	public static final Texture PLAYER_TEXTURE = new Texture("player.png");
 	public static final Texture SHARK_TEXTURE = new Texture("shark.png");
+	public static final Texture SPACE_STATION_TEXTURE = new Texture("space_station.png");
+	public static final Texture SNAKE_PART_TEXTURE = new Texture("snake_part.png");
 	/**The frames for a shark [0] is right [1] is straight [2] is left */
 	public static final TextureRegionDrawable[] SHARK_REGIONS = createRegions(SHARK_TEXTURE.getWidth() <= SHARK_TEXTURE.getHeight(), 3, SHARK_TEXTURE);
 	public static final Texture BULLET_TEXTURE = new Texture("bullet.png");

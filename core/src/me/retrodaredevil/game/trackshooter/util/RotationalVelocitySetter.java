@@ -1,5 +1,5 @@
 package me.retrodaredevil.game.trackshooter.util;
 
-public interface VelocitySetter {
+public interface RotationalVelocitySetter {
 	void setDesiredRotationalVelocity(float desiredVelocity, float accelerationMultiplier, float maxVelocity);
 }

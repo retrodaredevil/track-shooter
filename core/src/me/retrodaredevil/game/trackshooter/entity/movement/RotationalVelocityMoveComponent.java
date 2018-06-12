@@ -1,13 +1,13 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
-import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
-
-public interface RotationalVelocityMoveComponent extends MoveComponent, VelocitySetter {
+/**
+ * By implementing this interface, you allow other places in the code to check to see if a MoveComponent is an instanceof
+ * this class so that place in the code is able to see the rate of rotation. If your MoveComponent can, it is recommended to
+ * implement this class if possible (and if it's reasonable)
+ */
+public interface RotationalVelocityMoveComponent extends MoveComponent {
 	/**
-	 * @param desiredRotationalVelocity The desired rotational velocity in degrees per second
-	 * @param rotationalAccelerationMultiplier The acceleration multiplier
-	 * @param maxRotationalVelocity The maximum allows rotational velocity in degrees per second. If larger than desiredRotationalVelocity, has no effect
+	 * @return The amount of degrees this will rotate per second
 	 */
-	@Override
-	void setDesiredRotationalVelocity(float desiredRotationalVelocity, float rotationalAccelerationMultiplier, float maxRotationalVelocity);
+	float getRotationalVelocity();
 }

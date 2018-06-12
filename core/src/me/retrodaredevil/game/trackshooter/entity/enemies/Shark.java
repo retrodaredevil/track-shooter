@@ -62,7 +62,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		if(component == resetPosition){ // can happen for one frame
 			return true;
 		}
-		while(true){
+		while(true){ // does one of the linked MoveComponents contain final variable "resetPosition"?
 			component = component.getNextComponent();
 			if(component == resetPosition){
 				return true;
@@ -96,10 +96,10 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		SpinMoveComponent spin;
 		long spinTime = (long) (1000 * (1.75f + .5f * MathUtils.random()));
 		if(lastSpin != null){
-//			assert spinning;
-			spin = new SpinMoveComponent(this, spinTime, lastSpin.getSpinPerSecond() * -1);
+//			assert spinning; // commented out because according to intellij, unnecessary check
+			spin = new SpinMoveComponent(this, spinTime, lastSpin.getRotationalVelocity() * -1);
 		} else {
-			spin = new SpinMoveComponent(this, spinTime, 360 * 2 * (MathUtils.randomBoolean() ? 1 : -1));
+			spin = new SpinMoveComponent(this, spinTime, 360 * 2 * MathUtils.randomSign());
 		}
 		spin.setNextComponent(wantedComponent);
 		this.setMoveComponent(spin);

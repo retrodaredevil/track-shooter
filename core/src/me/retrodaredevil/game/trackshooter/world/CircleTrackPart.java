@@ -13,7 +13,7 @@ public class CircleTrackPart extends TrackPart {
 	public CircleTrackPart(float radius, Color color) {
 		super(new Vector2(radius, 0), new Vector2(radius, 0));
 		this.radius = radius;
-		this.renderComponent = new CircleRenderComponent(radius, Vector2.Zero, color);
+		this.renderComponent = new CircleRenderComponent(radius, Vector2.Zero, color, 100);
 	}
 
 	@Override

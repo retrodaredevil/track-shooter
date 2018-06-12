@@ -4,7 +4,7 @@ import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
- * Handles a "nested" MoveComponent so an instance can have multiple behaviours similar to how an Entity has multiple
+ * Handles a "nested" MoveComponent so an instance can have multiple behaviours similar to how an SnakePart has multiple
  * behaviours utilizing MoveComponents in the first place.
  */
 abstract class NestedComponentMoveComponent extends SimpleMoveComponent {

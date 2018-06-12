@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter.entity.powerup;
 
-import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -26,7 +25,7 @@ public abstract class PowerupPackage extends SimplePowerup {
 			throw new CannotHitException(other, this);
 		}
 		Player player = (Player) other;
-		player.addEffect(createEffect(player));
+		onHit(world, player);
 		eaten = true;
 	}
 
@@ -35,5 +34,5 @@ public abstract class PowerupPackage extends SimplePowerup {
 		return super.shouldRemove(world) || eaten;
 	}
 
-	protected abstract Effect createEffect(Player player);
+	protected abstract void onHit(World world, Player player);
 }

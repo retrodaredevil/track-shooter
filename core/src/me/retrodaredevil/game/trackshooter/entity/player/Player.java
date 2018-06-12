@@ -4,8 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
-import me.retrodaredevil.game.trackshooter.effect.Effect;
-import me.retrodaredevil.game.trackshooter.effect.PowerupActivateListenerEffect;
+import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
@@ -103,12 +102,12 @@ public class Player extends SimpleEntity {
 		return shotType;
 	}
 	public void activatePowerup(World world){
-		Collection<PowerupActivateListenerEffect> effects = getEffects(PowerupActivateListenerEffect.class);
-		if(effects == null){
+		Collection<PowerupActivateListenerItem> items = getItems(PowerupActivateListenerItem.class);
+		if(items == null){
 			return;
 		}
-		for(PowerupActivateListenerEffect effect : effects){
-			boolean didSomething = effect.activatePowerup(world);
+		for(PowerupActivateListenerItem item : items){
+			boolean didSomething = item.activatePowerup(world, this);
 			if(didSomething){
 				break;
 			}

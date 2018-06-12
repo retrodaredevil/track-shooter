@@ -1,6 +1,10 @@
 package me.retrodaredevil.game.trackshooter.util;
 
-public class VelocityHandler implements VelocitySetter {
+/**
+ * A class that can be used for keeping track of a variable that accelerates. (Get a velocity and that velocity increases
+ * an amount each second)
+ */
+public class VelocityHandler implements RotationalVelocitySetter {
 
 	private final float velocitySetGotoDeadband;
 

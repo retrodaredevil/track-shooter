@@ -11,12 +11,14 @@ public class CircleRenderComponent implements RenderComponent {
 	private float radius;
 	private Vector2 center;
 	private final ShapeRenderer renderer;
-	private Color color;
+	private int segments;
 
-	public CircleRenderComponent(float radius, Vector2 center, Color color){
+	public CircleRenderComponent(float radius, Vector2 center, Color color, int segments){
 		this.radius = radius;
 		this.center = center;
+		this.segments = segments;
 		renderer = new ShapeRenderer();
+		renderer.setColor(color);
 
 	}
 
@@ -27,7 +29,7 @@ public class CircleRenderComponent implements RenderComponent {
 		renderer.setProjectionMatrix(camera.combined);
 		renderer.begin(ShapeRenderer.ShapeType.Line);
 //		renderer.setColor(this.color);
-		renderer.circle(center.x, center.y, radius, 40);
+		renderer.circle(center.x, center.y, radius, segments);
 		renderer.end();
 	}
 

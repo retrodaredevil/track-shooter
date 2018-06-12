@@ -3,7 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SpinMoveComponent extends TimedMoveComponent {
+public class SpinMoveComponent extends TimedMoveComponent implements RotationalVelocityMoveComponent{
 
 
 	private Entity entity;
@@ -19,7 +19,9 @@ public class SpinMoveComponent extends TimedMoveComponent {
 		this.entity = entity;
 		this.spinPerSecond = spinPerSecond;
 	}
-	public float getSpinPerSecond(){
+
+	@Override
+	public float getRotationalVelocity() {
 		return spinPerSecond;
 	}
 

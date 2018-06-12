@@ -3,7 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 import me.retrodaredevil.game.trackshooter.Updateable;
 
 /**
- * This can have many implementations and is used for being able to call methods that will move an Entity.
+ * This can have many implementations and is used for being able to call methods that will move an SnakePart.
  * <p>
  * When update() is called, this should move the entity inside update, it should not use any external input that it
  * did not receive from one of its methods. Ex: Don't take input from a controller directly and have a method that
