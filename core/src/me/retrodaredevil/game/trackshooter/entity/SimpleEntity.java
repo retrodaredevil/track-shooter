@@ -22,6 +22,8 @@ public class SimpleEntity implements Entity {
 	/** If you want to be able to remove this entity at will, set this to true */
 	protected boolean canSetToRemove = false;
 	protected CollisionIdentity collisionIdentity = CollisionIdentity.UNKNOWN;
+	/** Should only set set in a subclass constructor. Defaults to true. */
+	protected boolean canLevelEndWithEntityActive = true;
 
 
 	private int spawnTimes = 0; // the amount of times the entity has spawned
@@ -257,5 +259,10 @@ public class SimpleEntity implements Entity {
 	@Override
 	public void addItem(Item item) {
 		items.add(item);
+	}
+
+	@Override
+	public boolean canLevelEnd(World world) {
+		return canLevelEndWithEntityActive;
 	}
 }

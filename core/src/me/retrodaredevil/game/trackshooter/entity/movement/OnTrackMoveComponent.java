@@ -1,9 +1,14 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
+import me.retrodaredevil.game.trackshooter.effect.EffectUtil;
+import me.retrodaredevil.game.trackshooter.effect.SpeedEffect;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnTrackMoveComponent extends SimpleMoveComponent implements AccelerationRotationalVelocityMoveComponent, TravelVelocityMoveComponent {
 	private Entity entity;
@@ -12,6 +17,7 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Acceler
 	private float velocity = 0; // per second
 
 	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
+
 
 
 	public OnTrackMoveComponent(Entity entity){
@@ -25,7 +31,7 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Acceler
 
 	@Override
 	public void onUpdate(float delta, World world) {
-		this.distance += delta * this.velocity;
+		this.distance += delta * getTravelVelocity();
 
 		entity.setLocation(world.getTrack().getDesiredLocation(distance));
 
@@ -57,7 +63,7 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Acceler
 	public float getDistance(){ return distance; }
 	public void setVelocity(float velocity){ this.velocity = velocity; }
 	@Override
-	public float getTravelVelocity(){ return velocity; }
+	public float getTravelVelocity(){ return velocity * EffectUtil.getSpeedMultiplier(entity); }
 
 	@Override
 	public void setDesiredRotationalVelocity(float desiredRotationalVelocity, float rotationalAccelerationMultiplier, float maxRotationalVelocity) {
@@ -68,4 +74,5 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Acceler
 	public float getRotationalVelocity() {
 		return rotationalVelocityHandler.getVelocity();
 	}
+
 }

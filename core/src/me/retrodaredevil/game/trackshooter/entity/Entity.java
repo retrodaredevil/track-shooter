@@ -8,12 +8,13 @@ import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.item.Item;
+import me.retrodaredevil.game.trackshooter.level.CanLevelEnd;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.Collection;
 
-public interface Entity extends Renderable, Updateable {
+public interface Entity extends Renderable, Updateable, CanLevelEnd {
 
 	/**
 	 *
@@ -118,9 +119,9 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	CollisionIdentity getCollisionIdentity();
 
-	/** @return A Collection of effects that are active on the player. */
+	/** @return A Collection of effects that are active on the Entity. */
 	Collection<Effect> getEffects();
-	/** @return A Collection of effects of the given type that are active on the player OR null if there are none active */
+	/** @return A Collection of effects of the given type that are active on the Entity OR null if there are none active */
 	<T extends Effect> Collection<T> getEffects(Class<T> clazz);
 	/**
 	 * NOTE: Do not call this method in an Effect's update method as it is probably currently iterating over effects,
@@ -129,7 +130,11 @@ public interface Entity extends Renderable, Updateable {
 	 */
 	void addEffect(Effect effect);
 
+	/** @return A Collection of items that this Entity has */
 	Collection<Item> getItems();
+	/** @return A Collection of items of the given type that this Entity has or null if there are none of that type. */
 	<T extends Item> Collection<T> getItems(Class<T> clazz);
+	/** @param item The item to be added */
 	void addItem(Item item);
+
 }

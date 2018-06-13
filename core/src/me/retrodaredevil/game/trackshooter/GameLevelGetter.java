@@ -10,6 +10,7 @@ import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.PowerupFunction;
+import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.Tracks;
@@ -38,29 +39,26 @@ public class GameLevelGetter implements LevelGetter {
 			protected void onStart(World world) {
 				super.onStart(world);
 				addFunction(new FruitFunction());
+				addFunction(new SnakeFunction(player));
 				if(levelNumber % 2 == 1){
-//					System.out.println("Adding triple power function to level #: " + levelNumber);
 					addFunction(new TripleShotPowerupFunction());
 				}
 
-//				final Vector2[] positions = new Vector2[] { new Vector2(1, 1), new Vector2(-1, 1), new Vector2(-1, -1), new Vector2(1, -1)};
 				final int amount = 4 + (levelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;
 				for(int i = 0; i < amount; i++){
-					int sign = ((i % 2) * 2) - 1;
+					int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(1, i), we use this
 					float trackDistanceAway = sign * ((i / 2f) * spacing);
 					float positionAngle = (i * 360f) / amount;
 					positionAngle += 45;
 					Vector2 location = new Vector2(MathUtils.cosDeg(positionAngle), MathUtils.sinDeg(positionAngle));
-//					float angle = 45 + 90 * i;
 					float angle = positionAngle;
 					Shark shark = new Shark(location, angle);
 					shark.setEntityController(new SharkAIController(shark, player, trackDistanceAway, sign * (2f + (i * .5f / amount))));
 					// start in the start position
-					shark.setLocation(location);
-					shark.setRotation(angle);
+					shark.setLocation(location, angle);
 
-					addEnemy(world, shark);
+					addEntity(world, shark);
 				}
 			}
 		};

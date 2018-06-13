@@ -45,16 +45,6 @@ public class GameScreen extends ScreenAdapter {
 		player.setEntityController(new PlayerController(player, gameInput));
 		world.addEntity(player);
 
-		SnakePart last = null;
-		for(int i = 0; i < 22; i++){
-			SnakePart part = new SnakePart();
-			part.setEntityController(new SnakeAIController(part, player));
-			part.follow(last);
-
-			world.addEntity(part);
-			last = part;
-		}
-
 //		System.out.println("initial entities: " + world.getEntities());
 
 //		Resources.INTRO.play();

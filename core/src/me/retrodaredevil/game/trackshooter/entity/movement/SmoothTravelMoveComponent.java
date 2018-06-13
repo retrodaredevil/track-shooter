@@ -2,10 +2,14 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import me.retrodaredevil.game.trackshooter.effect.EffectUtil;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
 	private static final Vector2 temp = new Vector2();
@@ -107,7 +111,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 
 		float rotation = entity.getRotation();
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
-		velocity.scl(delta * speed);
+		velocity.scl(delta * getTravelVelocity());
 		entity.setLocation(entity.getLocation().add(velocity));
 	}
 	@Override
@@ -117,11 +121,19 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 
 	@Override
 	public float getTravelVelocity() {
-		return speed;
+		return speed * EffectUtil.getSpeedMultiplier(entity);
+	}
+	public void setVelocity(float speed){
+		this.speed = speed;
 	}
 
 	@Override
 	public float getRotationalVelocity() {
 		return rotationalChange * rotationalSpeedMultiplier;
 	}
+	public void setRotationalSpeedMultiplier(float multiplier){
+		this.rotationalSpeedMultiplier = multiplier;
+	}
+
+
 }

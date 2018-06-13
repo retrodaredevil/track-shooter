@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies;
 
+import com.badlogic.gdx.math.MathUtils;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
@@ -7,6 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveCompo
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SnakeAIController implements EntityController {
+	private static final float IN_FRONT_DISTANCE = 3;
 	private SnakePart part;
 	private Entity target;
 	public SnakeAIController(SnakePart part, Entity target){
@@ -21,7 +23,21 @@ public class SnakeAIController implements EntityController {
 		MoveComponent moveComponent = part.getMoveComponent();
 		if(moveComponent instanceof SmoothTravelMoveComponent){
 			SmoothTravelMoveComponent travelMove = (SmoothTravelMoveComponent) moveComponent;
-			travelMove.setTarget(world.getTrack(), target, 0);
+			float rotation = target.getRotation();
+			travelMove.setTarget(target.getLocation().add(
+					MathUtils.cosDeg(rotation) * IN_FRONT_DISTANCE,
+					MathUtils.sinDeg(rotation) * IN_FRONT_DISTANCE
+			));
+			int numberParts = part.numberBehind() + 1; // add one because numberBehind() doesn't include part
+//			Gdx.app.debug("parts", "" + numberParts);
+			float speed = 5;
+			float rotMultiplier = 2;
+			if(numberParts <= 5){
+				speed = 10 - numberParts;
+				rotMultiplier = 4.5f - (numberParts * .5f);
+			}
+			travelMove.setVelocity(speed);
+			travelMove.setRotationalSpeedMultiplier(rotMultiplier);
 		}
 	}
 }

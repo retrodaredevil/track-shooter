@@ -5,6 +5,8 @@ import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Queue;
 
 public abstract class PowerupFunction implements LevelFunction {
@@ -18,7 +20,7 @@ public abstract class PowerupFunction implements LevelFunction {
 	}
 
 	@Override
-	public boolean update(float delta, World world, Queue<LevelFunction> functionsToAdd) {
+	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
 		Level level = world.getLevel();
 		long modeTime = level.getModeTime();
 		if(powerup != null){
@@ -58,5 +60,10 @@ public abstract class PowerupFunction implements LevelFunction {
 		if(powerup != null){
 			powerup.setToRemove();
 		}
+	}
+
+	@Override
+	public boolean canLevelEnd(World world) {
+		return true;
 	}
 }

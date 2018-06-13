@@ -13,16 +13,16 @@ import java.util.*;
 public abstract class SimpleLevel implements Level {
 
 	private final int number;
-	private Track track;
+	private final Track track;
 	private Long startTime = null;
 
-	private LevelMode mode = null;
-	private Long modeStartTime = null;
+	private LevelMode mode = null; // initialized in first call to update()
+	private Long modeStartTime = null; // changed and first initialized in setMode()
 
-	private List<Entity> entityList = new ArrayList<>(); // list of entities handled by the level
+	private final List<Entity> entityList = new ArrayList<>(); // list of entities handled by the level
 
-	private List<LevelFunction> functions = new ArrayList<>();
-	private final Queue<LevelFunction> addFunctionsQueue = new ArrayDeque<>();
+	private final List<LevelFunction> functions = new ArrayList<>();
+	private final Queue<LevelFunction> addFunctionsQueue = new ArrayDeque<>(); // used to poll new functions from
 
 	private boolean done = false; // set in update
 
@@ -46,7 +46,7 @@ public abstract class SimpleLevel implements Level {
 		}
 		assert mode != null;
 		World.updateEntityList(entityList);
-		this.done = onUpdate(delta, world);
+		onUpdate(delta, world);
 
 		for(Iterator<LevelFunction> it = functions.listIterator(); it.hasNext(); ){
 			LevelFunction function = it.next();
@@ -59,6 +59,7 @@ public abstract class SimpleLevel implements Level {
 			LevelFunction element = addFunctionsQueue.poll();
 			functions.add(element);
 		}
+		this.done = shouldLevelEnd(world);
 		if(this.done){
 			end(world);
 		}
@@ -76,14 +77,29 @@ public abstract class SimpleLevel implements Level {
 	}
 	protected abstract void onStart(World world);
 
-	/**
-	 *
-	 * @param delta
-	 * @param world
-	 * @return true if this level is done, false otherwise
-	 */
-	protected abstract boolean onUpdate(float delta, World world);
+	protected abstract void onUpdate(float delta, World world);
 	protected abstract void onEnd(World world);
+
+	/**
+	 * NOTE for implementors: Even if you return true, it is possible that the level will keep going because of
+	 * another condition that is abstracted away from you. (Possibly a LevelFunction as of right now)
+	 * <p>
+	 * NOTE for callers: It is possible that if this returns true, it is allowed to return false if called again because
+	 * of the above note.
+	 *
+	 * @return true if this level is able to end, false otherwise
+	 */
+	protected boolean shouldLevelEnd(World world){
+		Collection<CanLevelEnd> endCheckCollection = new ArrayList<>();
+		endCheckCollection.addAll(entityList);
+		endCheckCollection.addAll(functions);
+		for(CanLevelEnd endCheck : endCheckCollection){
+			if(!endCheck.canLevelEnd(world)){
+				return false;
+			}
+		}
+		return true;
+	}
 
 	protected boolean isStarted(){
 		return startTime != null;
@@ -107,6 +123,11 @@ public abstract class SimpleLevel implements Level {
 	public void addEntity(World world, Entity entity){
 		world.addEntity(entity);
 		entityList.add(entity);
+	}
+
+	@Override
+	public Collection<Entity> getEntities() {
+		return entityList;
 	}
 
 	@Override

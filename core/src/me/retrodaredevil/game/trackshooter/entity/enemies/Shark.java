@@ -31,6 +31,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		setHitboxSize(.7f, .7f);
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
+		canLevelEndWithEntityActive = false;
 	}
 
 	@Override

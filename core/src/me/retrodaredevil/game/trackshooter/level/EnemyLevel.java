@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.level;
 
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -8,14 +9,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The most basic level. It has enemies!
+ * This type of level handles Enemies that are in getEntities().
  * <p>
- * When implementing, you should override onStart() and call addEnemy() for each enemy you want to add. Also remember
+ * When implementing, you should override onStart() and call addEntity() for each entity/enemy you want to add. Also remember
  * to call super.onStart()
  */
 public abstract class EnemyLevel extends SimpleLevel {
 
-	private List<Enemy> enemyList = new ArrayList<>();
+//	private List<Enemy> enemyList = new ArrayList<>();
 	private boolean reset = false;
 
 	public EnemyLevel(int number, Track track) {
@@ -31,20 +32,23 @@ public abstract class EnemyLevel extends SimpleLevel {
 	}
 
 	@Override
-	protected boolean onUpdate(float delta, World world) {
-		World.updateEntityList(enemyList); // remove removed enemies
-
+	protected void onUpdate(float delta, World world) {
+//		World.updateEntityList(enemyList); // remove removed enemies
 		if(getMode() == LevelMode.RESET){
 			if(reset){
-				for(Enemy enemy : enemyList){
-					enemy.goToStart();
+				for(Entity entity : getEntities()){
+					if(entity instanceof Enemy) {
+						((Enemy) entity).goToStart();
+					}
 				}
 				reset = false;
 			} else {
 				boolean resetDone = true;
-				for (Enemy enemy : enemyList) {
-					if (enemy.isGoingToStart()) {
-						resetDone = false;
+				for(Entity entity : getEntities()){
+					if(entity instanceof Enemy) {
+						if (((Enemy) entity).isGoingToStart()) {
+							resetDone = false;
+						}
 					}
 				}
 				if (resetDone) {
@@ -52,12 +56,6 @@ public abstract class EnemyLevel extends SimpleLevel {
 				}
 			}
 		}
-		return enemyList.isEmpty(); // will be done if all the enemies are killed
-	}
-
-	protected void addEnemy(World world, Enemy enemy){
-		addEntity(world, enemy); // allow the level to handle the entity
-		enemyList.add(enemy); // we need to handle enemies ourselves
 	}
 
 	@Override
@@ -66,8 +64,10 @@ public abstract class EnemyLevel extends SimpleLevel {
 		if(mode == LevelMode.RESET) {
 			reset = true;
 		} else if(mode == LevelMode.NORMAL){
-			for(Enemy enemy : enemyList){
-				enemy.goNormalMode();
+			for(Entity entity : getEntities()){
+				if(entity instanceof Enemy) {
+					((Enemy) entity).goNormalMode();
+				}
 			}
 		}
 	}
