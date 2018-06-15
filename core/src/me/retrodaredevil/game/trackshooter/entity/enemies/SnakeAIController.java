@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveCompo
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SnakeAIController implements EntityController {
-	private static final float IN_FRONT_DISTANCE = 3;
+	private static final float IN_FRONT_DISTANCE = 5;
 	private SnakePart part;
 	private Entity target;
 	public SnakeAIController(SnakePart part, Entity target){
@@ -32,9 +32,9 @@ public class SnakeAIController implements EntityController {
 //			Gdx.app.debug("parts", "" + numberParts);
 			float speed = 5;
 			float rotMultiplier = 2;
-			if(numberParts <= 5){
-				speed = 10 - numberParts;
-				rotMultiplier = 4.5f - (numberParts * .5f);
+			if(numberParts <= 10){
+				speed = 15 - numberParts;
+				rotMultiplier = 4.5f - (numberParts * .25f);
 			}
 			travelMove.setVelocity(speed);
 			travelMove.setRotationalSpeedMultiplier(rotMultiplier);

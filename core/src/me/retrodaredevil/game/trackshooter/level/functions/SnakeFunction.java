@@ -1,5 +1,8 @@
 package me.retrodaredevil.game.trackshooter.level.functions;
 
+import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.enemies.SnakeAIController;
 import me.retrodaredevil.game.trackshooter.entity.enemies.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -12,7 +15,6 @@ import java.util.List;
 
 public class SnakeFunction implements LevelFunction {
 	private Player target;
-	private SnakePart head = null;
 
 	public SnakeFunction(Player target){
 		this.target = target;
@@ -28,12 +30,35 @@ public class SnakeFunction implements LevelFunction {
 		if(time < 10000){
 			return false;
 		}
+		createSnake(world);
+		return true;
+	}
+	protected void createSnake(World world){
+		Level level = world.getLevel();
+
+		Rectangle bounds = world.getBounds();
+
+		final float x, y, rotation;
+		if(MathUtils.randomBoolean()){ // up or down
+			x = bounds.getX() + bounds.getWidth() / 2.0f; // center
+			boolean up = MathUtils.randomBoolean();
+			y = bounds.getY() + (up ? 2 * bounds.getHeight() : 0);
+			rotation = up ? -90 : 90;
+		} else { // left or right
+			boolean left = MathUtils.randomBoolean();
+			x = bounds.getX() + (left ? 0 : 2 * bounds.getWidth());
+			y = bounds.getY() + bounds.getHeight() / 2.0f; // center
+			rotation = left ? 0 : 180;
+		}
+
 		List<SnakePart> parts = SnakePart.createSnake(22);
 		for(SnakePart part : parts){
-			part.setEntityController(new SnakeAIController(part, target));
+			part.setLocation(x, y, rotation);
+//			part.setEntityController(new SnakeAIController(part, target));
 			level.addEntity(world, part);
 		}
-		return true;
+		SnakePart head = parts.get(0);
+		head.setEntityController(new SnakeAIController(head, target));
 	}
 
 	@Override
@@ -46,6 +71,6 @@ public class SnakeFunction implements LevelFunction {
 
 	@Override
 	public boolean canLevelEnd(World world) {
-		return head != null && head.isRemoved();
+		return true; // Snake should return false on its own if needed
 	}
 }

@@ -16,7 +16,6 @@ import java.util.List;
  */
 public abstract class EnemyLevel extends SimpleLevel {
 
-//	private List<Enemy> enemyList = new ArrayList<>();
 	private boolean reset = false;
 
 	public EnemyLevel(int number, Track track) {
@@ -33,10 +32,9 @@ public abstract class EnemyLevel extends SimpleLevel {
 
 	@Override
 	protected void onUpdate(float delta, World world) {
-//		World.updateEntityList(enemyList); // remove removed enemies
 		if(getMode() == LevelMode.RESET){
 			if(reset){
-				for(Entity entity : getEntities()){
+				for(Entity entity : this.getEntities()){
 					if(entity instanceof Enemy) {
 						((Enemy) entity).goToStart();
 					}
@@ -44,7 +42,7 @@ public abstract class EnemyLevel extends SimpleLevel {
 				reset = false;
 			} else {
 				boolean resetDone = true;
-				for(Entity entity : getEntities()){
+				for(Entity entity : this.getEntities()){
 					if(entity instanceof Enemy) {
 						if (((Enemy) entity).isGoingToStart()) {
 							resetDone = false;
@@ -64,7 +62,7 @@ public abstract class EnemyLevel extends SimpleLevel {
 		if(mode == LevelMode.RESET) {
 			reset = true;
 		} else if(mode == LevelMode.NORMAL){
-			for(Entity entity : getEntities()){
+			for(Entity entity : this.getEntities()){
 				if(entity instanceof Enemy) {
 					((Enemy) entity).goNormalMode();
 				}

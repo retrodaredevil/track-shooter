@@ -13,11 +13,11 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Bullet extends SimpleEntity implements Entity {
 
-	private Entity shooter;
-
-	private Entity hitEntity = null; // right now this is just used to check if it's null. Maybe use in future
-
+	private final Entity shooter;
 	private final float shotDistance2; // the shot distance squared
+
+	private Entity hitEntity = null; // right now this is just used to check if it's null. Maybe use in future // init when hit
+
 	private Vector2 startingLocation = null;
 
 	/**
@@ -34,6 +34,7 @@ public class Bullet extends SimpleEntity implements Entity {
 		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 		setLocation(start, rotation);
 		canRespawn = false;
+		canLevelEndWithEntityActive = false;
 		this.collisionIdentity = collisionIdentity; // super.collisionIdentity same thing
 	}
 

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SnakePart extends SimpleEntity implements Enemy {
-	private static final float FOLLOW_DISTANCE = .25f;
+	private static final float FOLLOW_DISTANCE = .4f;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
@@ -34,7 +34,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		this.smoothMove = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0);
 		// ^ some are 0 because the EntityController that the caller will attach to this will change the values
 		setHitboxSize(.2f, .2f);
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, .25f, .25f));
+		setRenderComponent(new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, .4f, .4f));
 
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;

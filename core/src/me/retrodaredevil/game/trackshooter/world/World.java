@@ -21,6 +21,7 @@ public class World implements Updateable, Renderable {
 
 	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
 	private final List<Entity> entities = new ArrayList<>();
+	private boolean iteratingEntities = false;
 
 	private CollisionHandler collisionHandler;
 	private final Rectangle bounds;
@@ -67,6 +68,10 @@ public class World implements Updateable, Renderable {
 		this.level.update(delta, this);
 	}
 
+	/**
+	 * This is the recommended way to get the track of the current level
+	 * @return The current Track
+	 */
 	public Track getTrack(){
 		return level.getTrack();
 	}
@@ -82,6 +87,12 @@ public class World implements Updateable, Renderable {
 	public Collection<Entity> getEntities(){
 		return entities;
 	}
+
+	/**
+	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
+	 * so it is initialized correctly
+	 * @param entity The entity to add to the list of entities next frame
+	 */
 	public void addEntity(Entity entity){
 		entitiesToAdd.add(entity);
 	}

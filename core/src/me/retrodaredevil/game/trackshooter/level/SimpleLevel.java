@@ -38,7 +38,8 @@ public abstract class SimpleLevel implements Level {
 
 	@Override
 	public void update(float delta, World world) {
-		if(startTime == null){
+		final boolean firstRun = startTime == null;
+		if(firstRun){
 			startTime = System.currentTimeMillis();
 			assert mode == null;
 			setMode(LevelMode.RESET);
@@ -59,9 +60,11 @@ public abstract class SimpleLevel implements Level {
 			LevelFunction element = addFunctionsQueue.poll();
 			functions.add(element);
 		}
-		this.done = shouldLevelEnd(world);
-		if(this.done){
-			end(world);
+		if(!firstRun) { // we don't want to check if it's done on the first run because not everything may have been initialized
+			this.done = shouldLevelEnd(world);
+			if (this.done) {
+				end(world);
+			}
 		}
 	}
 	private void end(World world){
@@ -91,13 +94,14 @@ public abstract class SimpleLevel implements Level {
 	 */
 	protected boolean shouldLevelEnd(World world){
 		Collection<CanLevelEnd> endCheckCollection = new ArrayList<>();
-		endCheckCollection.addAll(entityList);
+		endCheckCollection.addAll(world.getEntities());
 		endCheckCollection.addAll(functions);
 		for(CanLevelEnd endCheck : endCheckCollection){
 			if(!endCheck.canLevelEnd(world)){
 				return false;
 			}
 		}
+//		System.out.println("level: " + getNumber() + " is ending. checks: " + endCheckCollection);
 		return true;
 	}
 

@@ -8,21 +8,14 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
 	private static final Vector2 temp = new Vector2();
 
-//	private VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 	private Entity entity;
 	private final Vector2 target = new Vector2();
 
 	private float speed;
 	private float rotationalSpeedMultiplier;
-
-//	private final float rotationalAccelerationMultiplier;
-//	private final float maxRotationalVelocity;
 
 	private float rotationalChange;
 
@@ -104,9 +97,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
 		float currentAngle = entity.getRotation();
 
-		this.rotationalChange = MathUtil.minChange(desiredAngle, currentAngle, 360);
-//		rotationalVelocityHandler.setDesiredRotationalVelocity(change, rotationalAccelerationMultiplier, maxRotationalVelocity);
-//		rotationalVelocityHandler.update(delta);
+		rotationalChange = MathUtil.minChange(desiredAngle, currentAngle, 360);
 		entity.setRotation(entity.getRotation() + rotationalChange * delta * rotationalSpeedMultiplier);
 
 		float rotation = entity.getRotation();
