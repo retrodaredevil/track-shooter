@@ -25,15 +25,7 @@ public class LineTrackPart extends TrackPart {
 
 	@Override
 	public float getMovePercent(float angleDegrees, float distance) {
-		return getAnglePercent(angle, angleDegrees);
-	}
-	public static float getAnglePercent(float anglePart, float desiredAngle){
-
-		float positive = MathUtil.minDistance(anglePart, desiredAngle, 360);
-		float negative = MathUtil.minDistance(anglePart, desiredAngle + 180, 360);
-		int sign = positive >= negative ? 1 : -1;
-		float bigger = Math.max(positive, negative);
-		return sign * (90 - bigger) / 90.0f;
+		return MathUtil.getAngleAlikeRatio(angle, angleDegrees);
 	}
 
 	@Override

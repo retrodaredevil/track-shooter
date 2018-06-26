@@ -64,6 +64,8 @@ public class Player extends SimpleEntity {
 	@Override
 	public void update(float delta, World world) {
 		super.update(delta, world);
+
+//		 old code that changes the shotType every 10 / ShotType.values().length seconds
 //		long now = System.currentTimeMillis();
 //		float percent = (now % 10000) / 10000.0f;
 //		Bullet.ShotType[] values = Bullet.ShotType.values();

@@ -21,14 +21,14 @@ public final class MathUtil {
 
 	/**
 	 * returns a - b or, when |a - b| > wrap / 2, it finds a quicker way
-	 * <p>
-	 * minChange(1, 5, 4) == 0
-	 * minChange(1, 5, 5) == 1
-	 * minChange(5, 1, 5) == -1
-	 * <p>
-	 * minChange(30, 300, 360) == 90
-	 * minChange(180, 0, 360) == 180
-	 * minChange(181, 0, 360) == -179
+	 * <br/> <br/>
+	 * minChange(1, 5, 4) == 0 <br/>
+	 * minChange(1, 5, 5) == 1 <br/>
+	 * minChange(5, 1, 5) == -1 <br/>
+	 * <br/>
+	 * minChange(30, 300, 360) == 90 <br/>
+	 * minChange(180, 0, 360) == 180 <br/>
+	 * minChange(181, 0, 360) == -179 <br/>
 	 * @param a Usually the desired variable to get to
 	 * @param b Usually the current variable to change
 	 * @param wrap The number that it "wraps" at. Ex: if wrap is 10, 2 is the same as 12
@@ -57,5 +57,24 @@ public final class MathUtil {
 
 	public static float angle(Vector2 start, Vector2 end){
 		return temp.set(end).sub(start).angle();
+	}
+
+	/**
+	 * NOTE: It doesn't matter what order the passed parameters are in
+	 * <br/>
+	 * getAngleAlikeRatio(90, 90) == 1 <br/>
+	 * getAngleAlikeRatio(90, -90) == -1 <br/>
+	 * getAngleAlikeRatio(90, 0) == 0 <br/>
+	 *
+	 * @param anglePart An angle to test the alikeness of
+	 * @param desiredAngle An angle to test the alikeness of
+	 * @return A number between -1 and 1 where 1 is 100% alike and -1 is totally opposite
+	 */
+	public static float getAngleAlikeRatio(float anglePart, float desiredAngle){
+		float positive = minDistance(anglePart, desiredAngle, 360);
+		float negative = minDistance(anglePart, desiredAngle + 180, 360);
+		int sign = positive >= negative ? 1 : -1;
+		float bigger = Math.max(positive, negative);
+		return sign * (90 - bigger) / 90.0f;
 	}
 }

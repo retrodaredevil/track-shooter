@@ -8,27 +8,24 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SnakeFollowMoveComponent extends SimpleMoveComponent{
 
-	private Entity entity;
+	private SnakePart entity;
 	private SnakePart inFront;
-	private final float followDistance; // units
-	private final float correctDistance;
+	private final float correctDistanceMultiplier;
 
 	/**
 	 *
 	 * @param entity The entity that this MoveComponent is attached to
 	 * @param inFront The entity that entity will "follow." It helps if this entity's MoveComponent implements RotationalVelocityMoveComponent
 	 *                so this class is able to tell the rate at which is it turning and also helps if it implements TravelVelocityMoveComponent
-	 * @param followDistance The distance that entity should follow behind inFront
-	 * @param correctDistance The distance that is used to make following look more circle/arc like. If you raise this too high,
-	 *                        the tail will go crazy, if this is too small, the tail will close in on it's target.<p><p>
+	 * @param correctDistanceMultiplier The multiplier for the distance that is used to make following look more circle/arc like. If you raise this too high,
+	 *                        the tail will go crazy, if this is too small, the tail will close in on it's target.<br/><br/>
 	 *                        It's recommended that you make this half of followDistance.
 	 */
-	public SnakeFollowMoveComponent(SnakePart entity, SnakePart inFront, float followDistance, float correctDistance) {
+	public SnakeFollowMoveComponent(SnakePart entity, SnakePart inFront, float correctDistanceMultiplier) {
 		super(null, false, false);
 		this.entity = entity;
 		this.inFront = inFront;
-		this.followDistance = followDistance;
-		this.correctDistance = correctDistance;
+		this.correctDistanceMultiplier = correctDistanceMultiplier;
 	}
 
 	@Override
@@ -48,7 +45,8 @@ public class SnakeFollowMoveComponent extends SimpleMoveComponent{
 //		if(frontMove instanceof TravelVelocityMoveComponent){
 //			velocity = ((TravelVelocityMoveComponent) frontMove).getTravelVelocity();
 //		}
-		final float moveAmount = correctDistance;
+		float followDistance = entity.getFollowDistance();
+		final float moveAmount = followDistance * correctDistanceMultiplier;
 
 		Vector2 distanceAway = inFront.getLocation().sub(entity.getX(), entity.getY());
 		float angle = distanceAway.angle(); // the angle to go towards

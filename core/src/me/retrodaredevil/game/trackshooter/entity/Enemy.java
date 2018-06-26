@@ -7,6 +7,7 @@ public interface Enemy extends Entity {
 	void goToStart();
 
 	/**
+	 * NOTE: This is only called when the LevelMode is in RESET
 	 *
 	 * @return true if the Enemy is trying to go to its starting position, false otherwise
 	 */

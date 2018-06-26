@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.render.CircleRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class CircleTrackPart extends TrackPart {
 	private float radius;
@@ -24,7 +25,7 @@ public class CircleTrackPart extends TrackPart {
 //			Gdx.app.debug("here", "" + angle);
 //		}
 
-		return LineTrackPart.getAnglePercent(angle, angleDegrees);
+		return MathUtil.getAngleAlikeRatio(angle, angleDegrees);
 	}
 
 	@Override

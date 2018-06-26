@@ -20,27 +20,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SnakePart extends SimpleEntity implements Enemy {
-	private static final float FOLLOW_DISTANCE = .4f;
+	private static final float HITBOX_SIZE_RATIO = .625f;
+	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
-	private SnakeState state = null; // not null when inFront == null
+
+	private float followDistance;
 
 	private boolean hit = false;
 
 	private final SmoothTravelMoveComponent smoothMove; // used when isHead() == true
+	private final ImageRenderComponent renderComponent;
 
 	public SnakePart(){
 		this.smoothMove = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0);
 		// ^ some are 0 because the EntityController that the caller will attach to this will change the values
-		setHitboxSize(.2f, .2f);
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, .4f, .4f));
+		this.renderComponent = new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, 0, 0); // width and height will be changed later
+		setRenderComponent(renderComponent);
+		setSize(.4f, true);
 
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
 		canLevelEndWithEntityActive = false;
 
 		this.follow(null);
+	}
+	public void setSize(float size, boolean applyToAll){
+		if(followDistance == size){
+			return;
+		}
+//		setHitboxSize(size / 2.0f, size / 2.0f);
+		final float hitboxSize = size * HITBOX_SIZE_RATIO;
+		setHitboxSize(hitboxSize, hitboxSize);
+		renderComponent.setSize(size, size);
+		this.followDistance = size;
+		if(applyToAll) {
+			if (inFront != null) {
+				inFront.setSize(size, true);
+			}
+			if (behind != null) {
+				behind.setSize(size, true);
+			}
+		}
+	}
+
+	public float getFollowDistance(){
+		return followDistance;
 	}
 
 	@Override
@@ -61,7 +87,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
-		for(int i = 0; i < 22; i++){
+		for(int i = 0; i < amount; i++){
 			SnakePart part = new SnakePart();
 			part.follow(last);
 			r.add(part);
@@ -94,15 +120,6 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		}
 		return head;
 	}
-	public SnakeState getState(){
-		if(!isHead()){
-			throw new UnsupportedOperationException("Only the head has the state of the snake");
-		}
-		if(state == null){
-			throw new IllegalStateException("state should have been initialized");
-		}
-		return state;
-	}
 
 	/**
 	 * If snakePart == null, this will become the head of the snake
@@ -115,9 +132,9 @@ public class SnakePart extends SimpleEntity implements Enemy {
 				this.inFront = null;
 				currentlyInFront.leadPart(null); // make sure the part we are inFront knows we are detaching
 			}
-			if(state == null){
-				state = new SnakeState();
-			}
+//			if(state == null){
+//				state = new SnakeState();
+//			}
 			setMoveComponent(smoothMove);
 			return;
 		}
@@ -127,7 +144,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 		this.inFront = snakePart;
 		snakePart.leadPart(this); // the SnakePart in front of us should "lead" us
-		setMoveComponent(new SnakeFollowMoveComponent(this, inFront, FOLLOW_DISTANCE, FOLLOW_DISTANCE * .5f));
+		setMoveComponent(new SnakeFollowMoveComponent(this, inFront, .5f));
 	}
 
 	/**
@@ -188,28 +205,20 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 	@Override
 	public void goToStart() {
-
+		if(isHead()){
+			setMoveComponent(smoothMove);
+			smoothMove.setTarget(Vector2.Zero);
+		}
 	}
 
 	@Override
 	public boolean isGoingToStart() {
-		return false;
+		return getLocation().dst2(Vector2.Zero) > DONE_GOING_TO_START_DISTANCE2;
 	}
 
 	@Override
 	public void goNormalMode() {
-
+		// let the AI control this
 	}
 
-	public static final class SnakeState {
-		private long invulnerableUntil = Long.MIN_VALUE;
-
-		private SnakeState(){
-		}
-
-		public boolean isInvulnerable(){
-			return invulnerableUntil > System.currentTimeMillis();
-		}
-
-	}
 }

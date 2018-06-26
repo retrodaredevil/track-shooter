@@ -8,8 +8,8 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 
 public class ImageRenderComponent implements RenderComponent{
 
-	protected Image image;
-	protected Entity entity;
+	protected final Image image;
+	protected final Entity entity;
 
 	private float width;
 	private float height;
@@ -27,13 +27,14 @@ public class ImageRenderComponent implements RenderComponent{
 	public ImageRenderComponent(Image image, Entity entity, float width, float height){
 		this.image = image;
 		this.entity = entity;
-		this.width = width;
-		this.height = height;
-		updateBounds();
+		setSize(width, height);
 	}
 
 	/**
-	 *
+	 * This is used so you can make your image with the image facing up. (90 degrees is up and is the default if this method
+	 * is not called)
+	 * <br/><br/>
+	 * If you create an image facing sideways or an image with text, you should call this method and pass 0 as facingDirection
 	 * @param facingDirection The direction the image is facing. By default 90
 	 */
 	public ImageRenderComponent setFacingDirection(int facingDirection){
@@ -58,6 +59,11 @@ public class ImageRenderComponent implements RenderComponent{
 		image.setSize(width, height);
 //		image.setOrigin(width / 2f, height / 2f);
 		image.setOrigin(Align.center);
+	}
+	public void setSize(float width, float height){
+		this.width = width;
+		this.height = height;
+		updateBounds();
 	}
 
 	@Override

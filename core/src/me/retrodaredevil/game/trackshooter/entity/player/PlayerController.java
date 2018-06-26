@@ -4,6 +4,7 @@ import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 import me.retrodaredevil.controller.JoystickPart;
 
