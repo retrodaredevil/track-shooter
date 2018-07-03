@@ -1,0 +1,29 @@
+println("hi")
+apply plugin: "java"
+
+sourceCompatibility = 1.7
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+
+
+eclipse.project {
+    name = appName + "-core"
+}
+
+//repositories {
+////    mavenLocal()
+////    mavenCentral()
+//    maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+//    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+//    jcenter()
+//
+//    maven { url "https://jitpack.io" }
+//}
+//
+//
+//
+//dependencies {
+//    // thanks https://forums.spongepowered.org/t/eyeglasses-gradle-tutorial-add-a-github-repo-as-dependency/19648
+//    compile "com.github.retrodaredevil:abstract-controller-lib:master-SNAPSHOT"
+//}
