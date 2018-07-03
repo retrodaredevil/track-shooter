@@ -1,3 +1,22 @@
+
+apply plugin: "gwt"
+apply plugin: "war"
+
+
+dependencies {
+    compile project(":core")
+    compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion:sources"
+    compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-controllers-gwt:$gdxVersion:sources"
+
+    compile "com.badlogicgames.gdx:gdx-tools:$gdxVersion" // maybe dont need ============
+
+}
 gwt {
     gwtVersion='2.8.0' // Should match the gwt version used for building the gwt backend
     maxHeapSize="1G" // Default 256m is not enough for gwt compiler. GWT is HUNGRY

@@ -1,5 +1,5 @@
 // THANK YOU @kekkou https://www.badlogicgames.com/forum/viewtopic.php?t=27639&p=109199
-apply plugin: "android"
+apply plugin: "com.android.application"
 
 configurations { natives }
 
