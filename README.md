@@ -10,4 +10,5 @@ get the highest score.
 
 ## Running the Game
 Windows: ```gradlew.bat desktop:run```
+
 *nix: ```./gradlew desktop:run```

@@ -30,7 +30,7 @@ public class GameScreen extends ScreenAdapter {
 	public GameScreen(){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
-		this.stage = new Stage(new WorldViewport(world, null));
+		this.stage = new Stage(new WorldViewport(world));
 
 		GameInput gameInput;
 		if(Controllers.getControllers().size > 0){

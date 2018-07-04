@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.input;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import me.retrodaredevil.controller.*;
 
@@ -33,7 +34,11 @@ public class DefaultGameInput extends GameInput {
 		reliesOn = controller;
 	}
 	public DefaultGameInput(){
-		mainJoystick = FourKeyJoystick.newWASDJoystick();
+		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
+			mainJoystick = new GdxGyroJoystick();
+		} else {
+			mainJoystick = FourKeyJoystick.newWASDJoystick();
+		}
 //		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
 		rotateJoystick = new GdxMouseJoystick();
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
