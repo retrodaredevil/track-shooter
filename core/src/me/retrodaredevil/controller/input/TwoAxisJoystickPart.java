@@ -1,4 +1,6 @@
-package me.retrodaredevil.controller;
+package me.retrodaredevil.controller.input;
+
+import me.retrodaredevil.controller.ControlConfig;
 
 /**
  * A single joystick with two axis
@@ -32,12 +34,15 @@ public class TwoAxisJoystickPart extends JoystickPart {
 				throw new IllegalArgumentException("Unsupported AxisType: " + x.getAxisType().toString());
 		}
 	}
+	public static TwoAxisJoystickPart createFromFour(InputPart up, InputPart down, InputPart left, InputPart right){
+		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down));
+	}
 
 	@Override
 	public void update(ControlConfig config) {
-		super.update(config);
 		xAxis.update(config);
 		yAxis.update(config);
+		super.update(config);
 	}
 
 	@Override
@@ -60,13 +65,15 @@ public class TwoAxisJoystickPart extends JoystickPart {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
-		return xAxis.isConnected(manager) && yAxis.isConnected(manager);
+	public boolean isConnected() {
+		return xAxis.isConnected() && yAxis.isConnected();
 	}
 
+	@Override
 	public InputPart getXAxis(){
 		return xAxis;
 	}
+	@Override
 	public InputPart getYAxis(){
 		return yAxis;
 	}

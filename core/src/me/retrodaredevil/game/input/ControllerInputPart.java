@@ -1,8 +1,11 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
-import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.InputPart;
+import com.badlogic.gdx.controllers.ControllerAdapter;
+import com.badlogic.gdx.controllers.Controllers;
+
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class ControllerInputPart extends InputPart {
 	private Controller controller;
@@ -43,7 +46,7 @@ public class ControllerInputPart extends InputPart {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
-		return true;
+	public boolean isConnected() {
+		return Util.isControllerConnected(controller);
 	}
 }

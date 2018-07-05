@@ -31,14 +31,21 @@ public abstract class ControllerPart {
 	 * @param parts The parts to change each element's parent to this
 	 * @param changeParent true if you want to allow the parent of parts that already have a parent to be changed
 	 * @param canAlreadyHaveParents Should be true if you expect one or more elements to already have a parent. If false,
-	 *                                 it will throw an IllegalStateException if a part already has a parent. If false,
+	 *                                 it will throw an AssertionError if a part already has a parent. If false,
 	 *                                 changeParent's value will do nothing.
+	 * @throws AssertionError if canAlreadyHaveParents == false and one of the parts in the
+	 *                        parts Iterable has a parent that isn't null, this will be thrown
+	 * @throws IllegalArgumentException only thrown when changeParent == true and canAlreadyHaveParents == false
 	 */
-	public void setParentsToThis(Iterable<? extends ControllerPart> parts, boolean changeParent, boolean canAlreadyHaveParents){
+	public void setParentsToThis(Iterable<? extends ControllerPart> parts,
+	                             boolean changeParent, boolean canAlreadyHaveParents){
+		if(changeParent && !canAlreadyHaveParents){
+			throw new IllegalArgumentException("If changeParent == true, canAlreadyHaveParents cannot be false");
+		}
 		for(ControllerPart part : parts){
 			boolean hasParent = part.getParent() != null;
 			if(!canAlreadyHaveParents && hasParent){
-				throw new IllegalStateException("A part already has a parent");
+				throw new AssertionError("A part already has a parent");
 			}
 			if(changeParent || !hasParent) {
 				part.setParent(this);
@@ -54,6 +61,9 @@ public abstract class ControllerPart {
 	 * Called right after update()
 	 * If you want to utilize something like getPosition() or getX() or something calculated in update, it is
 	 * recommended you override this. Also remember to call super
+	 * <br/><br/>
+	 * NOTE: This is called right after update and should not be used to get the values of other ControllerParts because
+	 * they may not have been called yet this frame.
 	 */
 	public void lateUpdate(){
 	}
@@ -63,8 +73,7 @@ public abstract class ControllerPart {
 	 * If this part somehow represents a button or axis (like InputPart), then this should return true if the button
 	 * exists on the controller, false otherwise.
 	 *
-	 * @param manager The ControllerManager that handles controllers
 	 * @return true if this ControllerPart will give accurate values and if it is connected.
 	 */
-	public abstract boolean isConnected(ControllerManager manager);
+	public abstract boolean isConnected();
 }

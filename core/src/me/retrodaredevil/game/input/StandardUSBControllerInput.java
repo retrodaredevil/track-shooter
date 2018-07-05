@@ -2,12 +2,17 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
 import me.retrodaredevil.controller.*;
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
+import me.retrodaredevil.game.trackshooter.util.Util;
 
 import java.util.Arrays;
 import java.util.Collection;
 
 public class StandardUSBControllerInput extends StandardControllerInput {
 
+	private final Controller controller;
 	private final InputPart start, select,
 			faceUp, faceDown, faceLeft, faceRight,
 			leftBumper, rightBumper,
@@ -15,11 +20,12 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 			leftStick, rightStick;
 
 	private final JoystickPart dPad, leftJoy, rightJoy;
-	private final Joysticks joysticks;
+	private final ControllerExtras extras;
 
 	private final Collection<ControllerPart> parts;
 
 	public StandardUSBControllerInput(Controller controller){
+		this.controller = controller;
 		InputPart leftXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 0);
 		InputPart leftYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 1, true);
 
@@ -50,7 +56,8 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
 		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
 
-		joysticks = new Joysticks(dPad, leftJoy, rightJoy);
+		extras = new ControllerExtras();
+		extras.setRumble(new GdxControllerRumble(controller));
 
 		parts = Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
 				start, select, faceUp, faceDown, faceLeft, faceRight,
@@ -139,8 +146,8 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	}
 
 	@Override
-	public Joysticks getJoysticks() {
-		return joysticks;
+	public ControllerExtras getExtras() {
+		return extras;
 	}
 
 	@Override
@@ -149,7 +156,7 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
-		return true; // TODO we may be able to return something else here
+	public boolean isConnected() {
+		return Util.isControllerConnected(controller);
 	}
 }

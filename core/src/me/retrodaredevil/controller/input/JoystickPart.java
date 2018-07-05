@@ -1,8 +1,11 @@
-package me.retrodaredevil.controller;
+package me.retrodaredevil.controller.input;
+
+import me.retrodaredevil.controller.ControlConfig;
+import me.retrodaredevil.controller.ControllerPart;
 
 import static java.lang.Math.*;
 
-public abstract class JoystickPart extends ControllerPart{
+public abstract class JoystickPart extends ControllerPart {
 	private JoystickType type;
 
 	protected Double angleDegrees;
@@ -17,6 +20,8 @@ public abstract class JoystickPart extends ControllerPart{
 	}
 
 	/**
+	 * NOTE: When calling super, make sure that if getX() or getY() is called, they are up to date
+	 * <br/>
 	 * When overriding, if there are SingleInputs as instance variables, their update should not be called unless
 	 * they were created by this instance.
 	 */
@@ -33,6 +38,8 @@ public abstract class JoystickPart extends ControllerPart{
 			magnitude = null;
 		}
 	}
+	public abstract InputPart getXAxis();
+	public abstract InputPart getYAxis();
 
 	protected double calculateAngle(double x, double y){
 		if(y == 0){
@@ -117,7 +124,7 @@ public abstract class JoystickPart extends ControllerPart{
 	 * @param y The y value of the joystick
 	 * @param angleDegrees If the atan2 of y, x or atan of y/x has already been calculated, this will use that value
 	 *                     instead of calculating it essentially increasing performance
-	 * @return The number you should scale x and y by (or the magnitude by)
+	 * @return The number you should scale (multiply) x and y by (or the magnitude by)
 	 */
 	public static double getScaled(double x, double y, Double angleDegrees){
 		if(x == 0 && y == 0){
@@ -142,6 +149,46 @@ public abstract class JoystickPart extends ControllerPart{
 	}
 
 	public enum JoystickType{
-		NORMAL, POV, MOUSE
+		NORMAL(true, false, true, true),
+		POV(false, false, true, true),
+		MOUSE(true, true, false, false);
+		private final boolean analog;
+		private final boolean rangeOver;
+		private final boolean shouldScale;
+		private final boolean shouldUseDelta;
+
+		JoystickType(boolean analog, boolean rangeOver, boolean shouldScale, boolean shouldUseDelta){
+			this.analog = analog;
+			this.rangeOver = rangeOver;
+			this.shouldScale = shouldScale;
+			this.shouldUseDelta = shouldUseDelta;
+		}
+
+		public boolean isAnalog(){
+			return analog;
+		}
+
+		/** @return returns true if either the abs of the x or the y can go over 1 */
+		public boolean isRangeOver(){
+			return rangeOver;
+		}
+
+		/**
+		 * NOTE: For things like MOUSE, this will return false since it doesn't make sense to scale it.
+		 * @return true if the magnitude of x and y can go over 1.
+		 */
+		public boolean shouldScale(){
+			return shouldScale;
+		}
+
+		/**
+		 *
+		 * @return true if you should apply delta time to the value
+		 */
+		public boolean shouldUseDelta(){
+			return shouldUseDelta;
+		}
+
+
 	}
 }

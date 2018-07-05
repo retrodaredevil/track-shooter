@@ -5,10 +5,11 @@ import java.util.Collection;
 public abstract class ControllerInput extends ControllerPart{
 
 
-	public abstract Joysticks getJoysticks();
+	public abstract ControllerExtras getExtras();
 
 	/**
-	 *
+	 * NOTE: This may not include all ControllerParts that are accessible from this object since some may not
+	 * be handled by this.
 	 * @return All parts that should be updated including all Joystick Axises and JoystickPart objects or any other
 	 *         ControllerPart objects
 	 */

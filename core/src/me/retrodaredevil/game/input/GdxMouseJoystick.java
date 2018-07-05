@@ -2,8 +2,9 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.controller.ControlConfig;
-import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.MouseJoystick;
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
+import me.retrodaredevil.controller.input.MouseJoystick;
 
 public class GdxMouseJoystick extends MouseJoystick {
 	private Double lastX = null;
@@ -12,10 +13,11 @@ public class GdxMouseJoystick extends MouseJoystick {
 	private double x;
 	private double y;
 
+	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
+	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
+
 	@Override
 	public void update(ControlConfig config) {
-		super.update(config);
-
 		double xPosition = Gdx.input.getX();
 		double yPosition = -Gdx.input.getY() + 1 + Gdx.graphics.getHeight();
 
@@ -31,6 +33,9 @@ public class GdxMouseJoystick extends MouseJoystick {
 
 		lastX = xPosition;
 		lastY = yPosition;
+		xAxis.update(config);
+		yAxis.update(config);
+		super.update(config);
 	}
 
 	@Override
@@ -44,7 +49,17 @@ public class GdxMouseJoystick extends MouseJoystick {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
+	public InputPart getXAxis() {
+		return xAxis;
+	}
+
+	@Override
+	public InputPart getYAxis() {
+		return yAxis;
+	}
+
+	@Override
+	public boolean isConnected() {
 		return true;
 	}
 }

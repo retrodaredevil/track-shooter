@@ -1,7 +1,10 @@
-package me.retrodaredevil.controller;
+package me.retrodaredevil.controller.input;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import me.retrodaredevil.controller.ControlConfig;
+import me.retrodaredevil.controller.NotConnectedException;
 
 public class HighestPositionInputPart extends InputPart {
 
@@ -22,28 +25,16 @@ public class HighestPositionInputPart extends InputPart {
 		boolean anyAnalog = false;
 		for(InputPart part : parts){
 			AxisType type = part.getAxisType();
-			if(type == AxisType.FULL_DIGITAL){
-				anyFull = true;
-			} else if(type == AxisType.FULL_ANALOG){
-				anyFull = true;
-				anyAnalog = true;
-			} else if(type == AxisType.ANALOG){
-				anyAnalog = true;
-			}
-		}
 
-		if(anyFull){
-			if(anyAnalog){
-				return AxisType.FULL_ANALOG;
-			} else {
-				return AxisType.FULL_DIGITAL;
-			}
+			anyFull = anyFull || type.isFull();
+			anyAnalog = anyAnalog || type.isAnalog();
 		}
-		if(anyAnalog){
-			return AxisType.ANALOG;
-		}
+		AxisType r = AxisType.getAxisType(anyFull, anyAnalog, false, true);
 
-		return AxisType.DIGITAL;
+		if(r == null){
+			throw new AssertionError("getAxisType() returned null!");
+		}
+		return r;
 	}
 
 	@Override
@@ -60,13 +51,16 @@ public class HighestPositionInputPart extends InputPart {
 
 	@Override
 	protected double calculatePosition() {
-		throw new IllegalStateException("This method should not be called because we overrid positionUpdate()");
+		throw new IllegalStateException("This method should not be called because we override positionUpdate()");
 	}
 
 	@Override
-	public double getPosition() {
+	public double getPosition(){
 		double value = 0;
 		for(InputPart part : parts){
+			if(!part.isConnected()){
+				continue;
+			}
 			double position = part.getPosition();
 			if(Math.abs(position) > Math.abs(value)){
 				value = position;
@@ -78,8 +72,11 @@ public class HighestPositionInputPart extends InputPart {
 	}
 
 	@Override
-	public boolean isPressed() {
+	public boolean isPressed(){
 		for(InputPart part : parts){
+			if(!part.isConnected()){
+				continue;
+			}
 			if(part.isPressed()){
 				return true;
 			}
@@ -89,7 +86,15 @@ public class HighestPositionInputPart extends InputPart {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
+	public boolean isConnected() {
+		for(InputPart part : parts){
+			if(!part.isConnected()){
+				continue;
+			}
+			if(part.isConnected()){
+				return true;
+			}
+		}
 		return false;
 	}
 }

@@ -1,5 +1,8 @@
 package me.retrodaredevil.game.trackshooter.util;
 
+import com.badlogic.gdx.controllers.Controller;
+import com.badlogic.gdx.controllers.Controllers;
+
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -25,5 +28,9 @@ public final class Util {
 		}
 
 		return r;
+	}
+
+	public static boolean isControllerConnected(Controller controller){
+		return Controllers.getControllers().contains(controller, true);
 	}
 }

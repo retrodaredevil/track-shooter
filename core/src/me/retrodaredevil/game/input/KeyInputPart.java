@@ -1,8 +1,9 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
-import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.InputPart;
+import com.badlogic.gdx.Input;
+
+import me.retrodaredevil.controller.input.InputPart;
 
 public class KeyInputPart extends InputPart {
 	private int code;
@@ -26,7 +27,7 @@ public class KeyInputPart extends InputPart {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
-		return true;
+	public boolean isConnected() {
+		return isButton || Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard);
 	}
 }

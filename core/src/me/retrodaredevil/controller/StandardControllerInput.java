@@ -1,5 +1,8 @@
 package me.retrodaredevil.controller;
 
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
+
 /**
  * This class can be used to store and access the standard layout on most modern controllers. Note that when
  * implementing, you can return null if the controller doesn't support something.

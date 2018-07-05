@@ -21,6 +21,10 @@ public class ControlConfig {
 	/** true if the angle and magnitude of a joystick should be calculated in lateUpdate(), otherwise it will only be
 	 * cached once one of those methods are called. */
 	public boolean cacheAngleAndMagnitudeInUpdate = false;
+	/** Since some controllers allow you to see how much a trigger is being pressed and if it's down,
+	 * setting this to true will use the controller's interpretation of when an analog button (like a trigger)
+	 * is pressed */
+	public boolean useAbstractedIsDownIfPossible = true;
 
 	// TODO public boolean scaleFromDeadzone; ex: is deadzone is .001, .001 is 0 and everything is LERPed accordingly
 }

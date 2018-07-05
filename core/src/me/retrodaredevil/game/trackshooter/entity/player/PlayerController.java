@@ -1,12 +1,12 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
+import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.controller.JoystickPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
@@ -48,22 +48,24 @@ public class PlayerController implements EntityController{
 
 			// ==== Rotation ====
 			JoystickPart rotateJoy = gameInput.rotateJoystick();
-			boolean isMouse = rotateJoy.getJoystickType() == JoystickPart.JoystickType.MOUSE;
 			double x = rotateJoy.getX();
-
-			if(isMouse){
-				player.setRotation(player.getRotation() + (float) x * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
-//				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
-			} else {
+			if (rotateJoy.getJoystickType().shouldUseDelta()) {
 				float desired = (float) (ACCEL_ROTATE_PER_SECOND * x);
 				if (rotateJoy.isDeadzone()) {
 					desired = 0;
 				}
 				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
+			} else {
+				player.setRotation(player.getRotation() + (float) x * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
+//				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}
 		}
+		ControllerRumble rumble = gameInput.getExtras().getRumble();
 		if (gameInput.fireButton().isPressed()) {
-			player.shootBullet(world, null);
+			boolean didShoot = player.shootBullet(world, null) != null;
+			if(didShoot && rumble != null && rumble.isConnected()){
+				rumble.rumble(.5f);
+			}
 		}
 		if(gameInput.activatePowerup().isPressed()){
 			player.activatePowerup(world);

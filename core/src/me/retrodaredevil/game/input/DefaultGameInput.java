@@ -3,6 +3,9 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import me.retrodaredevil.controller.*;
+import me.retrodaredevil.controller.input.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,7 +18,7 @@ public class DefaultGameInput extends GameInput {
 	private final InputPart slow;
 	private final InputPart activatePowerup;
 
-	private final Joysticks joysticks;
+	private final ControllerExtras extras;
 
 	private final Collection<ControllerPart> parts;
 
@@ -27,7 +30,8 @@ public class DefaultGameInput extends GameInput {
 		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper());
 		slow = controller.leftStick();
 		activatePowerup = controller.faceLeft();
-		joysticks = new Joysticks(mainJoystick, rotateJoystick);
+
+		extras = createExtras();
 
 		parts = Collections.emptyList(); // parts are already handled by controller
 
@@ -35,7 +39,7 @@ public class DefaultGameInput extends GameInput {
 	}
 	public DefaultGameInput(){
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
-			mainJoystick = new GdxGyroJoystick();
+			mainJoystick = new GdxTiltJoystick(20);
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
@@ -44,10 +48,20 @@ public class DefaultGameInput extends GameInput {
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		activatePowerup = new KeyInputPart(Input.Keys.F);
-		joysticks = new Joysticks(mainJoystick, rotateJoystick);
+//		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard)) {
+//		} else {
+//		}
+		extras = createExtras();
 
 		parts = Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow, activatePowerup);
 		setParentsToThis(parts, false, false);
+	}
+	private static ControllerExtras createExtras(){
+		ControllerExtras r = new ControllerExtras();
+		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
+			r.setRumble(new GdxRumble());
+		}
+		return r;
 	}
 
 	@Override
@@ -76,8 +90,8 @@ public class DefaultGameInput extends GameInput {
 	}
 
 	@Override
-	public Joysticks getJoysticks() {
-		return joysticks;
+	public ControllerExtras getExtras() {
+		return extras;
 	}
 
 	@Override
@@ -86,12 +100,12 @@ public class DefaultGameInput extends GameInput {
 	}
 
 	@Override
-	public boolean isConnected(ControllerManager manager) {
+	public boolean isConnected() {
 		for(ControllerPart part : parts){
-			if(!part.isConnected(manager)){
+			if(!part.isConnected()){
 				return false;
 			}
 		}
-		return reliesOn == null || reliesOn.isConnected(manager);
+		return reliesOn == null || reliesOn.isConnected();
 	}
 }

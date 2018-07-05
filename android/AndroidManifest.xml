@@ -3,6 +3,7 @@
     package="me.retrodaredevil.game.trackshooter" >
 
     <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="28" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
         android:allowBackup="true"
