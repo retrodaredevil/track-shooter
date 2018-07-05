@@ -2,7 +2,6 @@ package me.retrodaredevil.controller.input;
 
 import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.ControllerPart;
-import me.retrodaredevil.controller.NotConnectedException;
 
 /**
  * A single controller such as a button, joystick axis, pov axis, etc
@@ -52,18 +51,15 @@ public abstract class InputPart extends ControllerPart {
 		return Math.abs(position) <= getDeadzone(getAxisType(), config);
 	}
 	public static double getDeadzone(AxisType type, ControlConfig config){
-		switch(type){
-			case FULL_ANALOG:
+		if(type.isFull()){
+			if(type.isAnalog()){
 				return config.fullAnalogDeadzone;
-			case ANALOG:
-				return config.analogDeadzone;
-			case DIGITAL:
-				return config.digitalDeadzone;
-			case FULL_DIGITAL:
-				return config.fullDigitalDeadzone;
-			default:
-				throw new UnsupportedOperationException("We didn't account for AxisType: " + type);
+			}
+			return config.fullDigitalDeadzone;
+		} else if(type.isAnalog()){ // !isFull()
+			return config.analogDeadzone;
 		}
+		return config.digitalDeadzone;
 	}
 
 	/**
@@ -116,25 +112,25 @@ public abstract class InputPart extends ControllerPart {
 		this.position = calculatePosition();
 	}
 
-	public enum AxisType{
-		/** Used when range of getValue() is -1 to 1. Normally stays at 0 when still. */
-		FULL_ANALOG(true, true),
-		/** Used when getValue() is -1, 0, or 1. Normally stays at 0 when still. */
-		FULL_DIGITAL(true, false),
-		/** Used when range of getValue() is 0 to 1 */
-		ANALOG(false, true),
-		/** Used when getValue() is 0 or 1 */
-		DIGITAL(false, false),
-		/** Rarely if ever used. Can be used for a mouse that goes one way*/
-		RANGE_OVER_NO_DELTA(false, true, true, false),
-		/** Usually used with something like a mouse*/
-		FULL_RANGE_OVER_NO_DELTA(true, true, true, false);
+	public static final class AxisType{
+//		/** Used when range of getValue() is -1 to 1. Normally stays at 0 when still. */
+//		FULL_ANALOG(true, true),
+//		/** Used when getValue() is -1, 0, or 1. Normally stays at 0 when still. */
+//		FULL_DIGITAL(true, false),
+//		/** Used when range of getValue() is 0 to 1 */
+//		ANALOG(false, true),
+//		/** Used when getValue() is 0 or 1 */
+//		DIGITAL(false, false),
+//		/** Rarely if ever used. Can be used for a mouse that goes one way*/
+//		RANGE_OVER_NO_DELTA(false, true, true, false),
+//		/** Usually used with something like a mouse*/
+//		FULL_RANGE_OVER_NO_DELTA(true, true, true, false);
 
 		private final boolean full;
 		private final boolean analog;
 		private final boolean rangeOver;
 		private final boolean shouldUseDelta;
-		AxisType(boolean full, boolean analog){
+		public AxisType(boolean full, boolean analog){
 			this(full, analog, false, true);
 		}
 
@@ -145,7 +141,7 @@ public abstract class InputPart extends ControllerPart {
 		 * @param rangeOver Can the abs of the value be > 1
 		 * @param shouldUseDelta Should delta time be applied
 		 */
-		AxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
+		public AxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
 			this.full = full;
 			this.analog = analog;
 			this.rangeOver = rangeOver;
@@ -164,26 +160,56 @@ public abstract class InputPart extends ControllerPart {
 		public boolean shouldUseDelta(){
 			return shouldUseDelta;
 		}
+
 		public boolean equals(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
 			return this.full == full && this.analog == analog && this.rangeOver == rangeOver && this.shouldUseDelta == shouldUseDelta;
 		}
 		public boolean equalsIgnoreAnalog(boolean full, boolean rangeOver, boolean shouldUseDelta){
 			return this.full == full && this.rangeOver == rangeOver && this.shouldUseDelta == shouldUseDelta;
 		}
-		public static AxisType getAxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
-			for(AxisType type : values()){
-				if(type.equals(full, analog, rangeOver, shouldUseDelta)){
-					return type;
-				}
+
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof AxisType){
+				AxisType type = (AxisType) o;
+				return type.full == this.full && type.analog == this.analog
+						&& type.rangeOver == this.rangeOver && type.shouldUseDelta == this.shouldUseDelta;
 			}
-			for(AxisType type : values()){
-				if(type.equalsIgnoreAnalog(full, rangeOver, shouldUseDelta)){
-					return type;
-				}
-			}
-			return null;
+			return false;
 		}
+
+		@Override
+		public int hashCode() {
+			int r = 17;
+			r = 37 * r + (full ? 1 : 0);
+			r = 37 * r + (analog ? 1 : 0);
+			r = 37 * r + (rangeOver ? 1 : 0);
+			r = 37 * r + (shouldUseDelta ? 1 : 0);
+			return r;
+		}
+
+		@Override
+		public String toString() {
+			return String.format("AxisType{full:%s,analog:%s,rangeOver:%s,shouldUseDelta:%s}", full, analog, rangeOver, shouldUseDelta);
+		}
+
+		//		public static AxisType getAxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
+//			for(AxisType type : values()){
+//				if(type.equals(full, analog, rangeOver, shouldUseDelta)){
+//					return type;
+//				}
+//			}
+//			for(AxisType type : values()){
+//				if(type.equalsIgnoreAnalog(full, rangeOver, shouldUseDelta)){
+//					return type;
+//				}
+//			}
+//			return null;
+//		}
 		public static AxisType getAxisType(InputPart... parts){
+			if(parts.length == 0){
+				throw new IllegalArgumentException("The passed parts cannot have a length of 0.");
+			}
 			boolean anyFull = false;
 			boolean anyAnalog = false;
 			boolean anyRangeOver = false;
@@ -200,7 +226,9 @@ public abstract class InputPart extends ControllerPart {
 					}
 				}
 			}
-			return getAxisType(anyFull, anyAnalog, anyRangeOver, shouldUseDelta);
+//			return getAxisType(anyFull, anyAnalog, anyRangeOver, shouldUseDelta);
+//			assert shouldUseDelta != null; always true
+			return new AxisType(anyFull, anyAnalog, anyRangeOver, shouldUseDelta);
 		}
 	}
 

@@ -14,25 +14,32 @@ public class TwoAxisJoystickPart extends JoystickPart {
 //		this.xAxis = x;
 //		this.yAxis = y;
 //	}
-	public TwoAxisJoystickPart(InputPart x, InputPart y){
-		super(autoJoystickTypeHelper(x, y));
+
+	/**
+	 * @param x x axis where left is negative and positive is right
+	 * @param y y axis where down is negative and positive is up
+	 * @param shouldScale The shouldScale value for the JoystickType. Note this doesn't actually change the x or y, just the JoystickType
+	 */
+	public TwoAxisJoystickPart(InputPart x, InputPart y, boolean shouldScale){
+		super(autoJoystickTypeHelper(x, y, shouldScale));
 		this.xAxis = x;
 		this.yAxis = y;
 		xAxis.setParent(this);
 		yAxis.setParent(this);
 	}
-	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y){
-		if (x.getAxisType() != y.getAxisType()) {
-			throw new IllegalArgumentException("Each passed argument must have the same AxisType.");
+	public TwoAxisJoystickPart(InputPart x, InputPart y){
+		this(x, y, true);
+	}
+	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y, boolean shouldScale){
+//		if (!x.getAxisType().equals(y.getAxisType())) {
+//			throw new IllegalArgumentException("Each passed argument must have the same AxisType.");
+//		}
+		if(!x.getAxisType().isFull() || !y.getAxisType().isFull()){
+			throw new IllegalArgumentException("Each axis must have a full range.");
 		}
-		switch(x.getAxisType()){ // note this is also the same as y.getAxisType()
-			case FULL_ANALOG:
-				return JoystickType.NORMAL;
-			case FULL_DIGITAL:
-				return JoystickType.POV;
-			default:
-				throw new IllegalArgumentException("Unsupported AxisType: " + x.getAxisType().toString());
-		}
+		return new JoystickType(x.getAxisType().isAnalog() || y.getAxisType().isAnalog(),
+				x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver(),
+				shouldScale, x.getAxisType().shouldUseDelta() || y.getAxisType().shouldUseDelta());
 	}
 	public static TwoAxisJoystickPart createFromFour(InputPart up, InputPart down, InputPart left, InputPart right){
 		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down));

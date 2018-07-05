@@ -5,6 +5,7 @@ import java.util.Collection;
 public abstract class ControllerInput extends ControllerPart{
 
 
+
 	public abstract ControllerExtras getExtras();
 
 	/**
@@ -13,18 +14,21 @@ public abstract class ControllerInput extends ControllerPart{
 	 * @return All parts that should be updated including all Joystick Axises and JoystickPart objects or any other
 	 *         ControllerPart objects
 	 */
-	public abstract Collection<ControllerPart> getAllParts();
+	protected abstract Collection<ControllerPart> getPartsToUpdate();
 
 	@Override
 	public void update(ControlConfig config) {
-		super.update(config);
-		for(ControllerPart part : getAllParts()){
+		super.update(config); // this super method just sets this.config to config so it's okay to call
+		for(ControllerPart part : getPartsToUpdate()){
 			ControllerPart parent = part.getParent();
-			assert parent != null : part.toString() + " doesn't have a parent.";
-			if(parent == this){
-				part.update(config);
-				part.lateUpdate();
+			if(parent == null){
+				throw new IllegalStateException("One of the parts from getPartsToUpdate() doesn't have a parent");
 			}
+			if(parent != this){
+				throw new IllegalStateException("One of our children doesn't claim us as a parent. child: " + part);
+			}
+			part.update(config);
+			part.lateUpdate();
 		}
 	}
 }

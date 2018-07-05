@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
+import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
@@ -37,7 +38,9 @@ public class PlayerController implements EntityController{
 				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistance());
 				movePercent = Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent));
 
-				float joyScale = (float) JoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle());
+				float joyScale = movementJoy.getJoystickType().shouldScale()
+						? (float) JoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle())
+						: 1;
 				trackMove.setVelocity(
 						(float) movementJoy.getMagnitude() * joyScale
 						* movePercent // movePercent is -1, 0 or 1
@@ -47,16 +50,16 @@ public class PlayerController implements EntityController{
 			}
 
 			// ==== Rotation ====
-			JoystickPart rotateJoy = gameInput.rotateJoystick();
-			double x = rotateJoy.getX();
-			if (rotateJoy.getJoystickType().shouldUseDelta()) {
-				float desired = (float) (ACCEL_ROTATE_PER_SECOND * x);
-				if (rotateJoy.isDeadzone()) {
+			InputPart rotateAxis = gameInput.rotateAxis();
+			double position = rotateAxis.getPosition();
+			if (rotateAxis.getAxisType().shouldUseDelta()) {
+				float desired = (float) (ACCEL_ROTATE_PER_SECOND * position);
+				if (rotateAxis.isDeadzone()) {
 					desired = 0;
 				}
 				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
 			} else {
-				player.setRotation(player.getRotation() + (float) x * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
+				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
 //				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}
 		}

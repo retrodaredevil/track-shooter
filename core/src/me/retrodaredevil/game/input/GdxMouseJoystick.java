@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
+
 import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;

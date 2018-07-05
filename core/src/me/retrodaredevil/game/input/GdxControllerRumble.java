@@ -2,7 +2,6 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
 
-import me.retrodaredevil.controller.NotConnectedException;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
 public class GdxControllerRumble extends ControllerRumble {
@@ -20,7 +19,7 @@ public class GdxControllerRumble extends ControllerRumble {
 
 	@Override
 	public void rumble(float left, float right) {
-		throw new NotConnectedException("The rumble is not connected. Make sure to check isConnected(). Rumble is not supported yet.");
+		throw new UnsupportedOperationException("The rumble is not connected. Make sure to check isConnected(). Rumble is not supported yet.");
 	}
 
 	@Override

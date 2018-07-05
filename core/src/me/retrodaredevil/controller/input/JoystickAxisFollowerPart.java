@@ -18,13 +18,7 @@ public class JoystickAxisFollowerPart extends InputPart {
 	private static AxisType autoAxisTypeHelper(JoystickPart joystick){
 		JoystickPart.JoystickType type = joystick.getJoystickType();
 
-		if(type.isRangeOver()){
-			return AxisType.FULL_RANGE_OVER_NO_DELTA;
-		}
-		if(type.isAnalog()){
-			return AxisType.FULL_ANALOG;
-		}
-		return AxisType.FULL_DIGITAL;
+		return new AxisType(true, type.isAnalog(), type.isRangeOver(), type.shouldUseDelta());
 	}
 
 	@Override

@@ -5,9 +5,18 @@ package me.retrodaredevil.controller;
  */
 public abstract class ControllerPart {
 
+	private boolean completelyRemoved = false;
+
 	protected ControlConfig config;
 	private ControllerPart parent = null;
 
+
+	public void completelyRemove(){
+		completelyRemoved = true;
+	}
+	public boolean isCompletelyRemoved(){
+		return completelyRemoved;
+	}
 	/**
 	 * If null, that means that the only thing updating this should be a ControllerInput
 	 * @return The parent ControllerPart that calls this ControllPart's update or null if there is none
@@ -53,8 +62,25 @@ public abstract class ControllerPart {
 		}
 	}
 
+	/**
+	 * After this method is called, whether it is for a superclass or subclass, calls to getXXXX should
+	 * be the most current and accurate value.
+	 * <br/>
+	 * If a superclass has defined abstract methods such as getPosition() or getX(), when the superclass's update is called,
+	 * calling those methods must be up to date. This is one of the reasons that you might need to call
+	 * super after performing important steps that affect the return value of the methods that the call to super's update might use.
+	 */
 	public void update(ControlConfig config){
+		checkCompletelyRemoved();
 		this.config = config;
+	}
+	protected void checkCompletelyRemoved(){
+		if(isCompletelyRemoved()){
+			throw new IllegalStateException("Cannot update because we are completely removed. this: " + this);
+		}
+		if(parent != null && parent.isCompletelyRemoved()){
+			throw new IllegalStateException("Cannot update because our parent is completely removed. parent: " + parent);
+		}
 	}
 
 	/**

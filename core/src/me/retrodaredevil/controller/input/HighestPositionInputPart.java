@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import me.retrodaredevil.controller.ControlConfig;
-import me.retrodaredevil.controller.NotConnectedException;
 
 public class HighestPositionInputPart extends InputPart {
 
@@ -29,12 +28,7 @@ public class HighestPositionInputPart extends InputPart {
 			anyFull = anyFull || type.isFull();
 			anyAnalog = anyAnalog || type.isAnalog();
 		}
-		AxisType r = AxisType.getAxisType(anyFull, anyAnalog, false, true);
-
-		if(r == null){
-			throw new AssertionError("getAxisType() returned null!");
-		}
-		return r;
+		return new AxisType(anyFull, anyAnalog, false, true);
 	}
 
 	@Override

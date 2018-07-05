@@ -10,7 +10,7 @@ public class KeyInputPart extends InputPart {
 	private boolean isButton;
 
 	public KeyInputPart(int code, boolean isButton) {
-		super(AxisType.DIGITAL);
+		super(new AxisType(false, false));
 		this.code = code;
 		this.isButton = isButton;
 	}

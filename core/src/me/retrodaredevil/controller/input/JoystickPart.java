@@ -8,7 +8,9 @@ import static java.lang.Math.*;
 public abstract class JoystickPart extends ControllerPart {
 	private JoystickType type;
 
+	// set to null every frame or calculated every frame
 	protected Double angleDegrees;
+	// set to null every frame or calculated every frame
 	protected Double magnitude;
 
 	public JoystickPart(JoystickType type){
@@ -24,11 +26,12 @@ public abstract class JoystickPart extends ControllerPart {
 	 * <br/>
 	 * When overriding, if there are SingleInputs as instance variables, their update should not be called unless
 	 * they were created by this instance.
+	 * @param config
 	 */
 	@Override
 	public void update(ControlConfig config) {
 		super.update(config);
-		if(config.cacheAngleAndMagnitudeInUpdate){
+		if(this.config.cacheAngleAndMagnitudeInUpdate){
 			double x = getX();
 			double y = getY();
 			angleDegrees = calculateAngle(x, y);
@@ -38,7 +41,16 @@ public abstract class JoystickPart extends ControllerPart {
 			magnitude = null;
 		}
 	}
+
+	/**
+	 *
+	 * @return returns the x axis that is controlled and updated by this JoystickPart
+	 */
 	public abstract InputPart getXAxis();
+
+	/**
+	 * @return returns the y axis that is controlled and updated by this JoystickPart
+	 */
 	public abstract InputPart getYAxis();
 
 	protected double calculateAngle(double x, double y){
@@ -148,16 +160,16 @@ public abstract class JoystickPart extends ControllerPart {
 		return cos(toRadians(angle));
 	}
 
-	public enum JoystickType{
-		NORMAL(true, false, true, true),
-		POV(false, false, true, true),
-		MOUSE(true, true, false, false);
+	public static final class JoystickType{
+//		NORMAL(true, false, true, true),
+//		POV(false, false, true, true),
+//		MOUSE(true, true, false, false);
 		private final boolean analog;
 		private final boolean rangeOver;
 		private final boolean shouldScale;
 		private final boolean shouldUseDelta;
 
-		JoystickType(boolean analog, boolean rangeOver, boolean shouldScale, boolean shouldUseDelta){
+		public JoystickType(boolean analog, boolean rangeOver, boolean shouldScale, boolean shouldUseDelta){
 			this.analog = analog;
 			this.rangeOver = rangeOver;
 			this.shouldScale = shouldScale;
@@ -175,6 +187,8 @@ public abstract class JoystickPart extends ControllerPart {
 
 		/**
 		 * NOTE: For things like MOUSE, this will return false since it doesn't make sense to scale it.
+		 * <br/>
+		 * If shouldUseDelta() is false, then it is usually safe to assume that this is false as well.
 		 * @return true if the magnitude of x and y can go over 1.
 		 */
 		public boolean shouldScale(){
@@ -189,6 +203,24 @@ public abstract class JoystickPart extends ControllerPart {
 			return shouldUseDelta;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if(o instanceof JoystickType){
+				JoystickType type = (JoystickType) o;
+				return type.analog == this.analog && type.rangeOver == this.rangeOver
+						&& type.shouldScale == this.shouldScale && type.shouldUseDelta == this.shouldUseDelta;
+			}
+			return false;
+		}
 
+		@Override
+		public int hashCode() {
+			int r = 17;
+			r = 37 * r + (analog ? 1 : 0);
+			r = 37 * r + (rangeOver ? 1 : 0);
+			r = 37 * r + (shouldScale ? 1 : 0);
+			r = 37 * r + (shouldUseDelta ? 1 : 0);
+			return r;
+		}
 	}
 }

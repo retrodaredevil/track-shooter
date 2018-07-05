@@ -25,8 +25,8 @@ public class ControllerInputPart extends InputPart {
 		this.code = code;
 		this.inverted = inverted;
 
-		if(getAxisType() == AxisType.FULL_DIGITAL){
-			throw new UnsupportedOperationException("Controller Single Input does not support FULL_DIGITAL");
+		if((type.isFull() && !type.isAnalog()) || type.isRangeOver()){
+			throw new UnsupportedOperationException("Controller Single Input does not support AxisType: " + type);
 		}
 	}
 	public ControllerInputPart(Controller controller, AxisType type, int code){
@@ -35,12 +35,11 @@ public class ControllerInputPart extends InputPart {
 	@Override
 	protected double calculatePosition() {
 		AxisType type = getAxisType();
-		boolean fullAnalog = type == AxisType.FULL_ANALOG;
-		if(fullAnalog || type == AxisType.ANALOG){
+		if(type.isAnalog()){
 			double value = controller.getAxis(this.code);
 			double mult = inverted ? -1 : 1;
 			value *= mult;
-			return fullAnalog ? value : ((value + 1.0) / 2.0);
+			return type.isFull() ? value : ((value + 1.0) / 2.0);
 		}
 		return (controller.getButton(this.code) == !inverted) ? 1 : 0;
 	}

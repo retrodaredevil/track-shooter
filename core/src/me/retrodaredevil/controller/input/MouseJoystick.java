@@ -5,7 +5,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 public abstract class MouseJoystick extends JoystickPart {
 
 	public MouseJoystick() {
-		super(JoystickType.MOUSE);
+		super(new JoystickType(true, true, false, false));
 	}
 
 	// TODO add x and y position abstract methods

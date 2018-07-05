@@ -2,18 +2,23 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import me.retrodaredevil.controller.*;
-import me.retrodaredevil.controller.input.HighestPositionInputPart;
-import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import me.retrodaredevil.controller.ControllerExtras;
+import me.retrodaredevil.controller.ControllerInput;
+import me.retrodaredevil.controller.ControllerPart;
+import me.retrodaredevil.controller.StandardControllerInput;
+import me.retrodaredevil.controller.input.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
+
 public class DefaultGameInput extends GameInput {
 	private final JoystickPart mainJoystick;
-	private final JoystickPart rotateJoystick;
+//	private final JoystickPart rotateJoystick;
+	private final InputPart rotateAxis;
 	private final InputPart fireButton;
 	private final InputPart slow;
 	private final InputPart activatePowerup;
@@ -24,10 +29,11 @@ public class DefaultGameInput extends GameInput {
 
 	private ControllerInput reliesOn = null;
 
-	public DefaultGameInput(StandardUSBControllerInput controller){
+	public DefaultGameInput(StandardControllerInput controller){
 		mainJoystick = controller.leftJoy();
-		rotateJoystick = controller.rightJoy();
+		rotateAxis = controller.rightJoy().getXAxis();
 		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper());
+//		fireButton = controller.leftBumper();
 		slow = controller.leftStick();
 		activatePowerup = controller.faceLeft();
 
@@ -44,7 +50,8 @@ public class DefaultGameInput extends GameInput {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
 //		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
-		rotateJoystick = new GdxMouseJoystick();
+		JoystickPart rotateJoystick = new GdxMouseJoystick();
+		rotateAxis = rotateJoystick.getXAxis();
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		activatePowerup = new KeyInputPart(Input.Keys.F);
@@ -70,8 +77,8 @@ public class DefaultGameInput extends GameInput {
 	}
 
 	@Override
-	public JoystickPart rotateJoystick() {
-		return rotateJoystick;
+	public InputPart rotateAxis() {
+		return rotateAxis;
 	}
 
 	@Override
@@ -95,7 +102,7 @@ public class DefaultGameInput extends GameInput {
 	}
 
 	@Override
-	public Collection<ControllerPart> getAllParts() {
+	public Collection<ControllerPart> getPartsToUpdate() {
 		return parts;
 	}
 

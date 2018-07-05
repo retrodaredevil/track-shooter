@@ -10,7 +10,8 @@ import me.retrodaredevil.controller.input.JoystickPart;
  */
 public abstract class GameInput extends ControllerInput {
 	public abstract JoystickPart mainJoystick();
-	public abstract JoystickPart rotateJoystick();
+//	public abstract JoystickPart rotateJoystick();
+	public abstract InputPart rotateAxis();
 	public abstract InputPart fireButton();
 	public abstract InputPart slow();
 	public abstract InputPart activatePowerup();

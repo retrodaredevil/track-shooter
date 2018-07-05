@@ -26,31 +26,34 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 
 	public StandardUSBControllerInput(Controller controller){
 		this.controller = controller;
-		InputPart leftXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 0);
-		InputPart leftYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 1, true);
+		final InputPart.AxisType FULL_ANALOG = new InputPart.AxisType(true, true);
+		final InputPart.AxisType DIGITAL = new InputPart.AxisType(false, false);
 
-		InputPart rightXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 2);
-		InputPart rightYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 3, true);
+		InputPart leftXAxis = new ControllerInputPart(controller, FULL_ANALOG, 0);
+		InputPart leftYAxis = new ControllerInputPart(controller, FULL_ANALOG, 1, true);
 
-		InputPart dXAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 4);
-		InputPart dYAxis = new ControllerInputPart(controller, InputPart.AxisType.FULL_ANALOG, 5, true);
+		InputPart rightXAxis = new ControllerInputPart(controller, FULL_ANALOG, 2);
+		InputPart rightYAxis = new ControllerInputPart(controller, FULL_ANALOG, 3, true);
 
-		start = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 9);
-		select = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 8);
+		InputPart dXAxis = new ControllerInputPart(controller, FULL_ANALOG, 4);
+		InputPart dYAxis = new ControllerInputPart(controller, FULL_ANALOG, 5, true);
 
-		faceUp = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 0);
-		faceDown = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 2);
-		faceLeft = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 3);
-		faceRight = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 1);
+		start = new ControllerInputPart(controller, DIGITAL, 9);
+		select = new ControllerInputPart(controller, DIGITAL, 8);
 
-		leftBumper = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 4);
-		rightBumper = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 5);
+		faceUp = new ControllerInputPart(controller, DIGITAL, 0);
+		faceDown = new ControllerInputPart(controller, DIGITAL, 2);
+		faceLeft = new ControllerInputPart(controller, DIGITAL, 3);
+		faceRight = new ControllerInputPart(controller, DIGITAL, 1);
 
-		leftTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 6);
-		rightTrigger = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 7);
+		leftBumper = new ControllerInputPart(controller, DIGITAL, 4);
+		rightBumper = new ControllerInputPart(controller, DIGITAL, 5);
 
-		leftStick = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 10);
-		rightStick = new ControllerInputPart(controller, InputPart.AxisType.DIGITAL, 11);
+		leftTrigger = new ControllerInputPart(controller, DIGITAL, 6);
+		rightTrigger = new ControllerInputPart(controller, DIGITAL, 7);
+
+		leftStick = new ControllerInputPart(controller, DIGITAL, 10);
+		rightStick = new ControllerInputPart(controller, DIGITAL, 11);
 
 		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis);
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
@@ -151,7 +154,7 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	}
 
 	@Override
-	public Collection<ControllerPart> getAllParts() {
+	public Collection<ControllerPart> getPartsToUpdate() {
 		return parts;
 	}
 

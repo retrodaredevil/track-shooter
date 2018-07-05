@@ -21,7 +21,7 @@ public class GdxTiltJoystick extends JoystickPart {
 	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach max (1 or -1) corresponding to (20 or -20)
 	 */
 	public GdxTiltJoystick(float maxDegrees) {
-		super(JoystickType.NORMAL);
+		super(new JoystickType(true, false, true, true));
 		this.maxDegrees = maxDegrees;
 	}
 
