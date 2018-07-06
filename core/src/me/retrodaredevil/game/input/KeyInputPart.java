@@ -3,9 +3,10 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.AutoCachingInputPart;
+import me.retrodaredevil.controller.input.AxisType;
 
-public class KeyInputPart extends InputPart {
+public class KeyInputPart extends AutoCachingInputPart {
 	private int code;
 	private boolean isButton;
 

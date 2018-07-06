@@ -1,13 +1,12 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
-import com.badlogic.gdx.controllers.ControllerAdapter;
-import com.badlogic.gdx.controllers.Controllers;
 
-import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.AutoCachingInputPart;
+import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
-public class ControllerInputPart extends InputPart {
+public class ControllerInputPart extends AutoCachingInputPart {
 	private Controller controller;
 	private int code;
 	private boolean inverted;

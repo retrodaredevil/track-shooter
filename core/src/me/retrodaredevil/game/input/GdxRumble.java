@@ -3,9 +3,10 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
-public class GdxRumble extends ControllerRumble {
+public class GdxRumble extends SimpleControllerPart implements ControllerRumble {
 	@Override
 	public void rumble(float amount) {
 		if(amount == 0){

@@ -1,16 +1,20 @@
 package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
-import me.retrodaredevil.controller.*;
+
+import java.util.Arrays;
+
+import me.retrodaredevil.controller.SimpleControllerInput;
+import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
+import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.controller.types.RumbleCapableController;
+import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-public class StandardUSBControllerInput extends StandardControllerInput {
+public class StandardUSBControllerInput extends SimpleControllerInput implements StandardControllerInput, RumbleCapableController {
 
 	private final Controller controller;
 	private final InputPart start, select,
@@ -20,14 +24,13 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 			leftStick, rightStick;
 
 	private final JoystickPart dPad, leftJoy, rightJoy;
-	private final ControllerExtras extras;
 
-	private final Collection<ControllerPart> parts;
+	private final ControllerRumble rumble;
 
 	public StandardUSBControllerInput(Controller controller){
 		this.controller = controller;
-		final InputPart.AxisType FULL_ANALOG = new InputPart.AxisType(true, true);
-		final InputPart.AxisType DIGITAL = new InputPart.AxisType(false, false);
+		final AxisType FULL_ANALOG = new AxisType(true, true);
+		final AxisType DIGITAL = new AxisType(false, false);
 
 		InputPart leftXAxis = new ControllerInputPart(controller, FULL_ANALOG, 0);
 		InputPart leftYAxis = new ControllerInputPart(controller, FULL_ANALOG, 1, true);
@@ -59,17 +62,15 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
 		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
 
-		extras = new ControllerExtras();
-		extras.setRumble(new GdxControllerRumble(controller));
+		this.rumble = new GdxControllerRumble(controller);
 
-		parts = Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
+
+		// the axises already have parents and we don't want to change them
+		addChildren(Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
 				start, select, faceUp, faceDown, faceLeft, faceRight,
 				leftBumper, rightBumper, leftTrigger, rightTrigger,
 				leftStick, rightStick,
-				dPad, leftJoy, rightJoy);
-
-		// the axises already have parents and we don't want to change them
-		setParentsToThis(parts, false, true);
+				dPad, leftJoy, rightJoy), false, true);
 
 	}
 
@@ -149,17 +150,12 @@ public class StandardUSBControllerInput extends StandardControllerInput {
 	}
 
 	@Override
-	public ControllerExtras getExtras() {
-		return extras;
-	}
-
-	@Override
-	public Collection<ControllerPart> getPartsToUpdate() {
-		return parts;
-	}
-
-	@Override
 	public boolean isConnected() {
 		return Util.isControllerConnected(controller);
+	}
+
+	@Override
+	public ControllerRumble getRumble() {
+		return rumble;
 	}
 }

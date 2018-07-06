@@ -7,15 +7,17 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import me.retrodaredevil.controller.ControllerExtras;
-import me.retrodaredevil.controller.ControllerInput;
 import me.retrodaredevil.controller.ControllerPart;
-import me.retrodaredevil.controller.StandardControllerInput;
-import me.retrodaredevil.controller.input.HighestPositionInputPart;
+import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.SimpleJoystickPart;
+import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.controller.types.RumbleCapableController;
+import me.retrodaredevil.controller.types.StandardControllerInput;
+import me.retrodaredevil.controller.input.HighestPositionInputPart;
 
-public class DefaultGameInput extends GameInput {
+public class DefaultGameInput extends SimpleControllerPart implements GameInput {
 	private final JoystickPart mainJoystick;
 //	private final JoystickPart rotateJoystick;
 	private final InputPart rotateAxis;
@@ -23,11 +25,9 @@ public class DefaultGameInput extends GameInput {
 	private final InputPart slow;
 	private final InputPart activatePowerup;
 
-	private final ControllerExtras extras;
+	private final ControllerRumble rumble;
 
-	private final Collection<ControllerPart> parts;
-
-	private ControllerInput reliesOn = null;
+	private ControllerPart reliesOn = null;
 
 	public DefaultGameInput(StandardControllerInput controller){
 		mainJoystick = controller.leftJoy();
@@ -36,10 +36,13 @@ public class DefaultGameInput extends GameInput {
 //		fireButton = controller.leftBumper();
 		slow = controller.leftStick();
 		activatePowerup = controller.faceLeft();
+		if(controller instanceof RumbleCapableController) {
+			rumble = ((RumbleCapableController) controller).getRumble();
+		} else {
+			rumble = null;
+		}
 
-		extras = createExtras();
-
-		parts = Collections.emptyList(); // parts are already handled by controller
+		addChildren(Collections.singletonList(fireButton), false, false);
 
 		reliesOn = controller;
 	}
@@ -50,7 +53,7 @@ public class DefaultGameInput extends GameInput {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
 //		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
-		JoystickPart rotateJoystick = new GdxMouseJoystick();
+		SimpleJoystickPart rotateJoystick = new GdxMouseJoystick();
 		rotateAxis = rotateJoystick.getXAxis();
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
@@ -58,17 +61,14 @@ public class DefaultGameInput extends GameInput {
 //		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard)) {
 //		} else {
 //		}
-		extras = createExtras();
-
-		parts = Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow, activatePowerup);
-		setParentsToThis(parts, false, false);
-	}
-	private static ControllerExtras createExtras(){
-		ControllerExtras r = new ControllerExtras();
-		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
-			r.setRumble(new GdxRumble());
+		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
+			rumble = new GdxRumble();
+		} else {
+			rumble = null;
 		}
-		return r;
+
+		addChildren(Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow, activatePowerup),
+				false, false);
 	}
 
 	@Override
@@ -97,22 +97,12 @@ public class DefaultGameInput extends GameInput {
 	}
 
 	@Override
-	public ControllerExtras getExtras() {
-		return extras;
-	}
-
-	@Override
-	public Collection<ControllerPart> getPartsToUpdate() {
-		return parts;
-	}
-
-	@Override
 	public boolean isConnected() {
-		for(ControllerPart part : parts){
-			if(!part.isConnected()){
-				return false;
-			}
-		}
-		return reliesOn == null || reliesOn.isConnected();
+		return areAnyChildrenConnected() && (reliesOn == null || reliesOn.isConnected());
+	}
+
+	@Override
+	public ControllerRumble getRumble() {
+		return rumble;
 	}
 }

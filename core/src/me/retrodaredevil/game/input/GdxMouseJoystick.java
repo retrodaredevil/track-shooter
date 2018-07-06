@@ -2,7 +2,6 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
 
-import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
 import me.retrodaredevil.controller.input.MouseJoystick;
@@ -17,9 +16,18 @@ public class GdxMouseJoystick extends MouseJoystick {
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
 	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
 
+	{
+		addChild(xAxis);
+		addChild(yAxis);
+	}
+
+
 	@Override
-	public void update(ControlConfig config) {
+	public void onUpdate() {
+		super.onUpdate();
 		double xPosition = Gdx.input.getX();
+
+		// TODO this may not be completely accurate, but it doesn't matter for this purpose
 		double yPosition = -Gdx.input.getY() + 1 + Gdx.graphics.getHeight();
 
 		if(lastX != null && lastY != null){
@@ -34,9 +42,6 @@ public class GdxMouseJoystick extends MouseJoystick {
 
 		lastX = xPosition;
 		lastY = yPosition;
-		xAxis.update(config);
-		yAxis.update(config);
-		super.update(config);
 	}
 
 	@Override

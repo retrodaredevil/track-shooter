@@ -2,9 +2,10 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.controllers.Controller;
 
+import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
-public class GdxControllerRumble extends ControllerRumble {
+public class GdxControllerRumble extends SimpleControllerPart implements ControllerRumble {
 
 	private final Controller controller;
 

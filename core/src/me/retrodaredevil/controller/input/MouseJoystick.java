@@ -1,8 +1,9 @@
 package me.retrodaredevil.controller.input;
 
-import me.retrodaredevil.controller.input.JoystickPart;
-
-public abstract class MouseJoystick extends JoystickPart {
+/**
+ * NOTE: This should not be referenced with instanceof subject to change
+ */
+public abstract class MouseJoystick extends SimpleJoystickPart {
 
 	public MouseJoystick() {
 		super(new JoystickType(true, true, false, false));

@@ -1,22 +1,22 @@
 package me.retrodaredevil.controller.input;
 
-public class JoystickAxisFollowerPart extends InputPart {
-	private final JoystickPart joystick;
+public class JoystickAxisFollowerPart extends AutoCachingInputPart {
+	private final SimpleJoystickPart joystick;
 	private final boolean useY;
 
 	/**
-	 * When this is created, it sets its own parent to the passed JoystickPart meaning JoystickPart needs to update this
+	 * When this is created, it sets its own parent to the passed SimpleJoystickPart meaning SimpleJoystickPart needs to update this
 	 * @param joystick The joystick
 	 * @param useY true for y axis, false for x axis
 	 */
-	public JoystickAxisFollowerPart(JoystickPart joystick, boolean useY){
+	public JoystickAxisFollowerPart(SimpleJoystickPart joystick, boolean useY){
 		super(autoAxisTypeHelper(joystick));
 		this.joystick = joystick;
 		this.useY = useY;
 		this.setParent(joystick);
 	}
-	private static AxisType autoAxisTypeHelper(JoystickPart joystick){
-		JoystickPart.JoystickType type = joystick.getJoystickType();
+	private static AxisType autoAxisTypeHelper(SimpleJoystickPart joystick){
+		JoystickType type = joystick.getJoystickType();
 
 		return new AxisType(true, type.isAnalog(), type.isRangeOver(), type.shouldUseDelta());
 	}

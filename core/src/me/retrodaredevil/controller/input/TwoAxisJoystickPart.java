@@ -1,15 +1,13 @@
 package me.retrodaredevil.controller.input;
 
-import me.retrodaredevil.controller.ControlConfig;
-
 /**
  * A single joystick with two axis
  */
-public class TwoAxisJoystickPart extends JoystickPart {
+public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	private InputPart xAxis;
 	private InputPart yAxis;
 
-//	public TwoAxisJoystickPart(InputPart x, InputPart y, JoystickType type){
+//	public TwoAxisJoystickPart(AutoCachingInputPart x, AutoCachingInputPart y, JoystickType type){
 //		super(type);
 //		this.xAxis = x;
 //		this.yAxis = y;
@@ -26,6 +24,7 @@ public class TwoAxisJoystickPart extends JoystickPart {
 		this.yAxis = y;
 		xAxis.setParent(this);
 		yAxis.setParent(this);
+		System.out.println("length: " + getChildren().size());
 	}
 	public TwoAxisJoystickPart(InputPart x, InputPart y){
 		this(x, y, true);
@@ -43,13 +42,6 @@ public class TwoAxisJoystickPart extends JoystickPart {
 	}
 	public static TwoAxisJoystickPart createFromFour(InputPart up, InputPart down, InputPart left, InputPart right){
 		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down));
-	}
-
-	@Override
-	public void update(ControlConfig config) {
-		xAxis.update(config);
-		yAxis.update(config);
-		super.update(config);
 	}
 
 	@Override

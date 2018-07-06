@@ -1,13 +1,16 @@
 package me.retrodaredevil.controller.input;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 
-import me.retrodaredevil.controller.ControlConfig;
+import me.retrodaredevil.controller.ControllerPart;
 
-public class HighestPositionInputPart extends InputPart {
+/**
+ * This class can be used if you want to map two buttons to the same control.
+ */
+public class HighestPositionInputPart extends SimpleInputPart {
 
-	private final Collection<InputPart> parts;
+	private final List<InputPart> parts;
 
 	/**
 	 *
@@ -17,7 +20,7 @@ public class HighestPositionInputPart extends InputPart {
 	public HighestPositionInputPart(InputPart... parts){
 		super(autoAxisTypeHelper(parts));
 		this.parts = Arrays.asList(parts);
-		setParentsToThis(this.parts, false, true);
+		addChildren(this.parts, false, true);
 	}
 	private static AxisType autoAxisTypeHelper(InputPart... parts){
 		boolean anyFull = false;
@@ -29,23 +32,6 @@ public class HighestPositionInputPart extends InputPart {
 			anyAnalog = anyAnalog || type.isAnalog();
 		}
 		return new AxisType(anyFull, anyAnalog, false, true);
-	}
-
-	@Override
-	public void update(ControlConfig config) {
-		super.update(config);
-		for(InputPart part : parts){
-			part.update(config);
-		}
-	}
-
-	@Override
-	protected void positionUpdate() {
-	}
-
-	@Override
-	protected double calculatePosition() {
-		throw new IllegalStateException("This method should not be called because we override positionUpdate()");
 	}
 
 	@Override
@@ -66,25 +52,46 @@ public class HighestPositionInputPart extends InputPart {
 	}
 
 	@Override
-	public boolean isPressed(){
+	public boolean isDown() {
 		for(InputPart part : parts){
 			if(!part.isConnected()){
 				continue;
 			}
-			if(part.isPressed()){
+			if(part.isDown()){
 				return true;
 			}
 		}
-
 		return false;
+	}
+
+	@Override
+	public boolean isPressed() {
+		boolean onePressed = false;
+		for(InputPart part : parts){
+			boolean pressed = part.isPressed();
+			if(part.isDown() && !pressed){
+				return false;
+			}
+			onePressed = onePressed || pressed;
+		}
+		return onePressed;
+	}
+
+	@Override
+	public boolean isReleased() {
+		boolean oneReleased = false;
+		for(InputPart part : parts){
+			if(part.isDown()){
+				return false;
+			}
+			oneReleased = oneReleased || part.isReleased();
+		}
+		return oneReleased;
 	}
 
 	@Override
 	public boolean isConnected() {
 		for(InputPart part : parts){
-			if(!part.isConnected()){
-				continue;
-			}
 			if(part.isConnected()){
 				return true;
 			}

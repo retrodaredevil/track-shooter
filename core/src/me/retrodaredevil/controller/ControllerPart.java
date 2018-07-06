@@ -1,66 +1,51 @@
 package me.retrodaredevil.controller;
 
+import java.util.Collection;
+
 /**
  * Represents part of a controller such as a button or joystick
  */
-public abstract class ControllerPart {
-
-	private boolean completelyRemoved = false;
-
-	protected ControlConfig config;
-	private ControllerPart parent = null;
-
-
-	public void completelyRemove(){
-		completelyRemoved = true;
-	}
-	public boolean isCompletelyRemoved(){
-		return completelyRemoved;
-	}
+public interface ControllerPart {
 	/**
-	 * If null, that means that the only thing updating this should be a ControllerInput
-	 * @return The parent ControllerPart that calls this ControllPart's update or null if there is none
+	 * If null: That means that this is being updated by something like a ControllerManager or that this
+	 * ControllerPart is not being updated at all.
+	 * @return The parent ControllerPart that calls this ControllerPart's update or null if there is none
 	 */
-	public ControllerPart getParent(){
-		return parent;
-	}
+	ControllerPart getParent();
 
 	/**
 	 * Normally, you shouldn't call this with a ControllerInput as parent because ControllerInput already handles this
 	 * automatically
 	 * @param parent The parent to set
+	 * @throws IllegalArgumentException thrown if parent == this
 	 */
-	public void setParent(ControllerPart parent){
-		this.parent = parent;
-	}
-
+	void setParent(ControllerPart parent);
 
 	/**
-	 *
-	 * @param parts The parts to change each element's parent to this
-	 * @param changeParent true if you want to allow the parent of parts that already have a parent to be changed
-	 * @param canAlreadyHaveParents Should be true if you expect one or more elements to already have a parent. If false,
-	 *                                 it will throw an AssertionError if a part already has a parent. If false,
-	 *                                 changeParent's value will do nothing.
-	 * @throws AssertionError if canAlreadyHaveParents == false and one of the parts in the
-	 *                        parts Iterable has a parent that isn't null, this will be thrown
-	 * @throws IllegalArgumentException only thrown when changeParent == true and canAlreadyHaveParents == false
+	 * NOTE: The returned value should not be mutated
+	 * <br/>
+	 * NOTE: You can always assume that parent.getChildren().contains(part) == (part.getParent() == parent)
+	 * @return A Collection representing all the children
 	 */
-	public void setParentsToThis(Iterable<? extends ControllerPart> parts,
-	                             boolean changeParent, boolean canAlreadyHaveParents){
-		if(changeParent && !canAlreadyHaveParents){
-			throw new IllegalArgumentException("If changeParent == true, canAlreadyHaveParents cannot be false");
-		}
-		for(ControllerPart part : parts){
-			boolean hasParent = part.getParent() != null;
-			if(!canAlreadyHaveParents && hasParent){
-				throw new AssertionError("A part already has a parent");
-			}
-			if(changeParent || !hasParent) {
-				part.setParent(this);
-			}
-		}
-	}
+	Collection<ControllerPart> getChildren();
+
+	/**
+	 * When this method is called it is possible that part.getParent() == this but this.getChildren().contains(part) == false
+	 * so this method should check to make sure getChildren() will contain part and should also call part.setParent(this)
+	 * @param part The part to make a child of this
+	 */
+	void addChild(ControllerPart part);
+
+	/**
+	 * Calling this method should set part's parent to null only if part.getParent() == this. Otherwise it's
+	 * parent should not be changed.
+	 * <br/>
+	 * Calling this method will also (obviously) remove part as a child so part will not be contained in getChildren()
+	 * @param part The part to remove a child
+	 * @return true if the part was removed
+	 */
+	boolean removeChild(ControllerPart part);
+
 
 	/**
 	 * After this method is called, whether it is for a superclass or subclass, calls to getXXXX should
@@ -70,36 +55,15 @@ public abstract class ControllerPart {
 	 * calling those methods must be up to date. This is one of the reasons that you might need to call
 	 * super after performing important steps that affect the return value of the methods that the call to super's update might use.
 	 */
-	public void update(ControlConfig config){
-		checkCompletelyRemoved();
-		this.config = config;
-	}
-	protected void checkCompletelyRemoved(){
-		if(isCompletelyRemoved()){
-			throw new IllegalStateException("Cannot update because we are completely removed. this: " + this);
-		}
-		if(parent != null && parent.isCompletelyRemoved()){
-			throw new IllegalStateException("Cannot update because our parent is completely removed. parent: " + parent);
-		}
-	}
+	void update(ControlConfig config);
 
-	/**
-	 * Called right after update()
-	 * If you want to utilize something like getPosition() or getX() or something calculated in update, it is
-	 * recommended you override this. Also remember to call super
-	 * <br/><br/>
-	 * NOTE: This is called right after update and should not be used to get the values of other ControllerParts because
-	 * they may not have been called yet this frame.
-	 */
-	public void lateUpdate(){
-	}
 
 
 	/**
-	 * If this part somehow represents a button or axis (like InputPart), then this should return true if the button
+	 * If this part somehow represents a button or axis (like AutoCachingInputPart), then this should return true if the button
 	 * exists on the controller, false otherwise.
 	 *
 	 * @return true if this ControllerPart will give accurate values and if it is connected.
 	 */
-	public abstract boolean isConnected();
+	boolean isConnected();
 }

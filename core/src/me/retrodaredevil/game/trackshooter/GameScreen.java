@@ -5,6 +5,8 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+
+import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
@@ -15,7 +17,7 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.SimpleControllerManager;
 
 public class GameScreen extends ScreenAdapter {
 
@@ -23,7 +25,7 @@ public class GameScreen extends ScreenAdapter {
 	private Stage stage;
 	private World world;
 
-	private ControllerManager controllerManager = new ControllerManager();
+	private ControllerManager controllerManager = new SimpleControllerManager();
 
 	public GameScreen(){
 		this.player = new Player();

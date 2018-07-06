@@ -1,13 +1,14 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
 import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.SimpleJoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
@@ -39,7 +40,7 @@ public class PlayerController implements EntityController{
 				movePercent = Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent));
 
 				float joyScale = movementJoy.getJoystickType().shouldScale()
-						? (float) JoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle())
+						? (float) SimpleJoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle())
 						: 1;
 				trackMove.setVelocity(
 						(float) movementJoy.getMagnitude() * joyScale
@@ -63,7 +64,7 @@ public class PlayerController implements EntityController{
 //				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}
 		}
-		ControllerRumble rumble = gameInput.getExtras().getRumble();
+		ControllerRumble rumble = gameInput.getRumble();
 		if (gameInput.fireButton().isPressed()) {
 			boolean didShoot = player.shootBullet(world, null) != null;
 			if(didShoot && rumble != null && rumble.isConnected()){

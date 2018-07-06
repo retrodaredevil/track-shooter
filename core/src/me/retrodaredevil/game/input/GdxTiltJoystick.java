@@ -3,13 +3,13 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
-import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.JoystickType;
+import me.retrodaredevil.controller.input.SimpleJoystickPart;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
-public class GdxTiltJoystick extends JoystickPart {
+public class GdxTiltJoystick extends SimpleJoystickPart {
 	private final float maxDegrees;
 	private double x, y;
 
@@ -27,7 +27,8 @@ public class GdxTiltJoystick extends JoystickPart {
 
 
 	@Override
-	public void update(ControlConfig config) {
+	public void onUpdate() {
+		super.onUpdate();
 
 		float gyroX = -Gdx.input.getPitch(); // up and down
 		float gyroY = Gdx.input.getRoll(); // side to side
@@ -35,7 +36,6 @@ public class GdxTiltJoystick extends JoystickPart {
 
 		x = degreesToFullAnalog(gyroX, maxDegrees);
 		y = degreesToFullAnalog(gyroY, maxDegrees);
-		super.update(config);
 //		System.out.println();
 //		System.out.println("compass: " + Gdx.input.getAzimuth());
 	}
