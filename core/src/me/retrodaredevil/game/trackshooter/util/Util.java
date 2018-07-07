@@ -1,7 +1,9 @@
 package me.retrodaredevil.game.trackshooter.util;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,5 +34,13 @@ public final class Util {
 
 	public static boolean isControllerConnected(Controller controller){
 		return Controllers.getControllers().contains(controller, true);
+	}
+	public static Rectangle proportionalRectangleToScreenArea(Rectangle proportionalRectangle){
+		return new Rectangle(
+				Gdx.graphics.getWidth() * proportionalRectangle.x,
+				Gdx.graphics.getHeight() * (1 - proportionalRectangle.height - proportionalRectangle.y),
+				Gdx.graphics.getWidth() * proportionalRectangle.width,
+				Gdx.graphics.getHeight() * proportionalRectangle.height
+		);
 	}
 }

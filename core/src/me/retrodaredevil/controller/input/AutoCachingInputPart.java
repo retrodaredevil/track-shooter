@@ -11,6 +11,11 @@ public abstract class AutoCachingInputPart extends SimpleInputPart{
 	private Double position = null;
 	private Double previousPosition = null;
 
+	/**
+	 *
+	 * @param type
+	 * @param calculatePositionAfterChildren if you rely on children to calculate position, set to true, otherwise set to false
+	 */
 	public AutoCachingInputPart(AxisType type, boolean calculatePositionAfterChildren){
 		super(type);
 		this.calculatePositionAfterChildren = calculatePositionAfterChildren;

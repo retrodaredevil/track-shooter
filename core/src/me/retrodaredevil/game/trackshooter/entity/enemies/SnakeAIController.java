@@ -12,12 +12,17 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SnakeAIController implements EntityController {
 	private static final float IN_FRONT_DISTANCE = 5;
-	private static final float MAX_AWAY = 10;
-	private SnakePart part;
-	private Entity target;
-	public SnakeAIController(SnakePart part, Entity target){
+	private static final float MAX_AWAY = 12;
+
+	private static final float VIEW_ANGLE = 90; // * 2 total
+
+	private final SnakePart part;
+	private final Entity target;
+	private final Difficulty difficulty;
+	public SnakeAIController(SnakePart part, Entity target, Difficulty difficulty){
 		this.part = part;
 		this.target = target;
+		this.difficulty = difficulty;
 	}
 	@Override
 	public void update(float delta, World world) {
@@ -37,11 +42,16 @@ public class SnakeAIController implements EntityController {
 			float rotMultiplier = 2;
 			float size = .4f;
 			if(numberParts <= 10){
-				speed = 15 - numberParts;
-				rotMultiplier = 4.5f - (numberParts * .25f);
+				if(this.difficulty.value >= Difficulty.NORMAL.value){
+					if(this.difficulty.value >= Difficulty.HARD.value) {
+						speed = 15 - numberParts;
+					} else if(numberParts <= 5){
+						speed = 5 + (5 - numberParts) * .5f;
+					}
+					rotMultiplier = 4.5f - (numberParts * .25f);
+				}
 				size = .4f - (numberParts - 10) * .04f;
 			}
-			travelMove.setVelocity(speed);
 			travelMove.setRotationalSpeedMultiplier(rotMultiplier);
 			part.setSize(size, true);
 
@@ -50,12 +60,15 @@ public class SnakeAIController implements EntityController {
 			float rotation = target.getRotation();
 			float angle = part.getLocation().sub(target.getX(), target.getY()).angle();
 			float angleAway = MathUtil.minDistance(rotation, angle, 360); // the amount of degrees the target is away from looking right at the head
-			if(angleAway < 40){ // the target is looking at the head
-				float percent = (40 - angleAway) / 40;
+			if(this.difficulty.value >= Difficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
+				speed += (angleAway / 25) * 3;
+			}
+			if(angleAway < VIEW_ANGLE){ // the target is looking at the head
+				float percent = (float) Math.pow((VIEW_ANGLE - angleAway) / VIEW_ANGLE, .5); // the lower the view angle, the higher this number
 				Vector2 location = target.getLocation();
 				Vector2 distantPoint = target.getLocation().add(
-						MathUtils.cosDeg(rotation) * MAX_AWAY,
-						MathUtils.sinDeg(rotation) * MAX_AWAY
+						MathUtils.cosDeg(angle) * MAX_AWAY,
+						MathUtils.sinDeg(angle) * MAX_AWAY
 				);
 				location.lerp(distantPoint, percent); // location is mutated
 				travelMove.setTarget(location);
@@ -65,6 +78,17 @@ public class SnakeAIController implements EntityController {
 						MathUtils.sinDeg(rotation) * IN_FRONT_DISTANCE
 				));
 			}
+
+			travelMove.setVelocity(speed);
+		}
+	}
+
+	public enum Difficulty{
+		EASY(1), NORMAL(2), HARD(3), EXTREME(4);
+
+		private int value;
+		Difficulty(int value){
+			this.value = value;
 		}
 	}
 }

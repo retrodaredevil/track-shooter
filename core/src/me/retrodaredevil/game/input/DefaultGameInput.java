@@ -2,6 +2,7 @@ package me.retrodaredevil.game.input;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,7 +33,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	public DefaultGameInput(StandardControllerInput controller){
 		mainJoystick = controller.leftJoy();
 		rotateAxis = controller.rightJoy().getXAxis();
-		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper());
+		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper(), controller.rightTrigger(), controller.leftTrigger());
 //		fireButton = controller.leftBumper();
 		slow = controller.leftStick();
 		activatePowerup = controller.faceLeft();
@@ -48,14 +49,21 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	}
 	public DefaultGameInput(){
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
-			mainJoystick = new GdxTiltJoystick(20);
+			mainJoystick = new GdxTiltJoystick(15);
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
 //		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
-		SimpleJoystickPart rotateJoystick = new GdxMouseJoystick();
-		rotateAxis = rotateJoystick.getXAxis();
-		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
+		final JoystickPart rotateJoystick;
+		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen)) {
+			rotateJoystick = new GdxDragJoystick(new Rectangle(.5f, 0, .5f, 1));
+			rotateAxis = rotateJoystick.getYAxis();
+			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
+		} else {
+			rotateJoystick = new GdxMouseJoystick();
+			rotateAxis = rotateJoystick.getXAxis();
+			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
+		}
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		activatePowerup = new KeyInputPart(Input.Keys.F);
 //		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard)) {

@@ -11,9 +11,10 @@ public class ControlConfig {
 	/** Should be used for ANALOG AxisTypes */
 	public double analogDeadzone = .001;
 	/** Should be used for FULL_ANALOG AxisTypes */
-	public double fullAnalogDeadzone = .004;
-	/** Not used often if at all. Used for checking if in deadzone and should not be used for anything analog */
+	public double fullAnalogDeadzone = .001;
+	/** Usually not relevant. Used for checking if in deadzone and should not be used for anything analog */
 	public double digitalDeadzone = .001;
+	/** Usually not relevant */
 	public double fullDigitalDeadzone = digitalDeadzone;
 
 	public double mouseDeadzone = 0;
@@ -26,5 +27,4 @@ public class ControlConfig {
 	 * is pressed */
 	public boolean useAbstractedIsDownIfPossible = true;
 
-	// TODO public boolean scaleFromDeadzone; ex: is deadzone is .001, .001 is 0 and everything is LERPed accordingly
 }

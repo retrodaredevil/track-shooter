@@ -21,10 +21,6 @@ public class JoystickAxisFollowerPart extends AutoCachingInputPart {
 		return new AxisType(true, type.isAnalog(), type.isRangeOver(), type.shouldUseDelta());
 	}
 
-	@Override
-	public double getPosition() {
-		return useY ? joystick.getY() : joystick.getX();
-	}
 
 	@Override
 	public boolean isDeadzone() {
@@ -32,11 +28,8 @@ public class JoystickAxisFollowerPart extends AutoCachingInputPart {
 	}
 
 	@Override
-	protected void positionUpdate() {
-	}
-	@Override
 	protected double calculatePosition() {
-		throw new AssertionError("Should not be called since positionUpdate() is overridden.");
+		return useY ? joystick.getY() : joystick.getX();
 	}
 
 	@Override

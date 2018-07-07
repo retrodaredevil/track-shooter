@@ -30,10 +30,20 @@ public class SnakeFunction implements LevelFunction {
 		if(time < 10000){
 			return false;
 		}
-		createSnake(world);
+		SnakeAIController.Difficulty difficulty = SnakeAIController.Difficulty.EASY;
+
+		if(level.getNumber() >= 2){
+			difficulty = SnakeAIController.Difficulty.NORMAL;
+			if(level.getNumber() >= 6){
+				difficulty = SnakeAIController.Difficulty.EXTREME;
+			} else if(level.getNumber() >= 4){
+				difficulty = SnakeAIController.Difficulty.HARD;
+			}
+		}
+		createSnake(world, difficulty);
 		return true;
 	}
-	protected void createSnake(World world){
+	protected void createSnake(World world, SnakeAIController.Difficulty difficulty){
 		Level level = world.getLevel();
 
 		Rectangle bounds = world.getBounds();
@@ -50,15 +60,25 @@ public class SnakeFunction implements LevelFunction {
 			y = bounds.getY() + bounds.getHeight() / 2.0f; // center
 			rotation = left ? 0 : 180;
 		}
+		int amount = 10;
+		if(level.getNumber() == 2){
+			amount = 15;
+		} else if(level.getNumber() == 3){
+			amount = 20;
+		} else if(level.getNumber() >= 7){
+			amount = 30;
+		} else if(level.getNumber() >= 4){
+			amount = 22;
+		}
 
-		List<SnakePart> parts = SnakePart.createSnake(22);
+		List<SnakePart> parts = SnakePart.createSnake(amount);
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
 //			part.setEntityController(new SnakeAIController(part, target));
 			level.addEntity(world, part);
 		}
 		SnakePart head = parts.get(0);
-		head.setEntityController(new SnakeAIController(head, target));
+		head.setEntityController(new SnakeAIController(head, target, difficulty));
 	}
 
 	@Override
