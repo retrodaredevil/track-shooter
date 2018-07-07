@@ -37,15 +37,27 @@ public class PlayerController implements EntityController{
 				float mult = slow ? .5f : 1;
 //				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
 				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistance());
-				movePercent = Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent));
+				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
 				float joyScale = movementJoy.getJoystickType().shouldScale()
 						? (float) SimpleJoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle())
 						: 1;
+
+				float actualMagnitude = (float) (joyScale * movementJoy.getMagnitude());
+				if(movementJoy.getJoystickType().isRangeOver()){
+					if(actualMagnitude > 1){
+						actualMagnitude = 1;
+					}
+				} else if(actualMagnitude > 1){
+					System.err.println("Joystick: " + movementJoy + "'s magnitude is over 1!.");
+				}
+
 				trackMove.setVelocity(
-						(float) movementJoy.getMagnitude() * joyScale
-						* movePercent // movePercent is -1, 0 or 1
-						* VELOCITY_PER_SECOND * mult);
+						actualMagnitude
+						* moveDirection
+						* VELOCITY_PER_SECOND
+						* mult
+				);
 			} else {
 				trackMove.setVelocity(0);
 			}
@@ -53,13 +65,18 @@ public class PlayerController implements EntityController{
 			// ==== Rotation ====
 			InputPart rotateAxis = gameInput.rotateAxis();
 			double position = rotateAxis.getPosition();
-			if (rotateAxis.getAxisType().shouldUseDelta()) {
+			if (rotateAxis.getAxisType().shouldUseDelta()) { // normal joystick
+				if(rotateAxis.getAxisType().isRangeOver()){
+					if(Math.abs(position) > 1){
+						position = Math.signum(position);
+					}
+				}
 				float desired = (float) (ACCEL_ROTATE_PER_SECOND * position);
 				if (rotateAxis.isDeadzone()) {
 					desired = 0;
 				}
 				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
-			} else {
+			} else { // probably a mouse
 				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
 //				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}

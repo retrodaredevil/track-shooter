@@ -21,16 +21,16 @@ public final class AxisType{
 	private final boolean analog;
 	private final boolean rangeOver;
 	private final boolean shouldUseDelta;
+
 	public AxisType(boolean full, boolean analog){
 		this(full, analog, false, true);
 	}
 
 	/**
-	 *
 	 * @param full Can the values be negative
 	 * @param analog Can the values be in between. Ex: .5
 	 * @param rangeOver Can the abs of the value be > 1
-	 * @param shouldUseDelta Should delta time be applied
+	 * @param shouldUseDelta Should delta time be applied. (Not used with a mouse, or another device that gives "moved with much since last call" feedback)
 	 */
 	public AxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
 		this.full = full;
