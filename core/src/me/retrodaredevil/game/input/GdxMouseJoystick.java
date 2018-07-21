@@ -6,6 +6,7 @@ import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
 import me.retrodaredevil.controller.input.MouseJoystick;
 
+@Deprecated
 public class GdxMouseJoystick extends MouseJoystick {
 	private Double lastX = null;
 	private Double lastY = null;

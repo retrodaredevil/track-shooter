@@ -36,6 +36,9 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 		if(!x.getAxisType().isFull() || !y.getAxisType().isFull()){
 			throw new IllegalArgumentException("Each axis must have a full range.");
 		}
+		if(x.getAxisType().shouldUseDelta() != y.getAxisType().shouldUseDelta()){
+			System.err.println("The axes in " + TwoAxisJoystickPart.class.getSimpleName() + " don't have the same shouldUseDelta() return values");
+		}
 		return new JoystickType(x.getAxisType().isAnalog() || y.getAxisType().isAnalog(),
 				x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver(),
 				shouldScale, x.getAxisType().shouldUseDelta() || y.getAxisType().shouldUseDelta());

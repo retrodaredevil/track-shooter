@@ -54,14 +54,14 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
 //		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
-		final JoystickPart rotateJoystick;
+//		final JoystickPart rotateJoystick;
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen)) {
-			rotateJoystick = new GdxDragJoystick(new Rectangle(.5f, 0, .5f, 1));
-			rotateAxis = rotateJoystick.getYAxis();
+//			rotateJoystick = new GdxDragJoystick(, 5.0f);
+			rotateAxis = new GdxMouseAxis(true, -5.0f, new Rectangle(.5f, 0, .5f, 1));
 			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
 		} else {
-			rotateJoystick = new GdxMouseJoystick();
-			rotateAxis = rotateJoystick.getXAxis();
+//			rotateJoystick = new GdxMouseJoystick();
+			rotateAxis = new GdxMouseAxis(false, 1.0f);
 			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		}
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
@@ -75,7 +75,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			rumble = null;
 		}
 
-		addChildren(Arrays.asList(mainJoystick, rotateJoystick, fireButton, slow, activatePowerup),
+		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup),
 				false, false);
 	}
 

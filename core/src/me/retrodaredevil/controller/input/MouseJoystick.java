@@ -13,12 +13,12 @@ public abstract class MouseJoystick extends SimpleJoystickPart {
 
 	@Override
 	public boolean isXDeadzone() {
-		return Math.abs(getX()) <= config.mouseDeadzone;
+		return Math.abs(getX()) <= config.rangeOverDeadzone;
 	}
 
 	@Override
 	public boolean isYDeadzone() {
-		return Math.abs(getY()) <= config.mouseDeadzone;
+		return Math.abs(getY()) <= config.rangeOverDeadzone;
 	}
 
 }

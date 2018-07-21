@@ -12,12 +12,13 @@ public class ControlConfig {
 	public double analogDeadzone = .001;
 	/** Should be used for FULL_ANALOG AxisTypes */
 	public double fullAnalogDeadzone = .001;
-	/** Usually not relevant. Used for checking if in deadzone and should not be used for anything analog */
+	/** Usually not relevant (since it is usually only comparing -1, 0 or 1).
+	 * Used for checking if in deadzone and should not be used for anything analog */
 	public double digitalDeadzone = .001;
 	/** Usually not relevant */
 	public double fullDigitalDeadzone = digitalDeadzone;
 
-	public double mouseDeadzone = 0;
+	public double rangeOverDeadzone = 0;
 
 	/** true if the angle and magnitude of a joystick should be calculated in lateUpdate(), otherwise it will only be
 	 * cached once one of those methods are called. */
