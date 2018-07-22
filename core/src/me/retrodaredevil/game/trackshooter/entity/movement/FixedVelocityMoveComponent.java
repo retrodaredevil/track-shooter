@@ -1,9 +1,9 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import com.badlogic.gdx.math.Vector2;
+
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
-import sun.java2d.pipe.SpanShapeRenderer;
 
 public class FixedVelocityMoveComponent extends SimpleMoveComponent {
 

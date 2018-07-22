@@ -5,8 +5,10 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import me.retrodaredevil.controller.ControllerManager;
+import me.retrodaredevil.controller.SimpleControllerManager;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
@@ -14,23 +16,29 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
+import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.controller.SimpleControllerManager;
 
 public class GameScreen extends ScreenAdapter {
 
-	private Player player;
-	private Stage stage;
-	private World world;
+	private final Player player;
+	private final Stage stage;
+	private final World world;
 
-	private ControllerManager controllerManager = new SimpleControllerManager();
+	private final Overlay overlay;
+	private final Stage textStage;
+
+	private final ControllerManager controllerManager = new SimpleControllerManager();
 
 	public GameScreen(){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
 		this.stage = new Stage(new WorldViewport(world));
+		this.overlay = new Overlay(world, player);
+		this.textStage = new Stage(new ScreenViewport());
+//		textStage = null;
 
 		GameInput gameInput;
 		if(Controllers.getControllers().size > 0){
@@ -107,12 +115,21 @@ public class GameScreen extends ScreenAdapter {
 
 		stage.act();
 		stage.draw();
+
+
+		RenderComponent overlayRender = overlay.getRenderComponent();
+		if(overlayRender != null){
+			overlayRender.render(delta, textStage);
+		}
+		textStage.act();
+		textStage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		Gdx.gl.glViewport(0, 0, width, height);
-		stage.getViewport().update(width, height,true);
+		stage    .getViewport().update(width, height,true);
+		textStage.getViewport().update(width, height,true);
 
 //		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
 //		camera.setToOrtho(false, 20, 20);
@@ -121,11 +138,9 @@ public class GameScreen extends ScreenAdapter {
 
 	@Override
 	public void dispose() {
-		RenderComponent worldRender = world.getRenderComponent();
-		if(worldRender != null){
-			worldRender.dispose();
-		}
+		world.disposeRenderComponent();
 		stage.dispose();
+		textStage.dispose();
 
 	}
 }

@@ -43,6 +43,13 @@ public class LineTrackPart extends TrackPart {
 		return renderComponent;
 	}
 
+	@Override
+	public void disposeRenderComponent() {
+		if(renderComponent != null) {
+			renderComponent.dispose();
+		}
+	}
+
 	public static class LineTrackPartBuilder{
 		private final Vector2 first;
 		private Vector2 previous;

@@ -130,6 +130,13 @@ public class SimpleEntity implements Entity {
 		return renderComponent;
 	}
 
+	@Override
+	public void disposeRenderComponent() {
+		if(renderComponent != null){
+			renderComponent.dispose();
+		}
+	}
+
 	protected void setRenderComponent(RenderComponent renderComponent){
 		if(this.renderComponent != renderComponent && this.renderComponent != null){
 			this.renderComponent.dispose();

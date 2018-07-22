@@ -111,6 +111,13 @@ public class World implements Updateable, Renderable {
 		return renderComponent;
 	}
 
+	@Override
+	public void disposeRenderComponent() {
+		if(renderComponent != null){
+			renderComponent.dispose();
+		}
+	}
+
 	/**
 	 * A simple util method that takes a list and removes elements from the passed instance if they are removed
 	 *

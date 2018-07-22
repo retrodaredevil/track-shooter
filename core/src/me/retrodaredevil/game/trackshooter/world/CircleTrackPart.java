@@ -8,8 +8,8 @@ import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class CircleTrackPart extends TrackPart {
-	private float radius;
-	private RenderComponent renderComponent;
+	private final float radius;
+	private final RenderComponent renderComponent;
 
 	public CircleTrackPart(float radius, Color color) {
 		super(new Vector2(radius, 0), new Vector2(radius, 0));
@@ -44,5 +44,10 @@ public class CircleTrackPart extends TrackPart {
 	@Override
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
+	}
+
+	@Override
+	public void disposeRenderComponent() {
+		renderComponent.dispose();
 	}
 }

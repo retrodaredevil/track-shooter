@@ -17,7 +17,7 @@ public class LineRenderComponent implements RenderComponent {
 	private ShapeRenderer renderer;
 
 	/**
-	 * Note when dispose() is called, it will NOT call renderer.dispose().
+	 * Note when disposeRenderComponent() is called, it will NOT call renderer.disposeRenderComponent().
 	 */
 	public LineRenderComponent(Vector2 start, Vector2 end, Color color, float width, ShapeRenderer renderer){
 		this.start = start;

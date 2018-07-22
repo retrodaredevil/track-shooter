@@ -37,6 +37,13 @@ public class Track implements Renderable {
 		return renderComponent;
 	}
 
+	@Override
+	public void disposeRenderComponent() {
+		if(renderComponent != null){
+			renderComponent.dispose();
+		}
+	}
+
 	public float getTotalDistance(){
 		return totalDistance;
 	}
