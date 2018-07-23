@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -19,6 +20,7 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class GameScreen extends ScreenAdapter {
@@ -30,9 +32,9 @@ public class GameScreen extends ScreenAdapter {
 	private final Overlay overlay;
 	private final Stage textStage;
 
-	private final ControllerManager controllerManager = new SimpleControllerManager();
+	private boolean shouldExit = false;
 
-	public GameScreen(){
+	public GameScreen(GameInput gameInput){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
 		this.stage = new Stage(new WorldViewport(world));
@@ -40,15 +42,6 @@ public class GameScreen extends ScreenAdapter {
 		this.textStage = new Stage(new ScreenViewport());
 //		textStage = null;
 
-		GameInput gameInput;
-		if(Controllers.getControllers().size > 0){
-			StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().first());
-			controllerManager.addController(controller);
-			gameInput = new DefaultGameInput(controller);
-		} else {
-			gameInput = new DefaultGameInput();
-		}
-		controllerManager.addController(gameInput);
 
 		player.setEntityController(new PlayerController(player, gameInput));
 		world.addEntity(player);
@@ -74,7 +67,6 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doUpdate(float delta){
-		controllerManager.update();
 		world.update(delta, world);
 		stage.getViewport().apply(true);
 
@@ -85,6 +77,11 @@ public class GameScreen extends ScreenAdapter {
 		if(player.getScoreObject().getLives() <= 0){
 			if(mode == LevelMode.NORMAL) {
 				level.setMode(LevelMode.RESET);
+			}
+			if(mode == LevelMode.STANDBY){ // all enemies have returned to start
+				if(level.getModeTime() > 4000) {
+					shouldExit = true;
+				}
 			}
 			return;
 		}
@@ -104,8 +101,8 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doRender(float delta){
-		float amount = 16.0f / 255.0f;
-		Gdx.gl.glClearColor(amount, amount, amount, 1);
+		Color backgroundColor = Constants.BACKGROUND_COLOR;
+		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		RenderComponent worldRender = world.getRenderComponent();
@@ -142,5 +139,8 @@ public class GameScreen extends ScreenAdapter {
 		stage.dispose();
 		textStage.dispose();
 
+	}
+	public boolean isGameCompletelyOver(){
+		return shouldExit;
 	}
 }

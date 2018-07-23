@@ -25,6 +25,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	private final InputPart fireButton;
 	private final InputPart slow;
 	private final InputPart activatePowerup;
+	private final InputPart startButton;
 
 	private final ControllerRumble rumble;
 
@@ -37,6 +38,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 //		fireButton = controller.leftBumper();
 		slow = controller.leftStick();
 		activatePowerup = controller.faceLeft();
+		startButton = controller.start();
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
@@ -59,10 +61,12 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 //			rotateJoystick = new GdxDragJoystick(, 5.0f);
 			rotateAxis = new GdxMouseAxis(true, -5.0f, new Rectangle(.5f, 0, .5f, 1));
 			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
+			startButton = new GdxScreenTouchButton(new Rectangle(0, 0, 1, 1));
 		} else {
 //			rotateJoystick = new GdxMouseJoystick();
 			rotateAxis = new GdxMouseAxis(false, 1.0f);
 			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
+			startButton = new KeyInputPart(Input.Keys.ENTER);
 		}
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		activatePowerup = new KeyInputPart(Input.Keys.F);
@@ -75,7 +79,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			rumble = null;
 		}
 
-		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup),
+		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton),
 				false, false);
 	}
 
@@ -102,6 +106,11 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	@Override
 	public InputPart activatePowerup() {
 		return activatePowerup;
+	}
+
+	@Override
+	public InputPart startButton() {
+		return startButton;
 	}
 
 	@Override

@@ -18,4 +18,6 @@ public interface GameInput extends ControllerInput, RumbleCapableController {
 	InputPart fireButton();
 	InputPart slow();
 	InputPart activatePowerup();
+
+	InputPart startButton();
 }
