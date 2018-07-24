@@ -6,7 +6,10 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 public class PlayerScore implements Score {
 	private int score = 0;
 	private int lives = 3;
-	private Player player;
+	private final Player player;
+
+	private int numberShots = 0;
+	private int totalNumberShots = 0;
 
 	public PlayerScore(Player player){
 		this.player = player;
@@ -32,4 +35,23 @@ public class PlayerScore implements Score {
 	public void onDeath(Entity other) {
 		lives--;
 	}
+
+    @Override
+    public void onShot(int numberOfShots) {
+	    if(numberOfShots < 1){
+	        throw new IllegalArgumentException("onShot() called with numberOfShots < 1");
+        }
+        this.numberShots++;
+        this.totalNumberShots += numberOfShots;
+    }
+
+    @Override
+    public int getNumberShots() {
+        return numberShots;
+    }
+
+    @Override
+    public int getTotalNumberShots() {
+        return totalNumberShots;
+    }
 }

@@ -102,7 +102,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 				}
 				if ((!needsDrag || (isTouched && !justTouched))
 						&& (area == null || area.contains(Gdx.input.getX(i), Gdx.input.getY(i)))) {
-					System.out.println("updating " + System.currentTimeMillis());
+//					System.out.println("updating " + System.currentTimeMillis());
 					int r;
 					if(useDeltaMethods) {
 						r = yAxis ? -Gdx.input.getDeltaY(i) : Gdx.input.getDeltaX(i);
@@ -116,7 +116,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 					}
 				}
 				if(!useDeltaMethods){
-					System.out.println("updating lastPosition " + System.currentTimeMillis());
+//					System.out.println("updating lastPosition " + System.currentTimeMillis());
 					lastPositions[i] = yAxis ? -Gdx.input.getY(i) : Gdx.input.getX(i);
 				}
 			} catch(IndexOutOfBoundsException ex){

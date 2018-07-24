@@ -5,6 +5,8 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -15,12 +17,14 @@ import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
+import me.retrodaredevil.game.trackshooter.entity.player.Score;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class GameScreen extends ScreenAdapter {
@@ -30,25 +34,23 @@ public class GameScreen extends ScreenAdapter {
 	private final World world;
 
 	private final Overlay overlay;
-	private final Stage textStage;
+
+	private final Batch batch;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(GameInput gameInput){
+	public GameScreen(GameInput gameInput, Overlay overlay, Batch batch){
 		this.player = new Player();
 		this.world = new World(new GameLevelGetter(player), 18, 18);
-		this.stage = new Stage(new WorldViewport(world));
-		this.overlay = new Overlay(world, player);
-		this.textStage = new Stage(new ScreenViewport());
-//		textStage = null;
+		this.stage = new Stage(new WorldViewport(world), batch);
+		this.overlay = overlay;
+		this.batch = batch;
+
+		overlay.setPlayer(player);
 
 
 		player.setEntityController(new PlayerController(player, gameInput));
 		world.addEntity(player);
-
-//		System.out.println("initial entities: " + world.getEntities());
-
-//		Resources.INTRO.play();
 	}
 
 	@Override
@@ -68,19 +70,24 @@ public class GameScreen extends ScreenAdapter {
 	}
 	private void doUpdate(float delta){
 		world.update(delta, world);
-		stage.getViewport().apply(true);
+//		stage.getViewport().apply(true);
 
 
 		Level level = world.getLevel();
 		LevelMode mode = level.getMode();
 
-		if(player.getScoreObject().getLives() <= 0){
+		Score score = player.getScoreObject();
+		if(score.getLives() <= 0){
 			if(mode == LevelMode.NORMAL) {
 				level.setMode(LevelMode.RESET);
 			}
 			if(mode == LevelMode.STANDBY){ // all enemies have returned to start
 				if(level.getModeTime() > 4000) {
 					shouldExit = true;
+					System.out.println("Exiting game.");
+					Gdx.app.log("final score", "" + score.getScore());
+					Gdx.app.log("Shots", "" + score.getNumberShots());
+                    Gdx.app.log("Total Shots", "" + score.getTotalNumberShots());
 				}
 			}
 			return;
@@ -110,34 +117,43 @@ public class GameScreen extends ScreenAdapter {
 			worldRender.render(delta, stage);
 		}
 
-		stage.act();
-		stage.draw();
+		if(Constants.SHOULD_ACT) {
+			stage.act(delta);
+		}
 
 
 		RenderComponent overlayRender = overlay.getRenderComponent();
 		if(overlayRender != null){
+		    Stage textStage = overlay.getStage();
 			overlayRender.render(delta, textStage);
+
+			if(Constants.SHOULD_ACT) {
+				textStage.act(delta);
+			}
+			assert batch == stage.getBatch() : "stage's batch isn't our batch!";
+			assert batch == textStage.getBatch() : "Overlay's batch isn't our batch!";
+			// We use this instead of Stage#draw() because we only have to begin() batch one time
+            batch.begin();
+			RenderUtil.drawStage(batch, stage);
+			RenderUtil.drawStage(batch, textStage);
+			batch.end();
+		} else {
+			System.err.println("overlayRender is null!. If this is intended, please remove this debug statement. Not doing some assertion checks.");
+			stage.draw();
 		}
-		textStage.act();
-		textStage.draw();
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		Gdx.gl.glViewport(0, 0, width, height);
 		stage    .getViewport().update(width, height,true);
-		textStage.getViewport().update(width, height,true);
-
-//		OrthographicCamera camera = (OrthographicCamera) stage.getCamera();
-//		camera.setToOrtho(false, 20, 20);
-//		camera.position.set(0, 0, 0);
+		overlay.getStage().getViewport().update(width, height,true);
 	}
 
 	@Override
 	public void dispose() {
 		world.disposeRenderComponent();
 		stage.dispose();
-		textStage.dispose();
 
 	}
 	public boolean isGameCompletelyOver(){

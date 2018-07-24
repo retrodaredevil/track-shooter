@@ -12,8 +12,8 @@ import me.retrodaredevil.controller.input.SimpleJoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
-	private static final float ACCEL_ROTATE_PER_SECOND = -360; // target rotate velocity used for calculating accelerating but capped at max
-	private static final float MAX_ROTATE_PER_SECOND = 270; // max abs rotate velocity
+	private static final float ACCEL_ROTATE_PER_SECOND = -270; // target rotate velocity used for calculating accelerating but capped at max
+//	private static final float MAX_ROTATE_PER_SECOND = 270; // max abs rotate velocity
 	private static final float FULL_SPEED_IN = 0; // in seconds - amount of time to fully accelerate rotational velocity
 	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f; // how many degrees to change when the mouse is moved one pixel
 
@@ -71,13 +71,15 @@ public class PlayerController implements EntityController{
 						position = Math.signum(position);
 					}
 				}
+				System.out.println(position); // .004
 				float desired = (float) (ACCEL_ROTATE_PER_SECOND * position);
 				if (rotateAxis.isDeadzone()) {
 					desired = 0;
 				}
-				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
+//				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
+                player.setRotation(player.getRotation() + desired * delta);
 			} else { // probably a mouse
-				System.out.println(position);
+//				System.out.println(position);
 				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
 //				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}

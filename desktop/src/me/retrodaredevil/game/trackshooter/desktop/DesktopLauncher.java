@@ -7,7 +7,7 @@ import me.retrodaredevil.game.trackshooter.GameMain;
 public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		config.foregroundFPS = 70;
+		config.vSyncEnabled = false;
 		new LwjglApplication(new GameMain(), config);
 	}
 }

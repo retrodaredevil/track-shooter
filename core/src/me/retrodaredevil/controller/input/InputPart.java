@@ -17,6 +17,9 @@ public interface InputPart extends ControllerPart {
 
 	/**
 	 * Depending on what getAxisType() returns, the returned value may have a smaller range.
+	 * <br/>
+	 * NOTE: The deadzone is not applied to this. If you want to check if this is within the deadzone,
+	 * use isDeadzone()
 	 * @return The value of this axis/button. This will always be within -1 and 1 (inclusive)
 	 */
 	double getPosition();

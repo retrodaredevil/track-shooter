@@ -6,20 +6,28 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
+import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.SimpleControllerManager;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
+import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 
 public class GameMain extends Game {
+
+	private Batch batch;
+	private Overlay overlay;
 
 	private ControllerManager controllerManager;
 	private GameInput gameInput;
 
+
 	@Override
 	public void create () {
+	    batch = new SpriteBatch();
 		controllerManager = new SimpleControllerManager();
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
@@ -31,7 +39,10 @@ public class GameMain extends Game {
 			gameInput = new DefaultGameInput();
 		}
 		controllerManager.addController(gameInput);
-		setScreen(new StartScreen(gameInput));
+
+		overlay = new Overlay(batch);
+		setScreen(new StartScreen(gameInput, overlay));
+        Gdx.graphics.setTitle("Track Shooter");
 	}
 
 	@Override
@@ -43,14 +54,22 @@ public class GameMain extends Game {
 		if(screen instanceof GameScreen){
 			GameScreen game = (GameScreen) screen;
 			if(game.isGameCompletelyOver()){
-				setScreen(new StartScreen(gameInput));
+				setScreen(new StartScreen(gameInput, overlay));
 			}
 		} else if(screen instanceof StartScreen){
 			StartScreen startScreen = (StartScreen) screen;
 			if(startScreen.isReadyToStart()){
-				setScreen(new GameScreen(gameInput));
+				setScreen(new GameScreen(gameInput, overlay, batch));
 			}
 		}
-		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
+//		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		overlay.dispose();
+		batch.dispose();
+		System.out.println("dispose() called on GameMain!");
 	}
 }

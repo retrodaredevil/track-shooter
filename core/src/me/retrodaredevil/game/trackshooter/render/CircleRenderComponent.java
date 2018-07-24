@@ -8,14 +8,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class CircleRenderComponent implements RenderComponent {
 
-	private float radius;
-	private Vector2 center;
+	private final float radius;
+	private final Vector2 center = new Vector2();
 	private final ShapeRenderer renderer;
-	private int segments;
+	private final int segments;
 
 	public CircleRenderComponent(float radius, Vector2 center, Color color, int segments){
 		this.radius = radius;
-		this.center = center;
+		this.center.set(center);
 		this.segments = segments;
 		renderer = new ShapeRenderer();
 		renderer.setColor(color);

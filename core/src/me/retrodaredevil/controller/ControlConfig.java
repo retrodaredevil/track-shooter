@@ -9,12 +9,12 @@ public class ControlConfig {
 	/** Should be used for things like D-pads and POVs */
 	public double analogDigitalValueDeadzone = buttonDownDeadzone;
 	/** Should be used for ANALOG AxisTypes */
-	public double analogDeadzone = .001;
+	public double analogDeadzone = .005;
 	/** Should be used for FULL_ANALOG AxisTypes */
-	public double fullAnalogDeadzone = .001;
+	public double fullAnalogDeadzone = .005;
 	/** Usually not relevant (since it is usually only comparing -1, 0 or 1).
 	 * Used for checking if in deadzone and should not be used for anything analog */
-	public double digitalDeadzone = .001;
+	public double digitalDeadzone = .005;
 	/** Usually not relevant */
 	public double fullDigitalDeadzone = digitalDeadzone;
 

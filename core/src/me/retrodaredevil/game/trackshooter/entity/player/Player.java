@@ -180,6 +180,7 @@ public class Player extends SimpleEntity {
 		}
 		shotsList.add(bullets);
 		Resources.BULLET_SOUND.play(1, 4, 0);
+		getScoreObject().onShot(bullets.size());
 		return bullets;
 	}
 

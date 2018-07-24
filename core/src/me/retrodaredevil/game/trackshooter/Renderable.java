@@ -20,6 +20,8 @@ public interface Renderable {
 	 * <br/>
 	 * Also note that you are allowed to call this twice as this should only disposeRenderComponent of the render component
 	 * if it has any.
+	 * <br/>
+	 * HOWEVER, If this for whatever reason implements Disposable, then calling dispose() should call this method as well.
 	 */
 	void disposeRenderComponent();
 }
