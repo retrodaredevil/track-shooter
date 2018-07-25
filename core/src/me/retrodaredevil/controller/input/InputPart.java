@@ -4,7 +4,7 @@ import me.retrodaredevil.controller.ControllerPart;
 
 public interface InputPart extends ControllerPart {
 	/**
-	 *
+	 * NOTE: Normally this stays constant but it is possible for it to change.
 	 * @return returns an AxisType object with info on what getPosition() is allowed to return
 	 */
 	AxisType getAxisType();
@@ -27,6 +27,9 @@ public interface InputPart extends ControllerPart {
 
 	/**
 	 * Can be used for all AxisTypes.
+     * <br/><br/>
+     * If this axis type is "full" then this will return true when the absolute values moves enough
+     * in either direction
 	 * @return true if this input part is currently down
 	 */
 	boolean isDown();

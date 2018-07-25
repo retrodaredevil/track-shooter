@@ -1,15 +1,13 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 
 public class StartScreen extends ScreenAdapter{
 	private final GameInput gameInput;
@@ -21,9 +19,7 @@ public class StartScreen extends ScreenAdapter{
 	}
 	@Override
 	public void render(float delta) {
-		Color backgroundColor = Constants.BACKGROUND_COLOR;
-		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
 		if(gameInput.startButton().isPressed()){
 			start = true;
 		}
@@ -37,6 +33,7 @@ public class StartScreen extends ScreenAdapter{
 			}
 			stage.draw();
 		}
+//		Gdx.app.debug("angle", "" + gameInput.mainJoystick().getAngle());
 	}
 
 	@Override

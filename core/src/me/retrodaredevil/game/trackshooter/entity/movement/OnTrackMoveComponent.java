@@ -70,7 +70,17 @@ public class OnTrackMoveComponent extends SimpleMoveComponent implements Acceler
 		rotationalVelocityHandler.setDesiredRotationalVelocity(desiredRotationalVelocity, rotationalAccelerationMultiplier, maxRotationalVelocity);
 	}
 
-	@Override
+    @Override
+    public void setRotationalVelocity(float rotationalVelocity, boolean resetOtherFields) {
+        rotationalVelocityHandler.setRotationalVelocity(rotationalVelocity, resetOtherFields);
+    }
+
+    @Override
+    public void setRotationalVelocity(float rotationalVelocity) {
+	    rotationalVelocityHandler.setRotationalVelocity(rotationalVelocity);
+    }
+
+    @Override
 	public float getRotationalVelocity() {
 		return rotationalVelocityHandler.getVelocity();
 	}

@@ -3,12 +3,12 @@ package me.retrodaredevil.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleControllerManager implements ControllerManager {
+public class DefaultControllerManager implements ControllerManager {
 
 	private ControlConfig config;
 	private List<ControllerInput> controllers = new ArrayList<>();
 
-	public SimpleControllerManager(){
+	public DefaultControllerManager(){
 		config = new ControlConfig();
 	}
 
@@ -20,7 +20,7 @@ public class SimpleControllerManager implements ControllerManager {
 	public void update(){
 		for(ControllerInput controller : controllers){
 			if(controller.getParent() != null){
-				throw new IllegalStateException("The controllers handled by SimpleControllerManager cannot have parents");
+				throw new IllegalStateException("The controllers handled by DefaultControllerManager cannot have parents");
 			}
 			controller.update(config);
 		}

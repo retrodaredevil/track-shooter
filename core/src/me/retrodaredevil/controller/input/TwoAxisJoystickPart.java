@@ -7,11 +7,6 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	private InputPart xAxis;
 	private InputPart yAxis;
 
-//	public TwoAxisJoystickPart(AutoCachingInputPart x, AutoCachingInputPart y, JoystickType type){
-//		super(type);
-//		this.xAxis = x;
-//		this.yAxis = y;
-//	}
 
 	/**
 	 * @param x x axis where left is negative and positive is right
@@ -24,15 +19,8 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 		this.yAxis = y;
 		xAxis.setParent(this);
 		yAxis.setParent(this);
-		System.out.println("length: " + getChildren().size());
-	}
-	public TwoAxisJoystickPart(InputPart x, InputPart y){
-		this(x, y, true);
 	}
 	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y, boolean shouldScale){
-//		if (!x.getAxisType().equals(y.getAxisType())) {
-//			throw new IllegalArgumentException("Each passed argument must have the same AxisType.");
-//		}
 		if(!x.getAxisType().isFull() || !y.getAxisType().isFull()){
 			throw new IllegalArgumentException("Each axis must have a full range.");
 		}
@@ -44,7 +32,7 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 				shouldScale, x.getAxisType().shouldUseDelta() || y.getAxisType().shouldUseDelta());
 	}
 	public static TwoAxisJoystickPart createFromFour(InputPart up, InputPart down, InputPart left, InputPart right){
-		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down));
+		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down), true);
 	}
 
 	@Override

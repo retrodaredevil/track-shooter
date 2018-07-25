@@ -28,8 +28,10 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 	private final ControllerRumble rumble;
 
 	public StandardUSBControllerInput(Controller controller){
+	    System.out.println(controller.getName());
 		this.controller = controller;
 		final AxisType FULL_ANALOG = new AxisType(true, true);
+        final AxisType FULL_DIGITAL = new AxisType(true, false);
 		final AxisType DIGITAL = new AxisType(false, false);
 
 		InputPart leftXAxis = new ControllerInputPart(controller, FULL_ANALOG, 0);
@@ -38,8 +40,8 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 		InputPart rightXAxis = new ControllerInputPart(controller, FULL_ANALOG, 2);
 		InputPart rightYAxis = new ControllerInputPart(controller, FULL_ANALOG, 3, true);
 
-		InputPart dXAxis = new ControllerInputPart(controller, FULL_ANALOG, 4);
-		InputPart dYAxis = new ControllerInputPart(controller, FULL_ANALOG, 5, true);
+		InputPart dXAxis = new ControllerInputPart(controller, FULL_DIGITAL, 4);
+		InputPart dYAxis = new ControllerInputPart(controller, FULL_DIGITAL, 5, true);
 
 		start = new ControllerInputPart(controller, DIGITAL, 9);
 		select = new ControllerInputPart(controller, DIGITAL, 8);
@@ -58,9 +60,9 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 		leftStick = new ControllerInputPart(controller, DIGITAL, 10);
 		rightStick = new ControllerInputPart(controller, DIGITAL, 11);
 
-		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis);
-		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
-		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
+		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
+		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis, true);
+		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis, true);
 
 		this.rumble = new GdxControllerRumble(controller);
 

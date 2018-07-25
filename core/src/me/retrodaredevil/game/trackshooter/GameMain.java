@@ -4,13 +4,12 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.SimpleControllerManager;
+import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
@@ -28,7 +27,7 @@ public class GameMain extends Game {
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
-		controllerManager = new SimpleControllerManager();
+		controllerManager = new DefaultControllerManager();
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
 
 		if(Controllers.getControllers().size > 0){
@@ -50,7 +49,7 @@ public class GameMain extends Game {
 		controllerManager.update();
 
 		super.render();
-		Screen screen = getScreen();
+		Screen screen = getScreen(); // TODO create our own screen interface instead of this ugly mess
 		if(screen instanceof GameScreen){
 			GameScreen game = (GameScreen) screen;
 			if(game.isGameCompletelyOver()){

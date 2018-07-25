@@ -60,7 +60,7 @@ public interface ControllerPart {
 
 
 	/**
-	 * If this part somehow represents a button or axis (like AutoCachingInputPart), then this should return true if the button
+	 * If this part somehow represents a button or axis (like InputPart), then this should return true if the button
 	 * exists on the controller, false otherwise.
 	 *
 	 * @return true if this ControllerPart will give accurate values and if it is connected.

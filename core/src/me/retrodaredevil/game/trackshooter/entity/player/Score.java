@@ -17,6 +17,14 @@ public interface Score {
 	void onKill(Entity killed, Entity killerSource, int points);
 
 	/**
+     * NOTE: Unlike onKill(), this is going to be called from projectiles. HOWEVER, this is not enforced but is recommended. <br/>
+     * Should be called whenever a player's bullet hits an entity. Not necessarily if it kills it.
+     * @param hitEntity The entity (usually an enemy) that the player hit
+     * @param playerProjectile The projectile where getShooter() is the player. (This is normally a Bullet object)
+     */
+	void onBulletHit(Entity hitEntity, Entity playerProjectile);
+
+	/**
 	 * Should be called whenever the player
 	 * @param numberOfShots The number of shots shot out, usually 1
 	 */
@@ -26,6 +34,8 @@ public interface Score {
 	int getNumberShots();
 	/** @return The total number of shots where a triple shot counts as 3, double counts as 2 etc.*/
 	int getTotalNumberShots();
+
+	int getNumberShotsHit();
 
 	/**
 	 * Called when the player dies to an enemy or an enemy bullet

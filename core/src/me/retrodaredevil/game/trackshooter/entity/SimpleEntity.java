@@ -39,8 +39,8 @@ public class SimpleEntity implements Entity {
 	private final Rectangle hitbox; // also stores location data but must retrieve using HitboxUtil
 	private float rotation = 0; // in degrees
 
-	private List<Effect> effects = new ArrayList<>();
-	private List<Item> items = new ArrayList<>();
+	private final List<Effect> effects = new ArrayList<>();
+	private final List<Item> items = new ArrayList<>();
 
 	protected SimpleEntity(){
 		hitbox = HitboxUtil.createHitbox(0, 0, 1, 1);

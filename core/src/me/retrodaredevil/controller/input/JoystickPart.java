@@ -15,6 +15,10 @@ public interface JoystickPart extends ControllerPart {
 	 */
 	InputPart getYAxis();
 
+    /**
+     * NOTE: Normally, this stays constant but it is possible for it to change.
+     * @return The joystick type (contains information on what the x and y values might look like and whether or not they need to be scaled when diagonal)
+     */
 	JoystickType getJoystickType();
 
 	double getAngle();

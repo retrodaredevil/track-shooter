@@ -65,4 +65,19 @@ public class VelocityHandler implements RotationalVelocitySetter {
 		this.accelerationMultiplier = accelerationMultiplier;
 		this.maxVelocity = maxVelocity;
 	}
+
+    @Override
+    public void setRotationalVelocity(float rotationalVelocity, boolean resetOtherFields) {
+        if(resetOtherFields){
+            accelerationMultiplier = 1;
+            maxVelocity = Math.abs(rotationalVelocity);
+        }
+        desiredVelocity = rotationalVelocity;
+        velocity = rotationalVelocity;
+    }
+
+    @Override
+    public void setRotationalVelocity(float rotationalVelocity) {
+        setRotationalVelocity(rotationalVelocity, true);
+    }
 }

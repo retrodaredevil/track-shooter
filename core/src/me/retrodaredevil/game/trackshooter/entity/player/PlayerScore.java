@@ -4,16 +4,26 @@ import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 
 public class PlayerScore implements Score {
-	private int score = 0;
-	private int lives = 3;
-	private final Player player;
+    private final int startingLives;
+    private final int[] extraLivesAt;
+    private final int extraLifeEvery;
+    private final Player player;
 
+	private int score = 0;
+	private int deaths = 0;
 	private int numberShots = 0;
 	private int totalNumberShots = 0;
+	private int shotsHit = 0;
 
-	public PlayerScore(Player player){
+	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery){
 		this.player = player;
+		this.startingLives = startingLives;
+		this.extraLivesAt = extraLivesAt;
+		this.extraLifeEvery = extraLifeEvery;
 	}
+	public PlayerScore(Player player){
+	    this(player, 3, new int[]{ 15000 }, 30000);
+    }
 
 	@Override
 	public int getScore() {
@@ -22,6 +32,13 @@ public class PlayerScore implements Score {
 
 	@Override
 	public int getLives() {
+	    int lives = startingLives - deaths;
+	    for(int extraLifeAt : extraLivesAt){
+	        if(score > extraLifeAt){
+	            lives++;
+            }
+        }
+        lives += (score / extraLifeEvery); // rounds down because integer division
 		return lives;
 	}
 
@@ -33,8 +50,13 @@ public class PlayerScore implements Score {
 
 	@Override
 	public void onDeath(Entity other) {
-		lives--;
+	    deaths++;
 	}
+
+    @Override
+    public void onBulletHit(Entity hitEntity, Entity playerProjectile) {
+	    shotsHit++;
+    }
 
     @Override
     public void onShot(int numberOfShots) {
@@ -53,5 +75,10 @@ public class PlayerScore implements Score {
     @Override
     public int getTotalNumberShots() {
         return totalNumberShots;
+    }
+
+    @Override
+    public int getNumberShotsHit() {
+	    return shotsHit;
     }
 }

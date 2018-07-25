@@ -1,5 +1,7 @@
 package me.retrodaredevil.controller.input;
 
+import java.util.Arrays;
+
 public class TwoWayInput extends AutoCachingInputPart {
 	private final InputPart part1;
 	private final InputPart part2;
@@ -8,9 +10,10 @@ public class TwoWayInput extends AutoCachingInputPart {
 	 * If either of the parts have a parent, it will be overridden.
 	 * <br/>
 	 * the getPosition() will work like part1.getPosition() - part2.getPosition()
-	 *
-	 * @param part1 The AutoCachingInputPart that will be the positive value
-	 * @param part2 The AutoCachingInputPart that will be the negative value
+	 * <br/><br/>
+     * For each part1 and part2, their parent will only be set to this if they don't already have a parent. (Uses the addChildren() method)
+	 * @param part1 The InputPart that will be the positive value
+	 * @param part2 The InputPart that will be the negative value
 	 */
 	public TwoWayInput(InputPart part1, InputPart part2){
 		super(new AxisType(true,
@@ -23,8 +26,9 @@ public class TwoWayInput extends AutoCachingInputPart {
 		}
 		this.part1 = part1;
 		this.part2 = part2;
-		part1.setParent(this);
-		part2.setParent(this);
+//		part1.setParent(this);
+//		part2.setParent(this);
+        addChildren(Arrays.asList(part1, part2), false, true);
 	}
 	public InputPart getPart1(){
 		return part1;

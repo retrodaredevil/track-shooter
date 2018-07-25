@@ -2,19 +2,10 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.controllers.Controllers;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.SimpleControllerManager;
-import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
-import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.player.Score;
@@ -88,6 +79,9 @@ public class GameScreen extends ScreenAdapter {
 					Gdx.app.log("final score", "" + score.getScore());
 					Gdx.app.log("Shots", "" + score.getNumberShots());
                     Gdx.app.log("Total Shots", "" + score.getTotalNumberShots());
+                    Gdx.app.log("Hits", "" + score.getNumberShotsHit());
+                    float hitMiss = Math.round(score.getNumberShotsHit() * 1000 / score.getNumberShots()) / 10;
+                    Gdx.app.log("hit/miss ratio", hitMiss + "%");
 				}
 			}
 			return;
@@ -108,9 +102,7 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doRender(float delta){
-		Color backgroundColor = Constants.BACKGROUND_COLOR;
-		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
 
 		RenderComponent worldRender = world.getRenderComponent();
 		if(worldRender != null){

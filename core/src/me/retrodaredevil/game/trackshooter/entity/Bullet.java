@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -68,6 +69,12 @@ public class Bullet extends SimpleEntity implements Entity {
 				|| identity == CollisionIdentity.FRIENDLY_PROJECTILE || identity == CollisionIdentity.POWERUP){
 			throw new CannotHitException(other, this);
 		}
+		if(shooter != null){
+		    if(shooter instanceof Player){
+		        Player player = (Player) shooter;
+		        player.getScoreObject().onBulletHit(other, this);
+            }
+        }
 		this.hitEntity = other;
 	}
 

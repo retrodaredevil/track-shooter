@@ -25,7 +25,7 @@ public abstract class AutoCachingInputPart extends SimpleInputPart{
 	}
 	@Override
 	public boolean isDown() {
-		return getPosition() > this.config.buttonDownDeadzone;
+		return Math.abs(getPosition()) > this.config.buttonDownDeadzone;
 	}
 
 	@Override

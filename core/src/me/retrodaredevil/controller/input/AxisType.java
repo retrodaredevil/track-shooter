@@ -95,7 +95,7 @@ public final class AxisType{
 				shouldUseDelta = part.getAxisType().shouldUseDelta();
 			} else {
 				if(shouldUseDelta != part.getAxisType().shouldUseDelta()){
-					throw new IllegalArgumentException("Each passed AutoCachingInputPart in parts should have the same value for shouldUseDelta()");
+					throw new IllegalArgumentException("Each passed InputPart in parts should have the same value for shouldUseDelta()");
 				}
 			}
 		}

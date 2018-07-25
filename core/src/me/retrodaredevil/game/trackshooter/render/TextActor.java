@@ -8,6 +8,10 @@ import com.badlogic.gdx.utils.Pools;
 
 import java.util.Objects;
 
+/**
+ * @deprecated Works perfectly, except it is recommended to use a Table and Labels instead of this
+ */
+@Deprecated
 public class TextActor extends Actor {
 	private BitmapFont font;
 	private String text;

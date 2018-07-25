@@ -7,9 +7,10 @@ import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class ControllerInputPart extends AutoCachingInputPart {
-	private Controller controller;
-	private int code;
-	private boolean inverted;
+	private final Controller controller;
+	private final int code;
+    private final boolean inverted;
+	private final boolean isAxis;
 
 	/**
 	 *
@@ -17,24 +18,29 @@ public class ControllerInputPart extends AutoCachingInputPart {
 	 * @param type The AxisType
 	 * @param code The code for the button or axis
 	 * @param inverted true if this is inverted. Should be true for most y axises to when up, it is positive
+     * @param isAxis If true, the passed code is a code to be used with controller.getAxis(), otherwise, controller.getButton() will be used
 	 */
-	public ControllerInputPart(Controller controller, AxisType type, int code, boolean inverted){
+	public ControllerInputPart(Controller controller, AxisType type, int code, boolean inverted, boolean isAxis){
 		super(type);
 		this.controller = controller;
 		this.code = code;
-		this.inverted = inverted;
+        this.inverted = inverted;
+		this.isAxis = isAxis;
 
-		if((type.isFull() && !type.isAnalog()) || type.isRangeOver()){
+		if(type.isRangeOver()){
 			throw new UnsupportedOperationException("Controller Single Input does not support AxisType: " + type);
 		}
 	}
-	public ControllerInputPart(Controller controller, AxisType type, int code){
-		this(controller, type, code, false);
+	public ControllerInputPart(Controller controller, AxisType type, int code, boolean inverted){
+		this(controller, type, code, inverted,type.isAnalog() || type.isFull());
 	}
+	public ControllerInputPart(Controller controller, AxisType type, int code){
+	    this(controller, type, code, false);
+    }
 	@Override
 	protected double calculatePosition() {
 		AxisType type = getAxisType();
-		if(type.isAnalog()){
+		if(isAxis){
 			double value = controller.getAxis(this.code);
 			double mult = inverted ? -1 : 1;
 			value *= mult;

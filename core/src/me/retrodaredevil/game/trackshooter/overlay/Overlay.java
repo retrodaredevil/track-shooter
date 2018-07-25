@@ -10,6 +10,8 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 
 public class Overlay implements Renderable, Disposable {
+	// quick and dirty high score implementation // this only updates when an optional method is called so it's even worse
+	private static int highScore = 10000; // TODO git rid of this terrible static variable
 
     private final Stage stage;
 	private final RenderComponent component = new OverlayRenderer(this);
@@ -26,10 +28,10 @@ public class Overlay implements Renderable, Disposable {
 	}
 	public int getHighScore(){
 		int score = getCurrentScore();
-		if(score > 10000){
-			return score;
+		if(score > highScore){
+			highScore = score;
 		}
-		return 10000;
+		return highScore;
 	}
 	public void setPlayer(Player player){
 	    this.player = player;

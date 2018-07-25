@@ -107,23 +107,15 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	 * <p>
 	 * How this works: Takes the cosine of the smallest distance to the closest 45 degree angle. Ex: 45, 135, etc
 	 *
-	 * @param x The x value of the joystick
-	 * @param y The y value of the joystick
-	 * @param angleDegrees If the atan2 of y, x or atan of y/x has already been calculated, this will use that value
-	 *                     instead of calculating it essentially increasing performance
+	 * @param angleDegrees The angle of the joystick in degrees
 	 * @return The number you should scale (multiply) x and y by (or the magnitude by)
 	 */
-	public static double getScaled(double x, double y, Double angleDegrees){
-		if(x == 0 && y == 0){
-			return 0;
-		}
+	public static double getScaled(final double angleDegrees){
+	    // another option is 1/(cos(angle)+sin(angle)) from: https://www.reddit.com/r/gamedev/comments/4urddr/how_to_deal_with_joysticks_that_map_out_squares/d5srwz4
+        double angle = angleDegrees;
+//        System.out.println(angle);
 
-		double angle; // in degrees
-		if(angleDegrees == null){
-			angle = toDegrees(atan(y / x));
-		} else {
-			angle = angleDegrees % 90;
-		}
+        angle %= 90;
 		// angle is between -90 and 90
 		if(angle < 0){
 			angle = -angle;

@@ -40,7 +40,7 @@ public class PlayerController implements EntityController{
 				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
 				float joyScale = movementJoy.getJoystickType().shouldScale()
-						? (float) SimpleJoystickPart.getScaled(movementJoy.getX(), movementJoy.getY(), movementJoy.getAngle())
+						? (float) SimpleJoystickPart.getScaled(movementJoy.getAngle())
 						: 1;
 
 				float actualMagnitude = (float) (joyScale * movementJoy.getMagnitude());
@@ -71,13 +71,14 @@ public class PlayerController implements EntityController{
 						position = Math.signum(position);
 					}
 				}
-				System.out.println(position); // .004
+//				System.out.println(position); // .004
 				float desired = (float) (ACCEL_ROTATE_PER_SECOND * position);
 				if (rotateAxis.isDeadzone()) {
 					desired = 0;
 				}
 //				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
-                player.setRotation(player.getRotation() + desired * delta);
+//              player.setRotation(player.getRotation() + desired * delta);
+				trackMove.setRotationalVelocity(desired);
 			} else { // probably a mouse
 //				System.out.println(position);
 				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
