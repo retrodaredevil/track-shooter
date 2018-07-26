@@ -22,7 +22,7 @@ public class PlayerScore implements Score {
 		this.extraLifeEvery = extraLifeEvery;
 	}
 	public PlayerScore(Player player){
-	    this(player, 3, new int[]{ 15000 }, 30000);
+	    this(player, 3, new int[]{ 10000 }, 30000);
     }
 
 	@Override

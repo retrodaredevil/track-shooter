@@ -3,6 +3,8 @@ package me.retrodaredevil.game.trackshooter.overlay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -40,15 +42,16 @@ public class OverlayRenderer implements RenderComponent {
         currentScoreTable.add(new Label("1UP", new Label.LabelStyle(font, textColor)));
 		currentScoreTable.row();
 		scoreLabel = new Label("", new Label.LabelStyle(font, scoreColor));
-		currentScoreTable.add(scoreLabel);
+		currentScoreTable.add(scoreLabel).padTop(-10);
 
 		highScoreTable = new Table();
+//		highScoreTable.setDebug(true);
 		highScoreTable.setFillParent(true);
 		highScoreTable.center().top();
-		highScoreTable.add(new Label("HIGH SCORE", new Label.LabelStyle(font, textColor)));
+		highScoreTable.add(new Label(" HIGH SCORE", new Label.LabelStyle(font, textColor)));
 		highScoreTable.row();
 		highScoreLabel = new Label("", new Label.LabelStyle(font, scoreColor));
-		highScoreTable.add(highScoreLabel);
+		highScoreTable.add(highScoreLabel).padTop(-10);
 
 //
 //		highScoreWordsText = new TextActor(textFont, "HIGH SCORE ");
@@ -63,10 +66,26 @@ public class OverlayRenderer implements RenderComponent {
 		if(highScoreTable.getStage() != stage){
 			stage.addActor(highScoreTable);
 		}
+		updateLabelsOf(currentScoreTable, stage);
+		updateLabelsOf(highScoreTable, stage);
 
 		scoreLabel.setText(getScoreText(overlay.getCurrentScore()));
 		highScoreLabel.setText(getScoreText(overlay.getHighScore()));
 
+	}
+	private static void updateLabelsOf(Group group, Stage stage){
+		for(Actor actor : group.getChildren()){
+			if(actor instanceof Label){
+				Label label = (Label) actor;
+				float scale = Math.min(stage.getWidth(), stage.getHeight()) / 640;
+				if(label.getFontScaleX() != scale || label.getFontScaleY() != scale) {
+					label.setFontScale(scale);
+				}
+			}
+			if(actor instanceof Group) {
+				updateLabelsOf((Group) actor, stage);
+			}
+		}
 	}
 	private static String getScoreText(int scoreValue){
 		String scoreString = "" + scoreValue;
