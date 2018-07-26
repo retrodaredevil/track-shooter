@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.entity.enemies;
+package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;

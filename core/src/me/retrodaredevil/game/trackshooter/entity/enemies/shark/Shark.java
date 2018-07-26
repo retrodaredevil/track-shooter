@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.entity.enemies;
+package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;

@@ -2,9 +2,10 @@ package me.retrodaredevil.game.trackshooter.level.functions;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.entity.enemies.SnakeAIController;
-import me.retrodaredevil.game.trackshooter.entity.enemies.SnakePart;
+
+import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakeAIController;
+import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakeDifficulty;
+import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
@@ -30,20 +31,20 @@ public class SnakeFunction implements LevelFunction {
 		if(time < 10000){
 			return false;
 		}
-		SnakeAIController.Difficulty difficulty = SnakeAIController.Difficulty.EASY;
+		SnakeDifficulty difficulty = SnakeDifficulty.EASY;
 
 		if(level.getNumber() >= 2){
-			difficulty = SnakeAIController.Difficulty.NORMAL;
+			difficulty = SnakeDifficulty.NORMAL;
 			if(level.getNumber() >= 6){
-				difficulty = SnakeAIController.Difficulty.EXTREME;
+				difficulty = SnakeDifficulty.EXTREME;
 			} else if(level.getNumber() >= 4){
-				difficulty = SnakeAIController.Difficulty.HARD;
+				difficulty = SnakeDifficulty.HARD;
 			}
 		}
 		createSnake(world, difficulty);
 		return true;
 	}
-	protected void createSnake(World world, SnakeAIController.Difficulty difficulty){
+	protected void createSnake(World world, SnakeDifficulty difficulty){
 		Level level = world.getLevel();
 
 		Rectangle bounds = world.getBounds();
@@ -71,14 +72,14 @@ public class SnakeFunction implements LevelFunction {
 			amount = 22;
 		}
 
-		List<SnakePart> parts = SnakePart.createSnake(amount);
+		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
 //			part.setEntityController(new SnakeAIController(part, target));
 			level.addEntity(world, part);
 		}
 		SnakePart head = parts.get(0);
-		head.setEntityController(new SnakeAIController(head, target, difficulty));
+		head.setEntityController(new SnakeAIController(head, target));
 	}
 
 	@Override

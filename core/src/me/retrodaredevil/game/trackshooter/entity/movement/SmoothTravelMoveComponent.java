@@ -11,13 +11,13 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
 	private static final Vector2 temp = new Vector2();
 
-	private Entity entity;
+	private final Entity entity;
 	private final Vector2 target = new Vector2();
 
 	private float speed;
 	private float rotationalSpeedMultiplier;
 
-	private float rotationalChange;
+	private float rotationalChange; // just information calculated, not actually used for anything super meaningful
 
 	/**
 	 *
@@ -79,7 +79,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 	}
 
 	/**
-	 *
+	 * As of right now, this method is only used on the rendering side of things.
 	 * @return The amount this needs to change its angle by to get to its desired angle (in degrees)
 	 */
 	public float getRotationalChange(){

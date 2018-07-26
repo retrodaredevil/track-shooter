@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.entity.enemies;
+package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.effect.TimedSpeedEffect;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
-import me.retrodaredevil.game.trackshooter.entity.movement.SnakeFollowMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
@@ -19,9 +19,26 @@ import me.retrodaredevil.game.trackshooter.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A SnakePart is an entity that is able to "follow" another SnakePart. If this SnakePart isn't following
+ * another SnakePart, its behaviour will be different and its MoveComponent should be a SmoothTravelMoveComponent.
+ * <br/><br/>
+ * The SmoothTravelMoveComponent, by default does nothing and its travel speed and rotational speed are set
+ * to 0. It is the job of the EntityController to change these values.
+ * <br/><br/>
+ * However, if mode of the Level is not
+ * LevelMode.NORMAL, it is likely the the target has been set to (0, 0) (done automatically.) In this case
+ * you should not change the target unless you are making sure it is (0, 0) since this SnakePart would need
+ * to reset to its starting position.
+ */
 public class SnakePart extends SimpleEntity implements Enemy {
 	private static final float HITBOX_SIZE_RATIO = .625f;
 	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
+
+	private final SnakeDifficulty difficulty;
+	private final SmoothTravelMoveComponent returnToStart;
+	private final ImageRenderComponent renderComponent;
+	private SnakeTargetRotationMoveComponent targetRotationCache = null;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
@@ -30,12 +47,11 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 	private boolean hit = false;
 
-	private final SmoothTravelMoveComponent smoothMove; // used when isHead() == true
-	private final ImageRenderComponent renderComponent;
 
-	public SnakePart(){
-		this.smoothMove = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0);
-		// ^ some are 0 because the EntityController that the caller will attach to this will change the values
+
+	public SnakePart(SnakeDifficulty difficulty){
+		this.difficulty = difficulty;
+		this.returnToStart = new SmoothTravelMoveComponent(this, Vector2.Zero, SnakeAIController.DEFAULT_SPEED, SnakeAIController.DEFAULT_TURN_MULTIPLIER);
 		this.renderComponent = new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, 0, 0); // width and height will be changed later
 		setRenderComponent(renderComponent);
 		setSize(.4f, true);
@@ -46,11 +62,29 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 		this.follow(null);
 	}
+
+	/**
+	 * NOTE: This is allowed to be called as many times as you want since it will be cached and is
+	 * recommended to do so. (from an EntityController perspective)
+	 * @param target The target to start targeting
+	 */
+	public void switchToTargetRotation(Entity target){
+		if(!isHead()){
+			throw new UnsupportedOperationException("Only the head can use this method.");
+		}
+		if(targetRotationCache == null || targetRotationCache.getEntityTarget() != target){
+			targetRotationCache = new SnakeTargetRotationMoveComponent(this, target);
+			updateSpeedAndRotation(null, targetRotationCache);
+		}
+		setMoveComponent(targetRotationCache);
+	}
+
+
 	public void setSize(float size, boolean applyToAll){
 		if(followDistance == size){
+			//  && (inFront == null || inFront.followDistance == size) && (behind == null || behind.followDistance == size)
 			return;
 		}
-//		setHitboxSize(size / 2.0f, size / 2.0f);
 		final float hitboxSize = size * HITBOX_SIZE_RATIO;
 		setHitboxSize(hitboxSize, hitboxSize);
 		renderComponent.setSize(size, size);
@@ -72,7 +106,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	@Override
 	public void addEffect(Effect effect) {
 		if(!isHead()) {
-			throw new UnsupportedOperationException("Cannot add an effect to body of snake. Must be head.");
+			throw new UnsupportedOperationException("Cannot add an effect to body of snake. Must be head. If intended, remove these if and throw statements.");
 		}
 		super.addEffect(effect);
 	}
@@ -83,12 +117,12 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	 * @param amount The amount of SnakeParts there should be
 	 * @return A list of SnakeParts with a length of amount
 	 */
-	public static List<SnakePart> createSnake(int amount){
+	public static List<SnakePart> createSnake(int amount, SnakeDifficulty difficulty){
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
 		for(int i = 0; i < amount; i++){
-			SnakePart part = new SnakePart();
+			SnakePart part = new SnakePart(difficulty);
 			part.follow(last);
 			r.add(part);
 
@@ -121,6 +155,9 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		return head;
 	}
 
+	public SnakeDifficulty getDifficulty() {
+		return difficulty;
+	}
 	/**
 	 * If snakePart == null, this will become the head of the snake
 	 * @param snakePart The SnakePart we want to follow (in front of us)
@@ -135,7 +172,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 //			if(state == null){
 //				state = new SnakeState();
 //			}
-			setMoveComponent(smoothMove);
+			setMoveComponent(returnToStart);
 			return;
 		}
 		if(inFront == snakePart){
@@ -166,6 +203,56 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 		behind = snakePart;
 		snakePart.follow(this); // this WON'T result in a stackoverflow because it should do nothing if this is already correct
+	}
+
+	@Override
+	public void update(float delta, World world) {
+		if(this.isHead()){
+			// ==== Calculate velocity and size ====
+			int numberParts = this.numberBehind() + 1; // add one because numberBehind() doesn't include head
+			updateSize(numberParts);
+			MoveComponent move = getMoveComponent();
+			if(move instanceof SmoothTravelMoveComponent){
+				updateSpeedAndRotation(numberParts, (SmoothTravelMoveComponent) move);
+			}
+
+		}
+		super.update(delta, world);
+	}
+	private void updateSize(Integer numberParts){
+		if(!this.isHead()){
+			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePart");
+		}
+		if(numberParts == null){
+			numberParts = this.numberBehind() + 1;
+		}
+		float size = .4f;
+		if(numberParts <= 10){
+			size = .4f - (numberParts - 10) * .04f;
+		}
+		setSize(size, true);
+	}
+	private void updateSpeedAndRotation(Integer numberParts, SmoothTravelMoveComponent smoothTravel){
+		if(!this.isHead()){
+			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePark");
+		}
+		if(numberParts == null){
+			numberParts = this.numberBehind() + 1;
+		}
+		float speed = SnakeAIController.DEFAULT_SPEED;
+		float rotMultiplier = SnakeAIController.DEFAULT_TURN_MULTIPLIER;
+		if (numberParts <= 10) {
+			if (difficulty.value >= SnakeDifficulty.NORMAL.value) {
+				if (difficulty.value >= SnakeDifficulty.HARD.value) {
+					speed = 15 - numberParts;
+				} else if (numberParts <= 5) {
+					speed = 5 + (5 - numberParts) * .5f;
+				}
+				rotMultiplier = 4.5f - (numberParts * .25f);
+			}
+		}
+		smoothTravel.setRotationalSpeedMultiplier(rotMultiplier);
+		smoothTravel.setVelocity(speed);
 	}
 
 	@Override
@@ -205,9 +292,8 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 	@Override
 	public void goToStart() {
-		if(isHead()){
-			setMoveComponent(smoothMove);
-			smoothMove.setTarget(Vector2.Zero);
+		if(isHead()) {
+			setMoveComponent(returnToStart);
 		}
 	}
 

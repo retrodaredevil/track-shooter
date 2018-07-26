@@ -176,9 +176,8 @@ public class SimpleEntity implements Entity {
 		if (moveComponent != null) {
 			moveComponent.update(delta, world);
 			if(moveComponent.isDone()){
-				MoveComponent next = moveComponent.getNextComponent();
 				moveComponent.end();
-				moveComponent = next;
+				moveComponent = moveComponent.getNextComponent();
 			}
 		}
 	}

@@ -2,14 +2,13 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.entity.enemies.Shark;
-import me.retrodaredevil.game.trackshooter.entity.enemies.SharkAIController;
+import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
+import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
-import me.retrodaredevil.game.trackshooter.level.functions.PowerupFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
 import me.retrodaredevil.game.trackshooter.world.Track;

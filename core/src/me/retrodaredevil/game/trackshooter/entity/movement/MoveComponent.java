@@ -22,10 +22,12 @@ public interface MoveComponent extends Updateable {
 	 * <p>
 	 * <p>
 	 * Instead use:
-	 * <p>
+	 * <br/>
 	 * firstMoveComponent.setNextMoveComponent(secondMoveComponent).setNextComponent(thirdMoveComponent);
-	 * <p>
+	 * <br/>
 	 * aMoveComponent = firstMoveComponent;
+	 * <p>
+	 * NOTE: This should and will be called after end() is called
 	 * @return Will return the next MoveComponent or null if there is no next MoveComponent
 	 */
 	MoveComponent getNextComponent();
@@ -44,7 +46,8 @@ public interface MoveComponent extends Updateable {
 	void end();
 
 	/**
-	 * Should return true whenever this MoveComponent is done
+	 * Should return true whenever this MoveComponent is done. If this returns true, it is likely
+	 * that end() will be called followed by getNextComponent(), however, that may not always be the case.. immediately.
 	 * @return true if the MoveComponent is done, false otherwise
 	 */
 	boolean isDone();

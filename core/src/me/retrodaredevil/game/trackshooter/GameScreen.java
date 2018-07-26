@@ -80,8 +80,14 @@ public class GameScreen extends ScreenAdapter {
 					Gdx.app.log("Shots", "" + score.getNumberShots());
                     Gdx.app.log("Total Shots", "" + score.getTotalNumberShots());
                     Gdx.app.log("Hits", "" + score.getNumberShotsHit());
-                    float hitMiss = Math.round(score.getNumberShotsHit() * 1000 / (score.getNumberShots() - score.getNumberShotsHit())) / 10;
-                    Gdx.app.log("hit/miss ratio", hitMiss + "%");
+                    int hits = score.getNumberShotsHit();
+                    int misses = (score.getTotalNumberShots() - score.getNumberShotsHit());
+                    if(misses > 0){
+						float hitMiss = Math.round(hits * 1000.0f / misses) / 10;
+						Gdx.app.log("hit/miss ratio", hitMiss + "%");
+					} else {
+						Gdx.app.log("hit/miss ratio", "undefined");
+					}
 				}
 			}
 			return;
