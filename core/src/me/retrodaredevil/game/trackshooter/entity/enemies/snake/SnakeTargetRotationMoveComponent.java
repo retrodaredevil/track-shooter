@@ -66,9 +66,9 @@ public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
 					MathUtils.sinDeg(angle) * MAX_AWAY
 			);
 			location.lerp(distantPoint, percent); // location is mutated
-			this.setTarget(location);
+			this.setTargetPosition(location);
 		} else {
-			this.setTarget(target.getLocation().add(
+			this.setTargetPosition(target.getLocation().add(
 					MathUtils.cosDeg(rotation) * IN_FRONT_DISTANCE,
 					MathUtils.sinDeg(rotation) * IN_FRONT_DISTANCE
 			));

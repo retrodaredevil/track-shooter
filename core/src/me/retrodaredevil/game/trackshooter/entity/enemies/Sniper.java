@@ -5,6 +5,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -25,8 +26,8 @@ public class Sniper extends SimpleEntity implements Enemy {
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
 
-		OnTrackMoveComponent moveComponent = new OnTrackMoveComponent(this);
-		moveComponent.setDistance(world.getTrack().getTotalDistance() / 2.0f);
+		OnTrackMoveComponent moveComponent = new TravelRotateVelocityOnTrackMoveComponent(this);
+		moveComponent.setDistanceOnTrack(world.getTrack().getTotalDistance() / 2.0f);
 		setMoveComponent(moveComponent);
 	}
 

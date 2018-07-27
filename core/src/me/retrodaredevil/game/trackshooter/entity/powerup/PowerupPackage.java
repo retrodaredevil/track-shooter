@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.entity.powerup;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -13,9 +14,9 @@ public abstract class PowerupPackage extends SimplePowerup {
 	public PowerupPackage(float velocity, float startingTrackDistance){
 		setHitboxSize(.6f, .6f);
 
-		OnTrackMoveComponent trackMove = new OnTrackMoveComponent(this);
-		trackMove.setDistance(startingTrackDistance);
-		trackMove.setVelocity(velocity);
+		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
+		trackMove.setDistanceOnTrack(startingTrackDistance);
+		trackMove.getTravelVelocitySetter().setVelocity(velocity);
 		setMoveComponent(trackMove);
 	}
 

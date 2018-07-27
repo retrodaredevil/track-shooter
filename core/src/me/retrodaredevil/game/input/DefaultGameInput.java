@@ -33,6 +33,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 	public DefaultGameInput(StandardControllerInput controller){
 		mainJoystick = controller.leftJoy();
+//		mainJoystick = controller.dPad();
 		rotateAxis = controller.rightJoy().getXAxis();
 		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper(), controller.rightTrigger(), controller.leftTrigger());
 //		fireButton = controller.leftBumper();

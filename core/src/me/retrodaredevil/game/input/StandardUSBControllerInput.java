@@ -30,37 +30,35 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 	public StandardUSBControllerInput(Controller controller){
 	    System.out.println(controller.getName());
 		this.controller = controller;
-		final AxisType FULL_ANALOG = new AxisType(true, true);
-        final AxisType FULL_DIGITAL = new AxisType(true, false);
-		final AxisType DIGITAL = new AxisType(false, false);
 
-		InputPart leftXAxis = new ControllerInputPart(controller, FULL_ANALOG, 0);
-		InputPart leftYAxis = new ControllerInputPart(controller, FULL_ANALOG, 1, true);
+		InputPart leftXAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 0);
+		InputPart leftYAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 1, true);
 
-		InputPart rightXAxis = new ControllerInputPart(controller, FULL_ANALOG, 2);
-		InputPart rightYAxis = new ControllerInputPart(controller, FULL_ANALOG, 3, true);
+		InputPart rightXAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 2);
+		InputPart rightYAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 3, true);
 
-		InputPart dXAxis = new ControllerInputPart(controller, FULL_DIGITAL, 4);
-		InputPart dYAxis = new ControllerInputPart(controller, FULL_DIGITAL, 5, true);
+//		InputPart dXAxis = new ControllerInputPart(controller, AxisType.FULL_DIGITAL, 4);
+//		InputPart dYAxis = new ControllerInputPart(controller, AxisType.FULL_DIGITAL, 5, true);
 
-		start = new ControllerInputPart(controller, DIGITAL, 9);
-		select = new ControllerInputPart(controller, DIGITAL, 8);
+		start = new ControllerInputPart(controller, AxisType.DIGITAL, 9);
+		select = new ControllerInputPart(controller, AxisType.DIGITAL, 8);
 
-		faceUp = new ControllerInputPart(controller, DIGITAL, 0);
-		faceDown = new ControllerInputPart(controller, DIGITAL, 2);
-		faceLeft = new ControllerInputPart(controller, DIGITAL, 3);
-		faceRight = new ControllerInputPart(controller, DIGITAL, 1);
+		faceUp = new ControllerInputPart(controller, AxisType.DIGITAL, 0);
+		faceDown = new ControllerInputPart(controller, AxisType.DIGITAL, 2);
+		faceLeft = new ControllerInputPart(controller, AxisType.DIGITAL, 3);
+		faceRight = new ControllerInputPart(controller, AxisType.DIGITAL, 1);
 
-		leftBumper = new ControllerInputPart(controller, DIGITAL, 4);
-		rightBumper = new ControllerInputPart(controller, DIGITAL, 5);
+		leftBumper = new ControllerInputPart(controller, AxisType.DIGITAL, 4);
+		rightBumper = new ControllerInputPart(controller, AxisType.DIGITAL, 5);
 
-		leftTrigger = new ControllerInputPart(controller, DIGITAL, 6);
-		rightTrigger = new ControllerInputPart(controller, DIGITAL, 7);
+		leftTrigger = new ControllerInputPart(controller, AxisType.DIGITAL, 6);
+		rightTrigger = new ControllerInputPart(controller, AxisType.DIGITAL, 7);
 
-		leftStick = new ControllerInputPart(controller, DIGITAL, 10);
-		rightStick = new ControllerInputPart(controller, DIGITAL, 11);
+		leftStick = new ControllerInputPart(controller, AxisType.DIGITAL, 10);
+		rightStick = new ControllerInputPart(controller, AxisType.DIGITAL, 11);
 
-		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
+//		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
+		dPad = new ControllerPovJoystick(controller, 0);
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis, true);
 		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis, true);
 
@@ -68,11 +66,11 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 
 
 		// the axises already have parents and we don't want to change them
-		addChildren(Arrays.asList(leftXAxis, leftYAxis, rightXAxis, rightYAxis,
+		addChildren(Arrays.asList(
 				start, select, faceUp, faceDown, faceLeft, faceRight,
 				leftBumper, rightBumper, leftTrigger, rightTrigger,
 				leftStick, rightStick,
-				dPad, leftJoy, rightJoy), false, true);
+				dPad, leftJoy, rightJoy, rumble), false, false);
 
 	}
 

@@ -1,21 +1,19 @@
 package me.retrodaredevil.controller.input;
 
 /**
- * Represents information used with an InputPart
+ * Represents information used with an InputPart.
+ * <p>
+ * There are some general constant AxisTypes such as FULL_ANALOG and these should never be compared with ==
  */
 public final class AxisType{
-//		/** Used when range of getValue() is -1 to 1. Normally stays at 0 when still. */
-//		FULL_ANALOG(true, true),
-//		/** Used when getValue() is -1, 0, or 1. Normally stays at 0 when still. */
-//		FULL_DIGITAL(true, false),
-//		/** Used when range of getValue() is 0 to 1 */
-//		ANALOG(false, true),
-//		/** Used when getValue() is 0 or 1 */
-//		DIGITAL(false, false),
-//		/** Rarely if ever used. Can be used for a mouse that goes one way*/
-//		RANGE_OVER_NO_DELTA(false, true, true, false),
-//		/** Usually used with something like a mouse*/
-//		FULL_RANGE_OVER_NO_DELTA(true, true, true, false);
+	/** Used when range of getValue() is -1 to 1. Normally stays at 0 when still. */
+	public static final AxisType FULL_ANALOG = new AxisType(true, true);
+	/** Used when getValue() is -1, 0, or 1. Normally stays at 0 when still. */
+	public static final AxisType FULL_DIGITAL = new AxisType(true, false);
+	/** Used when range of getValue() is 0 to 1 */
+	public static final AxisType ANALOG = new AxisType(false, true);
+	/** Used when getValue() is 0 or 1 */
+	public static final AxisType DIGITAL = new AxisType(false, false);
 
 	private final boolean full;
 	private final boolean analog;

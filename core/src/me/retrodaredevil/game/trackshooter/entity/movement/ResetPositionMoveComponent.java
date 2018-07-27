@@ -7,14 +7,20 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public abstract class ResetPositionMoveComponent extends NestedComponentMoveComponent {
 
-	protected Entity entity;
-	protected Vector2 startingPosition;
-	protected float startingRotation;
+	protected final Entity entity;
+	protected final Vector2 startingPosition = new Vector2();
+	protected final float startingRotation;
 
+	/**
+	 *
+	 * @param entity The entity that this is handling
+	 * @param startingPosition The position to return to
+	 * @param startingRotation The rotation to return to
+	 */
 	protected ResetPositionMoveComponent(Entity entity, Vector2 startingPosition, float startingRotation) {
 		super(null, true, true); // this is designed to be recycled
 		this.entity = entity;
-		this.startingPosition = startingPosition;
+		this.startingPosition.set(startingPosition);
 		this.startingRotation = startingRotation;
 	}
 

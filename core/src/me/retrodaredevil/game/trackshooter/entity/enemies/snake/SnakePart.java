@@ -64,6 +64,27 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	}
 
 	/**
+	 * Creates many SnakeParts to create a fully functioning snake but, however, it does not add the created SnakeParts
+	 * to a world and does not give them an EntityController
+	 * @param amount The amount of SnakeParts there should be
+	 * @return A list of SnakeParts with a length of amount
+	 */
+	public static List<SnakePart> createSnake(int amount, SnakeDifficulty difficulty){
+		List<SnakePart> r = new ArrayList<>();
+
+		SnakePart last = null;
+		for(int i = 0; i < amount; i++){
+			SnakePart part = new SnakePart(difficulty);
+			part.follow(last);
+			r.add(part);
+
+			last = part;
+		}
+
+		return r;
+	}
+
+	/**
 	 * NOTE: This is allowed to be called as many times as you want since it will be cached and is
 	 * recommended to do so. (from an EntityController perspective)
 	 * @param target The target to start targeting
@@ -111,34 +132,13 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		super.addEffect(effect);
 	}
 
-	/**
-	 * Creates many SnakeParts to create a fully functioning snake but, however, it does not add the created SnakeParts
-	 * to a world and does not give them an EntityController
-	 * @param amount The amount of SnakeParts there should be
-	 * @return A list of SnakeParts with a length of amount
-	 */
-	public static List<SnakePart> createSnake(int amount, SnakeDifficulty difficulty){
-		List<SnakePart> r = new ArrayList<>();
-
-		SnakePart last = null;
-		for(int i = 0; i < amount; i++){
-			SnakePart part = new SnakePart(difficulty);
-			part.follow(last);
-			r.add(part);
-
-			last = part;
-		}
-
-		return r;
-	}
-
 	/** @return true if this SnakePart is the head of the snake */
 	public boolean isHead(){
 		return inFront == null;
 	}
 
 	/** @return The number of SnakeParts that are "behind" us or that are "following" us */
-	public int numberBehind(){
+	public int getNumberBehind(){
 		int r = 0;
 		SnakePart part = this;
 		while(part != null){
@@ -169,9 +169,6 @@ public class SnakePart extends SimpleEntity implements Enemy {
 				this.inFront = null;
 				currentlyInFront.leadPart(null); // make sure the part we are inFront knows we are detaching
 			}
-//			if(state == null){
-//				state = new SnakeState();
-//			}
 			setMoveComponent(returnToStart);
 			return;
 		}
@@ -209,11 +206,14 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	public void update(float delta, World world) {
 		if(this.isHead()){
 			// ==== Calculate velocity and size ====
-			int numberParts = this.numberBehind() + 1; // add one because numberBehind() doesn't include head
+			int numberParts = this.getNumberBehind() + 1; // add one because getNumberBehind() doesn't include head
 			updateSize(numberParts);
 			MoveComponent move = getMoveComponent();
 			if(move instanceof SmoothTravelMoveComponent){
 				updateSpeedAndRotation(numberParts, (SmoothTravelMoveComponent) move);
+			}
+			if(move != returnToStart){
+				updateSpeedAndRotation(numberParts, returnToStart); // update the speed of this just in case something else is using it
 			}
 
 		}
@@ -224,7 +224,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePart");
 		}
 		if(numberParts == null){
-			numberParts = this.numberBehind() + 1;
+			numberParts = this.getNumberBehind() + 1;
 		}
 		float size = .4f;
 		if(numberParts <= 10){
@@ -237,7 +237,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePark");
 		}
 		if(numberParts == null){
-			numberParts = this.numberBehind() + 1;
+			numberParts = this.getNumberBehind() + 1;
 		}
 		float speed = SnakeAIController.DEFAULT_SPEED;
 		float rotMultiplier = SnakeAIController.DEFAULT_TURN_MULTIPLIER;
@@ -245,7 +245,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 			if (difficulty.value >= SnakeDifficulty.NORMAL.value) {
 				if (difficulty.value >= SnakeDifficulty.HARD.value) {
 					speed = 15 - numberParts;
-				} else if (numberParts <= 5) {
+				} else if (numberParts <= 5) { // TODO incorporate DEFAULT_SPEED here
 					speed = 5 + (5 - numberParts) * .5f;
 				}
 				rotMultiplier = 4.5f - (numberParts * .25f);

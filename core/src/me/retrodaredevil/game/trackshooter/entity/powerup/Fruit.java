@@ -3,7 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.powerup;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.ShakeImageRenderComponent;
@@ -23,9 +23,9 @@ public class Fruit extends SimplePowerup {
 		this.points = points;
 		setHitboxSize(.6f, .6f);
 
-		OnTrackMoveComponent trackMove = new OnTrackMoveComponent(this);
-		trackMove.setDistance(startingTrackDistance);
-		trackMove.setVelocity(velocity);
+		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
+		trackMove.setDistanceOnTrack(startingTrackDistance);
+		trackMove.getTravelVelocitySetter().setVelocity(velocity);
 		setMoveComponent(trackMove);
 	}
 	public static Fruit createFruit(Resources.Points points, float startingTrackDistance, Image image){

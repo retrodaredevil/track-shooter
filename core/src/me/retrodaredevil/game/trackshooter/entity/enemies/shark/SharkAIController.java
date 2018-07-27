@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -37,7 +38,12 @@ public class SharkAIController implements EntityController {
 			double offset = time / 1000D;
 			offset %= world.getTrack().getTotalDistance();
 			offset *= timeMultiplier;
-			pointMove.setTarget(world.getTrack(), target, trackDistanceAway + (float) offset);
+			MoveComponent targetMove = target.getMoveComponent();
+			if(targetMove instanceof OnTrackMoveComponent){
+				OnTrackMoveComponent trackMove = (OnTrackMoveComponent) targetMove;
+				pointMove.setTargetPosition(world.getTrack().getDesiredLocation(trackMove.getDistanceOnTrack() + trackDistanceAway + (float) offset));
+			}
+//			pointMove.setTarget(world.getTrack(), target, trackDistanceAway + (float) offset);
 		}
 	}
 }

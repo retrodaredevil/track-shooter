@@ -6,8 +6,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class SpinMoveComponent extends TimedMoveComponent implements RotationalVelocityMoveComponent{
 
 
-	private Entity entity;
-	private float spinPerSecond;
+	private final Entity entity;
+	private final float spinPerSecond;
 
 	/**
 	 *
@@ -25,9 +25,10 @@ public class SpinMoveComponent extends TimedMoveComponent implements RotationalV
 		return spinPerSecond;
 	}
 
+
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	protected void onUpdate(float delta, World world) {
+		super.onUpdate(delta, world);
 		entity.setRotation(entity.getRotation() + delta * spinPerSecond);
 	}
 }

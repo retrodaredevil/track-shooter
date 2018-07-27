@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
@@ -33,7 +34,8 @@ public class StartScreen extends ScreenAdapter{
 			}
 			stage.draw();
 		}
-//		Gdx.app.debug("angle", "" + gameInput.mainJoystick().getAngle());
+//		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
+		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude());
 	}
 
 	@Override

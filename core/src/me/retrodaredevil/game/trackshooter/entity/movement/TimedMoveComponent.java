@@ -5,7 +5,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class TimedMoveComponent extends SimpleMoveComponent{
 
 	private Long startTime;
-	private long time;
+	private final long time;
 
 	public TimedMoveComponent(long time, MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
 		super(nextComponent, canHaveNext, canRecycle);

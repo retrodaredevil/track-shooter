@@ -8,11 +8,11 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	private static final Vector2 temp = new Vector2();
 
-	private Entity entity;
+	private final Entity entity;
 	private final Vector2 target = new Vector2();
-	private float speed;
-	private Float desiredRotation;
-	private float turnVelocity;
+	private final float speed;
+	private final Float desiredRotation;
+	private final float turnVelocity;
 
 	/**
 	 *

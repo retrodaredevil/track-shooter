@@ -7,8 +7,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class FixedVelocityMoveComponent extends SimpleMoveComponent {
 
-	private Entity entity;
-	private Vector2 velocity;
+	private final Entity entity;
+	private final Vector2 velocity = new Vector2();
 
 	/**
 	 *
@@ -18,7 +18,7 @@ public class FixedVelocityMoveComponent extends SimpleMoveComponent {
 	public FixedVelocityMoveComponent(Entity entity, Vector2 velocity){
 		super(null, false, false);
 		this.entity = entity;
-		this.velocity = velocity;
+		this.velocity.set(velocity);
 	}
 
 	@Override

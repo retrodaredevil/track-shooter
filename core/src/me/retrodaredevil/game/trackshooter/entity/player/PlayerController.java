@@ -6,7 +6,7 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
 
@@ -27,16 +27,16 @@ public class PlayerController implements EntityController{
 	@Override
 	public void update(float delta, World world) {
 		MoveComponent move = player.getMoveComponent();
-		if(move instanceof OnTrackMoveComponent){
+		if(move instanceof TravelRotateVelocityOnTrackMoveComponent){
 
 			// ==== Track Movement ====
-			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
+			TravelRotateVelocityOnTrackMoveComponent trackMove = (TravelRotateVelocityOnTrackMoveComponent) move;
 			JoystickPart movementJoy = gameInput.mainJoystick();
 			boolean slow = gameInput.slow().isDown();
 			if(!movementJoy.isDeadzone() || slow) {
 				float mult = slow ? .5f : 1;
 //				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
-				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistance());
+				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistanceOnTrack());
 				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
 				float joyScale = movementJoy.getJoystickType().shouldScale()
@@ -52,14 +52,14 @@ public class PlayerController implements EntityController{
 					System.err.println("Joystick: " + movementJoy + "'s magnitude is over 1!.");
 				}
 
-				trackMove.setVelocity(
+				trackMove.getTravelVelocitySetter().setVelocity(
 						actualMagnitude
 						* moveDirection
 						* VELOCITY_PER_SECOND
 						* mult
 				);
 			} else {
-				trackMove.setVelocity(0);
+				trackMove.getTravelVelocitySetter().setVelocity(0);
 			}
 
 			// ==== Rotation ====
@@ -78,7 +78,7 @@ public class PlayerController implements EntityController{
 				}
 //				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
 //              player.setRotation(player.getRotation() + desired * delta);
-				trackMove.setRotationalVelocity(desired);
+				trackMove.getRotationalVelocitySetter().setVelocity(desired);
 			} else { // probably a mouse
 //				System.out.println(position);
 				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative

@@ -4,7 +4,7 @@ package me.retrodaredevil.game.trackshooter.util;
  * A class that can be used for keeping track of a variable that accelerates. (Get a velocity and that velocity increases
  * an amount each second)
  */
-public class VelocityHandler implements RotationalVelocitySetter {
+public class VelocityHandler implements VelocitySetter {
 
 	private final float velocitySetGotoDeadband;
 
@@ -51,33 +51,25 @@ public class VelocityHandler implements RotationalVelocitySetter {
 		return velocity;
 	}
 
-	/**
-	 *
-	 * @param velocity The velocity to set in units per second
-	 */
-	public void setVelocity(float velocity){
-		this.velocity = velocity;
-	}
-
 	@Override
-	public void setDesiredRotationalVelocity(float desiredVelocity, float accelerationMultiplier, float maxVelocity) {
+	public void setDesiredVelocity(float desiredVelocity, float accelerationMultiplier, float maxVelocity) {
 		this.desiredVelocity = desiredVelocity;
 		this.accelerationMultiplier = accelerationMultiplier;
 		this.maxVelocity = maxVelocity;
 	}
 
     @Override
-    public void setRotationalVelocity(float rotationalVelocity, boolean resetOtherFields) {
+    public void setVelocity(float velocity, boolean resetOtherFields) {
         if(resetOtherFields){
             accelerationMultiplier = 1;
-            maxVelocity = Math.abs(rotationalVelocity);
+            maxVelocity = Math.abs(velocity);
         }
-        desiredVelocity = rotationalVelocity;
-        velocity = rotationalVelocity;
+        this.desiredVelocity = velocity;
+        this.velocity = velocity;
     }
 
     @Override
-    public void setRotationalVelocity(float rotationalVelocity) {
-        setRotationalVelocity(rotationalVelocity, true);
+    public void setVelocity(float velocity) {
+        setVelocity(velocity, true);
     }
 }

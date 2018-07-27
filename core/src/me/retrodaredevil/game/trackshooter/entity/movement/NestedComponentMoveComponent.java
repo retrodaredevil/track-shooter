@@ -6,6 +6,10 @@ import me.retrodaredevil.game.trackshooter.world.World;
 /**
  * Handles a "nested" MoveComponent so an instance can have multiple behaviours similar to how an SnakePart has multiple
  * behaviours utilizing MoveComponents in the first place.
+ * <p>
+ * By extending this class, you are able to utilize a "nested" MoveComponent. This class handles updating
+ * it and expects that the nested component is added in the overridden onStart() after super.onStart() is called.
+ * When this instance ends, it will remove the nested move component if there is any.
  */
 abstract class NestedComponentMoveComponent extends SimpleMoveComponent {
 	private MoveComponent nestedMoveComponent;

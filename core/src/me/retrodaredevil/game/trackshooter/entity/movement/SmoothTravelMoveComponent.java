@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
+public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TargetPositionMoveComponent, TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
 	private static final Vector2 temp = new Vector2();
 
 	private final Entity entity;
@@ -47,36 +47,50 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 				null, false, true);
 	}
 
-	/**
-	 * NOTE: The returned value is able to be mutated but should NEVER be mutated (clone it with .cpy() if you want to alter it)
-	 * @return The target Vector2 that this instance uses.
-	 */
-	public Vector2 getTarget(){
-		return target;
+	@Override
+	public float getTargetPositionX() {
+		return target.x;
 	}
 
-	public void setTarget(Vector2 target){
+	@Override
+	public float getTargetPositionY() {
+		return target.y;
+	}
+
+	@Override
+	public Vector2 getTargetPosition(){
+		return target.cpy();
+	}
+
+	@Override
+	public void setTargetPosition(Vector2 target){
 		this.target.set(target);
 	}
 
-	/**
-	 * Sets the target position to the track position of the entity plus trackDistanceToAdd. If entity's MoveComponent
-	 * is not an OnTrackMoveComponent, this returns false and does nothing
-	 *
-	 * @param track The track to use
-	 * @param entity The entity to use their track position
-	 * @param trackDistanceToAdd The distance on the track to add
-	 * @return true if it set the target successfully, false otherwise.
-	 */
-	public boolean setTarget(Track track, Entity entity, float trackDistanceToAdd){
-		MoveComponent entityMoveComponent = entity.getMoveComponent();
-		if(entityMoveComponent instanceof OnTrackMoveComponent){
-			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) entityMoveComponent;
-			this.setTarget(track.getDesiredLocation(trackDistanceToAdd + trackMove.getDistance()));
-			return true;
-		}
-		return false;
+	@Override
+	public void setTargetPosition(float x, float y) {
+		this.target.set(x, y);
 	}
+
+//	/**
+//	 * Sets the target position to the track position of the entity plus trackDistanceToAdd. If entity's MoveComponent
+//	 * is not an TravelRotateVelocityOnTrackMoveComponent, this returns false and does nothing
+//	 *
+//	 * @param track The track to use
+//	 * @param entity The entity to use their track position
+//	 * @param trackDistanceToAdd The distance on the track to add
+//	 * @return true if it set the target successfully, false otherwise.
+//	 */
+//	@Deprecated
+//	public boolean setTarget(Track track, Entity entity, float trackDistanceToAdd){
+//		MoveComponent entityMoveComponent = entity.getMoveComponent();
+//		if(entityMoveComponent instanceof OnTrackMoveComponent){
+//			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) entityMoveComponent;
+//			this.setTargetPosition(track.getDesiredLocation(trackDistanceToAdd + trackMove.getDistanceOnTrack()));
+//			return true;
+//		}
+//		return false;
+//	}
 
 	/**
 	 * As of right now, this method is only used on the rendering side of things.
@@ -84,30 +98,6 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 	 */
 	public float getRotationalChange(){
 		return rotationalChange;
-	}
-
-
-	@Override
-	protected void onStart(World world) {
-	}
-
-
-	@Override
-	protected void onUpdate(float delta, World world) {
-		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
-		float currentAngle = entity.getRotation();
-
-		rotationalChange = MathUtil.minChange(desiredAngle, currentAngle, 360);
-		entity.setRotation(entity.getRotation() + rotationalChange * delta * rotationalSpeedMultiplier);
-
-		float rotation = entity.getRotation();
-		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
-		velocity.scl(delta * getTravelVelocity());
-		entity.setLocation(entity.getLocation().add(velocity));
-	}
-	@Override
-	protected void onEnd(){
-
 	}
 
 	@Override
@@ -125,6 +115,27 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Tr
 	public void setRotationalSpeedMultiplier(float multiplier){
 		this.rotationalSpeedMultiplier = multiplier;
 	}
+
+	@Override
+	protected void onStart(World world) {
+	}
+	@Override
+	protected void onEnd(){
+	}
+	@Override
+	protected void onUpdate(float delta, World world) {
+		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
+		float currentAngle = entity.getRotation();
+
+		rotationalChange = MathUtil.minChange(desiredAngle, currentAngle, 360);
+		entity.setRotation(entity.getRotation() + rotationalChange * delta * rotationalSpeedMultiplier);
+
+		float rotation = entity.getRotation();
+		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
+		velocity.scl(delta * getTravelVelocity());
+		entity.setLocation(entity.getLocation().add(velocity));
+	}
+
 
 
 }
