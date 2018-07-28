@@ -5,16 +5,19 @@ import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.effect.EffectUtil;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
+import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
+import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmoothTravelMoveComponent extends SimpleMoveComponent implements TargetPositionMoveComponent, TravelVelocityMoveComponent, RotationalVelocityMoveComponent{
+public class SmoothTravelMoveComponent extends SimpleMoveComponent implements VelocityTargetPositionMoveComponent, TravelVelocitySetter,
+		RotationalVelocityMoveComponent, RotationalVelocityMultiplierSetter{
 	private static final Vector2 temp = new Vector2();
 
 	private final Entity entity;
 	private final Vector2 target = new Vector2();
 
-	private float speed;
+	private final VelocityHandler speedHandler = new VelocityHandler(0);
 	private float rotationalSpeedMultiplier;
 
 	private float rotationalChange; // just information calculated, not actually used for anything super meaningful
@@ -31,7 +34,7 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Ta
 		super(nextComponent, canHaveNext, canRecycle);
 		this.entity = entity;
 		this.target.set(initialTarget);
-		this.speed = speed;
+		speedHandler.setVelocity(speed);
 		this.rotationalSpeedMultiplier = rotationalSpeedMultiplier;
 	}
 
@@ -92,27 +95,27 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Ta
 //		return false;
 //	}
 
-	/**
-	 * As of right now, this method is only used on the rendering side of things.
-	 * @return The amount this needs to change its angle by to get to its desired angle (in degrees)
-	 */
+	@Override
 	public float getRotationalChange(){
 		return rotationalChange;
 	}
 
 	@Override
 	public float getTravelVelocity() {
-		return speed * EffectUtil.getSpeedMultiplier(entity);
+		return speedHandler.getVelocity() * EffectUtil.getSpeedMultiplier(entity);
 	}
-	public void setVelocity(float speed){
-		this.speed = speed;
+
+	@Override
+	public VelocitySetter getTravelVelocitySetter() {
+		return speedHandler;
 	}
 
 	@Override
 	public float getRotationalVelocity() {
 		return rotationalChange * rotationalSpeedMultiplier;
 	}
-	public void setRotationalSpeedMultiplier(float multiplier){
+	@Override
+	public void setRotationalMultiplier(float multiplier){
 		this.rotationalSpeedMultiplier = multiplier;
 	}
 

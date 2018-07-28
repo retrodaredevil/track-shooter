@@ -7,6 +7,13 @@ import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
 import me.retrodaredevil.game.trackshooter.world.World;
 
+/**
+ * This class is the basic implementation of OnTrackMoveComponent along with 4 other interfaces. (hell yeah abstraction)
+ * This can also get and set both travel and rotational velocities.
+ * <p>
+ * You should not use instanceof on this class. It is preferred to use instanceof on the interfaces
+ * that this class implements
+ */
 public class TravelRotateVelocityOnTrackMoveComponent extends SimpleMoveComponent
 		implements OnTrackMoveComponent,
 		RotationalVelocityMoveComponent, RotationalVelocitySetter,

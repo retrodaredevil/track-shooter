@@ -85,6 +85,7 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 		return done;
 	}
 
+	@Override
 	public boolean isActive(){
 		return active;
 	}

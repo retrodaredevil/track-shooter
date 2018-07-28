@@ -5,7 +5,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.VelocityTargetPositionMoveComponent;
 
 public class SharkRenderComponent extends ImageRenderComponent {
 	private static final int LEFT_FRAME = 2, RIGHT_FRAME = 0, STRAIGHT_FRAME = 1;
@@ -34,8 +36,9 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	public void render(float delta, Stage stage) {
 		MoveComponent moveComponent = entity.getMoveComponent();
 		boolean animate = false;
-		if(moveComponent instanceof SmoothTravelMoveComponent){
-			SmoothTravelMoveComponent targetMove = (SmoothTravelMoveComponent) moveComponent;
+		if(moveComponent instanceof VelocityTargetPositionMoveComponent){
+			VelocityTargetPositionMoveComponent targetMove = (VelocityTargetPositionMoveComponent) moveComponent;
+//			float change = targetMove.getRotationalChange();
 			float change = targetMove.getRotationalChange();
 			if(Math.abs(change) < 40){
 				animate = true;

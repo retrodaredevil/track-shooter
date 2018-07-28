@@ -56,7 +56,7 @@ public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
 		if(difficulty.value >= SnakeDifficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
 			float speed = this.getTravelVelocity();
 			speed += (angleAway / 25) * 3;
-			this.setVelocity(speed);
+			getTravelVelocitySetter().setVelocity(speed);
 		}
 		if(angleAway < VIEW_ANGLE){ // the target is looking at the head
 			float percent = (float) Math.pow((VIEW_ANGLE - angleAway) / VIEW_ANGLE, .5); // the lower the view angle, the higher this number

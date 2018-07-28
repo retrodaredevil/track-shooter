@@ -6,15 +6,16 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetter;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.world.World;
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
-	private static final float ACCEL_ROTATE_PER_SECOND = -270; // target rotate velocity used for calculating accelerating but capped at max
-//	private static final float MAX_ROTATE_PER_SECOND = 270; // max abs rotate velocity
-	private static final float FULL_SPEED_IN = 0; // in seconds - amount of time to fully accelerate rotational velocity
+	private static final float ROTATE_PER_SECOND = -270; // target rotate velocity used for calculating accelerating but capped at max
 	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f; // how many degrees to change when the mouse is moved one pixel
 
 	private Player player;
@@ -27,12 +28,13 @@ public class PlayerController implements EntityController{
 	@Override
 	public void update(float delta, World world) {
 		MoveComponent move = player.getMoveComponent();
-		if(move instanceof TravelRotateVelocityOnTrackMoveComponent){
+		if(move instanceof OnTrackMoveComponent){
 
 			// ==== Track Movement ====
-			TravelRotateVelocityOnTrackMoveComponent trackMove = (TravelRotateVelocityOnTrackMoveComponent) move;
+			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
 			JoystickPart movementJoy = gameInput.mainJoystick();
 			boolean slow = gameInput.slow().isDown();
+			final float velocity;
 			if(!movementJoy.isDeadzone() || slow) {
 				float mult = slow ? .5f : 1;
 //				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
@@ -51,15 +53,19 @@ public class PlayerController implements EntityController{
 				} else if(actualMagnitude > 1){
 					System.err.println("Joystick: " + movementJoy + "'s magnitude is over 1!.");
 				}
-
-				trackMove.getTravelVelocitySetter().setVelocity(
+				velocity =
 						actualMagnitude
 						* moveDirection
 						* VELOCITY_PER_SECOND
-						* mult
-				);
+						* mult;
 			} else {
-				trackMove.getTravelVelocitySetter().setVelocity(0);
+				velocity = 0;
+			}
+			if(move instanceof TravelVelocityMoveComponent) {
+				((TravelVelocitySetter) move).getTravelVelocitySetter().setVelocity(velocity);
+			} else {
+				System.err.println("move not instanceof TravelVelocityMoveComponent. Remove print error if intended.");
+				trackMove.setDistanceOnTrack(trackMove.getDistanceOnTrack() + delta * velocity);
 			}
 
 			// ==== Rotation ====
@@ -72,17 +78,21 @@ public class PlayerController implements EntityController{
 					}
 				}
 //				System.out.println(position); // .004
-				float desired = (float) (ACCEL_ROTATE_PER_SECOND * position);
+				float desired = (float) (ROTATE_PER_SECOND * position);
 				if (rotateAxis.isDeadzone()) {
 					desired = 0;
 				}
-//				trackMove.setDesiredRotationalVelocity(desired, (1f / FULL_SPEED_IN), MAX_ROTATE_PER_SECOND);
-//              player.setRotation(player.getRotation() + desired * delta);
-				trackMove.getRotationalVelocitySetter().setVelocity(desired);
+
+				if(move instanceof RotationalVelocitySetter){
+					((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(desired);
+				} else {
+					player.setRotation(player.getRotation() + delta * desired);
+				}
 			} else { // probably a mouse
-//				System.out.println(position);
+				if(move instanceof RotationalVelocitySetter){
+					((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(0);
+				}
 				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
-//				trackMove.setDesiredRotationalVelocity((float) x * ROTATION_PER_MOUSE_PIXEL / delta, 0, Float.MAX_VALUE);
 			}
 		}
 		ControllerRumble rumble = gameInput.getRumble();

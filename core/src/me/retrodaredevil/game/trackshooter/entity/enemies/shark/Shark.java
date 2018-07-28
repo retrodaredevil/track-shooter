@@ -20,8 +20,8 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private int lives = 3;
 	private int spinLives = 40; // hitting many times while spinning is hard and is worth double points
 
-	private final ResetPositionMoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
-	private final SmoothTravelMoveComponent smoothTravel;
+	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
+	private final MoveComponent smoothTravel;
 
 	public Shark(Vector2 startingPosition, float startingRotation){
 		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);

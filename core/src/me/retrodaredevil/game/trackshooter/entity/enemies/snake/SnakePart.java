@@ -9,7 +9,9 @@ import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocityMultiplierSetter;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -36,7 +38,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
 
 	private final SnakeDifficulty difficulty;
-	private final SmoothTravelMoveComponent returnToStart;
+	private final MoveComponent returnToStart;
 	private final ImageRenderComponent renderComponent;
 	private SnakeTargetRotationMoveComponent targetRotationCache = null;
 
@@ -209,9 +211,8 @@ public class SnakePart extends SimpleEntity implements Enemy {
 			int numberParts = this.getNumberBehind() + 1; // add one because getNumberBehind() doesn't include head
 			updateSize(numberParts);
 			MoveComponent move = getMoveComponent();
-			if(move instanceof SmoothTravelMoveComponent){
-				updateSpeedAndRotation(numberParts, (SmoothTravelMoveComponent) move);
-			}
+
+			updateSpeedAndRotation(numberParts, move);
 			if(move != returnToStart){
 				updateSpeedAndRotation(numberParts, returnToStart); // update the speed of this just in case something else is using it
 			}
@@ -232,7 +233,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		}
 		setSize(size, true);
 	}
-	private void updateSpeedAndRotation(Integer numberParts, SmoothTravelMoveComponent smoothTravel){
+	private void updateSpeedAndRotation(Integer numberParts, MoveComponent moveComponent){
 		if(!this.isHead()){
 			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePark");
 		}
@@ -251,8 +252,12 @@ public class SnakePart extends SimpleEntity implements Enemy {
 				rotMultiplier = 4.5f - (numberParts * .25f);
 			}
 		}
-		smoothTravel.setRotationalSpeedMultiplier(rotMultiplier);
-		smoothTravel.setVelocity(speed);
+		if(moveComponent instanceof RotationalVelocityMultiplierSetter) {
+			((RotationalVelocityMultiplierSetter) moveComponent).setRotationalMultiplier(rotMultiplier);
+		}
+		if(moveComponent instanceof TravelVelocitySetter){
+			((TravelVelocitySetter) moveComponent).getTravelVelocitySetter().setVelocity(speed);
+		}
 	}
 
 	@Override

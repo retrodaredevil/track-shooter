@@ -51,4 +51,5 @@ public interface MoveComponent extends Updateable {
 	 * @return true if the MoveComponent is done, false otherwise
 	 */
 	boolean isDone();
+	boolean isActive();
 }
