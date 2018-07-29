@@ -42,4 +42,6 @@ public interface Score {
 	 * @param other the entity causing the death
 	 */
 	void onDeath(Entity other);
+
+	void printOut();
 }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakeAIController;
-import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakeDifficulty;
+import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.Level;
@@ -31,20 +31,20 @@ public class SnakeFunction implements LevelFunction {
 		if(time < 10000){
 			return false;
 		}
-		SnakeDifficulty difficulty = SnakeDifficulty.EASY;
+		EntityDifficulty difficulty = EntityDifficulty.EASY;
 
 		if(level.getNumber() >= 2){
-			difficulty = SnakeDifficulty.NORMAL;
+			difficulty = EntityDifficulty.NORMAL;
 			if(level.getNumber() >= 6){
-				difficulty = SnakeDifficulty.EXTREME;
+				difficulty = EntityDifficulty.EXTREME;
 			} else if(level.getNumber() >= 4){
-				difficulty = SnakeDifficulty.HARD;
+				difficulty = EntityDifficulty.HARD;
 			}
 		}
 		createSnake(world, difficulty);
 		return true;
 	}
-	protected void createSnake(World world, SnakeDifficulty difficulty){
+	protected void createSnake(World world, EntityDifficulty difficulty){
 		Level level = world.getLevel();
 
 		Rectangle bounds = world.getBounds();
@@ -77,9 +77,8 @@ public class SnakeFunction implements LevelFunction {
 			part.setLocation(x, y, rotation);
 //			part.setEntityController(new SnakeAIController(part, target));
 			level.addEntity(world, part);
+			part.setEntityController(new SnakeAIController(part, target));
 		}
-		SnakePart head = parts.get(0);
-		head.setEntityController(new SnakeAIController(head, target));
 	}
 
 	@Override

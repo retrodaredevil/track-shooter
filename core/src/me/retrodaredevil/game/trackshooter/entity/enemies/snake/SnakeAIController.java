@@ -2,8 +2,6 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
-import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -28,8 +26,8 @@ public class SnakeAIController implements EntityController {
 			return;
 		}
 		if(world.getLevel().getMode() == LevelMode.NORMAL){
-			part.switchToTargetRotation(target);
-			System.out.println("target rotation.");
+			part.switchToSmartSight(target);
+//			System.out.println("target rotation for: " + Integer.toHexString(this.hashCode()));
 //			System.out.println(((SmoothTravelMoveComponent) part.getMoveComponent()).getTravelVelocity());
 		}
 	}

@@ -81,4 +81,20 @@ public class PlayerScore implements Score {
     public int getNumberShotsHit() {
 	    return shotsHit;
     }
+
+	@Override
+	public void printOut() {
+		Gdx.app.log("final score", "" + this.getScore());
+		Gdx.app.log("Shots", "" + this.getNumberShots());
+		Gdx.app.log("Total Shots", "" + this.getTotalNumberShots());
+		Gdx.app.log("Hits", "" + this.getNumberShotsHit());
+		int hits = this.getNumberShotsHit();
+		int misses = (this.getTotalNumberShots() - this.getNumberShotsHit());
+		if (misses > 0) {
+			float hitMiss = Math.round(hits * 1000.0f / misses) / 10;
+			Gdx.app.log("hit/miss ratio", hitMiss + "%");
+		} else {
+			Gdx.app.log("hit/miss ratio", "undefined");
+		}
+	}
 }

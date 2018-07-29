@@ -41,27 +41,24 @@ public class PlayerController implements EntityController{
 				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistanceOnTrack());
 				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
-				float joyScale = movementJoy.getJoystickType().shouldScale()
-						? (float) SimpleJoystickPart.getScaled(movementJoy.getAngle())
-						: 1;
-
-				float actualMagnitude = (float) (joyScale * movementJoy.getMagnitude());
+				float correctMagnitude = (float) movementJoy.getCorrectMagnitude();
 				if(movementJoy.getJoystickType().isRangeOver()){
-					if(actualMagnitude > 1){
-						actualMagnitude = 1;
+					if(correctMagnitude > 1){
+						throw new IllegalArgumentException("movementJoy's correct magnitude is: " + correctMagnitude);
 					}
-				} else if(actualMagnitude > 1){
+				} else if(correctMagnitude > 1){
 					System.err.println("Joystick: " + movementJoy + "'s magnitude is over 1!.");
 				}
 				velocity =
-						actualMagnitude
+						correctMagnitude
 						* moveDirection
 						* VELOCITY_PER_SECOND
 						* mult;
 			} else {
 				velocity = 0;
 			}
-			if(move instanceof TravelVelocityMoveComponent) {
+			// now velocity is initialized
+			if(move instanceof TravelVelocitySetter) {
 				((TravelVelocitySetter) move).getTravelVelocitySetter().setVelocity(velocity);
 			} else {
 				System.err.println("move not instanceof TravelVelocityMoveComponent. Remove print error if intended.");
@@ -86,6 +83,7 @@ public class PlayerController implements EntityController{
 				if(move instanceof RotationalVelocitySetter){
 					((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(desired);
 				} else {
+					System.err.println("move not instanceof RotationalVelocityMoveComponent. Remove print error if intended.");
 					player.setRotation(player.getRotation() + delta * desired);
 				}
 			} else { // probably a mouse

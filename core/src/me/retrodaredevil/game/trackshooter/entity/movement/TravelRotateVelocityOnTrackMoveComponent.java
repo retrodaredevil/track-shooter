@@ -15,9 +15,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * that this class implements
  */
 public class TravelRotateVelocityOnTrackMoveComponent extends SimpleMoveComponent
-		implements OnTrackMoveComponent,
-		RotationalVelocityMoveComponent, RotationalVelocitySetter,
-		TravelVelocityMoveComponent, TravelVelocitySetter {
+		implements OnTrackMoveComponent, RotationalVelocitySetter, TravelVelocitySetter {
 	private final Entity entity;
 
 	private float distance = 0; // total distance

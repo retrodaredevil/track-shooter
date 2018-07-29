@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
 
-public interface TravelVelocitySetter extends MoveComponent {
+public interface TravelVelocitySetter extends TravelVelocityMoveComponent {
 
 	/**
 	 * NOTE: When calling methods on the returned object, you should not take into account

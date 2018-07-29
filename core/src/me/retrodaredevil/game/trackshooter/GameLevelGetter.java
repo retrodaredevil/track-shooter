@@ -2,6 +2,9 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.List;
+
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -23,10 +26,10 @@ public class GameLevelGetter implements LevelGetter {
 
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
-	private final Player player;
+	private final List<? extends Player> players;
 
-	public GameLevelGetter(Player player){
-		this.player = player;
+	public GameLevelGetter(List<? extends Player> players){
+		this.players = players;
 		this.tracks = new Track[] {Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
 	}
 
@@ -38,7 +41,11 @@ public class GameLevelGetter implements LevelGetter {
 			protected void onStart(World world) {
 				super.onStart(world);
 				addFunction(new FruitFunction());
-				addFunction(new SnakeFunction(player));
+				if(levelNumber != 1 && levelNumber != 3 && levelNumber % 4 != 0){ // on all levels except 1, 3 and any multiples of 4
+					for(Player player : players) {
+						addFunction(new SnakeFunction(player));
+					}
+				}
 				if(levelNumber % 2 == 1){
 					addFunction(new TripleShotPowerupFunction());
 				}
@@ -53,7 +60,7 @@ public class GameLevelGetter implements LevelGetter {
 					Vector2 location = new Vector2(MathUtils.cosDeg(positionAngle), MathUtils.sinDeg(positionAngle));
 					float angle = positionAngle;
 					Shark shark = new Shark(location, angle);
-					shark.setEntityController(new SharkAIController(shark, player, trackDistanceAway, sign * (2f + (i * .5f / amount))));
+					shark.setEntityController(new SharkAIController(shark, players, trackDistanceAway, sign * (2f + (i * .5f / amount))));
 					// start in the start position
 					shark.setLocation(location, angle);
 

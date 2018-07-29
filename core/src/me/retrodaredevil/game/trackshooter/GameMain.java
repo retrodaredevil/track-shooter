@@ -8,6 +8,10 @@ import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.game.input.DefaultGameInput;
@@ -17,51 +21,59 @@ import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 
 public class GameMain extends Game {
 
-	private Batch batch;
-	private Overlay overlay;
+	private Batch batch; // used for initialization and begin() and end() methods are only used when used with RenderUtil.drawStage()
+	private Overlay overlay; // not handled in this class, passed around to current screen
 
 	private ControllerManager controllerManager;
-	private GameInput gameInput;
+	private List<GameInput> inputs = new ArrayList<>();
 
 
 	@Override
 	public void create () {
 	    batch = new SpriteBatch();
+		overlay = new Overlay(batch);
 		controllerManager = new DefaultControllerManager();
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-
 		if(Controllers.getControllers().size > 0){
 			StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().first());
 			controllerManager.addController(controller);
-			gameInput = new DefaultGameInput(controller);
-		} else {
-			gameInput = new DefaultGameInput();
-		}
-		controllerManager.addController(gameInput);
 
-		overlay = new Overlay(batch);
-		setScreen(new StartScreen(gameInput, overlay));
+			GameInput controllerInput = new DefaultGameInput(controller);
+			inputs.add(controllerInput);
+			controllerManager.addController(controllerInput);
+		}
+		GameInput keyboardInput = new DefaultGameInput();
+		inputs.add(keyboardInput);
+		controllerManager.addController(keyboardInput);
+
+		Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.graphics.setTitle("Track Shooter");
+		startScreen();
 	}
 
 	@Override
 	public void render() {
 		controllerManager.update();
-
 		super.render();
+
 		Screen screen = getScreen(); // TODO create our own screen interface instead of this ugly mess
 		if(screen instanceof GameScreen){
 			GameScreen game = (GameScreen) screen;
 			if(game.isGameCompletelyOver()){
-				setScreen(new StartScreen(gameInput, overlay));
+				startScreen();
 			}
 		} else if(screen instanceof StartScreen){
 			StartScreen startScreen = (StartScreen) screen;
 			if(startScreen.isReadyToStart()){
-				setScreen(new GameScreen(gameInput, overlay, batch));
+				gameScreen();
 			}
 		}
 //		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
+	}
+	private void startScreen(){
+		setScreen(new StartScreen(inputs.get(0), overlay, batch)); // TODO all inputs
+	}
+	private void gameScreen(){
+		setScreen(new GameScreen(inputs, overlay, batch));
 	}
 
 	@Override

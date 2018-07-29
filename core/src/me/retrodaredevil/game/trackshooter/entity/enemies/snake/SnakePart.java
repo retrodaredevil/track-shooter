@@ -5,11 +5,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.effect.TimedSpeedEffect;
+import me.retrodaredevil.game.trackshooter.entity.DifficultEntity;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocityMultiplierSetter;
+import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -33,14 +36,14 @@ import java.util.List;
  * you should not change the target unless you are making sure it is (0, 0) since this SnakePart would need
  * to reset to its starting position.
  */
-public class SnakePart extends SimpleEntity implements Enemy {
+public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	private static final float HITBOX_SIZE_RATIO = .625f;
 	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
 
-	private final SnakeDifficulty difficulty;
+	private final EntityDifficulty difficulty;
 	private final MoveComponent returnToStart;
 	private final ImageRenderComponent renderComponent;
-	private SnakeTargetRotationMoveComponent targetRotationCache = null;
+	private SmartSightMoveComponent targetRotationCache = null;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
@@ -51,7 +54,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 
 
 
-	public SnakePart(SnakeDifficulty difficulty){
+	public SnakePart(EntityDifficulty difficulty){
 		this.difficulty = difficulty;
 		this.returnToStart = new SmoothTravelMoveComponent(this, Vector2.Zero, SnakeAIController.DEFAULT_SPEED, SnakeAIController.DEFAULT_TURN_MULTIPLIER);
 		this.renderComponent = new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, 0, 0); // width and height will be changed later
@@ -71,7 +74,7 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	 * @param amount The amount of SnakeParts there should be
 	 * @return A list of SnakeParts with a length of amount
 	 */
-	public static List<SnakePart> createSnake(int amount, SnakeDifficulty difficulty){
+	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty){
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
@@ -91,12 +94,12 @@ public class SnakePart extends SimpleEntity implements Enemy {
 	 * recommended to do so. (from an EntityController perspective)
 	 * @param target The target to start targeting
 	 */
-	public void switchToTargetRotation(Entity target){
+	public void switchToSmartSight(Entity target){
 		if(!isHead()){
 			throw new UnsupportedOperationException("Only the head can use this method.");
 		}
 		if(targetRotationCache == null || targetRotationCache.getEntityTarget() != target){
-			targetRotationCache = new SnakeTargetRotationMoveComponent(this, target);
+			targetRotationCache = new SmartSightMoveComponent(this, target);
 			updateSpeedAndRotation(null, targetRotationCache);
 		}
 		setMoveComponent(targetRotationCache);
@@ -157,7 +160,8 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		return head;
 	}
 
-	public SnakeDifficulty getDifficulty() {
+	@Override
+	public EntityDifficulty getDifficulty() {
 		return difficulty;
 	}
 	/**
@@ -216,7 +220,13 @@ public class SnakePart extends SimpleEntity implements Enemy {
 			if(move != returnToStart){
 				updateSpeedAndRotation(numberParts, returnToStart); // update the speed of this just in case something else is using it
 			}
+//			System.out.println("I am a head: " + Integer.toHexString(this.hashCode()) + " move component: "
+//					+ move.getClass().getSimpleName() + " entity controller: " + getEntityController().getClass().getSimpleName());
 
+		} else {
+			if(inFront != null && inFront.isRemoved()){
+				System.err.println("We aren't a head but we should be!");
+			}
 		}
 		super.update(delta, world);
 	}
@@ -243,8 +253,8 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		float speed = SnakeAIController.DEFAULT_SPEED;
 		float rotMultiplier = SnakeAIController.DEFAULT_TURN_MULTIPLIER;
 		if (numberParts <= 10) {
-			if (difficulty.value >= SnakeDifficulty.NORMAL.value) {
-				if (difficulty.value >= SnakeDifficulty.HARD.value) {
+			if (difficulty.value >= EntityDifficulty.NORMAL.value) {
+				if (difficulty.value >= EntityDifficulty.HARD.value) {
 					speed = 15 - numberParts;
 				} else if (numberParts <= 5) { // TODO incorporate DEFAULT_SPEED here
 					speed = 5 + (5 - numberParts) * .5f;
@@ -273,12 +283,23 @@ public class SnakePart extends SimpleEntity implements Enemy {
 		}
 		SnakePart head = getHead();
 		head.addEffect(new TimedSpeedEffect(1000, 1.5f));
-		SnakePart part = this;
+		killAll(this, false, player, other);
+		/* code for centipede like behaviour
+		this.hit = true;
+		if(player != null) {
+			player.getScoreObject().onKill(this, other, 50);
+		}
+		leadPart(null);
+		follow(null);
+		*/
+	}
+	private static void killAll(final SnakePart start, boolean inFront, Player player, Entity cause){
+		SnakePart part = start;
 		while(part != null){
 			part.hit = true; // kill everyone behind us including ourselves
-			part = part.behind;
+			part = inFront ? part.inFront : part.behind;
 			if(player != null){
-				player.getScoreObject().onKill(part, other, 50);
+				player.getScoreObject().onKill(part, cause, 50);
 			}
 		}
 	}

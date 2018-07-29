@@ -15,11 +15,10 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	private final float turnVelocity;
 
 	/**
-	 *
 	 * @param entity The entity this MoveComponent controls
 	 * @param target The target location to go to. Feel free to alter after constructor is called. (calls .cpy())
 	 * @param desiredRotation The desired rotation to rotate to
-	 * @param turnVelocity The turn velocity in degrees per second. Must be positive
+	 * @param turnVelocity The turn velocity in degrees per second. Must be positive or 0. If 0, then will instantly turn to desiredRotation
 	 */
 	protected DirectTravelMoveComponent(Entity entity, Vector2 target, float speed, Float desiredRotation, float turnVelocity,
 	                                    MoveComponent moveComponent, boolean canHaveNext, boolean canRecycle) {
@@ -56,15 +55,15 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 		}
 		final float moveAmount = speed * delta;
 
-		Vector2 location = entity.getLocation();
-		Vector2 away = temp.set(target).sub(location); // target - current
+		float x = entity.getX(), y = entity.getY();
+		Vector2 away = temp.set(target).sub(x, y); // target - current
 		if(away.len2() < moveAmount * moveAmount){ // we don't want to move past the target
 			entity.setLocation(target);
 			return;
 		}
 		away.nor();
 		away.scl(moveAmount);
-		entity.setLocation(away.add(location));
+		entity.setLocation(away.add(x, y));
 
 	}
 }

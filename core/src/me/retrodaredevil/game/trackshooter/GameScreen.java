@@ -5,6 +5,10 @@ import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
@@ -20,7 +24,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class GameScreen extends ScreenAdapter {
 
-	private final Player player;
+//	private final GameInput gameInput;
+	private final List<Player> players = new ArrayList<>(); // elements may be removed
 	private final Stage stage;
 	private final World world;
 
@@ -30,32 +35,30 @@ public class GameScreen extends ScreenAdapter {
 
 	private boolean shouldExit = false;
 
-	public GameScreen(GameInput gameInput, Overlay overlay, Batch batch){
-		this.player = new Player();
-		this.world = new World(new GameLevelGetter(player), 18, 18);
+	public GameScreen(List<GameInput> gameInputs, Overlay overlay, Batch batch){
+//		this.gameInput = gameInputs.get(0);
+		this.world = new World(new GameLevelGetter(players), 18, 18);
 		this.stage = new Stage(new WorldViewport(world), batch);
 		this.overlay = overlay;
 		this.batch = batch;
 
-		overlay.setPlayer(player);
 
+		for(GameInput gameInput : gameInputs){
+			Player player = new Player();
+			players.add(player);
+			player.setEntityController(new PlayerController(player, gameInput));
+			world.addEntity(player);
+		}
 
-		player.setEntityController(new PlayerController(player, gameInput));
-		world.addEntity(player);
+		overlay.setPlayer(players.get(0)); // TODO add a player 2
 	}
 
 	@Override
 	public void render(float delta) {
-		if(delta > 1){
-			System.out.println("Delta is high: " + delta);
-			delta = Math.min(delta, .1f); //
-			float virtualDelta = 1f / 30f; // seems like it's 30 fps now
-			for(int i = 0; i < delta / virtualDelta; i++){
-				doUpdate(virtualDelta);
-			}
-		} else {
-			doUpdate(delta);
+		if(delta > 1 / 30.0f){
+			delta = 1 / 30.0f;
 		}
+		doUpdate(delta);
 		doRender(delta);
 
 	}
@@ -67,45 +70,48 @@ public class GameScreen extends ScreenAdapter {
 		Level level = world.getLevel();
 		LevelMode mode = level.getMode();
 
-		Score score = player.getScoreObject();
-		if(score.getLives() <= 0){
-			if(mode == LevelMode.NORMAL) {
-				level.setMode(LevelMode.RESET);
+		for(Iterator<Player> it = players.listIterator(); it.hasNext(); ){
+			Player player = it.next();
+			Score score = player.getScoreObject();
+
+			if(score.getLives() > 0){
+				if(player.isRemoved() && mode == LevelMode.NORMAL){
+					level.setMode(LevelMode.RESET);
+				}
+			} else {
+				it.remove();
 			}
-			if(mode == LevelMode.STANDBY){ // all enemies have returned to start
-				if(level.getModeTime() > 4000) {
+		}
+		// now players only has players that will appear on screen in the future
+
+		if(!players.isEmpty()){
+			if(mode == LevelMode.STANDBY){
+				long time = level.getModeTime();
+				if(time > 750){
+					for(Player player : players){
+						if(player.isRemoved()){
+							world.addEntity(player);
+						}
+					}
+				}
+				if(time > 1500){
+					level.setMode(LevelMode.NORMAL);
+				}
+			}
+		} else {
+			if(mode == LevelMode.NORMAL){
+				level.setMode(LevelMode.RESET);
+			} else if (mode == LevelMode.STANDBY) { // all enemies have returned to start
+				if (level.getModeTime() > 4000) {
 					shouldExit = true;
 					System.out.println("Exiting game.");
-					Gdx.app.log("final score", "" + score.getScore());
-					Gdx.app.log("Shots", "" + score.getNumberShots());
-                    Gdx.app.log("Total Shots", "" + score.getTotalNumberShots());
-                    Gdx.app.log("Hits", "" + score.getNumberShotsHit());
-                    int hits = score.getNumberShotsHit();
-                    int misses = (score.getTotalNumberShots() - score.getNumberShotsHit());
-                    if(misses > 0){
-						float hitMiss = Math.round(hits * 1000.0f / misses) / 10;
-						Gdx.app.log("hit/miss ratio", hitMiss + "%");
-					} else {
-						Gdx.app.log("hit/miss ratio", "undefined");
+					for(Player player : players){
+						Score score = player.getScoreObject();
+						score.printOut();
 					}
 				}
 			}
-			return;
 		}
-		if(player.isRemoved() && mode == LevelMode.NORMAL){
-			level.setMode(LevelMode.RESET);
-		}
-		if(mode == LevelMode.STANDBY){
-			long time = level.getModeTime();
-			if(player.isRemoved()){
-				if(time > 750){
-					world.addEntity(player);
-				}
-			} else if(time > 1500){
-				level.setMode(LevelMode.NORMAL);
-			}
-		}
-
 	}
 	private void doRender(float delta){
         RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
@@ -115,19 +121,14 @@ public class GameScreen extends ScreenAdapter {
 			worldRender.render(delta, stage);
 		}
 
-		if(Constants.SHOULD_ACT) {
-			stage.act(delta);
-		}
-
+		stage.act(delta);
 
 		RenderComponent overlayRender = overlay.getRenderComponent();
 		if(overlayRender != null){
 		    Stage textStage = overlay.getStage();
 			overlayRender.render(delta, textStage);
 
-			if(Constants.SHOULD_ACT) {
-				textStage.act(delta);
-			}
+			textStage.act(delta);
 			assert batch == stage.getBatch() : "stage's batch isn't our batch!";
 			assert batch == textStage.getBatch() : "Overlay's batch isn't our batch!";
 			// We use this instead of Stage#draw() because we only have to begin() batch one time

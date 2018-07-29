@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 
 public class Overlay implements Renderable, Disposable {
 	// quick and dirty high score implementation // this only updates when an optional method is called so it's even worse
@@ -19,6 +20,12 @@ public class Overlay implements Renderable, Disposable {
 
 	public Overlay(Batch batch){
 		stage = new Stage(new ScreenViewport(), batch);
+	}
+	public void handleRender(float delta){
+		component.render(delta, stage);
+
+		stage.act(delta);
+		stage.draw();
 	}
 	public int getCurrentScore(){
 		if(player == null){

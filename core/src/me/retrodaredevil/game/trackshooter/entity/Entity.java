@@ -67,10 +67,11 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	boolean shouldRemove(World world);
 	/**
 	 * Called when the Entity is going to be removed
-	 *
+	 * <p>
 	 * Should only be called by the World instance. This should be called after the entity has been removed
+	 * <p>
+	 * This should also call disposeRenderComponent()
 	 * @param world The world this entity will be removed from
-	 *
 	 */
 	void afterRemove(World world);
 	/**

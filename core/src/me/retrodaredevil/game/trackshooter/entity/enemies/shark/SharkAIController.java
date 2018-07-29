@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
+import java.util.List;
+
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
@@ -10,8 +12,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SharkAIController implements EntityController {
 
-	private Shark shark;
-	private Entity target;
+	private final Shark shark;
+	private final Entity target;
 
 	private float trackDistanceAway;
 	private float timeMultiplier;
@@ -19,13 +21,13 @@ public class SharkAIController implements EntityController {
 	/**
 	 *
 	 * @param shark The Shark entity for this controller to control
-	 * @param target The entity that the Shark should base its track distance off of
+	 * @param targets The list of targets with at least one element
 	 * @param trackDistanceAway The amount of distance away on the track the shark should target from
 	 * @param timeMultiplier The how much distance should the target distance change each second
 	 */
-	public SharkAIController(Shark shark, Entity target, float trackDistanceAway, float timeMultiplier){
+	public SharkAIController(Shark shark, List<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
 		this.shark = shark;
-		this.target = target;
+		this.target = targets.get(0); // TODO incorporate all targets
 		this.trackDistanceAway = trackDistanceAway;
 		this.timeMultiplier = timeMultiplier;
 	}

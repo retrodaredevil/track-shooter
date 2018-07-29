@@ -21,9 +21,17 @@ public interface JoystickPart extends ControllerPart {
      */
 	JoystickType getJoystickType();
 
+	/** @return angle of the joystick in degrees. If joystick completely centered, usually returns 0. */
 	double getAngle();
 
+	/** @return The raw magnitude using the values from getX() and getY() */
 	double getMagnitude();
+
+	/**
+	 * This will never be > 1 unless getJoystickType().isRangeOver() is true
+	 * @return returns getMagnitude() and scales it if getJoystickType().shouldScale().
+	 */
+	double getCorrectMagnitude();
 
 	/**
 	 * When implementing: You should try to cache the value in update() for this so if this method is called 100 times
@@ -42,6 +50,7 @@ public interface JoystickPart extends ControllerPart {
 	 * @return The Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
 	 */
 	double getY();
+
 
 	boolean isDeadzone();
 

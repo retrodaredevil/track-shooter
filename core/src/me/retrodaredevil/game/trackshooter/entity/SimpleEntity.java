@@ -213,9 +213,7 @@ public class SimpleEntity implements Entity {
 			throw new IllegalStateException(this.toString() + " is already removed!");
 		}
 		this.removed = true;
-		if (renderComponent != null) {
-			renderComponent.dispose();
-		}
+		disposeRenderComponent();
 	}
 
 	@Override

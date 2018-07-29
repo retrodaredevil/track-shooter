@@ -1,15 +1,16 @@
-package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
+package me.retrodaredevil.game.trackshooter.entity.movement;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import me.retrodaredevil.game.trackshooter.entity.DifficultEntity;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
+public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
 
 	private static final float IN_FRONT_DISTANCE = 5;
 	private static final float MAX_AWAY = 12;
@@ -17,11 +18,11 @@ public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
 	private static final float VIEW_ANGLE = 90; // * 2 total
 
 
-	private final SnakePart part;
+	private final DifficultEntity entity;
 	private final Entity target;
-	protected SnakeTargetRotationMoveComponent(SnakePart part, Entity target) {
-		super(part, Vector2.Zero, 0, 0);
-		this.part = part;
+	public SmartSightMoveComponent(DifficultEntity entity, Entity target) {
+		super(entity, Vector2.Zero, 0, 0);
+		this.entity = entity;
 		this.target = target;
 	}
 
@@ -31,14 +32,15 @@ public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
 
 	@Override
 	protected void onUpdate(float delta, World world) {
-		if(!part.isHead()){
-			throw new UnsupportedOperationException(getClass().getSimpleName() + " doesn't support non-head SnakeParts");
-		}
-		System.out.println("updating TargetRotation with velocity: " + getTravelVelocity());
+//		if(!entity.isHead()){
+//			throw new UnsupportedOperationException(getClass().getSimpleName() + " doesn't support non-head SnakeParts");
+//		}
+//		System.out.println("updating TargetRotation with velocity: " + getTravelVelocity());
 
-		if(world.getLevel().getMode() == LevelMode.NORMAL){ // we don't handle returning to normal position
-			doTarget();
+		if(world.getLevel().getMode() != LevelMode.NORMAL){ // we don't handle returning to normal position
+			System.err.println(getClass().getSimpleName() + " is active in mode: " + world.getLevel().getMode());
 		}
+		doTarget();
 		super.onUpdate(delta, world);
 	}
 
@@ -47,13 +49,13 @@ public class SnakeTargetRotationMoveComponent extends SmoothTravelMoveComponent{
 	 * Sets the target on the smoothTravel and possibly increases the travel speed of passed smoothTravel
 	 */
 	private void doTarget(){
-		SnakeDifficulty difficulty = part.getDifficulty();
+		EntityDifficulty difficulty = entity.getDifficulty();
 
 		// ==== Calculate target ====
 		float rotation = target.getRotation();
-		float angle = part.getLocation().sub(target.getX(), target.getY()).angle();
+		float angle = entity.getLocation().sub(target.getX(), target.getY()).angle();
 		float angleAway = MathUtil.minDistance(rotation, angle, 360); // the amount of degrees the target is away from looking right at the head
-		if(difficulty.value >= SnakeDifficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
+		if(difficulty.value >= EntityDifficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
 			float speed = this.getTravelVelocity();
 			speed += (angleAway / 25) * 3;
 			getTravelVelocitySetter().setVelocity(speed);

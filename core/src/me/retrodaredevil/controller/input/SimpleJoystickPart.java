@@ -13,10 +13,10 @@ import static java.lang.Math.toRadians;
 public abstract class SimpleJoystickPart extends SimpleControllerPart implements JoystickPart{
 	private JoystickType type;
 
-	// set to null every frame or calculated every frame
-	protected Double angleDegrees;
-	// set to null every frame or calculated every frame
-	protected Double magnitude;
+	// these 3 variables set to null every frame or calculated every frame
+	private Double angleDegrees;
+	private Double magnitude;
+	private Double correctMagnitude;
 
 	public SimpleJoystickPart(JoystickType type){
 		this.type = type;
@@ -32,6 +32,7 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 		super.onUpdate();
 		angleDegrees = null;
 		magnitude = null;
+		correctMagnitude = null;
 	}
 
 	@Override
@@ -42,6 +43,7 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 			double y = getY();
 			angleDegrees = calculateAngle(x, y);
 			magnitude = calculateMagnitude(x, y);
+			correctMagnitude = calculateCorrectMagnitude(magnitude, angleDegrees);
 		}
 	}
 
@@ -67,6 +69,13 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	protected double calculateMagnitude(double x, double y){
 		return hypot(x, y);
 	}
+	protected double calculateCorrectMagnitude(double magnitude, double angleDegrees){
+		double r = getJoystickType().shouldScale() ? magnitude * getScaled(angleDegrees) : magnitude;
+		if(r >= .999999999999999){ // if another 9 is added, will start to produce incorrect results
+			r = 1;
+		}
+		return r;
+	}
 
 	/**
 	 * The returned value will be 0 (inclusive) to 360 (exclusive)
@@ -88,6 +97,14 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 			magnitude = calculateMagnitude(getX(), getY());
 		}
 		return magnitude;
+	}
+
+	@Override
+	public double getCorrectMagnitude() {
+		if(correctMagnitude == null){
+			correctMagnitude = calculateCorrectMagnitude(getMagnitude(), getAngle());
+		}
+		return correctMagnitude;
 	}
 
 	/**
