@@ -50,7 +50,7 @@ public class GameScreen extends ScreenAdapter {
 			world.addEntity(player);
 		}
 
-		overlay.setPlayer(players.get(0)); // TODO add a player 2
+		overlay.setPlayers(players);
 	}
 
 	@Override

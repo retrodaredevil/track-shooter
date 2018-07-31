@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -33,17 +34,19 @@ public class GameMain extends Game {
 	    batch = new SpriteBatch();
 		overlay = new Overlay(batch);
 		controllerManager = new DefaultControllerManager();
-		if(Controllers.getControllers().size > 0){
-			StandardUSBControllerInput controller = new StandardUSBControllerInput(Controllers.getControllers().first());
-			controllerManager.addController(controller);
+		for(Controller controller : Controllers.getControllers()){
+			StandardUSBControllerInput standardController = new StandardUSBControllerInput(controller);
+			controllerManager.addController(standardController);
 
-			GameInput controllerInput = new DefaultGameInput(controller);
+			GameInput controllerInput = new DefaultGameInput(standardController);
 			inputs.add(controllerInput);
 			controllerManager.addController(controllerInput);
 		}
-		GameInput keyboardInput = new DefaultGameInput();
-		inputs.add(keyboardInput);
-		controllerManager.addController(keyboardInput);
+		if(inputs.size() == 0) {
+			GameInput keyboardInput = new DefaultGameInput();
+			inputs.add(keyboardInput);
+			controllerManager.addController(keyboardInput);
+		}
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
         Gdx.graphics.setTitle("Track Shooter");

@@ -5,6 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -16,7 +20,8 @@ public class Overlay implements Renderable, Disposable {
 
     private final Stage stage;
 	private final RenderComponent component = new OverlayRenderer(this);
-	private Player player = null;
+	private Player[] players = null;
+//	private final List<Player> players = new ArrayList<>(4);
 
 	public Overlay(Batch batch){
 		stage = new Stage(new ScreenViewport(), batch);
@@ -27,21 +32,35 @@ public class Overlay implements Renderable, Disposable {
 		stage.act(delta);
 		stage.draw();
 	}
-	public int getCurrentScore(){
-		if(player == null){
+	public int getNumberPlayers(){
+		return players == null ? 0 : players.length;
+	}
+	public int getCurrentScore(int playerIndex){
+		if(players == null || playerIndex >= players.length){
 			return 0;
+		}
+		Player player = players[playerIndex];
+		if(player == null){
+			throw new NullPointerException("An item in the players array is null");
 		}
 		return player.getScoreObject().getScore();
 	}
 	public int getHighScore(){
-		int score = getCurrentScore();
-		if(score > highScore){
-			highScore = score;
+		for(int i = 0; i < getNumberPlayers(); i++){
+			int score = getCurrentScore(i);
+			if(score > highScore){
+				highScore = score;
+			}
 		}
 		return highScore;
 	}
-	public void setPlayer(Player player){
-	    this.player = player;
+
+	/**
+	 * Sets the list of players and copies it
+	 * @param players The list of players to be copied
+	 */
+	public void setPlayers(List<Player> players){
+		this.players = players.toArray(new Player[players.size()]);
 	}
 	public Stage getStage(){
 		return stage;
