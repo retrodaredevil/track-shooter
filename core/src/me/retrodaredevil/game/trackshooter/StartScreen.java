@@ -12,6 +12,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -72,9 +74,11 @@ public class StartScreen extends ScreenAdapter {
 //		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
 //		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude()
 //				* (gameInput.mainJoystick().getJoystickType().shouldScale() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
-		Gdx.app.debug("correct magnitude", "" + gameInput.mainJoystick().getCorrectMagnitude());
-		Gdx.app.debug("is dead", "" + gameInput.mainJoystick().isDeadzone());
-		System.out.println();
+		JoystickPart joy = gameInput.mainJoystick();
+		InputPart x = joy.getXAxis();
+		InputPart y = joy.getYAxis();
+//		Gdx.app.debug("digital joystick", x.getDigitalPosition() + ", " + y.getDigitalPosition());
+//		System.out.println();
 	}
 
 	@Override

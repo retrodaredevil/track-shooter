@@ -26,8 +26,12 @@ public class GameLevelGetter implements LevelGetter {
 
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
-	private final List<? extends Player> players;
+	private final List<? extends Player> players; // may be mutated
 
+	/**
+	 *
+	 * @param players The reference to the list of players (NOT a copy)
+	 */
 	public GameLevelGetter(List<? extends Player> players){
 		this.players = players;
 		this.tracks = new Track[] {Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };

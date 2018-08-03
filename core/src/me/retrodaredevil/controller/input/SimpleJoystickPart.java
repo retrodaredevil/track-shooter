@@ -3,7 +3,6 @@ package me.retrodaredevil.controller.input;
 import me.retrodaredevil.controller.SimpleControllerPart;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.atan;
 import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.hypot;
@@ -11,16 +10,32 @@ import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
 public abstract class SimpleJoystickPart extends SimpleControllerPart implements JoystickPart{
+	private final boolean cacheAfterChildrenUpdate;
+	private final boolean autoCorrectNeedsScaleMagnitudes;
 	private JoystickType type;
 
-	// these 3 variables set to null every frame or calculated every frame
+	// these 3 variables set to null every frame and possibly calculated every frame
 	private Double angleDegrees;
 	private Double magnitude;
 	private Double correctMagnitude;
 
-	public SimpleJoystickPart(JoystickType type){
+	/**
+	 *
+	 * @param type The joystick type
+	 * @param cacheAfterChildrenUpdate If config.cacheAngleAndMagnitudeInUpdate, this will determine to calculate after or before children
+	 * @param autoCorrectNeedsScaleMagnitudes Should the JoystickType automatically change if the magnitude gets too high. Ex: Magnitude is sqrt(2)
+	 */
+	public SimpleJoystickPart(JoystickType type, boolean cacheAfterChildrenUpdate, boolean autoCorrectNeedsScaleMagnitudes){
 		this.type = type;
+		this.cacheAfterChildrenUpdate = cacheAfterChildrenUpdate;
+		this.autoCorrectNeedsScaleMagnitudes = autoCorrectNeedsScaleMagnitudes;
+		if(type.isRangeOver() && autoCorrectNeedsScaleMagnitudes){
+			throw new IllegalArgumentException("autoCorrectNeedsScaleMagnitudes cannot be true when the JoystickType supports rangeOver");
+		}
 	}
+//	public SimpleJoystickPart(JoystickType type){
+//		this(type, true, false);
+//	}
 
 	@Override
 	public JoystickType getJoystickType(){
@@ -38,11 +53,29 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	@Override
 	public void onSecondUpdate() {
 		super.onSecondUpdate();
-		if(this.config.cacheAngleAndMagnitudeInUpdate){
+		if(!cacheAfterChildrenUpdate){
+			checkCache();
+		}
+	}
+
+	@Override
+	protected void onAfterChildrenUpdate() {
+		super.onAfterChildrenUpdate();
+		if(cacheAfterChildrenUpdate){
+			checkCache();
+		}
+	}
+	private void checkCache(){
+		boolean testForNeedsScale = (autoCorrectNeedsScaleMagnitudes && !type.shouldScale()) && !type.isRangeOver();
+		if(this.config.cacheAngleAndMagnitudeInUpdate || testForNeedsScale){
 			double x = getX();
 			double y = getY();
 			angleDegrees = calculateAngle(x, y);
 			magnitude = calculateMagnitude(x, y);
+			if(testForNeedsScale && abs(magnitude) > config.switchToShouldScaleThreshold){
+				type = new JoystickType(type.isAnalog(), type.isRangeOver(), true, type.shouldUseDelta());
+				System.out.println("Changed joystick type to support scaling!");
+			}
 			correctMagnitude = calculateCorrectMagnitude(magnitude, angleDegrees);
 		}
 	}
@@ -71,7 +104,8 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	}
 	protected double calculateCorrectMagnitude(double magnitude, double angleDegrees){
 		double r = getJoystickType().shouldScale() ? magnitude * getScaled(angleDegrees) : magnitude;
-		if(r >= .999999999999999){ // if another 9 is added, will start to produce incorrect results
+		if(r >= .999999999999999  // if another 9 is added, will start to produce incorrect results
+				&& (!getJoystickType().isRangeOver() || r < 1.0001)){ // make sure that the range isn't over on purpose
 			r = 1;
 		}
 		return r;

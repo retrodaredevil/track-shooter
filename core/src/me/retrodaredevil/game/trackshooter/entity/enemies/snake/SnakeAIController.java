@@ -9,8 +9,6 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * An EntityController that supports head and non-head SnakeParts
  */
 public class SnakeAIController implements EntityController {
-	public static final float DEFAULT_SPEED = 5;
-	public static final float DEFAULT_TURN_MULTIPLIER = 2;
 
 	private final SnakePart part;
 	private final Entity target;

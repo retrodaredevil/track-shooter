@@ -59,8 +59,8 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 
 //		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
 		dPad = new ControllerPovJoystick(controller, 0);
-		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis, true);
-		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis, true);
+		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
+		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
 
 		this.rumble = new GdxControllerRumble(controller);
 

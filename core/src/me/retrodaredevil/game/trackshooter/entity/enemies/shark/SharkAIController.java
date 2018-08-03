@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -8,26 +9,29 @@ import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TargetPositionMoveComponent;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
+import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SharkAIController implements EntityController {
 
 	private final Shark shark;
-	private final Entity target;
+//	private final Entity target;
+	private final List<? extends Entity> targets;
 
-	private float trackDistanceAway;
-	private float timeMultiplier;
+	private final float trackDistanceAway;
+	private final float timeMultiplier;
 
 	/**
 	 *
 	 * @param shark The Shark entity for this controller to control
-	 * @param targets The list of targets with at least one element
+	 * @param targets The reference to the list of targets (NOT a copy)
 	 * @param trackDistanceAway The amount of distance away on the track the shark should target from
 	 * @param timeMultiplier The how much distance should the target distance change each second
 	 */
 	public SharkAIController(Shark shark, List<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
 		this.shark = shark;
-		this.target = targets.get(0); // TODO incorporate all targets
+		this.targets = targets;
 		this.trackDistanceAway = trackDistanceAway;
 		this.timeMultiplier = timeMultiplier;
 	}
@@ -41,12 +45,36 @@ public class SharkAIController implements EntityController {
 			double offset = time / 1000D;
 			offset %= world.getTrack().getTotalDistance();
 			offset *= timeMultiplier;
-			MoveComponent targetMove = target.getMoveComponent();
-			if(targetMove instanceof OnTrackMoveComponent){
-				OnTrackMoveComponent trackMove = (OnTrackMoveComponent) targetMove;
-				pointMove.setTargetPosition(world.getTrack().getDesiredLocation(trackMove.getDistanceOnTrack() + trackDistanceAway + (float) offset));
+			Float averageDistance = getAverageDistance(world.getTrack());
+			if(averageDistance != null) {
+				pointMove.setTargetPosition(world.getTrack().getDesiredLocation(averageDistance + trackDistanceAway + (float) offset));
 			}
 //			pointMove.setTarget(world.getTrack(), target, trackDistanceAway + (float) offset);
 		}
+	}
+	private Float getAverageDistance(Track track){
+		final List<Float> tempChangeFromTrackOrigin = new ArrayList<>(); // no null elements
+
+
+		for(int i = 0; i < targets.size(); i++){
+			Entity target = targets.get(i);
+
+			MoveComponent targetMove = target.getMoveComponent();
+			if(targetMove instanceof OnTrackMoveComponent && !target.isRemoved()){
+				OnTrackMoveComponent trackMove = (OnTrackMoveComponent) targetMove;
+				float distance = trackMove.getDistanceOnTrack();
+				tempChangeFromTrackOrigin.add(MathUtil.minChange(distance, 0 , track.getTotalDistance()));
+			}
+		}
+		int numberOnTrack = tempChangeFromTrackOrigin.size();
+		if(numberOnTrack == 0){
+			return null;
+		}
+
+		float sum = 0;
+		for(float toAdd : tempChangeFromTrackOrigin){
+			sum += toAdd;
+		}
+		return sum / numberOnTrack;
 	}
 }

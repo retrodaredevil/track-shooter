@@ -56,7 +56,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 
 	public SnakePart(EntityDifficulty difficulty){
 		this.difficulty = difficulty;
-		this.returnToStart = new SmoothTravelMoveComponent(this, Vector2.Zero, SnakeAIController.DEFAULT_SPEED, SnakeAIController.DEFAULT_TURN_MULTIPLIER);
+		this.returnToStart = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0); // values that are 0 will be reset
 		this.renderComponent = new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, 0, 0); // width and height will be changed later
 		setRenderComponent(renderComponent);
 		setSize(.4f, true);
@@ -243,29 +243,39 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		}
 		setSize(size, true);
 	}
+
+	/**
+	 * @param numberParts The total number of parts or null if this method should calculate that itself.
+	 * @param moveComponent The move component to set the rotational velocity of and of the travel velocity of
+	 */
 	private void updateSpeedAndRotation(Integer numberParts, MoveComponent moveComponent){
 		if(!this.isHead()){
 			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePark");
 		}
+		final boolean canMultiplyRotation = moveComponent instanceof RotationalVelocityMultiplierSetter;
+		final boolean canSetTravelSpeed = moveComponent instanceof TravelVelocitySetter;
+		if(!canSetTravelSpeed && !canMultiplyRotation){
+			return; // we can't do anything so why calculate anything
+		}
 		if(numberParts == null){
 			numberParts = this.getNumberBehind() + 1;
 		}
-		float speed = SnakeAIController.DEFAULT_SPEED;
-		float rotMultiplier = SnakeAIController.DEFAULT_TURN_MULTIPLIER;
+		float speed = 5;
+		float rotMultiplier = 2;
 		if (numberParts <= 10) {
 			if (difficulty.value >= EntityDifficulty.NORMAL.value) {
 				if (difficulty.value >= EntityDifficulty.HARD.value) {
 					speed = 15 - numberParts;
-				} else if (numberParts <= 5) { // TODO incorporate DEFAULT_SPEED here
+				} else if (numberParts <= 5) {
 					speed = 5 + (5 - numberParts) * .5f;
 				}
 				rotMultiplier = 4.5f - (numberParts * .25f);
 			}
 		}
-		if(moveComponent instanceof RotationalVelocityMultiplierSetter) {
+		if(canMultiplyRotation) {
 			((RotationalVelocityMultiplierSetter) moveComponent).setRotationalMultiplier(rotMultiplier);
 		}
-		if(moveComponent instanceof TravelVelocitySetter){
+		if(canSetTravelSpeed){
 			((TravelVelocitySetter) moveComponent).getTravelVelocitySetter().setVelocity(speed);
 		}
 	}

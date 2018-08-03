@@ -15,6 +15,7 @@ import java.util.List;
 
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
+import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
@@ -35,7 +36,7 @@ public class GameMain extends Game {
 		overlay = new Overlay(batch);
 		controllerManager = new DefaultControllerManager();
 		for(Controller controller : Controllers.getControllers()){
-			StandardUSBControllerInput standardController = new StandardUSBControllerInput(controller);
+			StandardControllerInput standardController = new StandardUSBControllerInput(controller);
 			controllerManager.addController(standardController);
 
 			GameInput controllerInput = new DefaultGameInput(standardController);

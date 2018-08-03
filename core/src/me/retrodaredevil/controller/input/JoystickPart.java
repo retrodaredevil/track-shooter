@@ -24,7 +24,11 @@ public interface JoystickPart extends ControllerPart {
 	/** @return angle of the joystick in degrees. If joystick completely centered, usually returns 0. */
 	double getAngle();
 
-	/** @return The raw magnitude using the values from getX() and getY() */
+	/**
+	 * NOTE: It is possible for this to return a value > 1 even if shouldScale is correct, it could
+	 * be 1.00000001. This is why it is recommended to use getCorrectMagnitude() instead.
+	 * @return The raw magnitude using the values from getX() and getY()
+	 * */
 	double getMagnitude();
 
 	/**
@@ -36,8 +40,10 @@ public interface JoystickPart extends ControllerPart {
 	/**
 	 * When implementing: You should try to cache the value in update() for this so if this method is called 100 times
 	 * per frame, it won't affect performance.
+	 * <p>
+	 * NOTE: Normally instead of this, you should calculate x and y using getAngle() and getCorrectMagnitude()
 	 *
-	 * @return The X value of the joystick -1 to 1. Or greater if getJoystickType() == MOUSE
+	 * @return The raw X value of the joystick -1 to 1. Or greater if getJoystickType() == MOUSE
 	 */
 	double getX();
 
@@ -45,9 +51,11 @@ public interface JoystickPart extends ControllerPart {
 	 * When implementing: You should try to cache the value in update() for this so if this method is called 100 times
 	 * per frame, it won't affect performance.
 	 *
-	 * NOTE: When joystick is up, this is positive, when joystick is down, this is negative
+	 * NOTE: When joystick is up, this is positive, when joystick is down, this is negative (Like a normal coordinate system)
+	 * <p>
+	 * NOTE: Normally instead of this, you should calculate x and y using getAngle() and getCorrectMagnitude()
 	 *
-	 * @return The Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
+	 * @return The raw Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
 	 */
 	double getY();
 

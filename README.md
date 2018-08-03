@@ -5,7 +5,9 @@ In this game, you go around a track and rotate to shoot enemies. Each level you 
 After 10 seconds in each level, a Snake enemy comes in that has crazy and unique movement. The only point of this game is to
 get the highest score.
 
-## Example Screenshot:
+## Example:
+[Low Quality Video](https://www.youtube.com/watch?v=qpaIXSVZYBI "Track Shooter Demo Video")
+
 ![alt text](demo-screenshot.png?raw=true "Demo Screenshot")
 
 ## Running the Game

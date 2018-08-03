@@ -6,7 +6,7 @@ package me.retrodaredevil.controller;
 public class ControlConfig {
 	/** Should be used for all isDown() calls */
 	public double buttonDownDeadzone = .5;
-	/** Should be used for things like D-pads and POVs */
+	/** Should be used for things like D-pads and POVs and all digitalPosition calls */
 	public double analogDigitalValueDeadzone = buttonDownDeadzone;
 	/** Should be used for ANALOG AxisTypes */
 	public double analogDeadzone = .005;
@@ -28,4 +28,5 @@ public class ControlConfig {
 	 * is pressed */
 	public boolean useAbstractedIsDownIfPossible = true;
 
+	public double switchToShouldScaleThreshold = 1.01;
 }

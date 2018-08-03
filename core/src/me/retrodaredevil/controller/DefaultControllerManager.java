@@ -22,7 +22,12 @@ public class DefaultControllerManager implements ControllerManager {
 			if(controller.getParent() != null){
 				throw new IllegalStateException("The controllers handled by DefaultControllerManager cannot have parents");
 			}
-			controller.update(config);
+			try {
+				controller.update(config);
+			} catch(Exception ex){
+				System.err.println("Error while updating controller: " + controller + " which is of class: " + controller.getClass().getSimpleName());
+				throw ex;
+			}
 		}
 	}
 }

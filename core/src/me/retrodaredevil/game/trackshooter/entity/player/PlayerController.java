@@ -29,7 +29,6 @@ public class PlayerController implements EntityController{
 	public void update(float delta, World world) {
 		MoveComponent move = player.getMoveComponent();
 		if(move instanceof OnTrackMoveComponent){
-
 			// ==== Track Movement ====
 			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
 			JoystickPart movementJoy = gameInput.mainJoystick();
@@ -65,34 +64,39 @@ public class PlayerController implements EntityController{
 				trackMove.setDistanceOnTrack(trackMove.getDistanceOnTrack() + delta * velocity);
 			}
 
-			// ==== Rotation ====
-			InputPart rotateAxis = gameInput.rotateAxis();
-			double position = rotateAxis.getPosition();
-			if (rotateAxis.getAxisType().shouldUseDelta()) { // normal joystick
-				if(rotateAxis.getAxisType().isRangeOver()){
-					if(Math.abs(position) > 1){
-						position = Math.signum(position);
-					}
-				}
-//				System.out.println(position); // .004
-				float desired = (float) (ROTATE_PER_SECOND * position);
-				if (rotateAxis.isDeadzone()) {
-					desired = 0;
-				}
-
-				if(move instanceof RotationalVelocitySetter){
-					((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(desired);
-				} else {
-					System.err.println("move not instanceof RotationalVelocityMoveComponent. Remove print error if intended.");
-					player.setRotation(player.getRotation() + delta * desired);
-				}
-			} else { // probably a mouse
-				if(move instanceof RotationalVelocitySetter){
-					((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(0);
-				}
-				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
-			}
+		} else {
+			System.err.println("MoveComponent is not on track. Remove print statement if intended.");
 		}
+		// ==== Rotation ====
+		InputPart rotateAxis = gameInput.rotateAxis();
+		double position = rotateAxis.getPosition();
+		if (rotateAxis.getAxisType().shouldUseDelta()) { // normal joystick
+			if(rotateAxis.getAxisType().isRangeOver()){
+				if(Math.abs(position) > 1){
+					position = Math.signum(position);
+				}
+			}
+//				System.out.println(position); // .004
+			float desired = (float) (ROTATE_PER_SECOND * position);
+			if (rotateAxis.isDeadzone()) {
+				desired = 0;
+			}
+
+			if(move instanceof RotationalVelocitySetter){
+				((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(desired);
+			} else {
+				System.err.println("move not instanceof RotationalVelocityMoveComponent. Remove print error if intended.");
+				player.setRotation(player.getRotation() + delta * desired);
+			}
+		} else { // probably a mouse
+			if(move instanceof RotationalVelocitySetter){ // 0 velocity just in case
+				((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(0);
+			}
+			// change rotation manually
+			player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
+		}
+
+		// ==== Rumble and Shoot ====
 		ControllerRumble rumble = gameInput.getRumble();
 		if (gameInput.fireButton().isPressed()) {
 			boolean didShoot = player.shootBullet(world, null) != null;
@@ -100,6 +104,8 @@ public class PlayerController implements EntityController{
 				rumble.rumble(.5f);
 			}
 		}
+
+		// ==== Powerup ====
 		if(gameInput.activatePowerup().isPressed()){
 			player.activatePowerup(world);
 		}

@@ -23,7 +23,7 @@ public class ControllerPovJoystick extends SimpleJoystickPart{
 	private double x, y;
 
 	public ControllerPovJoystick(Controller controller, int povCode){
-		super(new JoystickType(false, false, false, true));
+		super(new JoystickType(false, false, false, true), false,false);
 		this.controller = controller;
 		this.povCode = povCode;
 	}
