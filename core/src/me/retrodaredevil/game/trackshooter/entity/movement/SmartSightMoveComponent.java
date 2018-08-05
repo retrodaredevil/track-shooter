@@ -32,14 +32,6 @@ public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
 
 	@Override
 	protected void onUpdate(float delta, World world) {
-//		if(!entity.isHead()){
-//			throw new UnsupportedOperationException(getClass().getSimpleName() + " doesn't support non-head SnakeParts");
-//		}
-//		System.out.println("updating TargetRotation with velocity: " + getTravelVelocity());
-
-		if(world.getLevel().getMode() != LevelMode.NORMAL){ // we don't handle returning to normal position
-			System.err.println(getClass().getSimpleName() + " is active in mode: " + world.getLevel().getMode());
-		}
 		doTarget();
 		super.onUpdate(delta, world);
 	}

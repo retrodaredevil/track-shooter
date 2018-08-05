@@ -53,11 +53,11 @@ public class SnakeFunction implements LevelFunction {
 		if(MathUtils.randomBoolean()){ // up or down
 			x = bounds.getX() + bounds.getWidth() / 2.0f; // center
 			boolean up = MathUtils.randomBoolean();
-			y = bounds.getY() + (up ? 2 * bounds.getHeight() : 0);
+			y = bounds.getY() + (up ? 2 * bounds.getHeight() : -bounds.getHeight());
 			rotation = up ? -90 : 90;
 		} else { // left or right
 			boolean left = MathUtils.randomBoolean();
-			x = bounds.getX() + (left ? 0 : 2 * bounds.getWidth());
+			x = bounds.getX() + (left ? -bounds.getWidth() : 2 * bounds.getWidth());
 			y = bounds.getY() + bounds.getHeight() / 2.0f; // center
 			rotation = left ? 0 : 180;
 		}

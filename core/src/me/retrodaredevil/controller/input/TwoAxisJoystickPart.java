@@ -40,6 +40,9 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	 * with shouldScale=false and autoCorrectNeedsScaleMagnitude=true meaning that at first
 	 * this expects the magnitude to not go over 1 but if it goes over too much it will switch to
 	 * shouldScale=true
+	 * <p>
+	 * If either x or y support range over, should scale will always be false because autoCorrectNeedsScaleMagnitudes
+	 * will be set to false.
 	 * @param x x axis where left is negative and positive is right
 	 * @param y y axis where down is negative and positive is up
 	 */
