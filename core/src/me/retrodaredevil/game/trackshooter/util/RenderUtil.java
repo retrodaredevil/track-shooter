@@ -9,27 +9,27 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public final class RenderUtil {
-    private RenderUtil(){}
+	private RenderUtil(){}
 
-    /**
-     * Draws the stage without starting or ending the batch.
-     * @param batch
-     * @param stage
-     */
-    public static void drawStage(Batch batch, Stage stage){
+	/**
+	 * Draws the stage without starting or ending the batch.
+	 * @param batch
+	 * @param stage
+	 */
+	public static void drawStage(Batch batch, Stage stage){
 
-        Camera camera = stage.getCamera();
-        camera.update();
+		Camera camera = stage.getCamera();
+		camera.update();
 
-        Group root = stage.getRoot();
-        if (!root.isVisible()) return;
+		Group root = stage.getRoot();
+		if (!root.isVisible()) return;
 
-        batch.setProjectionMatrix(camera.combined);
-        root.draw(batch, 1);
-    }
+		batch.setProjectionMatrix(camera.combined);
+		root.draw(batch, 1);
+	}
 
-    public static void clearScreen(Color backgroundColor){
-        Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-    }
+	public static void clearScreen(Color backgroundColor){
+		Gdx.gl.glClearColor(backgroundColor.r, backgroundColor.g, backgroundColor.b, backgroundColor.a);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+	}
 }

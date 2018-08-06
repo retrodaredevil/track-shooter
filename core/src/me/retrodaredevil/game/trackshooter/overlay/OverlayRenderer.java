@@ -3,63 +3,85 @@ package me.retrodaredevil.game.trackshooter.overlay;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 
 public class OverlayRenderer implements RenderComponent {
 	private static final int SCORE_SPACES = 7;
+	private static final int MAX_LIVES_DISPLAYED = 5;
 
 	private static final Color textColor = new Color(1, 0, 0, 1);
 	private static final Color scoreColor = new Color(1, 1, 1, 1);
 
-    private final BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/main_font.fnt"),
-            Gdx.files.internal("fonts/main_font.png"), false, true);
+	private final BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/main_font.fnt"),
+			Gdx.files.internal("fonts/main_font.png"), false, true);
 
-    private final Table table;
+	private final Group group = new Table(){{setFillParent(true);}};
 
-//	private final Table currentScoreTable;
-//	private final Label scoreLabel;
-	private final Table[] currentScoreTables = new Table[4];
+	private final Table[] cornerTables = new Table[4];
 	private final Label[] currentScores = new Label[4];
 
-//	private final Table highScoreTable;
+	// each element in this array is a Table where only a certain number of its children will be
+	// visible meaning that this should only contain images to represent lives and nothing else
+	private final Table[] livesTables = new Table[4];
+	private final Table[] itemsTables = new Table[4];
+
 	private final Label highScoreLabel;
 
 	private final Overlay overlay;
 
 	public OverlayRenderer(Overlay overlay){
-	    this.overlay = Objects.requireNonNull(overlay);
+		this.overlay = Objects.requireNonNull(overlay);
 
-	    table = new Table();
-	    table.setFillParent(true);
-	    for(int i = 0; i < currentScoreTables.length; i++){
-			Table currentScoreTable = new Table();
-			currentScoreTables[i] = currentScoreTable;
-			table.addActor(currentScoreTable);
+		for(int i = 0; i < cornerTables.length; i++){
+			Table cornerTable = new Table();
+			cornerTables[i] = cornerTable;
+			group.addActor(cornerTable);
+			cornerTable.setFillParent(true);
+			cornerTable.add(new Label((i + 1) + "UP", new Label.LabelStyle(font, textColor)));
 
-			currentScoreTable.setFillParent(true);
-			currentScoreTable.add(new Label((i + 1) + "UP", new Label.LabelStyle(font, textColor)));
-			currentScoreTable.row();
+			cornerTable.row();
 
 			Label scoreLabel = new Label("", new Label.LabelStyle(font, scoreColor));
 			currentScores[i] = scoreLabel;
-			currentScoreTable.add(scoreLabel).padTop(-10);
+			cornerTable.add(scoreLabel).padTop(-10);
+
+			cornerTable.row();
+
+			Table livesTable = new Table();
+			livesTables[i] = livesTable;
+			cornerTable.add(livesTable);
+			livesTable.setHeight(24);
+			for(int j = 0; j < MAX_LIVES_DISPLAYED; j++) {
+				livesTable.add(new Image(Resources.PLAYER_TEXTURE)).width(24).height(24);
+			}
+
+			cornerTable.row();
+
+			Table itemsTable = new Table();
+			itemsTables[i] = itemsTable;
+			cornerTable.add(itemsTable);
 		}
-		currentScoreTables[0].top().left();
-		currentScoreTables[1].top().right();
-		currentScoreTables[2].bottom().left();
-		currentScoreTables[3].bottom().right();
+		cornerTables[0].top().left();
+		cornerTables[1].top().right();
+		cornerTables[2].bottom().left();
+		cornerTables[3].bottom().right();
 
 		Table highScoreTable = new Table();
-		table.addActor(highScoreTable);
-//		highScoreTable.setDebug(true);
+		group.addActor(highScoreTable);
 		highScoreTable.setFillParent(true);
 		highScoreTable.center().top();
 		highScoreTable.add(new Label(" HIGH SCORE", new Label.LabelStyle(font, textColor)));
@@ -71,23 +93,59 @@ public class OverlayRenderer implements RenderComponent {
 
 	@Override
 	public void render(float delta, Stage stage) {
-		stage.addActor(table);
+		stage.addActor(group);
 
-		final float scale = Math.min(stage.getWidth(), stage.getHeight()) / 640;
-		table.setScale(scale);
+		// TODO fix scale; scale not working as of right now
+		// a previous commit got rid of an updateLabelsOf function that we can use
+//		final float scale = Math.min(stage.getWidth(), stage.getHeight()) / 640;
+//		group.setScale(scale);
 
-        final int numberPlayers = overlay.getNumberPlayers();
-        for(int i = 0; i < currentScoreTables.length; i++){
-        	Group scoreGroup = currentScoreTables[i];
-        	Label scoreLabel = currentScores[i];
+		final int numberPlayers = overlay.getNumberPlayers();
+		for(int i = 0; i < cornerTables.length; i++){
+			Group cornerTable = cornerTables[i];
 
-        	String score = getScoreText(overlay.getCurrentScore(i));
-//        	System.out.println("score for: " + i + " is " + score);
-			scoreLabel.setText(score);
+			// ==== Visibility ====
 			if(i >= numberPlayers && i != 0){
-				scoreGroup.setVisible(false);
+				cornerTable.setVisible(false);
 			} else {
-				scoreGroup.setVisible(true);
+				cornerTable.setVisible(true);
+			}
+
+			// ==== Score ====
+			Label scoreLabel = currentScores[i];
+			String score = getScoreText(overlay.getCurrentScore(i));
+//			System.out.println("score for: " + i + " is " + score);
+			scoreLabel.setText(score);
+
+			// ==== Lives ====
+			Table livesTable = livesTables[i];
+			final int numberToDraw = overlay.getShipsToDraw(i);
+			int numberDrawn = 0;
+			for(Actor a : livesTable.getChildren()){
+				if(numberDrawn < numberToDraw){
+					a.setVisible(true);
+					numberDrawn++;
+				} else {
+					a.setVisible(false);
+				}
+			}
+
+			// ==== Items ====
+			Table itemsTable = itemsTables[i];
+			List<Image> itemImages = new ArrayList<>(overlay.getItemImages(i));
+			for(Actor a : itemsTable.getChildren()){
+				if(a instanceof Image){
+					Image image = (Image) a;
+					if(!itemImages.contains(image)){
+						itemsTable.removeActor(image); // we are able to do this because getChildren() returns a SnapshotArray
+					} else {
+						itemImages.remove(image);
+					}
+				}
+			}
+			for(Image toAdd : itemImages){
+				toAdd.setSize(24, 24);
+				itemsTable.add(toAdd);
 			}
 		}
 		highScoreLabel.setText(getScoreText(overlay.getHighScore()));
@@ -108,6 +166,6 @@ public class OverlayRenderer implements RenderComponent {
 
 	@Override
 	public void dispose() {
-	    font.dispose();
+		font.dispose();
 	}
 }

@@ -32,7 +32,7 @@ public class GameMain extends Game {
 
 	@Override
 	public void create () {
-	    batch = new SpriteBatch();
+		batch = new SpriteBatch();
 		overlay = new Overlay(batch);
 		controllerManager = new DefaultControllerManager();
 		for(Controller controller : Controllers.getControllers()){
@@ -50,7 +50,7 @@ public class GameMain extends Game {
 		}
 
 		Gdx.app.setLogLevel(Application.LOG_DEBUG);
-        Gdx.graphics.setTitle("Track Shooter");
+		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
 	}
 

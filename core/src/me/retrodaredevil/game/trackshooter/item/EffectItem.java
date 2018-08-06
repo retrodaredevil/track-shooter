@@ -1,14 +1,17 @@
 package me.retrodaredevil.game.trackshooter.item;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 
-public abstract class EffectItem implements Item {
+public abstract class EffectItem implements DisplayedItem {
 
+	private final Image image;
 	private boolean used = false;
 
-	public EffectItem(){
-
+	public EffectItem(Image image){
+		this.image = image;
 	}
 
 	/**
@@ -39,5 +42,10 @@ public abstract class EffectItem implements Item {
 	@Override
 	public boolean isUsed() {
 		return used;
+	}
+
+	@Override
+	public Image getImage() {
+		return image;
 	}
 }

@@ -114,7 +114,7 @@ public class GameScreen extends ScreenAdapter {
 		}
 	}
 	private void doRender(float delta){
-        RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
+		RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
 
 		RenderComponent worldRender = world.getRenderComponent();
 		if(worldRender != null){
@@ -125,14 +125,14 @@ public class GameScreen extends ScreenAdapter {
 
 		RenderComponent overlayRender = overlay.getRenderComponent();
 		if(overlayRender != null){
-		    Stage textStage = overlay.getStage();
+			Stage textStage = overlay.getStage();
 			overlayRender.render(delta, textStage);
 
 			textStage.act(delta);
 			assert batch == stage.getBatch() : "stage's batch isn't our batch!";
 			assert batch == textStage.getBatch() : "Overlay's batch isn't our batch!";
 			// We use this instead of Stage#draw() because we only have to begin() batch one time
-            batch.begin();
+			batch.begin();
 			RenderUtil.drawStage(batch, stage);
 			RenderUtil.drawStage(batch, textStage);
 			batch.end();
@@ -145,7 +145,7 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void resize(int width, int height) {
 		Gdx.gl.glViewport(0, 0, width, height);
-		stage    .getViewport().update(width, height,true);
+		stage             .getViewport().update(width, height,true);
 		overlay.getStage().getViewport().update(width, height,true);
 	}
 

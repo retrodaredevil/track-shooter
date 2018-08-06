@@ -17,11 +17,11 @@ public interface Score {
 	void onKill(Entity killed, Entity killerSource, int points);
 
 	/**
-     * NOTE: Unlike onKill(), this is going to be called from projectiles. HOWEVER, this is not enforced but is recommended. <br/>
-     * Should be called whenever a player's bullet hits an entity. Not necessarily if it kills it.
-     * @param hitEntity The entity (usually an enemy) that the player hit
-     * @param playerProjectile The projectile where getShooter() is the player. (This is normally a Bullet object)
-     */
+	 * NOTE: Unlike onKill(), this is going to be called from projectiles. HOWEVER, this is not enforced but is recommended. <br/>
+	 * Should be called whenever a player's bullet hits an entity. Not necessarily if it kills it.
+	 * @param hitEntity The entity (usually an enemy) that the player hit
+	 * @param playerProjectile The projectile where getShooter() is the player. (This is normally a Bullet object)
+	 */
 	void onBulletHit(Entity hitEntity, Entity playerProjectile);
 
 	/**

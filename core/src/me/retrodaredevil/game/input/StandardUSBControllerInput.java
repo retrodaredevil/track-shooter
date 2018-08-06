@@ -28,7 +28,7 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 	private final ControllerRumble rumble;
 
 	public StandardUSBControllerInput(Controller controller){
-	    System.out.println(controller.getName());
+		System.out.println(controller.getName());
 		this.controller = controller;
 
 		InputPart leftXAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 0);

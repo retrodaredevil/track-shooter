@@ -50,4 +50,38 @@ public final class Tracks {
 				.build(true);
 		return new Track(parts);
 	}
+	public static Track newPlusTrack(){
+		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(Color.GRAY,
+				new Vector2(-2, -2))
+				.connect(-2, -7)
+				.connect(2, -7)
+				.connect(2, -2)
+				.connect(7, -2)
+				.connect(7, 2)
+				.connect(2, 2)
+				.connect(2, 7)
+				.connect(-2, 7)
+				.connect(-2, 2)
+				.connect(-7, 2)
+				.connect(-7, -2)
+				.build(true);
+		return new Track(parts);
+	}
+	public static Track newMazeTrack(){
+		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(Color.GRAY,
+				new Vector2(-8, -7))
+				.connect(7, -7)
+				.connect(7, -5)
+				.connect(-7, -5)
+				.connect(-7, -3)
+				.connect(7, -3)
+				.connect(7, 3)
+				.connect(-7, 3)
+				.connect(-7, 5)
+				.connect(7, 5)
+				.connect(7, 7)
+				.connect(-8, 7)
+				.build(true);
+		return new Track(parts);
+	}
 }

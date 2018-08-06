@@ -52,7 +52,7 @@ public class StartScreen extends ScreenAdapter {
 	}
 	@Override
 	public void render(float delta) {
-        RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
+		RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
 		if(gameInput.startButton().isPressed()){
 			start = true;
 		}

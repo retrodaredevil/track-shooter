@@ -32,8 +32,8 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
 		smoothTravel = new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, ROTATIONAL_SPEED);
 
-        // TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
-        // possibly only rely on one RenderComponent if that is more elegant
+		// TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
+		// possibly only rely on one RenderComponent if that is more elegant
 		fullRender = new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f);
 		hitRender = new SharkRenderComponent(Resources.SHARK_REGIONS_HIT, this, 1.0f, 1.0f);
 		wornRender = new SharkRenderComponent(Resources.SHARK_REGIONS_WORN, this, 1.0f, 1.0f);
@@ -49,20 +49,20 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		if(lives <= 1){
 			setRenderComponent(wornRender);
 		} else if(lives == 2){
-            setRenderComponent(hitRender);
+			setRenderComponent(hitRender);
 		} else {
-            setRenderComponent(fullRender);
+			setRenderComponent(fullRender);
 		}
 	}
 
-    @Override
-    public void disposeRenderComponent() {
-	    fullRender.dispose();
-	    hitRender.dispose();
-	    wornRender.dispose();
-    }
+	@Override
+	public void disposeRenderComponent() {
+		fullRender.dispose();
+		hitRender.dispose();
+		wornRender.dispose();
+	}
 
-    @Override
+	@Override
 	public void goToStart() {
 		resetPosition.setNextComponent(null);
 		MoveComponent moveComponent = getMoveComponent();

@@ -34,7 +34,7 @@ public class GameLevelGetter implements LevelGetter {
 	 */
 	public GameLevelGetter(List<? extends Player> players){
 		this.players = players;
-		this.tracks = new Track[] {Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
+		this.tracks = new Track[] {Tracks.newMazeTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
 	}
 
 	@Override

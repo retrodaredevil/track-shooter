@@ -2,15 +2,19 @@ package me.retrodaredevil.game.trackshooter.overlay;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 
@@ -18,7 +22,7 @@ public class Overlay implements Renderable, Disposable {
 	// quick and dirty high score implementation // this only updates when an optional method is called so it's even worse
 	private static int highScore = 10000; // TODO git rid of this terrible static variable
 
-    private final Stage stage;
+	private final Stage stage;
 	private final RenderComponent component = new OverlayRenderer(this);
 	private Player[] players = null;
 //	private final List<Player> players = new ArrayList<>(4);
@@ -54,6 +58,39 @@ public class Overlay implements Renderable, Disposable {
 		}
 		return highScore;
 	}
+	public int getShipsToDraw(int playerIndex){
+		if(players == null || playerIndex >= players.length){
+			return 0;
+		}
+		Player player = players[playerIndex];
+		int lives = player.getScoreObject().getLives();
+		if(player.isRemoved()){
+			return lives;
+		}
+		return lives - 1;
+	}
+	/**
+	 *
+	 * @param playerIndex The index of the player
+	 * @return A list that should not be modified representing the images of the items the player of playerIndex has
+	 */
+	public Collection<Image> getItemImages(int playerIndex) {
+		if(players == null || playerIndex >= players.length){
+			return Collections.emptyList();
+		}
+		Player player = players[playerIndex];
+		Collection<DisplayedItem> items = player.getItems(DisplayedItem.class);
+		if(items == null){
+			return Collections.emptyList();
+		}
+
+		List<Image> r = new ArrayList<>();
+		for(DisplayedItem item : items){
+			Image image = item.getImage();
+			r.add(image);
+		}
+		return r;
+	}
 
 	/**
 	 * Sets the list of players and copies it
@@ -72,7 +109,7 @@ public class Overlay implements Renderable, Disposable {
 
 	@Override
 	public void disposeRenderComponent() {
-        component.dispose();
+		component.dispose();
 	}
 
 	@Override
@@ -80,4 +117,5 @@ public class Overlay implements Renderable, Disposable {
 		disposeRenderComponent();
 		stage.dispose();
 	}
+
 }
