@@ -5,8 +5,7 @@ import java.util.*;
 /**
  * The idea of this class is to make dealing with collisions easier and less prone to errors. With this alone, you
  * shouldn't have to use instanceof for most things (although you should use that in some cases.) However, just because
- * you can use someIdentity == CollisionIdentity.X doesn't mean you should. If needed create getter methods to access
- * instance variables if you need them.
+ * you can use someIdentity == CollisionIdentity.X doesn't mean you should.
  * <p>
  * <p>
  * Also note that adding values to this enum may have side effects unless other parts of the code are updated. Yes,

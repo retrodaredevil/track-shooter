@@ -10,12 +10,18 @@ public final class Resources {
 	// Constants
 	// Textures
 	public static final Texture PLAYER_TEXTURE = new Texture("player.png");
-	public static final Texture SHARK_TEXTURE = new Texture("shark.png");
 	public static final Texture SPACE_STATION_TEXTURE = new Texture("space_station.png");
 	public static final Texture SNIPER_TEXTURE = new Texture("sniper.png");
 	public static final Texture SNAKE_PART_TEXTURE = new Texture("snake_part.png");
+
+	private static final Texture SHARK_TEXTURE = new Texture("shark.png");
+	private static final Texture SHARK_HIT = new Texture("shark_hit.png");
+	private static final Texture SHARK_WORN = new Texture("shark_worn.png");
 	/**The frames for a shark [0] is right [1] is straight [2] is left */
 	public static final TextureRegionDrawable[] SHARK_REGIONS = createRegions(SHARK_TEXTURE.getWidth() <= SHARK_TEXTURE.getHeight(), 3, SHARK_TEXTURE);
+	public static final TextureRegionDrawable[] SHARK_REGIONS_HIT = createRegions(SHARK_HIT.getWidth() <= SHARK_HIT.getHeight(), 3, SHARK_HIT);
+	public static final TextureRegionDrawable[] SHARK_REGIONS_WORN = createRegions(SHARK_WORN.getWidth() <= SHARK_WORN.getHeight(), 3, SHARK_WORN);
+
 	public static final Texture BULLET_TEXTURE = new Texture("bullet.png");
 	public static final Texture CHERRY_TEXTURE = new Texture("cherry.png");
 	public static final Texture POWERUP_TEXTURE = new Texture("powerup.png");

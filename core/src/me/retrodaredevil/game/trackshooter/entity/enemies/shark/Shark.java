@@ -6,6 +6,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.*;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.SharkRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.EntityUtil;
@@ -23,11 +24,19 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
 	private final MoveComponent smoothTravel;
 
+	private final RenderComponent fullRender;
+	private final RenderComponent hitRender;
+	private final RenderComponent wornRender;
+
 	public Shark(Vector2 startingPosition, float startingRotation){
 		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
 		smoothTravel = new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, ROTATIONAL_SPEED);
 
-		setRenderComponent(new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f));
+        // TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
+        // possibly only rely on one RenderComponent if that is more elegant
+		fullRender = new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f);
+		hitRender = new SharkRenderComponent(Resources.SHARK_REGIONS_HIT, this, 1.0f, 1.0f);
+		wornRender = new SharkRenderComponent(Resources.SHARK_REGIONS_WORN, this, 1.0f, 1.0f);
 		setHitboxSize(.7f, .7f);
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
@@ -35,6 +44,25 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	}
 
 	@Override
+	public void update(float delta, World world) {
+		super.update(delta, world);
+		if(lives <= 1){
+			setRenderComponent(wornRender);
+		} else if(lives == 2){
+            setRenderComponent(hitRender);
+		} else {
+            setRenderComponent(fullRender);
+		}
+	}
+
+    @Override
+    public void disposeRenderComponent() {
+	    fullRender.dispose();
+	    hitRender.dispose();
+	    wornRender.dispose();
+    }
+
+    @Override
 	public void goToStart() {
 		resetPosition.setNextComponent(null);
 		MoveComponent moveComponent = getMoveComponent();

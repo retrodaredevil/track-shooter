@@ -12,7 +12,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.VelocityTargetPositio
 public class SharkRenderComponent extends ImageRenderComponent {
 	private static final int LEFT_FRAME = 2, RIGHT_FRAME = 0, STRAIGHT_FRAME = 1;
 
-	private TextureRegionDrawable[] frames;
+	private final TextureRegionDrawable[] frames;
 
 
 	/**
