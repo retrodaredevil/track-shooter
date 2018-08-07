@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 
@@ -31,6 +32,7 @@ public class OverlayRenderer implements RenderComponent {
 			Gdx.files.internal("fonts/main_font.png"), false, true);
 
 	private final Group group = new Table(){{setFillParent(true);}};
+//	private final Group group = new Stack();
 
 	private final Table[] cornerTables = new Table[4];
 	private final Label[] currentScores = new Label[4];
@@ -94,6 +96,7 @@ public class OverlayRenderer implements RenderComponent {
 
 	@Override
 	public void render(float delta, Stage stage) {
+//		group.setSize(stage.getWidth(), stage.getHeight());
 		stage.addActor(group);
 
 
@@ -142,7 +145,7 @@ public class OverlayRenderer implements RenderComponent {
 					if(j >= MAX_ITEMS_DISPLAYED){
 						break;
 					}
-					itemsTable.add(image).center().width(24).height(24);
+					itemsTable.add(image).center().size(24);
 					j++;
 				}
 			}

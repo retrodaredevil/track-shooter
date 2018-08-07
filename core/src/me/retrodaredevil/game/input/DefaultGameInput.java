@@ -70,10 +70,11 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			startButton = new KeyInputPart(Input.Keys.ENTER);
 		}
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
-		activatePowerup = new KeyInputPart(Input.Keys.F);
-//		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard)) {
-//		} else {
-//		}
+		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard) || !Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
+			activatePowerup = new KeyInputPart(Input.Keys.F);
+		} else {
+			activatePowerup = new GdxShakeButton();
+		}
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
 			rumble = new GdxRumble();
 		} else {
