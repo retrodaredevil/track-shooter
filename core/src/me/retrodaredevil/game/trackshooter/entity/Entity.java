@@ -60,6 +60,8 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 
 	/**
 	 * Note: This method may be called multiple times before the entity is actually removed.
+	 * <p>
+	 * Depending on the implementation, if this is removed this may return either true or false.
 	 *
 	 * @param world The World the entity is being removed from
 	 * @return true if the entity should be removed

@@ -53,7 +53,8 @@ public class Player extends SimpleEntity {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		hit = false;
+//		hit = false; // set in afterRemove()
+		assert !hit : "afterRemove() didn't set hit to false!";
 		setRenderComponent(new ImageRenderComponent(new Image(Resources.PLAYER_TEXTURE), this, .8f, .8f));
 	}
 
@@ -90,6 +91,12 @@ public class Player extends SimpleEntity {
 		}
 		hit = true;
 		score.onDeath(other);
+	}
+
+	@Override
+	public void afterRemove(World world) {
+		super.afterRemove(world);
+		hit = false; // makes sure shouldRemove() only returns true once
 	}
 
 	@Override

@@ -41,12 +41,11 @@ public class PlayerController implements EntityController{
 				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
 				float correctMagnitude = (float) movementJoy.getCorrectMagnitude();
-				if(movementJoy.getJoystickType().isRangeOver()){
-					if(correctMagnitude > 1){
+				if(correctMagnitude > 1){
+					if(!movementJoy.getJoystickType().isRangeOver()){
 						throw new IllegalArgumentException("movementJoy's correct magnitude is: " + correctMagnitude);
 					}
-				} else if(correctMagnitude > 1){
-					System.err.println("Joystick: " + movementJoy + "'s magnitude is over 1!.");
+					correctMagnitude = 1;
 				}
 				velocity =
 						correctMagnitude

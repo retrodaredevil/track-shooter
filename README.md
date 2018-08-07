@@ -11,6 +11,10 @@ get the highest score.
 ![alt text](demo-screenshot.png?raw=true "Demo Screenshot")
 
 ## Running the Game
+You must have a java 8 jdk installed or $JAVA_HOME must point to a valid java 8 jdk installation. The current
+gradle version that is being used does not support java 9 or 10. You must create a local.properties
+with ```sdk.dir="your android installation"```
+
 Windows: ```gradlew.bat desktop:run```
 
 *nix: ```./gradlew desktop:run```

@@ -32,7 +32,7 @@ public interface JoystickPart extends ControllerPart {
 	double getMagnitude();
 
 	/**
-	 * This will never be > 1 unless getJoystickType().isRangeOver() is true
+	 * This will NEVER be > 1 unless getJoystickType().isRangeOver() is true
 	 * @return returns getMagnitude() and scales it if getJoystickType().shouldScale().
 	 */
 	double getCorrectMagnitude();

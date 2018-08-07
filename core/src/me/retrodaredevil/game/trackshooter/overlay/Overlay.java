@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Overlay implements Renderable, Disposable {
 	// quick and dirty high score implementation // this only updates when an optional method is called so it's even worse
@@ -25,6 +26,7 @@ public class Overlay implements Renderable, Disposable {
 	private final Stage stage;
 	private final RenderComponent component = new OverlayRenderer(this);
 	private Player[] players = null;
+	private World world = null;
 //	private final List<Player> players = new ArrayList<>(4);
 
 	public Overlay(Batch batch){
@@ -64,7 +66,8 @@ public class Overlay implements Renderable, Disposable {
 		}
 		Player player = players[playerIndex];
 		int lives = player.getScoreObject().getLives();
-		if(player.isRemoved()){
+		// we have the player.shouldRemove() call so the lives doesn't flicker in a single frame when the life is lost.
+		if(player.isRemoved() || player.shouldRemove(world)){ // if the player is removed or is about to be
 			return lives;
 		}
 		return lives - 1;
@@ -95,9 +98,11 @@ public class Overlay implements Renderable, Disposable {
 	/**
 	 * Sets the list of players and copies it
 	 * @param players The list of players to be copied
+	 * @param world The world of the game
 	 */
-	public void setPlayers(List<Player> players){
+	public void setGame(List<Player> players, World world){
 		this.players = players.toArray(new Player[players.size()]);
+		this.world = world;
 	}
 	public Stage getStage(){
 		return stage;
