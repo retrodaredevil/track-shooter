@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.UIViewport;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -30,7 +32,7 @@ public class Overlay implements Renderable, Disposable {
 //	private final List<Player> players = new ArrayList<>(4);
 
 	public Overlay(Batch batch){
-		stage = new Stage(new ScreenViewport(), batch);
+		stage = new Stage(new UIViewport(640), batch);
 	}
 	public void handleRender(float delta){
 		component.render(delta, stage);

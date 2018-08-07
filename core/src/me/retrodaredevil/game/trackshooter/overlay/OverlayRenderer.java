@@ -22,6 +22,7 @@ import me.retrodaredevil.game.trackshooter.util.Resources;
 public class OverlayRenderer implements RenderComponent {
 	private static final int SCORE_SPACES = 7;
 	private static final int MAX_LIVES_DISPLAYED = 5;
+	private static final int MAX_ITEMS_DISPLAYED = 5;
 
 	private static final Color textColor = new Color(1, 0, 0, 1);
 	private static final Color scoreColor = new Color(1, 1, 1, 1);
@@ -95,26 +96,17 @@ public class OverlayRenderer implements RenderComponent {
 	public void render(float delta, Stage stage) {
 		stage.addActor(group);
 
-		// TODO fix scale; scale not working as of right now
-		// a previous commit got rid of an updateLabelsOf function that we can use
-//		final float scale = Math.min(stage.getWidth(), stage.getHeight()) / 640;
-//		group.setScale(scale);
 
 		final int numberPlayers = overlay.getNumberPlayers();
 		for(int i = 0; i < cornerTables.length; i++){
 			Group cornerTable = cornerTables[i];
 
 			// ==== Visibility ====
-			if(i >= numberPlayers && i != 0){
-				cornerTable.setVisible(false);
-			} else {
-				cornerTable.setVisible(true);
-			}
+			cornerTable.setVisible(i < numberPlayers || i == 0);
 
 			// ==== Score ====
 			Label scoreLabel = currentScores[i];
 			String score = getScoreText(overlay.getCurrentScore(i));
-//			System.out.println("score for: " + i + " is " + score);
 			scoreLabel.setText(score);
 
 			// ==== Lives ====
@@ -122,30 +114,37 @@ public class OverlayRenderer implements RenderComponent {
 			final int numberToDraw = overlay.getShipsToDraw(i);
 			int numberDrawn = 0;
 			for(Actor a : livesTable.getChildren()){
-				if(numberDrawn < numberToDraw){
-					a.setVisible(true);
-					numberDrawn++;
-				} else {
-					a.setVisible(false);
-				}
+				a.setVisible(numberDrawn < numberToDraw);
+				numberDrawn++;
 			}
 
 			// ==== Items ====
 			Table itemsTable = itemsTables[i];
-			List<Image> itemImages = new ArrayList<>(overlay.getItemImages(i));
+			Collection<Image> itemImages = overlay.getItemImages(i);
+			int numberCorrect = 0; // may use -1 as magic number
 			for(Actor a : itemsTable.getChildren()){
 				if(a instanceof Image){
 					Image image = (Image) a;
-					if(!itemImages.contains(image)){
-						itemsTable.removeActor(image); // we are able to do this because getChildren() returns a SnapshotArray
+					if(itemImages.contains(image)){
+						numberCorrect++;
 					} else {
-						itemImages.remove(image);
+						numberCorrect = -1;
+						break;
 					}
+				} else {
+					throw new IllegalStateException("The itemsTable can only contain images!");
 				}
 			}
-			for(Image toAdd : itemImages){
-				toAdd.setSize(24, 24);
-				itemsTable.add(toAdd);
+			if (numberCorrect != itemImages.size()) {
+				itemsTable.clearChildren();
+				int j = 0;
+				for(Image image : itemImages){
+					if(j >= MAX_ITEMS_DISPLAYED){
+						break;
+					}
+					itemsTable.add(image).center().width(24).height(24);
+					j++;
+				}
 			}
 		}
 		highScoreLabel.setText(getScoreText(overlay.getHighScore()));
