@@ -12,5 +12,5 @@ public interface CanLevelEnd {
 	 * @param world The World object
 	 * @return true if the level is allowed to end
 	 */
-	boolean canLevelEnd(World world);
+	LevelEndState canLevelEnd(World world);
 }

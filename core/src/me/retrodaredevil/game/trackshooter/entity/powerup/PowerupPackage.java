@@ -12,7 +12,7 @@ public abstract class PowerupPackage extends SimplePowerup {
 	private boolean eaten = false;
 
 	public PowerupPackage(float velocity, float startingTrackDistance){
-		setHitboxSize(.6f, .6f);
+		setHitboxSize(.6f);
 
 		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
 		trackMove.setDistanceOnTrack(startingTrackDistance);
@@ -21,7 +21,7 @@ public abstract class PowerupPackage extends SimplePowerup {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
+	public void onHit(World world, Entity other)  {
 		if(!(other instanceof Player)){
 			throw new CannotHitException(other, this);
 		}

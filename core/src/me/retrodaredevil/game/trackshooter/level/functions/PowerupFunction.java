@@ -2,12 +2,11 @@ package me.retrodaredevil.game.trackshooter.level.functions;
 
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.level.Level;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.Collection;
-import java.util.List;
-import java.util.Queue;
 
 public abstract class PowerupFunction implements LevelFunction {
 	private final long addAt; // 15 seconds
@@ -63,7 +62,7 @@ public abstract class PowerupFunction implements LevelFunction {
 	}
 
 	@Override
-	public boolean canLevelEnd(World world) {
-		return true;
+	public LevelEndState canLevelEnd(World world) {
+		return LevelEndState.CAN_END;
 	}
 }

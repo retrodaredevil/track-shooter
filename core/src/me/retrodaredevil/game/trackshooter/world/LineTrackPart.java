@@ -29,6 +29,11 @@ public class LineTrackPart extends TrackPart {
 	}
 
 	@Override
+	public float getForwardDirection(float distance) {
+		return this.angle;
+	}
+
+	@Override
 	public float getDistance() {
 		return distance;
 	}

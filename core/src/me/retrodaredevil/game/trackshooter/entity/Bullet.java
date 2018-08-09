@@ -7,6 +7,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -30,12 +31,15 @@ public class Bullet extends SimpleEntity implements Entity {
 	public Bullet(Entity shooter, Vector2 start, Vector2 velocity, float rotation, float shotDistance, CollisionIdentity collisionIdentity){
 		this.shooter = shooter;
 		this.shotDistance2 = shotDistance * shotDistance;
-		setHitboxSize(.25f, .25f);
+		setHitboxSize(.25f);
 		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
 		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 		setLocation(start, rotation);
 		canRespawn = false;
-		canLevelEndWithEntityActive = false;
+//		canLevelEndWithEntityActive = false;
+//		levelEndStateWhenActive = LevelEndState.CAN_END_SOON;
+		// TODO This may cause bugs in the future V. Maybe provide a better way to change levelEndStateWhenActive
+		levelEndStateWhenActive = collisionIdentity == CollisionIdentity.ENEMY_PROJECTILE ? LevelEndState.CANNOT_END : LevelEndState.CAN_END_SOON;
 		this.collisionIdentity = collisionIdentity; // super.collisionIdentity same thing
 	}
 
@@ -60,7 +64,7 @@ public class Bullet extends SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException{
+	public void onHit(World world, Entity other) {
 		if(hitEntity != null){
 			throw new IllegalStateException("I hit something twice!!");
 		}

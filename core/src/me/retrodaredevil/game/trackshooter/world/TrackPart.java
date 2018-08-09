@@ -16,18 +16,23 @@ public abstract class TrackPart implements Renderable {
 	/**
 	 *
 	 * @param angleDegrees The desired direction to travel
-	 * @param distance The distance/location of whatever is on the track
+	 * @param distance The distance/location of whatever is on this track part
 	 * @return A value between -1 and 1 where a value > 0 means the direction corresponds to an increasing track distance
 	 */
 	public abstract float getMovePercent(float angleDegrees, float distance);
 
+	/**
+	 *
+	 * @param distance The distance/location on this track part
+	 * @return The direction in degrees that is forward on the track
+	 */
+	public abstract float getForwardDirection(float distance);
+
 	public abstract float getDistance();
 
 	/**
-	 * When distanceGone is 0, the return value should be
-	 *
 	 * @param distanceGone must be in range [0, getDistance())
-	 * @return The desired coordinate position.
+	 * @return The desired coordinate position. This variable is allowed to be modified.
 	 */
 	public abstract Vector2 getDesiredPosition(float distanceGone);
 }

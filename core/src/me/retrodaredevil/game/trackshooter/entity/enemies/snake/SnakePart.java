@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveCompone
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -63,7 +64,8 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
-		canLevelEndWithEntityActive = false;
+//		canLevelEndWithEntityActive = false;
+		levelEndStateWhenActive = LevelEndState.CANNOT_END;
 
 		this.follow(null);
 	}
@@ -112,7 +114,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 			return;
 		}
 		final float hitboxSize = size * HITBOX_SIZE_RATIO;
-		setHitboxSize(hitboxSize, hitboxSize);
+		setHitboxSize(hitboxSize);
 		renderComponent.setSize(size, size);
 		this.followDistance = size;
 		if(applyToAll) {
@@ -281,7 +283,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
+	public void onHit(World world, Entity other)  {
 		Player player = null;
 		if(other instanceof Player){
 			player = (Player) other;

@@ -24,6 +24,8 @@ public abstract class SimpleLevel implements Level {
 	private final List<LevelFunction> functions = new ArrayList<>();
 	private final Queue<LevelFunction> addFunctionsQueue = new ArrayDeque<>(); // used to poll new functions from
 
+	private LevelEndState lastLevelEndState = null;
+
 	private boolean done = false; // set in update
 
 	protected SimpleLevel(int number, Track track){
@@ -38,6 +40,8 @@ public abstract class SimpleLevel implements Level {
 
 	@Override
 	public void update(float delta, World world) {
+		assert !done : "Level wasn't terminated correctly!";
+
 		final boolean firstRun = startTime == null;
 		if(firstRun){
 			startTime = System.currentTimeMillis();
@@ -78,31 +82,36 @@ public abstract class SimpleLevel implements Level {
 		}
 		onEnd(world);
 	}
+
+	@Override
+	public boolean isEndingSoon() {
+		return lastLevelEndState == LevelEndState.CAN_END_SOON;
+	}
+
 	protected abstract void onStart(World world);
 
 	protected abstract void onUpdate(float delta, World world);
 	protected abstract void onEnd(World world);
 
 	/**
-	 * NOTE for implementors: Even if you return true, it is possible that the level will keep going because of
-	 * another condition that is abstracted away from you. (Possibly a LevelFunction as of right now)
-	 * <p>
-	 * NOTE for callers: It is possible that if this returns true, it is allowed to return false if called again because
-	 * of the above note.
-	 *
+	 * Should be called once every update() call
 	 * @return true if this level is able to end, false otherwise
 	 */
 	protected boolean shouldLevelEnd(World world){
 		Collection<CanLevelEnd> endCheckCollection = new ArrayList<>();
 		endCheckCollection.addAll(world.getEntities());
 		endCheckCollection.addAll(functions);
+
+		LevelEndState highest = LevelEndState.CAN_END;
 		for(CanLevelEnd endCheck : endCheckCollection){
-			if(!endCheck.canLevelEnd(world)){
-				return false;
+			LevelEndState state = endCheck.canLevelEnd(world);
+			if(state.value > highest.value){
+				highest = state;
 			}
 		}
+		lastLevelEndState = highest;
 //		System.out.println("level: " + getNumber() + " is ending. checks: " + endCheckCollection);
-		return true;
+		return highest.value <= LevelEndState.CAN_END.value;
 	}
 
 	protected boolean isStarted(){

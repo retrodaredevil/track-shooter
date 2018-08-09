@@ -102,7 +102,7 @@ public class Track implements Renderable {
 			assert before != null;
 		}
 		float currentPartDistance = distanceGone - current;
-		float percent = currentPartDistance / currentPart.getDistance();
+		float percent = currentPartDistance / currentPart.getDistance(); // if NPE, asserts not turned on
 		float r = currentPart.getMovePercent(angleDegrees, currentPartDistance);
 		if(percent < .5f){
 			// before
@@ -124,4 +124,18 @@ public class Track implements Renderable {
 		return r;
 	}
 
+	public float getForwardDirection(float distanceGone){
+		distanceGone = MathUtil.mod(distanceGone, totalDistance);
+		float current = 0;
+		for(TrackPart part : parts){
+			float partDistance = part.getDistance();
+			float newCurrent = current + partDistance;
+			if (distanceGone < newCurrent) {
+				float currentPartDistance = distanceGone - current;
+				return part.getForwardDirection(currentPartDistance);
+			}
+			current = newCurrent;
+		}
+		throw new AssertionError("You had the correct arguments. But the code didn't return!. distanceGone: " + distanceGone + " total: " + totalDistance);
+	}
 }

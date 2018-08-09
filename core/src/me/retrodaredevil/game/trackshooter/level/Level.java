@@ -35,6 +35,8 @@ public interface Level extends Updateable {
 	 */
 	boolean isDone();
 
+	boolean isEndingSoon();
+
 	/**
 	 * Sets the mode of the level
 	 * @param mode The mode to set

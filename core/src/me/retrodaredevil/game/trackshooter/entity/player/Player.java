@@ -9,6 +9,7 @@ import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
+import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -40,7 +41,7 @@ public class Player extends SimpleEntity {
 
 	public Player(){
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
-		setHitboxSize(.7f, .7f);
+		setHitboxSize(.7f);
 		score = new PlayerScore(this);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
@@ -81,7 +82,7 @@ public class Player extends SimpleEntity {
 
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
+	public void onHit(World world, Entity other) {
 		CollisionIdentity identity = other.getCollisionIdentity();
 		if(other.getShooter() == this || identity == CollisionIdentity.FRIENDLY_PROJECTILE || identity == CollisionIdentity.FRIENDLY){
 			throw new CannotHitException(other, this);
@@ -192,7 +193,8 @@ public class Player extends SimpleEntity {
 	}
 
 	private boolean canShootBullet(World world, Bullet.ShotType shotType) {
-		if(world.getLevel().getMode() != LevelMode.NORMAL){
+		Level level = world.getLevel();
+		if(level.getMode() != LevelMode.NORMAL || level.isEndingSoon()){
 			return false;
 		}
 		updateActive(world);

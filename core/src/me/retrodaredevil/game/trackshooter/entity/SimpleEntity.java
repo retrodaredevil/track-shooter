@@ -6,6 +6,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.item.Item;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
@@ -22,12 +23,12 @@ public class SimpleEntity implements Entity {
 	/** If you want to be able to remove this entity at will, set this to true */
 	protected boolean canSetToRemove = false;
 	protected CollisionIdentity collisionIdentity = CollisionIdentity.UNKNOWN;
-	/** Should only set set in a subclass constructor. Defaults to true. */
-	protected boolean canLevelEndWithEntityActive = true;
+	/** Should only set set in a subclass constructor. Defaults to CAN_END. */
+	protected LevelEndState levelEndStateWhenActive = LevelEndState.CAN_END;
 
 
 	private int spawnTimes = 0; // the amount of times the entity has spawned
-	/** Changed only in afterRemove() */
+	/** Changed only in afterRemove() and beforeSpawn() */
 	private boolean removed = false;
 	/** Changed in setToRemove() */
 	private boolean forceRemove = false;
@@ -48,6 +49,9 @@ public class SimpleEntity implements Entity {
 
 	protected void setHitboxSize(float width, float height){
 		HitboxUtil.hitboxSetSize(hitbox, width, height);
+	}
+	protected void setHitboxSize(float size){
+		setHitboxSize(size, size);
 	}
 
 	@Override
@@ -92,12 +96,6 @@ public class SimpleEntity implements Entity {
 		return hitbox.y + (hitbox.height / 2.0f);
 	}
 
-	/**
-	 * Note, you should NEVER edit the values of this hitbox unless you use HitboxUtil and you know what you are doing
-	 * Also, the x and y values are probably not the actual location values
-	 *
-	 * @return The hitbox of the entity
-	 */
 	@Override
 	public Rectangle getHitbox() {
 		return hitbox;
@@ -228,6 +226,9 @@ public class SimpleEntity implements Entity {
 
 	@Override
 	public void setToRemove() {
+		if(this.isRemoved()){
+			throw new IllegalStateException(this + " is already removed!");
+		}
 		if(!canSetToRemove){
 			throw new IllegalStateException(this + " cannot be forcibly removed.");
 		}
@@ -235,8 +236,11 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
-		throw new CannotHitException(other, this);
+	public void onHit(World world, Entity other)  {
+		if(this.collisionIdentity == CollisionIdentity.UNKNOWN){
+			throw new CannotHitException(other, this, "The collisionIdentity of this entity is UNKNOWN so it never should have collided in the first place!");
+		}
+		throw new CannotHitException(other, this, "This entity is probably able to collide, but the onHit() method was not overridden!");
 	}
 
 	@Override
@@ -271,7 +275,7 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public boolean canLevelEnd(World world) {
-		return canLevelEndWithEntityActive;
+	public LevelEndState canLevelEnd(World world) {
+		return levelEndStateWhenActive;
 	}
 }

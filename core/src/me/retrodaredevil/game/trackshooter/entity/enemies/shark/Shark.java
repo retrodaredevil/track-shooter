@@ -6,6 +6,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.*;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.SharkRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -37,10 +38,11 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		fullRender = new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f);
 		hitRender = new SharkRenderComponent(Resources.SHARK_REGIONS_HIT, this, 1.0f, 1.0f);
 		wornRender = new SharkRenderComponent(Resources.SHARK_REGIONS_WORN, this, 1.0f, 1.0f);
-		setHitboxSize(.7f, .7f);
+		setHitboxSize(.7f);
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
-		canLevelEndWithEntityActive = false;
+//		canLevelEndWithEntityActive = false;
+		levelEndStateWhenActive = LevelEndState.CANNOT_END;
 	}
 
 	@Override
@@ -103,13 +105,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
-		CollisionIdentity identity = other.getCollisionIdentity();
-		if(other.getShooter() == this || identity == CollisionIdentity.POWERUP || identity == CollisionIdentity.ENEMY_PROJECTILE
-				|| identity == CollisionIdentity.ENEMY){
-			throw new CannotHitException(other, this);
-		}
-//		Gdx.app.debug("hit by", other.toString() + " at " + Gdx.app.getGraphics().getFrameId());
+	public void onHit(World world, Entity other)  {
 		MoveComponent wantedComponent = getMoveComponent();
 		boolean spinning = false;
 		SpinMoveComponent lastSpin = null;

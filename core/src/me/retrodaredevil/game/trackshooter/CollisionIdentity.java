@@ -13,12 +13,11 @@ import java.util.*;
  */
 public enum CollisionIdentity {
 
-	// Special identities (referenced in the code more, harder to change)
 	UNKNOWN(),
-	FRIENDLY(), // friendlies don't trigger collisions
-	ENEMY(FRIENDLY), // enemy triggers a enemy friendly collision
+	FRIENDLY(),
+	FRIENDLY_ALLY(),
+	ENEMY(FRIENDLY, FRIENDLY_ALLY), // enemy triggers a enemy friendly collision
 
-	// Regular identities (referenced in the code less, easier to change and add to)
 	FRIENDLY_PROJECTILE(ENEMY),
 	ENEMY_PROJECTILE(FRIENDLY),
 	POWERUP(FRIENDLY)

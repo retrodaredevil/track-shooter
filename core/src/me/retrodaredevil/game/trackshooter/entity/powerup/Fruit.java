@@ -21,7 +21,7 @@ public class Fruit extends SimplePowerup {
 	protected Fruit(Resources.Points points, float velocity, float startingTrackDistance){
 		super();
 		this.points = points;
-		setHitboxSize(.6f, .6f);
+		setHitboxSize(.6f);
 
 		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
 		trackMove.setDistanceOnTrack(startingTrackDistance);
@@ -38,9 +38,9 @@ public class Fruit extends SimplePowerup {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) throws CannotHitException {
+	public void onHit(World world, Entity other)  {
 		if(!(other instanceof Player)){
-			throw new CannotHitException(other, this);
+			return;
 		}
 		Player player = (Player) other;
 		player.getScoreObject().onKill(this, player, points.getWorth());

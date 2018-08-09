@@ -8,6 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.Level;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -90,7 +91,7 @@ public class SnakeFunction implements LevelFunction {
 	}
 
 	@Override
-	public boolean canLevelEnd(World world) {
-		return true; // Snake should return false on its own if needed
+	public LevelEndState canLevelEnd(World world) {
+		return LevelEndState.CAN_END; // Snake should return false on its own if needed
 	}
 }

@@ -2,6 +2,9 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 
+/**
+ * Represents the score of an Entity (usually a Player) and also keeps track of their lives.
+ */
 public interface Score {
 
 	int getScore();
@@ -15,6 +18,13 @@ public interface Score {
 	 * @param points
 	 */
 	void onKill(Entity killed, Entity killerSource, int points);
+
+	/**
+	 * Called when onKill() cannot be called because we are getting points for a reason like a cargo
+	 * ship of something.
+	 * @param points The number of points to add to the score
+	 */
+	void onScore(int points);
 
 	/**
 	 * NOTE: Unlike onKill(), this is going to be called from projectiles. HOWEVER, this is not enforced but is recommended. <br/>

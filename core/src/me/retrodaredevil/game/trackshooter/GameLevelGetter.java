@@ -5,12 +5,15 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
+import me.retrodaredevil.game.trackshooter.entity.friendly.CargoShip;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
+import me.retrodaredevil.game.trackshooter.level.functions.BonusCargoFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
@@ -40,7 +43,8 @@ public class GameLevelGetter implements LevelGetter {
 	@Override
 	public Level nextLevel() {
 		levelNumber++; // future programmers you're welcome that I put this on a separate line.
-		return new EnemyLevel(levelNumber, tracks[(levelNumber - 1) % tracks.length]) {
+		final Track track = tracks[(levelNumber - 1) % tracks.length];
+		return new EnemyLevel(levelNumber, track) {
 			@Override
 			protected void onStart(World world) {
 				super.onStart(world);
@@ -52,7 +56,12 @@ public class GameLevelGetter implements LevelGetter {
 				}
 				if(levelNumber % 2 == 1){
 					addFunction(new TripleShotPowerupFunction());
+				} else if(levelNumber >= 4) { // all even levels >= 4
+					Entity cargoEntity = new CargoShip(.8f * MathUtils.randomSign(), MathUtils.random(track.getTotalDistance()));
+					this.addEntity(world, cargoEntity);
+					addFunction(new BonusCargoFunction(cargoEntity, players, levelNumber >= 8 ? 3000 : 2000));
 				}
+
 
 				final int amount = 4 + (levelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;

@@ -41,6 +41,12 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	/** @param rotation The rotation in degrees to set */
 	void setRotation(float rotation);
 
+	/**
+	 * Note, you should NEVER edit the values of this hitbox unless you use HitboxUtil and you know what you are doing
+	 * Also, the x and y values are probably not the actual location values
+	 *
+	 * @return The hitbox of the entity correctly positioned in the world coordinate space
+	 */
 	Rectangle getHitbox();
 
 	/**
@@ -87,6 +93,9 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	void beforeSpawn(World world);
 	boolean isRemoved();
 	/**
+	 * Throughout this Entity's life, this should only return one value (this shouldn't change). Even
+	 * though this is not enforced, everything else that calls this method will assume that is the case
+	 * so by returning something different after the Entity is constructed, that may cause bugs.
 	 *
 	 * @return true if you are allowed to call setToRemove()
 	 */
@@ -96,6 +105,7 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	 * <p>
 	 * <p>
 	 * Once this is called, it should make the next time (and every time after) shouldRemove() is called return true essentially removing this
+	 * @throws IllegalStateException If canSetToRemove() == false or isRemoved() == true
 	 */
 	void setToRemove();
 
@@ -106,16 +116,15 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	 * For instance, bob collides with pete. bob.onHit(pete) and pete.onHit(bob) are called.
 	 * pete should not try to kill bob, bob will determine if pete should kill bob.
 	 * <p>
-	 * This should also not be called for every Entity that collides with this. Implementations of this should be kept
-	 * simple and this method will be called intelligently by a CollisionHandler. ex: two bullets cannot collide so
-	 * CollisionHandler should not call Bullet#onHit(otherBullet)
+	 * Calls to this method are handled by some sort of collision handler which will use the CollisionIdentity
+	 * to determine if two things should collide. see {@link CollisionIdentity} docs for more info
 	 *
 	 * @param world The World object
 	 * @param other The other entity this has collided with
 	 * @throws CannotHitException This is thrown when the caller has passed an entity that this cannot handle or
 	 *                            doesn't know how to handle.
 	 */
-	void onHit(World world, Entity other) throws CannotHitException;
+	void onHit(World world, Entity other);
 	/**
 	 *
 	 * @return The CollisionIdentity for this instance

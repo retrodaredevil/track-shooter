@@ -13,6 +13,7 @@ public final class Resources {
 	public static final Texture SPACE_STATION_TEXTURE = new Texture("space_station.png");
 	public static final Texture SNIPER_TEXTURE = new Texture("sniper.png");
 	public static final Texture SNAKE_PART_TEXTURE = new Texture("snake_part.png");
+	public static final Texture CARGO_SHIP = new Texture("cargo_ship.png");
 
 	private static final Texture SHARK_TEXTURE = new Texture("shark.png");
 	private static final Texture SHARK_HIT = new Texture("shark_hit.png");
@@ -25,10 +26,10 @@ public final class Resources {
 	public static final Texture BULLET_TEXTURE = new Texture("bullet.png");
 	public static final Texture CHERRY_TEXTURE = new Texture("cherry.png");
 	public static final Texture POWERUP_TEXTURE = new Texture("powerup.png");
-	public static final Texture EVEN_BONUS = new Texture("even_bonus.png");
+	private static final Texture EVEN_BONUS = new Texture("even_bonus.png");
 	/** 200, 400, 800, 1600*/
 	public static final TextureRegionDrawable[] EVEN_BONUS_REGIONS = createRegions(false, 4, EVEN_BONUS);
-	public static final Texture ODD_BONUS = new Texture("odd_bonus.png");
+	private static final Texture ODD_BONUS = new Texture("odd_bonus.png");
 	/** 100, 300, 500, 700, 1000*/
 	public static final TextureRegionDrawable[] ODD_BONUS_REGIONS = createRegions(false, 5, ODD_BONUS);
 

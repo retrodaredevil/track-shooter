@@ -44,6 +44,11 @@ public class PlayerScore implements Score {
 
 	@Override
 	public void onKill(Entity killed, Entity killerSource, int points) {
+		onScore(points);
+	}
+
+	@Override
+	public void onScore(int points) {
 		score += points;
 		Gdx.app.debug("score", "" + score);
 	}

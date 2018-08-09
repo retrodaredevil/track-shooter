@@ -7,8 +7,11 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
  */
 public class CannotHitException extends RuntimeException {
 
+	public CannotHitException(Entity other, Entity self, String message){
+		super("SnakePart: " + other + " cannot hit this. (" + self + ") reason: '" + message + "'");
+	}
 	public CannotHitException(Entity other, Entity self){
-		super("SnakePart: " + other + " cannot hit this. (" + self + ")");
+		this(other, self, "no reason provided");
 	}
 
 }
