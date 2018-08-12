@@ -33,7 +33,6 @@ public class Bullet extends SimpleEntity implements Entity {
 		this.shotDistance2 = shotDistance * shotDistance;
 		setHitboxSize(.25f);
 		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 		setLocation(start, rotation);
 		canRespawn = false;
 //		canLevelEndWithEntityActive = false;
@@ -41,6 +40,12 @@ public class Bullet extends SimpleEntity implements Entity {
 		// TODO This may cause bugs in the future V. Maybe provide a better way to change levelEndStateWhenActive
 		levelEndStateWhenActive = collisionIdentity == CollisionIdentity.ENEMY_PROJECTILE ? LevelEndState.CANNOT_END : LevelEndState.CAN_END_SOON;
 		this.collisionIdentity = collisionIdentity; // super.collisionIdentity same thing
+	}
+
+	@Override
+	public void beforeSpawn(World world) {
+		super.beforeSpawn(world);
+		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
 	}
 
 	@Override

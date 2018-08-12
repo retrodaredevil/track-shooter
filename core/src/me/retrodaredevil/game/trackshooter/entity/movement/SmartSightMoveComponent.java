@@ -10,20 +10,30 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
-
+public class SmartSightMoveComponent extends NestedComponentMoveComponent {
 	private static final float IN_FRONT_DISTANCE = 5;
 	private static final float MAX_AWAY = 12;
 
 	private static final float VIEW_ANGLE = 90; // * 2 total
 
-
 	private final DifficultEntity entity;
 	private final Entity target;
-	public SmartSightMoveComponent(DifficultEntity entity, Entity target) {
-		super(entity, Vector2.Zero, 0, 0);
+	private final SmoothTravelMoveComponent smoothTravel;
+
+	/**
+	 *
+	 * @param entity The entity with a difficulty that is using this MoveComponent
+	 * @param target The target the entity will target depending on their location and rotation
+	 * @param smoothTravel The SmoothTravelMoveComponent that will be "nested" and will be used to
+	 *                     control the entity. The velocities will not be changed. Before this is updated,
+	 *                     it is expected that the speed value is reset as this may change that value.
+	 */
+	public SmartSightMoveComponent(DifficultEntity entity, Entity target, SmoothTravelMoveComponent smoothTravel) {
+		super(null, true, true);
+//		super(entity, Vector2.Zero, 0, 0);
 		this.entity = entity;
 		this.target = target;
+		this.smoothTravel = smoothTravel;
 	}
 
 	public Entity getEntityTarget(){
@@ -32,6 +42,7 @@ public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
 
 	@Override
 	protected void onUpdate(float delta, World world) {
+		setNestedMoveComponent(smoothTravel);
 		doTarget();
 		super.onUpdate(delta, world);
 	}
@@ -48,9 +59,9 @@ public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
 		float angle = entity.getLocation().sub(target.getX(), target.getY()).angle();
 		float angleAway = MathUtil.minDistance(rotation, angle, 360); // the amount of degrees the target is away from looking right at the head
 		if(difficulty.value >= EntityDifficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
-			float speed = this.getTravelVelocity();
+			float speed = smoothTravel.getTravelVelocity();
 			speed += (angleAway / 25) * 3;
-			getTravelVelocitySetter().setVelocity(speed);
+			smoothTravel.getTravelVelocitySetter().setVelocity(speed);
 		}
 		if(angleAway < VIEW_ANGLE){ // the target is looking at the head
 			float percent = (float) Math.pow((VIEW_ANGLE - angleAway) / VIEW_ANGLE, .5); // the lower the view angle, the higher this number
@@ -60,9 +71,9 @@ public class SmartSightMoveComponent extends SmoothTravelMoveComponent {
 					MathUtils.sinDeg(angle) * MAX_AWAY
 			);
 			location.lerp(distantPoint, percent); // location is mutated
-			this.setTargetPosition(location);
+			smoothTravel.setTargetPosition(location);
 		} else {
-			this.setTargetPosition(target.getLocation().add(
+			smoothTravel.setTargetPosition(target.getLocation().add(
 					MathUtils.cosDeg(rotation) * IN_FRONT_DISTANCE,
 					MathUtils.sinDeg(rotation) * IN_FRONT_DISTANCE
 			));

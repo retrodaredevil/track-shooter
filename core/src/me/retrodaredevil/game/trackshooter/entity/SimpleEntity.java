@@ -135,11 +135,24 @@ public class SimpleEntity implements Entity {
 		}
 	}
 
-	protected void setRenderComponent(RenderComponent renderComponent){
-		if(this.renderComponent != renderComponent && this.renderComponent != null){
+	/**
+	 *
+	 * @param renderComponent The RenderComponent to use to render this Entity
+	 * @param autoDispose If renderComponent is different from the last, it will dispose the last RenderComponent
+	 */
+	protected void setRenderComponent(RenderComponent renderComponent, boolean autoDispose){
+		if(autoDispose && this.renderComponent != renderComponent && this.renderComponent != null){
 			this.renderComponent.dispose();
 		}
 		this.renderComponent = renderComponent;
+	}
+
+	/**
+	 * calls {@link #setRenderComponent(RenderComponent,boolean)} with autoDispose=true
+	 * @param renderComponent The RenderComponent to use to render this Entity
+	 */
+	protected void setRenderComponent(RenderComponent renderComponent){
+		setRenderComponent(renderComponent, true);
 	}
 
 	@Override

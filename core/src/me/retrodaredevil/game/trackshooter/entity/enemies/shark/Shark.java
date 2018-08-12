@@ -25,7 +25,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
 	private final MoveComponent smoothTravel;
 
-	private final RenderComponent fullRender;
+	private final RenderComponent fullRender; // NOTE These will be disposed as the Shark loses lives
 	private final RenderComponent hitRender;
 	private final RenderComponent wornRender;
 

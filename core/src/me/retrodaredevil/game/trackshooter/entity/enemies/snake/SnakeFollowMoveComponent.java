@@ -3,7 +3,6 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.movement.SimpleMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 

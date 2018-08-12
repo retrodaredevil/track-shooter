@@ -40,7 +40,8 @@ public enum CollisionIdentity {
 
 
 	CollisionIdentity(){
-		this.triggersWith = Collections.emptySet();
+//		this.triggersWith = Collections.emptySet();
+		this.triggersWith = null; // use an EnumSet instead which is initialized later
 	}
 	CollisionIdentity(CollisionIdentity... triggers){
 		triggersWith = new HashSet<>();

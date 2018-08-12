@@ -13,6 +13,9 @@ import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
+/**
+ * Please, call him "Mr. Spaceship"
+ */
 public class CargoShip extends SimpleEntity {
 
 	private boolean hit = false;
@@ -26,10 +29,15 @@ public class CargoShip extends SimpleEntity {
 				setDistanceOnTrack(distance);
 			}
 		});
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.CARGO_SHIP), this, 1.0f, 1.0f));
 		canRespawn = false;
 		canSetToRemove = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY_ALLY;
+	}
+
+	@Override
+	public void beforeSpawn(World world) {
+		super.beforeSpawn(world);
+		setRenderComponent(new ImageRenderComponent(new Image(Resources.CARGO_SHIP), this, 1.0f, 1.0f));
 	}
 
 	@Override
@@ -49,9 +57,6 @@ public class CargoShip extends SimpleEntity {
 
 	@Override
 	public void onHit(World world, Entity other) {
-		if(other.getCollisionIdentity() == CollisionIdentity.POWERUP){
-			return;
-		}
 		hit = true;
 	}
 
