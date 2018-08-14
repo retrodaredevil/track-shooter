@@ -5,7 +5,7 @@ package me.retrodaredevil.controller.input;
  * <p>
  * There are some general constant AxisTypes such as FULL_ANALOG and these should never be compared with ==
  * <p>
- * When using an AxisType, you can rely on isFull(), isRangeOver() and shouldUseDelta() to be accurate
+ * When using an AxisType, you can rely on isFull(), isRangeOver() and isShouldUseDelta() to be accurate
  * but analog should be accurate but is usually not guaranteed
  */
 public final class AxisType{
@@ -24,7 +24,7 @@ public final class AxisType{
 	private final boolean shouldUseDelta;
 
 	/**
-	 * Calls {@link #AxisType(boolean, boolean, boolean, boolean)} with rangeOver=false, shouldUseDelta=true
+	 * Calls {@link #AxisType(boolean, boolean, boolean, boolean)} with rangeOver=false, isShouldUseDelta=true
 	 * @param full Can the values be negative. If true range: [-1, 1] if false range: [0, 1]
 	 * @param analog Can the values be in between. Ex: .5
 	 */
@@ -45,16 +45,31 @@ public final class AxisType{
 		this.shouldUseDelta = shouldUseDelta;
 	}
 
+	/** @return true if the values can be negative. range [-1, 1] */
 	public boolean isFull(){
 		return full;
 	}
+
+	/** @return true if the values can be analog (in between) */
 	public boolean isAnalog(){
 		return analog;
 	}
+
+	/**
+	 * A good example of the range being over is a mouse where isShouldUseDelta() == true as well
+	 * @return true if the range of what this AxisType represents can be > 1
+	 */
 	public boolean isRangeOver(){
 		return rangeOver;
 	}
-	public boolean shouldUseDelta(){
+
+	/**
+	 * If true, this usually means that whatever this AxisType represents returns a POSITION.
+	 * <br/>
+	 * If false this usually means that whatever this AxisType represents returns a CHANGE IN POSITION
+	 * @return true if delta should be applied.
+	 */
+	public boolean isShouldUseDelta(){
 		return shouldUseDelta;
 	}
 
@@ -82,7 +97,7 @@ public final class AxisType{
 
 	@Override
 	public String toString() {
-		return String.format("AxisType{full:%s,analog:%s,rangeOver:%s,shouldUseDelta:%s}", full, analog, rangeOver, shouldUseDelta);
+		return String.format("AxisType{full:%s,analog:%s,rangeOver:%s,isShouldUseDelta:%s}", full, analog, rangeOver, shouldUseDelta);
 	}
 
 	public static AxisType getAxisType(InputPart... parts){
@@ -98,15 +113,15 @@ public final class AxisType{
 			anyAnalog = anyAnalog || part.getAxisType().isAnalog();
 			anyRangeOver = anyRangeOver || part.getAxisType().isRangeOver();
 			if(shouldUseDelta == null){
-				shouldUseDelta = part.getAxisType().shouldUseDelta();
+				shouldUseDelta = part.getAxisType().isShouldUseDelta();
 			} else {
-				if(shouldUseDelta != part.getAxisType().shouldUseDelta()){
-					throw new IllegalArgumentException("Each passed InputPart in parts should have the same value for shouldUseDelta()");
+				if(shouldUseDelta != part.getAxisType().isShouldUseDelta()){
+					throw new IllegalArgumentException("Each passed InputPart in parts should have the same value for isShouldUseDelta()");
 				}
 			}
 		}
-//			return getAxisType(anyFull, anyAnalog, anyRangeOver, shouldUseDelta);
-//			assert shouldUseDelta != null; always true
+//			return getAxisType(anyFull, anyAnalog, anyRangeOver, isShouldUseDelta);
+//			assert isShouldUseDelta != null; always true
 		return new AxisType(anyFull, anyAnalog, anyRangeOver, shouldUseDelta);
 	}
 }

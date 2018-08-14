@@ -3,7 +3,8 @@ package me.retrodaredevil.controller.input;
 import me.retrodaredevil.controller.ControllerPartNotUpdatedException;
 
 /**
- * A single controller such as a button, joystick axis, pov axis, etc
+ * A base class for InputParts that calculate their position for caching. This type of InputPart
+ * requires that it is updated when it is supposed to be before a call to getPosition() is called
  */
 public abstract class AutoCachingInputPart extends SimpleInputPart{
 
@@ -27,16 +28,16 @@ public abstract class AutoCachingInputPart extends SimpleInputPart{
 	}
 	@Override
 	public boolean isDown() {
-		return Math.abs(getPosition()) > this.config.buttonDownDeadzone;
+		return Math.abs(getPosition()) > this.config.getButtonDownDeadzone();
 	}
 
 	@Override
 	public boolean isPressed() {
-		return isDown() && (previousPosition == null || previousPosition <= this.config.buttonDownDeadzone);
+		return isDown() && (previousPosition == null || previousPosition <= this.config.getButtonDownDeadzone());
 	}
 	@Override
 	public boolean isReleased() {
-		return !isDown() && (previousPosition != null && previousPosition > this.config.buttonDownDeadzone);
+		return !isDown() && (previousPosition != null && previousPosition > this.config.getButtonDownDeadzone());
 	}
 
 

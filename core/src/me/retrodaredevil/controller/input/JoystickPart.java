@@ -2,7 +2,10 @@ package me.retrodaredevil.controller.input;
 
 import me.retrodaredevil.controller.ControllerPart;
 
-public interface JoystickPart extends ControllerPart {
+/**
+ * Represents a ControllerPart that has two axi (2D) representing a joystick.
+ */
+public interface JoystickPart extends ControllerPart, AnglePart{
 	/**
 	 *
 	 * @return returns the x axis that is controlled and updated by this SimpleJoystickPart
@@ -21,11 +24,8 @@ public interface JoystickPart extends ControllerPart {
      */
 	JoystickType getJoystickType();
 
-	/** @return angle of the joystick in degrees. If joystick completely centered, usually returns 0. */
-	double getAngle();
-
 	/**
-	 * NOTE: It is possible for this to return a value > 1 even if shouldScale is correct, it could
+	 * NOTE: It is possible for this to return a value > 1 even if isInputSquare is correct, it could
 	 * be 1.00000001. This is why it is recommended to use getCorrectMagnitude() instead.
 	 * @return The raw magnitude using the values from getX() and getY()
 	 * */
@@ -33,7 +33,7 @@ public interface JoystickPart extends ControllerPart {
 
 	/**
 	 * This will NEVER be > 1 unless getJoystickType().isRangeOver() is true
-	 * @return returns getMagnitude() and scales it if getJoystickType().shouldScale().
+	 * @return returns getMagnitude() and scales it if getJoystickType().isInputSquare().
 	 */
 	double getCorrectMagnitude();
 
@@ -58,9 +58,6 @@ public interface JoystickPart extends ControllerPart {
 	 * @return The raw Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
 	 */
 	double getY();
-
-
-	boolean isDeadzone();
 
 	boolean isXDeadzone();
 

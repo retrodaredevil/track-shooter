@@ -8,10 +8,8 @@ import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetter;
-import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.world.World;
-import me.retrodaredevil.controller.input.SimpleJoystickPart;
 
 public class PlayerController implements EntityController{
 	private static final float VELOCITY_PER_SECOND = 5f;
@@ -69,7 +67,7 @@ public class PlayerController implements EntityController{
 		// ==== Rotation ====
 		InputPart rotateAxis = gameInput.rotateAxis();
 		double position = rotateAxis.getPosition();
-		if (rotateAxis.getAxisType().shouldUseDelta()) { // normal joystick
+		if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
 			if(rotateAxis.getAxisType().isRangeOver()){
 				if(Math.abs(position) > 1){
 					position = Math.signum(position);

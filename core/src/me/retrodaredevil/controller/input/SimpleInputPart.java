@@ -3,6 +3,9 @@ package me.retrodaredevil.controller.input;
 import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.SimpleControllerPart;
 
+/**
+ * An abstract base class for simple InputParts that handle deadzones, AxisType and digital position
+ */
 public abstract class SimpleInputPart extends SimpleControllerPart implements InputPart{
 	private final AxisType type;
 
@@ -25,26 +28,26 @@ public abstract class SimpleInputPart extends SimpleControllerPart implements In
 	public static double getDeadzone(AxisType type, ControlConfig config){
 		if(type.isFull()){
 			if(type.isAnalog()){
-				return config.fullAnalogDeadzone;
+				return config.getFullAnalogDeadzone();
 			}
-			return config.fullDigitalDeadzone;
+			return config.getFullDigitalDeadzone();
 		} else if(type.isAnalog()){ // !isFull()
-			return config.analogDeadzone;
+			return config.getAnalogDeadzone();
 		}
-		return config.digitalDeadzone;
+		return config.getDigitalDeadzone();
 	}
 
 	@Override
 	public int getDigitalPosition() {
 		double value = getPosition();
 		if(!getAxisType().isFull()){
-			if(value > config.buttonDownDeadzone){
+			if(value > config.getButtonDownDeadzone()){
 				return 1;
 			}
 		} else {
-			if (value > config.analogDigitalValueDeadzone) {
+			if (value > config.getAnalogDigitalValueDeadzone()) {
 				return 1;
-			} else if (value < -config.analogDigitalValueDeadzone) {
+			} else if (value < -config.getAnalogDigitalValueDeadzone()) {
 				return -1;
 			}
 		}
@@ -52,4 +55,8 @@ public abstract class SimpleInputPart extends SimpleControllerPart implements In
 		return 0;
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "{AxisType:" + type + ",hashCode: " + Integer.toHexString(hashCode()) + "}";
+	}
 }

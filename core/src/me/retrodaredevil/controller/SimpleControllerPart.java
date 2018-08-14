@@ -4,12 +4,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * A simple abstract base class for ControllerParts that handles the parent, children and the config
+ */
 public abstract class SimpleControllerPart implements ControllerPart{
 	private static boolean debugChangeInParent = false;
 
 	private ControllerPart parent = null;
 	private final Set<ControllerPart> children = new HashSet<>();
 
+	/** Can be accessed after or during the first call to update. */
 	protected ControlConfig config;
 
 	/**
@@ -159,4 +163,8 @@ public abstract class SimpleControllerPart implements ControllerPart{
 		}
 	}
 
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + "{parent: " + getParent() + "}";
+	}
 }

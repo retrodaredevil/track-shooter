@@ -24,10 +24,15 @@ public class TwoWayInput extends AutoCachingInputPart {
 		super(new AxisType(true,
 				part1.getAxisType().isAnalog() || part2.getAxisType().isAnalog(),
 				part1.getAxisType().isRangeOver() || part2.getAxisType().isRangeOver(),
-				part1.getAxisType().shouldUseDelta() && part2.getAxisType().shouldUseDelta()),
+				part1.getAxisType().isShouldUseDelta() && part2.getAxisType().isShouldUseDelta()),
 				true);
-		if(part1.getAxisType().isFull() || part2.getAxisType().isFull()){
+		AxisType type1 = part1.getAxisType();
+		AxisType type2 = part2.getAxisType();
+		if(type1.isFull() || type2.isFull()){
 			throw new IllegalArgumentException("Neither part1 or part2's AxisType can be 'full'");
+		}
+		if(type1.isShouldUseDelta() != type2.isShouldUseDelta()){
+			System.err.println("part1 and part2's isShouldUseDelta() are different! part1: " + part1 + " part2: " + part2);
 		}
 		this.part1 = part1;
 		this.part2 = part2;

@@ -69,12 +69,12 @@ public class GdxTiltJoystick extends SimpleJoystickPart {
 
 	@Override
 	public boolean isXDeadzone() {
-		return Math.abs(x) <= config.fullAnalogDeadzone;
+		return Math.abs(x) <= config.getFullAnalogDeadzone();
 	}
 
 	@Override
 	public boolean isYDeadzone() {
-		return Math.abs(y) <= config.fullAnalogDeadzone;
+		return Math.abs(y) <= config.getFullAnalogDeadzone();
 	}
 
 	@Override

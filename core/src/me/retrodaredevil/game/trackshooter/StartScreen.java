@@ -74,8 +74,8 @@ public class StartScreen extends ScreenAdapter {
 		}
 //		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
 //		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude()
-//				* (gameInput.mainJoystick().getJoystickType().shouldScale() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
-		
+//				* (gameInput.mainJoystick().getJoystickType().isInputSquare() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
+
 //		ControllerRumble rumble = gameInput.getRumble();
 //		if(rumble != null && rumble.isConnected()){
 //			double intensity = System.currentTimeMillis() % 1400 < 700 ? .9 : .3;

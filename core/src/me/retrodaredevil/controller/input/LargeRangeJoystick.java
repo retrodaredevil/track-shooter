@@ -1,7 +1,7 @@
 package me.retrodaredevil.controller.input;
 
 /**
- * Represents a joystick where its JoystickType's rangeOver is true and shouldScale is false
+ * Represents a joystick where its JoystickType's rangeOver is true and isInputSquare is false
  * <p>
  * NOTE: This should not be referenced with instanceof
  */
@@ -13,12 +13,12 @@ public abstract class LargeRangeJoystick extends SimpleJoystickPart {
 
 	@Override
 	public boolean isXDeadzone() {
-		return Math.abs(getX()) <= config.rangeOverDeadzone;
+		return Math.abs(getX()) <= config.getRangeOverDeadzone();
 	}
 
 	@Override
 	public boolean isYDeadzone() {
-		return Math.abs(getY()) <= config.rangeOverDeadzone;
+		return Math.abs(getY()) <= config.getRangeOverDeadzone();
 	}
 
 }

@@ -4,9 +4,8 @@ import com.badlogic.gdx.Game;
 import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.input.LargeRangeJoystick;
 
+@Deprecated
 public class TestMain extends Game {
-	private ControlConfig config = new ControlConfig();
-	private LargeRangeJoystick joystick;
 	@Override
 	public void create() {
 		System.out.println("here");

@@ -9,9 +9,14 @@ import static java.lang.Math.hypot;
 import static java.lang.Math.toDegrees;
 import static java.lang.Math.toRadians;
 
+/**
+ * A simple abstract base class for JoystickParts that handles many things on its own with the
+ * ability to extend and override different parts if needed.
+ */
 public abstract class SimpleJoystickPart extends SimpleControllerPart implements JoystickPart{
 	private final boolean cacheAfterChildrenUpdate;
-	private final boolean autoCorrectNeedsScaleMagnitudes;
+	private final boolean autoCorrectToDetectSquareInput;
+	private final boolean canCallGetMethodsWhenUpdating;
 	private JoystickType type;
 
 	// these 3 variables set to null every frame and possibly calculated every frame
@@ -22,16 +27,26 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	/**
 	 *
 	 * @param type The joystick type
-	 * @param cacheAfterChildrenUpdate If config.cacheAngleAndMagnitudeInUpdate, this will determine to calculate after or before children
-	 * @param autoCorrectNeedsScaleMagnitudes Should the JoystickType automatically change if the magnitude gets too high. Ex: Magnitude is sqrt(2)
+	 * @param cacheAfterChildrenUpdate If config.isCacheAngleAndMagnitudeInUpdate(), this will determine to calculate after or before children
+	 * @param autoCorrectToDetectSquareInput Should the JoystickType automatically change if the magnitude gets too high. Ex: Magnitude is sqrt(2)
+	 * @param canCallGetMethodsWhenUpdating true if getX() and getY() are able to be called when updating. False if getX() and getY() cannot
+	 *                                      be called when updating
+	 * @throws IllegalArgumentException thrown if (type.isRangeOver() && autoCorrectToDetectSquareInput) OR (!canCallGetMethodsWhenUpdating && autoCorrectToDetectSquareInput)
 	 */
-	public SimpleJoystickPart(JoystickType type, boolean cacheAfterChildrenUpdate, boolean autoCorrectNeedsScaleMagnitudes){
+	public SimpleJoystickPart(JoystickType type, boolean cacheAfterChildrenUpdate, boolean autoCorrectToDetectSquareInput, boolean canCallGetMethodsWhenUpdating){
 		this.type = type;
 		this.cacheAfterChildrenUpdate = cacheAfterChildrenUpdate;
-		this.autoCorrectNeedsScaleMagnitudes = autoCorrectNeedsScaleMagnitudes;
-		if(type.isRangeOver() && autoCorrectNeedsScaleMagnitudes){
-			throw new IllegalArgumentException("autoCorrectNeedsScaleMagnitudes cannot be true when the JoystickType supports rangeOver");
+		this.autoCorrectToDetectSquareInput = autoCorrectToDetectSquareInput;
+		this.canCallGetMethodsWhenUpdating = canCallGetMethodsWhenUpdating;
+		if(type.isRangeOver() && autoCorrectToDetectSquareInput){
+			throw new IllegalArgumentException("autoCorrectToDetectSquareInput cannot be true when the JoystickType supports rangeOver");
 		}
+		if(!canCallGetMethodsWhenUpdating && autoCorrectToDetectSquareInput){
+			throw new IllegalArgumentException("cannot auto correct square input if we are unable to call get methods when updating");
+		}
+	}
+	public SimpleJoystickPart(JoystickType type, boolean cacheAfterChildrenUpdate, boolean autoCorrectToDetectSquareInput){
+		this(type, cacheAfterChildrenUpdate, autoCorrectToDetectSquareInput, true);
 	}
 //	public SimpleJoystickPart(JoystickType type){
 //		this(type, true, false);
@@ -66,14 +81,17 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 		}
 	}
 	private void checkCache(){
-		boolean testForNeedsScale = (autoCorrectNeedsScaleMagnitudes && !type.shouldScale()) && !type.isRangeOver();
-		if(this.config.cacheAngleAndMagnitudeInUpdate || testForNeedsScale){
+		if(!canCallGetMethodsWhenUpdating){
+			return;
+		}
+		boolean testForNeedsScale = (autoCorrectToDetectSquareInput && !type.isInputSquare()) && !type.isRangeOver();
+		if(this.config.isCacheAngleAndMagnitudeInUpdate() || testForNeedsScale){
 			double x = getX();
 			double y = getY();
 			angleDegrees = calculateAngle(x, y);
 			magnitude = calculateMagnitude(x, y);
-			if(testForNeedsScale && abs(magnitude) > config.switchToShouldScaleThreshold){
-				type = new JoystickType(type.isAnalog(), type.isRangeOver(), true, type.shouldUseDelta());
+			if(testForNeedsScale && abs(magnitude) > config.getSwitchToSquareInputThreshold()){
+				type = new JoystickType(type.isAnalog(), type.isRangeOver(), true, type.isShouldUseDelta());
 				System.out.println("Changed joystick type to support scaling!");
 			}
 			correctMagnitude = calculateCorrectMagnitude(magnitude, angleDegrees);
@@ -103,7 +121,7 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 		return hypot(x, y);
 	}
 	protected double calculateCorrectMagnitude(double magnitude, double angleDegrees){
-		double r = getJoystickType().shouldScale() ? magnitude * getScaled(angleDegrees) : magnitude;
+		double r = getJoystickType().isInputSquare() ? magnitude * getScaled(angleDegrees) : magnitude;
 		if(r >= .999999999999999  // if another 9 is added, will start to produce incorrect results
 				&& (!getJoystickType().isRangeOver() || r < 1.0001)){ // make sure that the range isn't over on purpose
 			r = 1;
@@ -122,6 +140,12 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 		}
 		return angleDegrees;
 	}
+
+	@Override
+	public double getAngleRadians() {
+		return toRadians(angleDegrees);
+	}
+
 	/**
 	 * @return The magnitude of the joystick
 	 */

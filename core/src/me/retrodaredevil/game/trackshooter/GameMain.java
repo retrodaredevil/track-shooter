@@ -14,6 +14,7 @@ import java.util.List;
 
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
+import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
@@ -31,6 +32,8 @@ public class GameMain extends Game {
 
 	@Override
 	public void create () {
+		SimpleControllerPart.setDebugChangeInParent(true);
+
 		batch = new SpriteBatch();
 		overlay = new Overlay(batch);
 		controllerManager = new DefaultControllerManager();
@@ -56,7 +59,7 @@ public class GameMain extends Game {
 	@Override
 	public void render() {
 		controllerManager.update();
-		super.render();
+		super.render(); // renders current screen
 
 		Screen screen = getScreen(); // TODO create our own screen interface instead of this ugly mess
 		if(screen instanceof GameScreen){

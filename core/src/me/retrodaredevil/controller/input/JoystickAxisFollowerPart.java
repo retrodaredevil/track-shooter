@@ -22,7 +22,7 @@ public class JoystickAxisFollowerPart extends AutoCachingInputPart {
 	private static AxisType autoAxisTypeHelper(SimpleJoystickPart joystick){
 		JoystickType type = joystick.getJoystickType();
 
-		return new AxisType(true, type.isAnalog(), type.isRangeOver(), type.shouldUseDelta());
+		return new AxisType(true, type.isAnalog(), type.isRangeOver(), type.isShouldUseDelta());
 	}
 
 

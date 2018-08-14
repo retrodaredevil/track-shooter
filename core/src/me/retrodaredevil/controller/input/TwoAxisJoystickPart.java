@@ -19,15 +19,15 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	 * It is not recommended that x or y have parents when this constructor is called.
 	 * @param x x axis where left is negative and positive is right
 	 * @param y y axis where down is negative and positive is up
-	 * @param shouldScale Is the input from each x and y a "square".
-	 *                    Almost always false with autoCorrectNeedsScaleMagnitudes is true. If set to true, autoCorrectNeedsScaleMagnitudes will have no effect
-	 * @param autoCorrectNeedsScaleMagnitudes Should this change to shouldScale only if needed.
-	 *                                        Should only be set to false if you are sure shouldScale will and should always be false.
+	 * @param isInputSquare Is the input from each x and y a "square".
+	 *                    Almost always false with autoCorrectToDetectSquareInput is true. If set to true, autoCorrectToDetectSquareInput will have no effect
+	 * @param autoCorrectToDetectSquareInput Should this change to isInputSquare only if needed.
+	 *                                        Should only be set to false if you are sure isInputSquare will and should always be false.
 	 *                                        If this is true and the x or y axis support range over, this will be set to false and have no effect
 	 */
-	public TwoAxisJoystickPart(InputPart x, InputPart y, boolean shouldScale, boolean autoCorrectNeedsScaleMagnitudes){
-		super(autoJoystickTypeHelper(x, y, shouldScale), true,
-				autoCorrectNeedsScaleMagnitudes && !(x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver()));
+	public TwoAxisJoystickPart(InputPart x, InputPart y, boolean isInputSquare, boolean autoCorrectToDetectSquareInput){
+		super(autoJoystickTypeHelper(x, y, isInputSquare), true,
+				autoCorrectToDetectSquareInput && !(x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver()));
 		this.xAxis = x;
 		this.yAxis = y;
 //		xAxis.setParent(this);
@@ -39,11 +39,11 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	 * The recommended way of constructing a TwoAxisJoystickPart.
 	 * <p>
 	 * Calls {@link TwoAxisJoystickPart#TwoAxisJoystickPart(InputPart, InputPart, boolean, boolean)}
-	 * with shouldScale=false and autoCorrectNeedsScaleMagnitude=true meaning that at first
+	 * with isInputSquare=false and autoCorrectToDetectSquareInput=true meaning that at first
 	 * this expects the magnitude to not go over 1 but if it goes over too much it will switch to
-	 * shouldScale=true
+	 * isInputSquare=true
 	 * <p>
-	 * If either x or y support range over, should scale will always be false because autoCorrectNeedsScaleMagnitudes
+	 * If either x or y support range over, should scale will always be false because autoCorrectToDetectSquareInputs
 	 * will be set to false.
 	 * @param x x axis where left is negative and positive is right
 	 * @param y y axis where down is negative and positive is up
@@ -51,16 +51,16 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 	public TwoAxisJoystickPart(InputPart x, InputPart y){
 		this(x, y, false, true);
 	}
-	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y, boolean shouldScale){
+	private static JoystickType autoJoystickTypeHelper(InputPart x, InputPart y, boolean isSquareInput){
 		if(!x.getAxisType().isFull() || !y.getAxisType().isFull()){
 			throw new IllegalArgumentException("Each axis must have a full range.");
 		}
-		if(x.getAxisType().shouldUseDelta() != y.getAxisType().shouldUseDelta()){
-			System.err.println("The axes in " + TwoAxisJoystickPart.class.getSimpleName() + " don't have the same shouldUseDelta() return values");
+		if(x.getAxisType().isShouldUseDelta() != y.getAxisType().isShouldUseDelta()){
+			System.err.println("The axes in " + TwoAxisJoystickPart.class.getSimpleName() + " don't have the same isShouldUseDelta() return values");
 		}
 		return new JoystickType(x.getAxisType().isAnalog() || y.getAxisType().isAnalog(),
 				x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver(),
-				shouldScale, x.getAxisType().shouldUseDelta() || y.getAxisType().shouldUseDelta());
+				isSquareInput, x.getAxisType().isShouldUseDelta() || y.getAxisType().isShouldUseDelta());
 	}
 	public static TwoAxisJoystickPart createFromFour(InputPart up, InputPart down, InputPart left, InputPart right){
 		return new TwoAxisJoystickPart(new TwoWayInput(right, left), new TwoWayInput(up, down));
