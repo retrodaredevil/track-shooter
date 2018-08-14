@@ -19,8 +19,8 @@ public class GdxShakeButton extends AutoCachingInputPart {
 		float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
 		magnitude -= 9.8f;
 		// magnitude may be less than 0
-		System.out.println("magnitude: " + magnitude);
-		return magnitude >= 5 ? 1 : 0;
+//		System.out.println("magnitude: " + magnitude);
+		return magnitude >= 8 ? 1 : 0;
 	}
 
 	@Override

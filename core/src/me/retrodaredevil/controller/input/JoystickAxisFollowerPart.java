@@ -1,5 +1,9 @@
 package me.retrodaredevil.controller.input;
 
+/**
+ * Caches the position of the x or y axis of a joystick. The parent of this class should be
+ * the joystick we are using so the joystick must update us after it calculates its own position.
+ */
 public class JoystickAxisFollowerPart extends AutoCachingInputPart {
 	private final SimpleJoystickPart joystick;
 	private final boolean useY;

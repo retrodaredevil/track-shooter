@@ -36,7 +36,7 @@ public class GameMain extends Game {
 		controllerManager = new DefaultControllerManager();
 		for(Controller controller : Controllers.getControllers()){
 			StandardControllerInput standardController = new StandardUSBControllerInput(controller);
-			controllerManager.addController(standardController);
+//			controllerManager.addController(standardController);
 
 			GameInput controllerInput = new DefaultGameInput(standardController);
 			inputs.add(controllerInput);

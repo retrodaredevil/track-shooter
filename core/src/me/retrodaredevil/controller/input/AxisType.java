@@ -4,6 +4,9 @@ package me.retrodaredevil.controller.input;
  * Represents information used with an InputPart.
  * <p>
  * There are some general constant AxisTypes such as FULL_ANALOG and these should never be compared with ==
+ * <p>
+ * When using an AxisType, you can rely on isFull(), isRangeOver() and shouldUseDelta() to be accurate
+ * but analog should be accurate but is usually not guaranteed
  */
 public final class AxisType{
 	/** Used when range of getValue() is -1 to 1. Normally stays at 0 when still. */
@@ -20,6 +23,11 @@ public final class AxisType{
 	private final boolean rangeOver;
 	private final boolean shouldUseDelta;
 
+	/**
+	 * Calls {@link #AxisType(boolean, boolean, boolean, boolean)} with rangeOver=false, shouldUseDelta=true
+	 * @param full Can the values be negative. If true range: [-1, 1] if false range: [0, 1]
+	 * @param analog Can the values be in between. Ex: .5
+	 */
 	public AxisType(boolean full, boolean analog){
 		this(full, analog, false, true);
 	}

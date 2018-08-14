@@ -1,5 +1,7 @@
 package me.retrodaredevil.controller.input;
 
+import me.retrodaredevil.controller.ControllerPartNotUpdatedException;
+
 /**
  * A single controller such as a button, joystick axis, pov axis, etc
  */
@@ -41,7 +43,7 @@ public abstract class AutoCachingInputPart extends SimpleInputPart{
 	@Override
 	public double getPosition() {
 		if(this.position == null){
-			throw new NullPointerException("this.position was not initialized. " +
+			throw new ControllerPartNotUpdatedException("this.position was not initialized. " +
 					"update() must not have been called. this: " + this + " this.getParent(): " + this.getParent());
 		}
 		return this.position;

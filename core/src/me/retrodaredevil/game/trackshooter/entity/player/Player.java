@@ -3,6 +3,8 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+
+import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
@@ -39,10 +41,10 @@ public class Player extends SimpleEntity {
 	private boolean triplePowerup = false;
 
 
-	public Player(){
+	public Player(ControllerRumble rumble){
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
 		setHitboxSize(.7f);
-		score = new PlayerScore(this);
+		score = new PlayerScore(this, rumble);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
 	}

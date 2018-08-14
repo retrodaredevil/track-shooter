@@ -2,6 +2,9 @@ package me.retrodaredevil.controller.input;
 
 import me.retrodaredevil.controller.ControllerPart;
 
+/**
+ * Represents input that can be digital, analog and can have full range, not full range, or range over
+ */
 public interface InputPart extends ControllerPart {
 	/**
 	 * NOTE: Normally this stays constant but it is possible for it to change.

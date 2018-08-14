@@ -31,6 +31,10 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 	private ControllerPart reliesOn = null;
 
+	/**
+	 *
+	 * @param controller The controller to use. This will also be added as a child to this object
+	 */
 	public DefaultGameInput(StandardControllerInput controller){
 		mainJoystick = controller.leftJoy();
 //		mainJoystick = controller.dPad();
@@ -46,9 +50,9 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			rumble = null;
 		}
 
-		addChildren(Collections.singletonList(fireButton), false, false);
+		addChildren(Arrays.asList(fireButton, controller), false, false);
 
-		reliesOn = controller;
+		reliesOn = controller; // TODO do we really need reliesOn?
 	}
 	public DefaultGameInput(){
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
@@ -83,6 +87,9 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton),
 				false, false);
+		if(rumble != null){
+			addChildren(Collections.singletonList(rumble), false, false);
+		}
 	}
 
 	@Override

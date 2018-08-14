@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
 import com.badlogic.gdx.Gdx;
+
+import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 
 public class PlayerScore implements Score {
@@ -8,6 +10,7 @@ public class PlayerScore implements Score {
     private final int[] extraLivesAt;
     private final int extraLifeEvery;
     private final Player player;
+    private final ControllerRumble rumble;
 
 	private int score = 0;
 	private int deaths = 0;
@@ -15,14 +18,20 @@ public class PlayerScore implements Score {
 	private int totalNumberShots = 0;
 	private int shotsHit = 0;
 
-	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery){
+	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, ControllerRumble rumble){
 		this.player = player;
 		this.startingLives = startingLives;
 		this.extraLivesAt = extraLivesAt;
 		this.extraLifeEvery = extraLifeEvery;
+		this.rumble = rumble;
 	}
-	public PlayerScore(Player player){
-	    this(player, 3, new int[]{ 10000 }, 30000);
+
+	/**
+	 * @param player The player
+	 * @param rumble The rumble for the player or null
+	 */
+	public PlayerScore(Player player, ControllerRumble rumble){
+	    this(player, 3, new int[]{ 10000 }, 30000, rumble);
     }
 
 	@Override
@@ -56,6 +65,13 @@ public class PlayerScore implements Score {
 	@Override
 	public void onDeath(Entity other) {
 	    deaths++;
+	    if(rumble != null && rumble.isConnected()){
+	    	long time = 300;
+	    	if(getLives() <= 0){
+	    		time = 600;
+			}
+	    	rumble.rumble(time, 1);
+		}
 	}
 
     @Override

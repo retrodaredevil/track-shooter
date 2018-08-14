@@ -2,6 +2,11 @@ package me.retrodaredevil.controller.input;
 
 import java.util.Arrays;
 
+/**
+ * Represents a "full" InputPart so that you are able to use two other InputParts where one is
+ * positive and the other is negative. (Can be useful to create an Axis for x and y using A and D,
+ * then W and S or for other d-pad like buttons)
+ */
 public class TwoWayInput extends AutoCachingInputPart {
 	private final InputPart part1;
 	private final InputPart part2;

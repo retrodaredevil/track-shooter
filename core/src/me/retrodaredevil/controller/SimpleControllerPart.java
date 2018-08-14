@@ -5,12 +5,23 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class SimpleControllerPart implements ControllerPart{
+	private static boolean debugChangeInParent = false;
 
 	private ControllerPart parent = null;
 	private final Set<ControllerPart> children = new HashSet<>();
 
 	protected ControlConfig config;
 
+	/**
+	 * @param debugChangeInParent true if a message should be logged to the console whenever
+	 *                               a parent is changed (only debugs when previous parent != null), false for no debug
+	 */
+	public static void setDebugChangeInParent(boolean debugChangeInParent){
+		SimpleControllerPart.debugChangeInParent = debugChangeInParent;
+	}
+	public static boolean isDebuggingChangeInParent(){
+		return debugChangeInParent;
+	}
 
 	@Override
 	public ControllerPart getParent() {
@@ -27,6 +38,9 @@ public abstract class SimpleControllerPart implements ControllerPart{
 		}
 		if(this.parent != null) {
 			this.parent.removeChild(this);
+			if(isDebuggingChangeInParent()){
+				System.out.println(getClass().getSimpleName() + " (or " + this + ") is changing its parent from old parent: " + this.parent + " to new parent: " + parent);
+			}
 		}
 		this.parent = parent;
 		if(parent != null){
@@ -55,7 +69,7 @@ public abstract class SimpleControllerPart implements ControllerPart{
 		}
 		boolean wasRemoved = children.remove(part);
 		if(!wasRemoved){
-			throw new AssertionError("part: " + part + " had us a parent, but we didn't know because they weren't in our children list!");
+			throw new AssertionError("part: " + part + " had us as a parent, but we didn't know because they weren't in our children list!");
 		}
 		return true;
 	}
@@ -93,6 +107,7 @@ public abstract class SimpleControllerPart implements ControllerPart{
 
 	/**
 	 * Should be overridden to act on updated data. This is called after all children are fully updated
+	 * and everything in this instance should also be updated.
 	 */
 	protected void onLateUpdate(){}
 
@@ -113,6 +128,10 @@ public abstract class SimpleControllerPart implements ControllerPart{
 		return false;
 	}
 	/**
+	 * NOTE: The ControllerParts that will be added as children may not necessarily get
+	 * updated in the same order you expect. Because of this, it is expected that the implementation
+	 * handles ControllerParts that the children rely upon before the children are updated (possibly in
+	 * onSecondUpdate() or before)
 	 *
 	 * @param parts The parts to change each element's parent to this
 	 * @param changeParent true if you want to allow the parent of parts that already have a parent to be changed

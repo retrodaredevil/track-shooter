@@ -13,7 +13,9 @@ public class ControlConfig {
 	/** Should be used for FULL_ANALOG AxisTypes */
 	public double fullAnalogDeadzone = .005;
 	/** Usually not relevant (since it is usually only comparing -1, 0 or 1).
-	 * Used for checking if in deadzone and should not be used for anything analog */
+	 * Used for checking if in deadzone and should not be used for anything analog. Really, if you set this to 0,
+	 * there should be no difference but it is recommended to use a normal deadzone in case of round off errors
+	 * or there being analog input for an unknown reason.*/
 	public double digitalDeadzone = .005;
 	/** Usually not relevant */
 	public double fullDigitalDeadzone = digitalDeadzone;
@@ -28,5 +30,7 @@ public class ControlConfig {
 	 * is pressed */
 	public boolean useAbstractedIsDownIfPossible = true;
 
+	/** Some implementations of JoystickParts allow you to determine if it should check to see if the magnitude
+	 * of the joystick is over 1 and change the AxisType to scale it if the magnitude is > this threshold.*/
 	public double switchToShouldScaleThreshold = 1.01;
 }

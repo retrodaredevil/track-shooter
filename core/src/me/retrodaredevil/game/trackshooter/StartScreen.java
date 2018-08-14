@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -74,11 +75,14 @@ public class StartScreen extends ScreenAdapter {
 //		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
 //		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude()
 //				* (gameInput.mainJoystick().getJoystickType().shouldScale() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
-		JoystickPart joy = gameInput.mainJoystick();
-		InputPart x = joy.getXAxis();
-		InputPart y = joy.getYAxis();
-//		Gdx.app.debug("digital joystick", x.getDigitalPosition() + ", " + y.getDigitalPosition());
-//		System.out.println();
+		
+//		ControllerRumble rumble = gameInput.getRumble();
+//		if(rumble != null && rumble.isConnected()){
+//			double intensity = System.currentTimeMillis() % 1400 < 700 ? .9 : .3;
+////			System.out.println("intensity: " + intensity);
+//			rumble.rumble(100, intensity); // if this stops being called, it will end
+////			rumble.rumble(1);
+//		}
 	}
 
 	@Override

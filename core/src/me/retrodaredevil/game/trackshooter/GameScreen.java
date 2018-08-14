@@ -44,7 +44,7 @@ public class GameScreen extends ScreenAdapter {
 
 
 		for(GameInput gameInput : gameInputs){
-			Player player = new Player();
+			Player player = new Player(gameInput.getRumble());
 			players.add(player);
 			player.setEntityController(new PlayerController(player, gameInput));
 			world.addEntity(player);

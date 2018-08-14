@@ -100,7 +100,7 @@ public class PlayerController implements EntityController{
 		if (gameInput.fireButton().isPressed()) {
 			boolean didShoot = player.shootBullet(world, null) != null;
 			if(didShoot && rumble != null && rumble.isConnected()){
-				rumble.rumble(.5f);
+				rumble.rumble(100, .5);
 			}
 		}
 

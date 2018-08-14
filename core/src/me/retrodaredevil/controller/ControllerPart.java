@@ -16,6 +16,8 @@ public interface ControllerPart {
 	/**
 	 * Normally, you shouldn't call this with a ControllerInput as parent because ControllerInput already handles this
 	 * automatically
+	 * <p>
+	 * This is expected to call parent.addChild() only if old parent != parent
 	 * @param parent The parent to set
 	 * @throws IllegalArgumentException thrown if parent == this
 	 */
@@ -25,6 +27,7 @@ public interface ControllerPart {
 	 * NOTE: The returned value should not be mutated
 	 * <br/>
 	 * NOTE: You can always assume that parent.getChildren().contains(part) == (part.getParent() == parent)
+	 * UNLESS: you are in the middle of a addChild(), removeChild() or setParent() call (very unlikely)
 	 * @return A Collection representing all the children
 	 */
 	Collection<ControllerPart> getChildren();
@@ -32,6 +35,9 @@ public interface ControllerPart {
 	/**
 	 * When this method is called it is possible that part.getParent() == this but this.getChildren().contains(part) == false
 	 * so this method should check to make sure getChildren() will contain part and should also call part.setParent(this)
+	 * <p>
+	 * This is expected to add part to collection of children if needed and should always call
+	 * part.setParent() no matter what.
 	 * @param part The part to make a child of this
 	 */
 	void addChild(ControllerPart part);
@@ -39,7 +45,7 @@ public interface ControllerPart {
 	/**
 	 * Calling this method should set part's parent to null only if part.getParent() == this. Otherwise it's
 	 * parent should not be changed.
-	 * <br/>
+	 * <p>
 	 * Calling this method will also (obviously) remove part as a child so part will not be contained in getChildren()
 	 * @param part The part to remove a child
 	 * @return true if the part was removed
@@ -50,10 +56,13 @@ public interface ControllerPart {
 	/**
 	 * After this method is called, whether it is for a superclass or subclass, calls to getXXXX should
 	 * be the most current and accurate value.
-	 * <br/>
+	 * <p>
 	 * If a superclass has defined abstract methods such as getPosition() or getX(), when the superclass's update is called,
 	 * calling those methods must be up to date. This is one of the reasons that you might need to call
 	 * super after performing important steps that affect the return value of the methods that the call to super's update might use.
+	 * <p>
+	 * After this is called, all the children should have also been updated. Note that children
+	 * are not guaranteed to be updated in the same order each time.
 	 */
 	void update(ControlConfig config);
 

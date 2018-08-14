@@ -7,6 +7,9 @@ import me.retrodaredevil.controller.ControllerPart;
 
 /**
  * This class can be used if you want to map two buttons to the same control.
+ * <p>
+ * Even though this class relies upon other InputParts, it does not matter if they were updated
+ * before or after this is updated because we don't rely upon them in our update()
  */
 public class HighestPositionInputPart extends SimpleInputPart {
 
