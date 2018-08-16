@@ -45,9 +45,9 @@ public abstract class SimpleInputPart extends SimpleControllerPart implements In
 				return 1;
 			}
 		} else {
-			if (value > config.getAnalogDigitalValueDeadzone()) {
+			if (value > config.getButtonDownDeadzone()) {
 				return 1;
-			} else if (value < -config.getAnalogDigitalValueDeadzone()) {
+			} else if (value < -config.getButtonDownDeadzone()) {
 				return -1;
 			}
 		}

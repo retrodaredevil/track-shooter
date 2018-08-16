@@ -4,10 +4,10 @@ package me.retrodaredevil.controller;
  * NOTE: For all deadzones, they will return true if the position is less than OR equal to the deadzone
  */
 public interface ControlConfig {
-	/** Should be used for all isDown() calls */
+	/** Should be used for all isDown() calls and for POVs and digitalPosition calls. It should also be used on isPressed and isReleased calls*/
 	double getButtonDownDeadzone();
-	/** Should be used for things like D-pads and POVs and all digitalPosition calls */
-	double getAnalogDigitalValueDeadzone();
+//	/** Should be used for things like D-pads and POVs and all digitalPosition calls */
+//	double getAnalogDigitalValueDeadzone();
 	/** Should be used for AxisTypes with full=false and analog=true */
 	double getAnalogDeadzone();
 	/** Should be used for AxisTypes with full=true and analog=true*/

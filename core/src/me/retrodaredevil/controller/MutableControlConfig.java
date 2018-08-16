@@ -2,7 +2,7 @@ package me.retrodaredevil.controller;
 
 public class MutableControlConfig implements ControlConfig{
 	public double buttonDownDeadzone = .5;
-	public double analogDigitalValueDeadzone = buttonDownDeadzone;
+//	public double analogDigitalValueDeadzone = buttonDownDeadzone;
 	public double analogDeadzone = .005;
 	public double fullAnalogDeadzone = .005;
 	public double digitalDeadzone = .005;
@@ -17,8 +17,8 @@ public class MutableControlConfig implements ControlConfig{
 
 	@Override
 	public double getButtonDownDeadzone() { return buttonDownDeadzone; }
-	@Override
-	public double getAnalogDigitalValueDeadzone() { return analogDigitalValueDeadzone; }
+//	@Override
+//	public double getAnalogDigitalValueDeadzone() { return analogDigitalValueDeadzone; }
 	@Override
 	public double getAnalogDeadzone() { return analogDeadzone; }
 	@Override

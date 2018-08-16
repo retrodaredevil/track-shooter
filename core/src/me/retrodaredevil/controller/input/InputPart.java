@@ -55,7 +55,7 @@ public interface InputPart extends ControllerPart {
 	 * NOTE: This will only ever return 1, 0, and -1
 	 * @return returns {@link #getPosition()} unless {@link #getAxisType()}.{@link AxisType#isAnalog() isAnalog()} == true
 	 * 			or {@link #getAxisType()}.{@link AxisType#isRangeOver() isRangeOver()} == true, it will round it using the
-	 *          {@link ControlConfig#getAnalogDigitalValueDeadzone()}
+	 *          {@link ControlConfig#getButtonDownDeadzone()}
 	 */
 	int getDigitalPosition();
 }
