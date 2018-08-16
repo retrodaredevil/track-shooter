@@ -9,10 +9,10 @@ import me.retrodaredevil.controller.ControllerPart;
  */
 public interface AnglePart extends ControllerPart {
 
-	/** @return angle of the joystick in degrees. If joystick completely centered, usually returns 0 but not guaranteed. */
+	/** @return angle of the AnglePart in degrees. */
 	double getAngle();
 
-	/** @return angle of the joystick in radians. If joystick completely centered, usually returns 0 but not guaranteed.*/
+	/** @return angle of the AnglePart in radians. */
 	double getAngleRadians();
 
 	/**

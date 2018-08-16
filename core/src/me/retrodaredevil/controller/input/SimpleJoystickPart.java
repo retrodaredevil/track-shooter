@@ -1,5 +1,6 @@
 package me.retrodaredevil.controller.input;
 
+import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.SimpleControllerPart;
 
 import static java.lang.Math.abs;
@@ -27,7 +28,9 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 	/**
 	 *
 	 * @param type The joystick type
-	 * @param cacheAfterChildrenUpdate If config.isCacheAngleAndMagnitudeInUpdate(), this will determine to calculate after or before children
+	 * @param cacheAfterChildrenUpdate If config.{@link ControlConfig#isCacheAngleAndMagnitudeInUpdate() isCacheAngleAndMagnitudeInUpdate()} == true,
+	 *                                 this will determine to calculate after or before children. (set to true if the implementation relies on children,
+	 *                                 false otherwise)
 	 * @param autoCorrectToDetectSquareInput Should the JoystickType automatically change if the magnitude gets too high. Ex: Magnitude is sqrt(2)
 	 * @param canCallGetMethodsWhenUpdating true if getX() and getY() are able to be called when updating. False if getX() and getY() cannot
 	 *                                      be called when updating
@@ -121,9 +124,9 @@ public abstract class SimpleJoystickPart extends SimpleControllerPart implements
 		return hypot(x, y);
 	}
 	protected double calculateCorrectMagnitude(double magnitude, double angleDegrees){
-		double r = getJoystickType().isInputSquare() ? magnitude * getScaled(angleDegrees) : magnitude;
+		double r = type.isInputSquare() ? magnitude * getScaled(angleDegrees) : magnitude;
 		if(r >= .999999999999999  // if another 9 is added, will start to produce incorrect results
-				&& (!getJoystickType().isRangeOver() || r < 1.0001)){ // make sure that the range isn't over on purpose
+				&& (!type.isRangeOver() || r < 1.0001)){ // make sure that the range isn't over on purpose
 			r = 1;
 		}
 		return r;

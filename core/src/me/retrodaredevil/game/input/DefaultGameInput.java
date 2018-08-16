@@ -5,14 +5,12 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.input.SimpleJoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
@@ -36,14 +34,14 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	 * @param controller The controller to use. This will also be added as a child to this object
 	 */
 	public DefaultGameInput(StandardControllerInput controller){
-		mainJoystick = controller.leftJoy();
-//		mainJoystick = controller.dPad();
-		rotateAxis = controller.rightJoy().getXAxis();
-		fireButton = new HighestPositionInputPart(controller.rightBumper(), controller.leftBumper(), controller.rightTrigger(), controller.leftTrigger());
-//		fireButton = controller.leftBumper();
-		slow = controller.leftStick();
-		activatePowerup = controller.faceLeft();
-		startButton = controller.start();
+		mainJoystick = controller.getLeftJoy();
+//		mainJoystick = controller.getDPad();
+		rotateAxis = controller.getRightJoy().getXAxis();
+		fireButton = new HighestPositionInputPart(controller.getRightBumper(), controller.getLeftBumper(), controller.getRightTrigger(), controller.getLeftTrigger());
+//		fireButton = controller.getLeftBumper();
+		slow = controller.getLeftStick();
+		activatePowerup = controller.getFaceLeft();
+		startButton = controller.getStart();
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {

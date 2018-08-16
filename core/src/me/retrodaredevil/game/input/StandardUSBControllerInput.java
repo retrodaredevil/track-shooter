@@ -18,7 +18,7 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 
 	private final Controller controller;
 	private final InputPart start, select,
-			faceUp, faceDown, faceLeft, faceRight,
+			yButton, aButton, xButton, bButton,
 			leftBumper, rightBumper,
 			leftTrigger, rightTrigger,
 			leftStick, rightStick;
@@ -37,16 +37,17 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 		InputPart rightXAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 2);
 		InputPart rightYAxis = new ControllerInputPart(controller, AxisType.FULL_ANALOG, 3, true);
 
+		// The reason we didn't use these two axi, is because when I tested it (on linux) it didn't work at all
 //		InputPart dXAxis = new ControllerInputPart(controller, AxisType.FULL_DIGITAL, 4);
 //		InputPart dYAxis = new ControllerInputPart(controller, AxisType.FULL_DIGITAL, 5, true);
 
 		start = new ControllerInputPart(controller, AxisType.DIGITAL, 9);
 		select = new ControllerInputPart(controller, AxisType.DIGITAL, 8);
 
-		faceUp = new ControllerInputPart(controller, AxisType.DIGITAL, 0);
-		faceDown = new ControllerInputPart(controller, AxisType.DIGITAL, 2);
-		faceLeft = new ControllerInputPart(controller, AxisType.DIGITAL, 3);
-		faceRight = new ControllerInputPart(controller, AxisType.DIGITAL, 1);
+		yButton = new ControllerInputPart(controller, AxisType.DIGITAL, 0);
+		aButton = new ControllerInputPart(controller, AxisType.DIGITAL, 2);
+		xButton = new ControllerInputPart(controller, AxisType.DIGITAL, 3);
+		bButton = new ControllerInputPart(controller, AxisType.DIGITAL, 1);
 
 		leftBumper = new ControllerInputPart(controller, AxisType.DIGITAL, 4);
 		rightBumper = new ControllerInputPart(controller, AxisType.DIGITAL, 5);
@@ -57,7 +58,7 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 		leftStick = new ControllerInputPart(controller, AxisType.DIGITAL, 10);
 		rightStick = new ControllerInputPart(controller, AxisType.DIGITAL, 11);
 
-//		dPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
+//		getDPad = new TwoAxisJoystickPart(dXAxis, dYAxis, true);
 		dPad = new ControllerPovJoystick(controller, 0);
 		leftJoy = new TwoAxisJoystickPart(leftXAxis, leftYAxis);
 		rightJoy = new TwoAxisJoystickPart(rightXAxis, rightYAxis);
@@ -67,7 +68,7 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 
 		// the axises already have parents and we don't want to change them
 		addChildren(Arrays.asList(
-				start, select, faceUp, faceDown, faceLeft, faceRight,
+				start, select, yButton, aButton, xButton, bButton,
 				leftBumper, rightBumper, leftTrigger, rightTrigger,
 				leftStick, rightStick,
 				dPad, leftJoy, rightJoy, rumble), false, false);
@@ -75,77 +76,92 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 	}
 
 	@Override
-	public JoystickPart dPad() {
+	public JoystickPart getDPad() {
 		return dPad;
 	}
 
 	@Override
-	public JoystickPart leftJoy() {
+	public JoystickPart getLeftJoy() {
 		return leftJoy;
 	}
 
 	@Override
-	public JoystickPart rightJoy() {
+	public JoystickPart getRightJoy() {
 		return rightJoy;
 	}
 
 	@Override
-	public InputPart leftStick() {
+	public InputPart getLeftStick() {
 		return leftStick;
 	}
 
 	@Override
-	public InputPart rightStick() {
+	public InputPart getRightStick() {
 		return rightStick;
 	}
 
 	@Override
-	public InputPart start() {
+	public InputPart getStart() {
 		return start;
 	}
 
 	@Override
-	public InputPart select() {
+	public InputPart getSelect() {
 		return select;
 	}
 
+	// TODO correct physical locations
 	@Override
-	public InputPart faceUp() {
-		return faceUp;
+	public InputPart getFaceUp() {
+		return yButton;
+	}
+	@Override
+	public InputPart getFaceDown() {
+		return aButton;
+	}
+	@Override
+	public InputPart getFaceLeft() {
+		return xButton;
+	}
+	@Override
+	public InputPart getFaceRight() {
+		return bButton;
 	}
 
 	@Override
-	public InputPart faceDown() {
-		return faceDown;
+	public InputPart getAButton() {
+		return aButton;
+	}
+	@Override
+	public InputPart getBButton() {
+		return bButton;
+	}
+	@Override
+	public InputPart getXButton() {
+		return xButton;
+	}
+	@Override
+	public InputPart getYButton() {
+		return yButton;
 	}
 
 	@Override
-	public InputPart faceLeft() {
-		return faceLeft;
-	}
-
-	@Override
-	public InputPart faceRight() {
-		return faceRight;
-	}
-
-	@Override
-	public InputPart leftBumper() {
+	public InputPart getLeftBumper() {
 		return leftBumper;
 	}
 
 	@Override
-	public InputPart rightBumper() {
+	public InputPart getRightBumper() {
 		return rightBumper;
 	}
 
 	@Override
-	public InputPart leftTrigger() {
+	public InputPart getLeftTrigger() {
 		return leftTrigger;
 	}
 
 	@Override
-	public InputPart rightTrigger() {
+	public InputPart getRightTrigger() {
 		return rightTrigger;
 	}
 

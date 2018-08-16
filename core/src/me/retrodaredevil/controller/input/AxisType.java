@@ -1,7 +1,7 @@
 package me.retrodaredevil.controller.input;
 
 /**
- * Represents information used with an InputPart.
+ * An immutable class that represents information used with an InputPart.
  * <p>
  * There are some general constant AxisTypes such as FULL_ANALOG and these should never be compared with ==
  * <p>
@@ -36,7 +36,7 @@ public final class AxisType{
 	 * @param full Can the values be negative
 	 * @param analog Can the values be in between. Ex: .5
 	 * @param rangeOver Can the abs of the value be > 1
-	 * @param shouldUseDelta Should delta time be applied. (Not used with a mouse, or another device that gives "moved with much since last call" feedback)
+	 * @param shouldUseDelta Should delta time be applied. For position input, should be true, for change in position (like a mouse), it should be false
 	 */
 	public AxisType(boolean full, boolean analog, boolean rangeOver, boolean shouldUseDelta){
 		this.full = full;
@@ -56,7 +56,10 @@ public final class AxisType{
 	}
 
 	/**
-	 * A good example of the range being over is a mouse where isShouldUseDelta() == true as well
+	 * A good example of the range being over is a mouse where {@link #isShouldUseDelta()} == true as well
+	 * <p>
+	 * Another example is a controller using tilt controls: The range can be over 1 if the phone is tilted
+	 * too far and the angle will be taken into account but you can normalize the magnitude if > 1.
 	 * @return true if the range of what this AxisType represents can be > 1
 	 */
 	public boolean isRangeOver(){

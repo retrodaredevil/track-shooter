@@ -4,7 +4,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
  * A class which simplifies MoveComponents, setting next components, ending, starting etc. When overriding, you should
- * never override update(), start, or end() always use onUpdate(), onStart(), onEnd(). You may optionally override
+ * never override update(), or end() always use onUpdate(), onStart(), onEnd(). You may optionally override
  * isDone(), but should still call super.
  */
 public abstract class SimpleMoveComponent implements MoveComponent {

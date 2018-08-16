@@ -79,8 +79,9 @@ public abstract class AutoCachingInputPart extends SimpleInputPart{
 			this.position = calculatePosition();
 //			System.out.println("Calculated position for: " + this + " is: " + this.position + " children.size: " + this.getChildren().size());
 		} catch(NullPointerException ex){
-			System.err.println("There was a NPE when calculatePosition() was called. " +
-					"If you base this off of your children, make sure you set calculatePositionAfterChildren to true in the constructor.");
+			System.err.println("There was a NPE when calculatePosition() was called.\n" +
+					"If you base this off of your children, make sure you set calculatePositionAfterChildren to true in the constructor.\n" +
+					"The NPE will now be thrown.");
 			throw ex;
 		}
 	}

@@ -57,6 +57,6 @@ public abstract class SimpleInputPart extends SimpleControllerPart implements In
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + "{AxisType:" + type + ",hashCode: " + Integer.toHexString(hashCode()) + "}";
+		return getClass().getSimpleName() + "{AxisType:" + type + ",hashCode:" + Integer.toHexString(hashCode()) + "}";
 	}
 }

@@ -14,7 +14,6 @@ public class CollisionHandler implements Updateable {
 
 	@Override
 	public void update(float delta, World world) {
-//		long start = System.nanoTime();
 		final Collection<Entity> entities = world.getEntities();
 
 		List<Entity> possiblyCollides = new ArrayList<>();
@@ -53,10 +52,5 @@ public class CollisionHandler implements Updateable {
 				}
 			}
 		}
-
-//		long end = System.nanoTime();
-//		long took = end - start;
-//		Gdx.app.debug("took", "" + took);
-
 	}
 }

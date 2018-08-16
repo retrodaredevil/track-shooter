@@ -9,8 +9,8 @@ import me.retrodaredevil.game.trackshooter.Updateable;
  * did not receive from one of its methods. Ex: Don't take input from a controller directly and have a method that
  * allows you to start going to a target location instead of choosing that target location
  * <p>
- * Note that if start() then x number of update() are called then end() is called, this should still be able to be
- * reused (stop using the MoveComponent, then start again)
+ * Note that if x number of update() are called then end() is called, some implementations should be
+ * able to be used. (Others that disallow this feature should throw an exception when that happens)
  */
 public interface MoveComponent extends Updateable {
 

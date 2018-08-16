@@ -30,15 +30,13 @@ public class TwoAxisJoystickPart extends SimpleJoystickPart {
 				autoCorrectToDetectSquareInput && !(x.getAxisType().isRangeOver() || y.getAxisType().isRangeOver()));
 		this.xAxis = x;
 		this.yAxis = y;
-//		xAxis.setParent(this);
-//		yAxis.setParent(this);
 		this.addChildren(Arrays.asList(xAxis, yAxis), true, true);
 	}
 
 	/**
 	 * The recommended way of constructing a TwoAxisJoystickPart.
 	 * <p>
-	 * Calls {@link TwoAxisJoystickPart#TwoAxisJoystickPart(InputPart, InputPart, boolean, boolean)}
+	 * Calls {@link #TwoAxisJoystickPart(InputPart, InputPart, boolean, boolean)}
 	 * with isInputSquare=false and autoCorrectToDetectSquareInput=true meaning that at first
 	 * this expects the magnitude to not go over 1 but if it goes over too much it will switch to
 	 * isInputSquare=true

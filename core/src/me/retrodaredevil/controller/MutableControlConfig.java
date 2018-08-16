@@ -28,7 +28,7 @@ public class MutableControlConfig implements ControlConfig{
 	@Override
 	public double getFullDigitalDeadzone() { return fullDigitalDeadzone; }
 	@Override
-	public double getRangeOverDeadzone() { return rangeOverDeadzone; }
+	public double getChangeInPositionDeadzone() { return rangeOverDeadzone; }
 
 	@Override
 	public boolean isCacheAngleAndMagnitudeInUpdate() { return cacheAngleAndMagnitudeInUpdate; }

@@ -5,20 +5,20 @@ package me.retrodaredevil.controller.input;
  * <p>
  * NOTE: This should not be referenced with instanceof
  */
-public abstract class LargeRangeJoystick extends SimpleJoystickPart {
+public abstract class ChangeInPositionJoystick extends SimpleJoystickPart {
 
-	protected LargeRangeJoystick() {
+	protected ChangeInPositionJoystick() {
 		super(new JoystickType(true, true, false, false), false, false);
 	}
 
 	@Override
 	public boolean isXDeadzone() {
-		return Math.abs(getX()) <= config.getRangeOverDeadzone();
+		return Math.abs(getX()) <= config.getChangeInPositionDeadzone();
 	}
 
 	@Override
 	public boolean isYDeadzone() {
-		return Math.abs(getY()) <= config.getRangeOverDeadzone();
+		return Math.abs(getY()) <= config.getChangeInPositionDeadzone();
 	}
 
 }

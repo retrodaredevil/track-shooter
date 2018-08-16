@@ -19,8 +19,15 @@ public interface ControlConfig {
 	double getDigitalDeadzone();
 	/** Just as relevant as {@link #getDigitalDeadzone()} used for full digital*/
 	double getFullDigitalDeadzone();
-	/** Deadzone used for range over axis types*/
-	double getRangeOverDeadzone();
+	/**
+	 * Deadzone for AxisTypes where shouldUseDelta=false
+	 * <p>
+	 * The value returned from this method is very small because inputs from InputParts that
+	 * represent changes should almost never be in a deadzone because each change in position is
+	 * important. This means that this should return 0 almost all the time but is used just in case
+	 * it needs to be changed in the future.
+	 */
+	double getChangeInPositionDeadzone();
 
 	/** true if the angle and magnitude of a joystick should be calculated in lateUpdate(), otherwise it will only be
 	 * cached once one of those methods are called. */

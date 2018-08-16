@@ -13,7 +13,7 @@ public interface JoystickPart extends ControllerPart, AnglePart{
 	InputPart getXAxis();
 
 	/**
-	 * Just like getY(), the getPosition() should be exactly the same so positive is up and negative is down.
+	 * Just like getY(), the getPosition() should be exactly the same: positive is up and negative is down.
 	 * @return returns the y axis that is controlled and updated by this SimpleJoystickPart
 	 */
 	InputPart getYAxis();
@@ -26,14 +26,15 @@ public interface JoystickPart extends ControllerPart, AnglePart{
 
 	/**
 	 * NOTE: It is possible for this to return a value > 1 even if isInputSquare is correct, it could
-	 * be 1.00000001. This is why it is recommended to use getCorrectMagnitude() instead.
-	 * @return The raw magnitude using the values from getX() and getY()
+	 * be 1.00000001. This is why it is recommended to use {@link #getCorrectMagnitude()} instead.
+	 * @return The raw magnitude using the values from {@link #getX()} and {@link #getY()}
 	 * */
 	double getMagnitude();
 
 	/**
 	 * This will NEVER be > 1 unless getJoystickType().isRangeOver() is true
-	 * @return returns getMagnitude() and scales it if getJoystickType().isInputSquare().
+	 * @return returns getMagnitude() and scales it if
+	 * 			{@link #getJoystickType()}.{@link JoystickType#isInputSquare() isInputSquare()} == true.
 	 */
 	double getCorrectMagnitude();
 
@@ -43,7 +44,8 @@ public interface JoystickPart extends ControllerPart, AnglePart{
 	 * <p>
 	 * NOTE: Normally instead of this, you should calculate x and y using getAngle() and getCorrectMagnitude()
 	 *
-	 * @return The raw X value of the joystick -1 to 1. Or greater if getJoystickType() == MOUSE
+	 * @return The raw X value of the joystick in range [-1, 1] or an unknown range if
+	 * 			{@link #getJoystickType()}.{@link JoystickType#isRangeOver() isRangeOver()} == true
 	 */
 	double getX();
 
@@ -55,7 +57,8 @@ public interface JoystickPart extends ControllerPart, AnglePart{
 	 * <p>
 	 * NOTE: Normally instead of this, you should calculate x and y using getAngle() and getCorrectMagnitude()
 	 *
-	 * @return The raw Y value of the joystick -1 to 1 Or greater if getJoystickType() == MOUSE
+	 * @return The raw Y value of the joystick in range [-1, 1] or an unknown range if
+	 * 			{@link #getJoystickType()}.{@link JoystickType#isRangeOver() isRangeOver()} == true
 	 */
 	double getY();
 

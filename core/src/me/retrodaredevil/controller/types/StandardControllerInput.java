@@ -1,8 +1,10 @@
 package me.retrodaredevil.controller.types;
 
-import me.retrodaredevil.controller.ControllerInput;
 import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.types.subtypes.BumperTriggerControllerInput;
+import me.retrodaredevil.controller.types.subtypes.ClickDualJoystickControllerInput;
+import me.retrodaredevil.controller.types.subtypes.DPadControllerInput;
+import me.retrodaredevil.controller.types.subtypes.FourFaceControllerInput;
 
 /**
  * This class can be used to store and access the standard layout on most modern controllers. Note that when
@@ -11,25 +13,9 @@ import me.retrodaredevil.controller.input.JoystickPart;
  * None of the values returned defined in this interface should be null, however some may not be
  * "connected"
  */
-public interface StandardControllerInput extends ControllerInput {
+public interface StandardControllerInput extends FourFaceControllerInput, ClickDualJoystickControllerInput, DPadControllerInput, BumperTriggerControllerInput {
 
-	JoystickPart dPad();
-	JoystickPart leftJoy();
-	JoystickPart rightJoy();
+	InputPart getStart();
+	InputPart getSelect();
 
-	InputPart leftStick();
-	InputPart rightStick();
-
-	InputPart start();
-	InputPart select();
-
-	InputPart faceUp();
-	InputPart faceDown();
-	InputPart faceLeft();
-	InputPart faceRight();
-
-	InputPart leftBumper();
-	InputPart rightBumper();
-	InputPart leftTrigger();
-	InputPart rightTrigger();
 }

@@ -1,5 +1,6 @@
 package me.retrodaredevil.controller.input;
 
+import me.retrodaredevil.controller.ControlConfig;
 import me.retrodaredevil.controller.ControllerPart;
 
 /**
@@ -8,18 +9,18 @@ import me.retrodaredevil.controller.ControllerPart;
 public interface InputPart extends ControllerPart {
 	/**
 	 * Even if called multiple times, the value of this should not be different
-	 * @return returns an AxisType object with info on what getPosition() is allowed to return
+	 * @return returns an {@link AxisType} object with info on what getPosition() is allowed to return
 	 */
 	AxisType getAxisType();
 
 	/**
 	 *
-	 * @return true if the value returned by getPosition() is close enough to 0 to be ignored.
+	 * @return true if the value returned by {@link #getPosition()} is close enough to 0 to be ignored.
 	 */
 	boolean isDeadzone();
 
 	/**
-	 * Depending on what getAxisType() returns, the returned value may have a smaller range.
+	 * Depending on what {@link #getAxisType()} returns, the returned value may have a smaller range.
 	 * <br/>
 	 * NOTE: The deadzone is not applied to this. If you want to check if this is within the deadzone,
 	 * use isDeadzone()
@@ -30,7 +31,7 @@ public interface InputPart extends ControllerPart {
 
 	/**
 	 * Can be used for all AxisTypes.
-     * <br/><br/>
+	 * <p>
      * If this axis type is "full" then this will return true when the absolute values moves enough
      * in either direction
 	 * @return true if this input part is currently down
@@ -52,8 +53,9 @@ public interface InputPart extends ControllerPart {
 
 	/**
 	 * NOTE: This will only ever return 1, 0, and -1
-	 * @return returns getPosition() unless getAxisType().isAnalog() or getAxisType().isRangeOver(), it will round it using the
-	 *          ControlConfig#analogDigitalValueDeadzone;
+	 * @return returns {@link #getPosition()} unless {@link #getAxisType()}.{@link AxisType#isAnalog() isAnalog()} == true
+	 * 			or {@link #getAxisType()}.{@link AxisType#isRangeOver() isRangeOver()} == true, it will round it using the
+	 *          {@link ControlConfig#getAnalogDigitalValueDeadzone()}
 	 */
 	int getDigitalPosition();
 }
