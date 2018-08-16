@@ -4,7 +4,8 @@ import me.retrodaredevil.controller.ControllerInput;
 import me.retrodaredevil.controller.input.InputPart;
 
 /**
- * Represents a controller used for selecting items using A and B
+ * Represents a controller used for selecting items using A and B. The physical location of each button
+ * is not guaranteed
  */
 public interface SelectingControllerInput extends ControllerInput {
 	/**

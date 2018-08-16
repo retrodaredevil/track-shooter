@@ -53,6 +53,8 @@ public interface InputPart extends ControllerPart {
 
 	/**
 	 * NOTE: This will only ever return 1, 0, and -1
+	 * <p>
+	 * If {@link #isDown()} == true, then this should return 1 or -1
 	 * @return returns {@link #getPosition()} unless {@link #getAxisType()}.{@link AxisType#isAnalog() isAnalog()} == true
 	 * 			or {@link #getAxisType()}.{@link AxisType#isRangeOver() isRangeOver()} == true, it will round it using the
 	 *          {@link ControlConfig#getButtonDownDeadzone()}
