@@ -83,6 +83,14 @@ public class StartScreen extends ScreenAdapter {
 //			rumble.rumble(100, intensity); // if this stops being called, it will end
 ////			rumble.rumble(1);
 //		}
+//		JoystickPart joy = gameInput.mainJoystick();
+//		if(!joy.getJoystickType().isInputSquare()){
+//			System.out.println("hardware correct joystick");
+//			System.out.println("magnitude: " + joy.getMagnitude());
+//			System.out.println("angle: " + joy.getAngle());
+//			System.out.println("angle rad: " + joy.getAngleRadians());
+//			System.out.println();
+//		}
 	}
 
 	@Override
