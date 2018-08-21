@@ -4,19 +4,26 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
-import me.retrodaredevil.controller.SensitivityControllerPart;
+import me.retrodaredevil.controller.ThresholdControllerPart;
 import me.retrodaredevil.controller.input.AxisType;
 
-public class GdxShakeButton extends AutoCachingInputPart implements SensitivityControllerPart{
+public class GdxShakeButton extends AutoCachingInputPart implements ThresholdControllerPart{
 
-	private double sensitivity;
+	private double threshold;
 
-	public GdxShakeButton(double sensitivity) {
+	public GdxShakeButton(Double threshold) {
 		super(new AxisType(false, false), false);
-		setSensitivity(sensitivity);
+		if(threshold != null){
+			setThreshold(threshold);
+		} else {
+			setToDefaultThreshold();
+		}
+	}
+	public GdxShakeButton(double threshold){
+		this((Double) threshold);
 	}
 	public GdxShakeButton(){
-		this(8);
+		this(null);
 	}
 
 
@@ -29,7 +36,7 @@ public class GdxShakeButton extends AutoCachingInputPart implements SensitivityC
 		magnitude -= 9.8f;
 		// magnitude may be less than 0
 //		System.out.println("magnitude: " + magnitude);
-		return (magnitude >= sensitivity) ? 1 : 0;
+		return (magnitude >= threshold) ? 1 : 0;
 	}
 
 	@Override
@@ -38,22 +45,32 @@ public class GdxShakeButton extends AutoCachingInputPart implements SensitivityC
 	}
 
 	@Override
-	public double getMaxSensitivity() {
-		return 20;
+	public double getMaxThreshold() {
+		return 16;
 	}
 
 	@Override
-	public double getMinSensitivity() {
-		return 0;
+	public double getMinThreshold() {
+		return 3;
 	}
 
 	@Override
-	public double getSensitivity() {
-		return sensitivity;
+	public double getThreshold() {
+		return threshold;
 	}
 
 	@Override
-	public void setSensitivity(double sensitivity) {
-		this.sensitivity = sensitivity;
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
+	}
+
+	@Override
+	public double getDefaultThreshold() {
+		return 8;
+	}
+
+	@Override
+	public void setToDefaultThreshold() {
+		this.threshold = 8;
 	}
 }

@@ -54,7 +54,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	}
 	public DefaultGameInput(){
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
-			mainJoystick = new GdxTiltJoystick(15);
+			mainJoystick = new GdxTiltJoystick();
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
