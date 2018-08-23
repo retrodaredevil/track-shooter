@@ -3,19 +3,28 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import me.retrodaredevil.controller.ThresholdControllerPart;
+import java.util.Collection;
+import java.util.Collections;
+
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
 import me.retrodaredevil.controller.input.JoystickType;
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
+import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionControllerPart;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
-public class GdxTiltJoystick extends SimpleJoystickPart implements ThresholdControllerPart{
-	private double maxDegrees;
+public class GdxTiltJoystick extends SimpleJoystickPart implements OptionControllerPart, ConfigurableControllerPart {
+	private int maxDegrees;
 	private double x, y;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
 	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
+
+	private final Collection<ControlOption> controlOptions = Collections.singletonList(new ControlOption("Tilt Controller Angle",
+				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.",
+				this));
 
 	/**
 	 *
@@ -24,9 +33,9 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ThresholdCont
 	public GdxTiltJoystick(Double maxDegrees) {
 		super(new JoystickType(true, true, true, true), false, false);
 		if(maxDegrees != null) {
-			setThreshold(maxDegrees);
+			setOptionValue(maxDegrees);
 		} else {
-			setToDefaultThreshold();
+			setToDefaultOptionValue();
 		}
 	}
 	public GdxTiltJoystick(double maxDegrees){
@@ -36,6 +45,10 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ThresholdCont
 		this(null);
 	}
 
+	@Override
+	public Collection<ControlOption> getControlOptions() {
+		return controlOptions;
+	}
 
 	@Override
 	public void onUpdate() {
@@ -50,7 +63,7 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ThresholdCont
 //		System.out.println();
 //		System.out.println("compass: " + Gdx.input.getAzimuth());
 	}
-	private static double degreesToFullAnalog(float degrees, double maxDegrees){
+	private static double degreesToFullAnalog(float degrees, int maxDegrees){
 		return MathUtil.minChange(degrees, 0, 360) / maxDegrees;
 	}
 
@@ -90,32 +103,37 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ThresholdCont
 	}
 
 	@Override
-	public double getMaxThreshold() {
+	public double getMaxOptionValue() {
 		return 70;
 	}
 
 	@Override
-	public double getMinThreshold() {
+	public double getMinOptionValue() {
 		return 5;
 	}
 
 	@Override
-	public double getThreshold() {
+	public boolean isOptionAnalog() {
+		return false;
+	}
+
+	@Override
+	public double getOptionValue() {
 		return maxDegrees;
 	}
 
 	@Override
-	public void setThreshold(double v) {
-		this.maxDegrees = v;
+	public void setOptionValue(double v) {
+		this.maxDegrees = (int) v;
 	}
 
 	@Override
-	public double getDefaultThreshold() {
+	public double getDefaultOptionValue() {
 		return 15;
 	}
 
 	@Override
-	public void setToDefaultThreshold() {
+	public void setToDefaultOptionValue() {
 		this.maxDegrees = 15;
 	}
 }

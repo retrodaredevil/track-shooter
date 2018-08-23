@@ -4,13 +4,17 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
@@ -26,6 +30,8 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	private final InputPart startButton;
 
 	private final ControllerRumble rumble;
+
+	private final Collection<ControlOption> controlOptions;
 
 	private ControllerPart reliesOn = null;
 
@@ -50,11 +56,17 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 		addChildren(Arrays.asList(fireButton, controller), false, false);
 
+		controlOptions = Collections.emptyList();
+
 		reliesOn = controller; // TODO do we really need reliesOn?
 	}
 	public DefaultGameInput(){
+		final List<ControlOption> options = new ArrayList<>();
+
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
-			mainJoystick = new GdxTiltJoystick();
+			GdxTiltJoystick joy = new GdxTiltJoystick();
+			options.addAll(joy.getControlOptions());
+			mainJoystick = joy;
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
@@ -75,19 +87,29 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard) || !Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
 			activatePowerup = new KeyInputPart(Input.Keys.F);
 		} else {
-			activatePowerup = new GdxShakeButton();
+			GdxShakeButton button = new GdxShakeButton();
+			options.add(new ControlOption("Powerup Activate Shake Sensitivity", "How much you have to shake the device to activate the powerup in m/s^s", button));
+			activatePowerup = button;
 		}
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
-			rumble = new GdxRumble();
+			GdxRumble gdxRumble = new GdxRumble();
+			options.addAll(gdxRumble.getControlOptions());
+			rumble = gdxRumble;
 		} else {
 			rumble = null;
 		}
+		controlOptions = options;
 
 		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton),
 				false, false);
 		if(rumble != null){
 			addChildren(Collections.singletonList(rumble), false, false);
 		}
+	}
+
+	@Override
+	public Collection<ControlOption> getControlOptions() {
+		return controlOptions;
 	}
 
 	@Override

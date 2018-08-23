@@ -3,18 +3,39 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import me.retrodaredevil.controller.SimpleControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionControllerPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
-public class GdxRumble extends SimpleControllerPart implements ControllerRumble {
+public class GdxRumble extends SimpleControllerPart implements ControllerRumble, OptionControllerPart, ConfigurableControllerPart {
+
+	private final Collection<ControlOption> controlOptions = Collections.singletonList(
+			new ControlOption("Simulate Analog Rumble",
+					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", this));
+
+	private boolean simulateAnalog;
 
 	private long vibrateUntil = 0;
 	private VibratePattern vibratePattern;
 
+	public GdxRumble(){
+		setToDefaultOptionValue();
+	}
+	public GdxRumble(boolean simulateAnalog){
+		this.simulateAnalog = simulateAnalog;
+	}
+
 	private void cancel(){
 		vibrateUntil = 0;
-		vibratePattern = VibratePattern.OFF;
-		Gdx.input.cancelVibrate();
+		if(vibratePattern != VibratePattern.OFF) {
+			vibratePattern = VibratePattern.OFF;
+			Gdx.input.cancelVibrate();
+		}
 	}
 
 	@Override
@@ -84,7 +105,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble 
 
 	@Override
 	public boolean isAnalogRumbleSupported() {
-		return true;
+		return simulateAnalog;
 	}
 	@Override
 	public boolean isAnalogRumbleNativelySupported() {
@@ -100,6 +121,51 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble 
 	public boolean isConnected() {
 		return Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator);
 	}
+
+	@Override
+	public Collection<ControlOption> getControlOptions() {
+		return controlOptions;
+	}
+
+	@Override
+	public boolean isOptionAnalog() {
+		return false;
+	}
+
+	@Override
+	public double getMinOptionValue() {
+		return 0;
+	}
+
+	@Override
+	public double getMaxOptionValue() {
+		return 1;
+	}
+
+	/**
+	 * @param b 1 for true, 0 for false. If true, sets simulateAnalog to true
+	 */
+	@Override
+	public void setOptionValue(double b) {
+		this.simulateAnalog = b >= .5;
+	}
+
+
+	/**
+	 * @return true if simulateAnalog==true, false otherwise
+	 */
+	@Override
+	public double getOptionValue() { return simulateAnalog ? 1 : 0; }
+	/** @return true because the default value of simulateAnalog is true*/
+	@Override
+	public double getDefaultOptionValue() { return 1; }
+
+	/**
+	 * Sets simulateAnalog to true
+	 */
+	@Override
+	public void setToDefaultOptionValue() { simulateAnalog = true; }
+
 	private enum VibratePattern{
 		OFF(), FULL(), P90(new long[]{4, 30}), P70(new long[]{12, 25}), P50(new long[]{10, 18}), P35(new long[]{15, 15}), P10(new long[]{22, 15});
 
