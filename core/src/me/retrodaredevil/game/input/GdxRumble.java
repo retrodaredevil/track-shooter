@@ -3,31 +3,32 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionControllerPart;
+import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
-public class GdxRumble extends SimpleControllerPart implements ControllerRumble, OptionControllerPart, ConfigurableControllerPart {
+public class GdxRumble extends SimpleControllerPart implements ControllerRumble, ConfigurableControllerPart {
+	private final OptionValueObject simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
+	private final OptionValueObject enableRumbleOption = OptionValues.createBooleanOptionValue(true);
+	private final ControlOption simulateAnalogControlOption = new ControlOption("Simulate Analog Rumble",
+					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", "output.rumble.simulateAnalog", simulateAnalogOption);
+	private final ControlOption enableRumbleControlOption = new ControlOption("Enable Rumble", "Should the rumble/vibrator be enabled", "output.rumble.enable", enableRumbleOption);
 
-	private final Collection<ControlOption> controlOptions = Collections.singletonList(
-			new ControlOption("Simulate Analog Rumble",
-					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", this));
-
-	private boolean simulateAnalog;
 
 	private long vibrateUntil = 0;
 	private VibratePattern vibratePattern;
 
 	public GdxRumble(){
-		setToDefaultOptionValue();
 	}
 	public GdxRumble(boolean simulateAnalog){
-		this.simulateAnalog = simulateAnalog;
+		simulateAnalogOption.setOptionValue(simulateAnalog ? 1 : 0);
 	}
 
 	private void cancel(){
@@ -41,14 +42,17 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	@Override
 	protected void onUpdate() {
 		super.onUpdate();
-		if(vibrateUntil <= System.currentTimeMillis()){
+		if(vibrateUntil <= System.currentTimeMillis() || !enableRumbleOption.getBooleanOptionValue()){
 			cancel();
 		}
 	}
 	private void requestPattern(VibratePattern pattern){
+		if(pattern == VibratePattern.OFF){
+			throw new IllegalArgumentException("This method cannot handle the OFF value. use cancel() instead");
+		}
 		if(pattern != vibratePattern){
 			Gdx.input.cancelVibrate();
-			if(pattern == VibratePattern.FULL){
+			if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
 				Gdx.input.vibrate(Integer.MAX_VALUE);
 			} else {
 				Gdx.input.vibrate(pattern.pattern, 0);
@@ -61,6 +65,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	@Override
 	public void rumble(double amount) {
 		checkRange(amount);
+		checkEnabled();
 		if(amount == 0){
 			cancel();
 		} else {
@@ -79,6 +84,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	@Override
 	public void rumble(long millis, double amount) {
 		checkRange(amount);
+		checkEnabled();
 		if(amount == 0) {
 			cancel();
 		} else {
@@ -97,6 +103,11 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 			throw new IllegalArgumentException("intensity cannot be > 1");
 		}
 	}
+	private void checkEnabled(){
+		if(!enableRumbleOption.getBooleanOptionValue()){
+			throw new IllegalStateException("The rumble is not connected because it's not enabled! You can't use the gyro right now! Remember to check isConnected()");
+		}
+	}
 
 	@Override
 	public boolean isTimingNativelyImplemented() {
@@ -105,7 +116,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 
 	@Override
 	public boolean isAnalogRumbleSupported() {
-		return simulateAnalog;
+		return simulateAnalogOption.getBooleanOptionValue() && enableRumbleOption.getBooleanOptionValue();
 	}
 	@Override
 	public boolean isAnalogRumbleNativelySupported() {
@@ -119,52 +130,16 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 
 	@Override
 	public boolean isConnected() {
-		return Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator);
+		return Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator) && enableRumbleOption.getBooleanOptionValue();
 	}
 
 	@Override
-	public Collection<ControlOption> getControlOptions() {
-		return controlOptions;
+	public Collection<? extends ControlOption> getControlOptions() {
+		if(enableRumbleOption.getBooleanOptionValue()){
+			return Arrays.asList(enableRumbleControlOption, simulateAnalogControlOption);
+		}
+		return Collections.singletonList(enableRumbleControlOption);
 	}
-
-	@Override
-	public boolean isOptionAnalog() {
-		return false;
-	}
-
-	@Override
-	public double getMinOptionValue() {
-		return 0;
-	}
-
-	@Override
-	public double getMaxOptionValue() {
-		return 1;
-	}
-
-	/**
-	 * @param b 1 for true, 0 for false. If true, sets simulateAnalog to true
-	 */
-	@Override
-	public void setOptionValue(double b) {
-		this.simulateAnalog = b >= .5;
-	}
-
-
-	/**
-	 * @return true if simulateAnalog==true, false otherwise
-	 */
-	@Override
-	public double getOptionValue() { return simulateAnalog ? 1 : 0; }
-	/** @return true because the default value of simulateAnalog is true*/
-	@Override
-	public double getDefaultOptionValue() { return 1; }
-
-	/**
-	 * Sets simulateAnalog to true
-	 */
-	@Override
-	public void setToDefaultOptionValue() { simulateAnalog = true; }
 
 	private enum VibratePattern{
 		OFF(), FULL(), P90(new long[]{4, 30}), P70(new long[]{12, 25}), P50(new long[]{10, 18}), P35(new long[]{15, 15}), P10(new long[]{22, 15});

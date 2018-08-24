@@ -15,7 +15,6 @@ import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Shark extends SimpleEntity implements Enemy, Entity {
-	private static final int POINTS = 200; // 200 points for killing a Shark
 	private static final float VELOCITY_SPEED = 5; // units per second
 	private static final float ROTATIONAL_SPEED = 2; // rotations per second
 
@@ -135,8 +134,8 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		}
 		boolean spinDeath = spinLives <= 0;
 		if(lives <= 0 || spinDeath) {
-			float multiplier = spinDeath ? 2 : 1;
-			EntityUtil.displayScore(world, this.getLocation(), Resources.EVEN_BONUS_REGIONS[spinDeath ? 1 : 0]); // display 200
+			Resources.Points points = spinDeath ? Resources.Points.P400 : Resources.Points.P200;
+			EntityUtil.displayScore(world, this.getLocation(), points.getDrawable()); // display 200
 
 			Player player = null;
 			if (other instanceof Player) {
@@ -148,7 +147,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 				}
 			}
 			if(player != null) {
-				player.getScoreObject().onKill(this, other, (int) (POINTS * multiplier));
+				player.getScoreObject().onKill(this, other, points.getWorth());
 			}
 		}
 

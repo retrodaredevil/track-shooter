@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.level.functions.BonusCargoFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
+import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.Tracks;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -59,7 +60,7 @@ public class GameLevelGetter implements LevelGetter {
 				} else if(levelNumber >= 4) { // all even levels >= 4
 					Entity cargoEntity = new CargoShip(.8f * MathUtils.randomSign(), MathUtils.random(track.getTotalDistance()));
 					this.addEntity(world, cargoEntity);
-					addFunction(new BonusCargoFunction(cargoEntity, players, levelNumber >= 8 ? 3000 : 2000));
+					addFunction(new BonusCargoFunction(cargoEntity, players, levelNumber >= 8 ? Resources.Points.P1600 : Resources.Points.P1000));
 				}
 
 

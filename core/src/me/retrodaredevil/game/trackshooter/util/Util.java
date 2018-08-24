@@ -18,6 +18,7 @@ public final class Util {
 	 * @param <V> The type of elements the returned list will have
 	 * @return A list of elements with the type of V. Each element from list where element instanceof V will be in this list.
 	 */
+	@SuppressWarnings("unchecked")
 	public static <T, V> Collection<V> getElementsOfClass(Collection<T> list, Class<V> clazz){
 		Collection<V> r = null;
 		for(T effect : list){

@@ -88,7 +88,9 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			activatePowerup = new KeyInputPart(Input.Keys.F);
 		} else {
 			GdxShakeButton button = new GdxShakeButton();
-			options.add(new ControlOption("Powerup Activate Shake Sensitivity", "How much you have to shake the device to activate the powerup in m/s^s", button));
+			options.add(new ControlOption("Powerup Activate Shake Sensitivity",
+					"How much you have to shake the device to activate the powerup in m/s^s",
+					"controls.all.shake", button));
 			activatePowerup = button;
 		}
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
@@ -108,7 +110,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	}
 
 	@Override
-	public Collection<ControlOption> getControlOptions() {
+	public Collection<? extends ControlOption> getControlOptions() {
 		return controlOptions;
 	}
 

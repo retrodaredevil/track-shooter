@@ -5,7 +5,7 @@ import com.badlogic.gdx.Input;
 
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.controller.options.OptionControllerPart;
+import me.retrodaredevil.controller.options.OptionValueObject;
 
 import static java.lang.Math.sqrt;
 
@@ -13,7 +13,7 @@ import static java.lang.Math.sqrt;
  * This class does not implement {@link me.retrodaredevil.controller.options.ConfigurableControllerPart} because
  * it has many use cases and the label and description may vary from use case to use case.
  */
-public class GdxShakeButton extends AutoCachingInputPart implements OptionControllerPart{
+public class GdxShakeButton extends AutoCachingInputPart implements OptionValueObject{
 
 	private int threshold;
 

@@ -12,41 +12,40 @@ import me.retrodaredevil.controller.input.JoystickType;
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionControllerPart;
+import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
-public class GdxTiltJoystick extends SimpleJoystickPart implements OptionControllerPart, ConfigurableControllerPart {
-	private int maxDegrees;
+public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableControllerPart {
+	private final OptionValueObject maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 70, 15);
 	private double x, y;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
 	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
 
 	private final Collection<ControlOption> controlOptions = Collections.singletonList(new ControlOption("Tilt Controller Angle",
-				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.",
-				this));
+				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.", "controls.all.tilt",
+				maxDegreesOption));
 
 	/**
 	 *
 	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach max (1 or -1) corresponding to (20 or -20)
 	 */
-	public GdxTiltJoystick(Double maxDegrees) {
+	public GdxTiltJoystick(Integer maxDegrees) {
 		super(new JoystickType(true, true, true, true), false, false);
 		if(maxDegrees != null) {
-			setOptionValue(maxDegrees);
-		} else {
-			setToDefaultOptionValue();
+			maxDegreesOption.setOptionValue(maxDegrees);
 		}
 	}
-	public GdxTiltJoystick(double maxDegrees){
-		this((Double) maxDegrees);
+	public GdxTiltJoystick(int maxDegrees){
+		this((Integer) maxDegrees);
 	}
 	public GdxTiltJoystick(){
 		this(null);
 	}
 
 	@Override
-	public Collection<ControlOption> getControlOptions() {
+	public Collection<? extends ControlOption> getControlOptions() {
 		return controlOptions;
 	}
 
@@ -58,12 +57,12 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements OptionControl
 		float gyroY = Gdx.input.getRoll(); // side to side
 //		float gyroZ = Gdx.input.getAzimuth();
 
-		x = degreesToFullAnalog(gyroX, maxDegrees);
-		y = degreesToFullAnalog(gyroY, maxDegrees);
+		x = degreesToFullAnalog(gyroX, maxDegreesOption.getOptionValue());
+		y = degreesToFullAnalog(gyroY, maxDegreesOption.getOptionValue());
 //		System.out.println();
 //		System.out.println("compass: " + Gdx.input.getAzimuth());
 	}
-	private static double degreesToFullAnalog(float degrees, int maxDegrees){
+	private static double degreesToFullAnalog(float degrees, double maxDegrees){
 		return MathUtil.minChange(degrees, 0, 360) / maxDegrees;
 	}
 
@@ -102,38 +101,4 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements OptionControl
 		return Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope);
 	}
 
-	@Override
-	public double getMaxOptionValue() {
-		return 70;
-	}
-
-	@Override
-	public double getMinOptionValue() {
-		return 5;
-	}
-
-	@Override
-	public boolean isOptionAnalog() {
-		return false;
-	}
-
-	@Override
-	public double getOptionValue() {
-		return maxDegrees;
-	}
-
-	@Override
-	public void setOptionValue(double v) {
-		this.maxDegrees = (int) v;
-	}
-
-	@Override
-	public double getDefaultOptionValue() {
-		return 15;
-	}
-
-	@Override
-	public void setToDefaultOptionValue() {
-		this.maxDegrees = 15;
-	}
 }

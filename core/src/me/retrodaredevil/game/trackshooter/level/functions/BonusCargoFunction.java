@@ -18,7 +18,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class BonusCargoFunction implements LevelFunction {
 	private final Entity cargoEntity;
 	private final Collection<? extends Player> players; // may be mutated
-	private final int points;
+	private final Resources.Points points;
 
 	private boolean failed = false;
 
@@ -28,7 +28,7 @@ public class BonusCargoFunction implements LevelFunction {
 	 * @param players A list of players that may be mutated (NOT A COPY)
 	 * @param points
 	 */
-	public BonusCargoFunction(Entity cargoEntity, Collection<? extends Player> players, int points){
+	public BonusCargoFunction(Entity cargoEntity, Collection<? extends Player> players, Resources.Points points){
 		this.cargoEntity = cargoEntity;
 		this.players = players;
 		this.points = points;
@@ -47,9 +47,9 @@ public class BonusCargoFunction implements LevelFunction {
 		}
 		if(world.getLevel().isEndingSoon()){
 			cargoEntity.setToRemove();
-			EntityUtil.displayScore(world, cargoEntity.getLocation(), Resources.ODD_BONUS_REGIONS[4]);
+			EntityUtil.displayScore(world, cargoEntity.getLocation(), points.getDrawable());
 			for(Player player : players) {
-				player.getScoreObject().onScore(points);
+				player.getScoreObject().onScore(points.getWorth());
 			}
 			System.out.println("Gave " + players.size() + " player(s) " + points + " points");
 			return true;
