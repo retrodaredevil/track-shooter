@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -17,7 +18,7 @@ public class SharkAIController implements EntityController {
 
 	private final Shark shark;
 //	private final Entity target;
-	private final List<? extends Entity> targets;
+	private final Collection<? extends Entity> targets;
 
 	private final float trackDistanceAway;
 	private final float timeMultiplier;
@@ -29,7 +30,7 @@ public class SharkAIController implements EntityController {
 	 * @param trackDistanceAway The amount of distance away on the track the shark should target from
 	 * @param timeMultiplier The how much distance should the target distance change each second
 	 */
-	public SharkAIController(Shark shark, List<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
+	public SharkAIController(Shark shark, Collection<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
 		this.shark = shark;
 		this.targets = targets;
 		this.trackDistanceAway = trackDistanceAway;
@@ -55,10 +56,7 @@ public class SharkAIController implements EntityController {
 	private Float getAverageDistance(Track track){
 		final List<Float> tempChangeFromTrackOrigin = new ArrayList<>(); // no null elements
 
-
-		for(int i = 0; i < targets.size(); i++){
-			Entity target = targets.get(i);
-
+		for(Entity target : targets){
 			MoveComponent targetMove = target.getMoveComponent();
 			if(targetMove instanceof OnTrackMoveComponent && !target.isRemoved()){
 				OnTrackMoveComponent trackMove = (OnTrackMoveComponent) targetMove;

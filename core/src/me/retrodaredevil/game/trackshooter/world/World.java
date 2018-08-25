@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
@@ -17,6 +19,7 @@ public class World implements Updateable, Renderable {
 
 
 	private final LevelGetter levelGetter;
+	private final Skin skin;
 	private Level level;
 
 	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
@@ -29,8 +32,9 @@ public class World implements Updateable, Renderable {
 
 	protected RenderComponent renderComponent;
 
-	public World(LevelGetter levelGetter, float width, float height){
+	public World(LevelGetter levelGetter, float width, float height, Skin skin){
 		this.levelGetter = levelGetter;
+		this.skin = skin;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler();
@@ -66,6 +70,10 @@ public class World implements Updateable, Renderable {
 		}
 		this.collisionHandler.update(delta, this);
 		this.level.update(delta, this);
+	}
+
+	public Skin getSkin(){
+		return skin;
 	}
 
 	/**

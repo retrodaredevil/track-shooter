@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.entity.enemies;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
@@ -16,7 +18,6 @@ public class Sniper extends SimpleEntity implements Enemy {
 	public Sniper(){
 
 		setHitboxSize(.5f, .5f);
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.SNIPER_TEXTURE), this, .6f, .6f));
 
 		collisionIdentity = CollisionIdentity.ENEMY;
 //		canLevelEndWithEntityActive = false;
@@ -27,6 +28,7 @@ public class Sniper extends SimpleEntity implements Enemy {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
+		setRenderComponent(new ImageRenderComponent(new Image(world.getSkin().getDrawable("sniper")), this, .6f, .6f));
 
 		OnTrackMoveComponent moveComponent = new TravelRotateVelocityOnTrackMoveComponent(this);
 		moveComponent.setDistanceOnTrack(world.getTrack().getTotalDistance() / 2.0f);

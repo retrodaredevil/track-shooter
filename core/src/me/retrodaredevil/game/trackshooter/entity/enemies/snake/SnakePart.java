@@ -2,6 +2,8 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.effect.TimedSpeedEffect;
@@ -49,23 +51,22 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
 
-	private float followDistance;
+	private float followDistance = 0;
 
 	private boolean hit = false;
 
 
 
-	public SnakePart(EntityDifficulty difficulty){
+	public SnakePart(EntityDifficulty difficulty, Skin skin){
 		this.difficulty = difficulty;
 
 		this.smoothTravel = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0); // values that are 0 will be reset
-		this.renderComponent = new ImageRenderComponent(new Image(Resources.SNAKE_PART_TEXTURE), this, 0, 0); // width and height will be changed later
+		this.renderComponent = new ImageRenderComponent(new Image(skin.getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
 		setRenderComponent(renderComponent);
 		setSize(.4f, true);
 
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
-//		canLevelEndWithEntityActive = false;
 		levelEndStateWhenActive = LevelEndState.CANNOT_END;
 
 		this.follow(null);
@@ -77,12 +78,12 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	 * @param amount The amount of SnakeParts there should be
 	 * @return A list of SnakeParts with a length of amount
 	 */
-	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty){
+	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty, Skin skin){
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
 		for(int i = 0; i < amount; i++){
-			SnakePart part = new SnakePart(difficulty);
+			SnakePart part = new SnakePart(difficulty, skin);
 			part.follow(last);
 			r.add(part);
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
@@ -25,11 +26,11 @@ public class OverlayRenderer implements RenderComponent {
 	private static final int MAX_LIVES_DISPLAYED = 5;
 	private static final int MAX_ITEMS_DISPLAYED = 5;
 
-	private static final Color textColor = new Color(1, 0, 0, 1);
-	private static final Color scoreColor = new Color(1, 1, 1, 1);
+//	private static final Color textColor = new Color(1, 0, 0, 1);
+//	private static final Color scoreColor = new Color(1, 1, 1, 1);
 
-	private final BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/main_font.fnt"),
-			Gdx.files.internal("fonts/main_font.png"), false, true);
+//	private final BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/main_font.fnt"),
+//			Gdx.files.internal("fonts/main_font.png"), false, true);
 
 	private final Group group = new Table(){{setFillParent(true);}};
 //	private final Group group = new Stack();
@@ -46,19 +47,21 @@ public class OverlayRenderer implements RenderComponent {
 
 	private final Overlay overlay;
 
-	public OverlayRenderer(Overlay overlay){
+	public OverlayRenderer(Overlay overlay, Skin skin){
 		this.overlay = Objects.requireNonNull(overlay);
+
+		BitmapFont font = skin.getFont("game_label");
 
 		for(int i = 0; i < cornerTables.length; i++){
 			Table cornerTable = new Table();
 			cornerTables[i] = cornerTable;
 			group.addActor(cornerTable);
 			cornerTable.setFillParent(true);
-			cornerTable.add(new Label((i + 1) + "UP", new Label.LabelStyle(font, textColor)));
+			cornerTable.add(new Label((i + 1) + "UP", new Label.LabelStyle(font, skin.getColor("score_label"))));
 
 			cornerTable.row();
 
-			Label scoreLabel = new Label("", new Label.LabelStyle(font, scoreColor));
+			Label scoreLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score")));
 			currentScores[i] = scoreLabel;
 			cornerTable.add(scoreLabel).padTop(-10);
 
@@ -69,7 +72,7 @@ public class OverlayRenderer implements RenderComponent {
 			cornerTable.add(livesTable);
 			livesTable.setHeight(24);
 			for(int j = 0; j < MAX_LIVES_DISPLAYED; j++) {
-				livesTable.add(new Image(Resources.PLAYER_TEXTURE)).width(24).height(24);
+				livesTable.add(new Image(skin.getDrawable("player"))).width(24).height(24);
 			}
 
 			cornerTable.row();
@@ -87,9 +90,9 @@ public class OverlayRenderer implements RenderComponent {
 		group.addActor(highScoreTable);
 		highScoreTable.setFillParent(true);
 		highScoreTable.center().top();
-		highScoreTable.add(new Label(" HIGH SCORE", new Label.LabelStyle(font, textColor)));
+		highScoreTable.add(new Label(" HIGH SCORE", new Label.LabelStyle(font, skin.getColor("score_label"))));
 		highScoreTable.row();
-		highScoreLabel = new Label("", new Label.LabelStyle(font, scoreColor));
+		highScoreLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score")));
 		highScoreTable.add(highScoreLabel).padTop(-10);
 
 	}
@@ -168,6 +171,6 @@ public class OverlayRenderer implements RenderComponent {
 
 	@Override
 	public void dispose() {
-		font.dispose();
+//		font.dispose();
 	}
 }

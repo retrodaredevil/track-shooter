@@ -1,20 +1,10 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
-import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
@@ -28,8 +18,10 @@ public class StartScreen extends ScreenAdapter {
 	private boolean start;
 
 	private final Stage uiStage;
+
 //	private final Table table;
 //	private final Button startButton;
+
 	public StartScreen(GameInput gameInput, Overlay overlay, Batch batch){
 		this.gameInput = gameInput;
 		this.overlay = overlay;

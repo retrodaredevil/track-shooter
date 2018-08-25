@@ -24,9 +24,9 @@ public class BonusCargoFunction implements LevelFunction {
 
 	/**
 	 *
-	 * @param cargoEntity
-	 * @param players A list of players that may be mutated (NOT A COPY)
-	 * @param points
+	 * @param cargoEntity The entity that if survives the whole level, will give points to each player. This entity must be able to be removed
+	 * @param players A list of players that may be mutated outside this class (NOT A COPY)
+	 * @param points The points object with contains the drawable and how much it's worth
 	 */
 	public BonusCargoFunction(Entity cargoEntity, Collection<? extends Player> players, Resources.Points points){
 		this.cargoEntity = cargoEntity;
@@ -40,7 +40,6 @@ public class BonusCargoFunction implements LevelFunction {
 	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
 		if(cargoEntity.isRemoved()){
 			failed = true;
-			System.out.println("Failed!");
 		}
 		if(failed){
 			return true; // we failed, end this function

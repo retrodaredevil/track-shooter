@@ -3,6 +3,8 @@ package me.retrodaredevil.game.trackshooter.entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -45,7 +47,7 @@ public class Bullet extends SimpleEntity implements Entity {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.BULLET_TEXTURE), this, .5f, .5f));
+		setRenderComponent(new ImageRenderComponent(new Image(world.getSkin().getDrawable("bullet")), this, .5f, .5f));
 	}
 
 	@Override

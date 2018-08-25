@@ -2,7 +2,9 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import java.util.Collection;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -30,13 +32,13 @@ public class GameLevelGetter implements LevelGetter {
 
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
-	private final List<? extends Player> players; // may be mutated
+	private final Collection<? extends Player> players; // may be mutated
 
 	/**
 	 *
 	 * @param players The reference to the list of players (NOT a copy)
 	 */
-	public GameLevelGetter(List<? extends Player> players){
+	public GameLevelGetter(Collection<? extends Player> players){
 		this.players = players;
 		this.tracks = new Track[] {Tracks.newMazeTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
 	}

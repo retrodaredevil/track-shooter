@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.level.functions;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakeAIController;
 import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
@@ -16,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class SnakeFunction implements LevelFunction {
-	private Player target;
+	private final Player target;
 
 	public SnakeFunction(Player target){
 		this.target = target;
@@ -73,7 +74,7 @@ public class SnakeFunction implements LevelFunction {
 			amount = 22;
 		}
 
-		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
+		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty, world.getSkin());
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
 //			part.setEntityController(new SnakeAIController(part, target));

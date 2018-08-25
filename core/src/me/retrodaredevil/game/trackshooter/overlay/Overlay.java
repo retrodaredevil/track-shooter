@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.overlay;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -26,13 +27,16 @@ public class Overlay implements Renderable, Disposable {
 	private static int highScore = 10000; // TODO git rid of this terrible static variable
 
 	private final Stage stage;
-	private final RenderComponent component = new OverlayRenderer(this);
+	private final Skin skin;
+	private final RenderComponent component;
 	private Player[] players = null;
 	private World world = null;
 //	private final List<Player> players = new ArrayList<>(4);
 
-	public Overlay(Batch batch){
+	public Overlay(Batch batch, Skin skin){
 		stage = new Stage(new UIViewport(640), batch);
+		this.skin = skin;
+		component = new OverlayRenderer(this, skin);
 	}
 	public void handleRender(float delta){
 		component.render(delta, stage);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,16 +36,16 @@ public class GameScreen extends ScreenAdapter {
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, Overlay overlay, Batch batch){
+	public GameScreen(List<GameInput> gameInputs, Overlay overlay, Batch batch, Skin skin){
 //		this.gameInput = gameInputs.get(0);
-		this.world = new World(new GameLevelGetter(players), 18, 18);
+		this.world = new World(new GameLevelGetter(players), 18, 18, skin);
 		this.stage = new Stage(new WorldViewport(world), batch);
 		this.overlay = overlay;
 		this.batch = batch;
 
 
 		for(GameInput gameInput : gameInputs){
-			Player player = new Player(gameInput.getRumble());
+			Player player = new Player(gameInput.getRumble(), skin);
 			players.add(player);
 			player.setEntityController(new PlayerController(player, gameInput));
 			world.addEntity(player);

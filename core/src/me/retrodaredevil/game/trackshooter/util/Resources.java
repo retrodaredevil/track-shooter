@@ -3,46 +3,59 @@ package me.retrodaredevil.game.trackshooter.util;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public final class Resources {
 	// Constants
 	// Textures
-	public static final Texture PLAYER_TEXTURE = new Texture("player.png");
-	public static final Texture SPACE_STATION_TEXTURE = new Texture("space_station.png");
-	public static final Texture SNIPER_TEXTURE = new Texture("sniper.png");
-	public static final Texture SNAKE_PART_TEXTURE = new Texture("snake_part.png");
-	public static final Texture CARGO_SHIP = new Texture("cargo_ship.png");
+//	public static final Texture PLAYER_TEXTURE = new Texture("textures/player.png");
+//	public static final Texture SPACE_STATION_TEXTURE = new Texture("space_station.png");
+//	public static final Texture SNIPER_TEXTURE = new Texture("textures/sniper.png");
+//	public static final Texture SNAKE_PART_TEXTURE = new Texture("textures/snake_part.png");
+//	public static final Texture CARGO_SHIP = new Texture("textures/cargo_ship.png");
 
-	private static final Texture SHARK_TEXTURE = new Texture("shark.png");
-	private static final Texture SHARK_HIT = new Texture("shark_hit.png");
-	private static final Texture SHARK_WORN = new Texture("shark_worn.png");
+	private static final Texture SHARK_TEXTURE = new Texture("textures/shark.png");
+	private static final Texture SHARK_HIT = new Texture("textures/shark_hit.png");
+	private static final Texture SHARK_WORN = new Texture("textures/shark_worn.png");
 	/**The frames for a shark [0] is right [1] is straight [2] is left */
 	public static final TextureRegionDrawable[] SHARK_REGIONS = createRegions(SHARK_TEXTURE.getWidth() <= SHARK_TEXTURE.getHeight(), 3, SHARK_TEXTURE);
 	public static final TextureRegionDrawable[] SHARK_REGIONS_HIT = createRegions(SHARK_HIT.getWidth() <= SHARK_HIT.getHeight(), 3, SHARK_HIT);
 	public static final TextureRegionDrawable[] SHARK_REGIONS_WORN = createRegions(SHARK_WORN.getWidth() <= SHARK_WORN.getHeight(), 3, SHARK_WORN);
 
-	public static final Texture BULLET_TEXTURE = new Texture("bullet.png");
-	public static final Texture CHERRY_TEXTURE = new Texture("cherry.png");
-	public static final Texture POWERUP_TEXTURE = new Texture("powerup.png");
-	private static final Texture EVEN_BONUS = new Texture("even_bonus.png");
+//	public static final Texture BULLET_TEXTURE = new Texture("textures/bullet.png");
+//	public static final Texture CHERRY_TEXTURE = new Texture("textures/cherry.png");
+//	public static final Texture POWERUP_TEXTURE = new Texture("textures/powerup.png");
+	private static final Texture EVEN_BONUS = new Texture("textures/even_bonus.png");
 	/** 200, 400, 800, 1600*/
-	public static final TextureRegionDrawable[] EVEN_BONUS_REGIONS = createRegions(false, 4, EVEN_BONUS);
-	private static final Texture ODD_BONUS = new Texture("odd_bonus.png");
+	private static final TextureRegionDrawable[] EVEN_BONUS_REGIONS = createRegions(false, 4, EVEN_BONUS);
+	private static final Texture ODD_BONUS = new Texture("textures/odd_bonus.png");
 	/** 100, 300, 500, 700, 1000*/
-	public static final TextureRegionDrawable[] ODD_BONUS_REGIONS = createRegions(false, 5, ODD_BONUS);
+	private static final TextureRegionDrawable[] ODD_BONUS_REGIONS = createRegions(false, 5, ODD_BONUS);
 
 
 
 	// Sounds
 //	public static final Sound INTRO = Gdx.audio.newSound(Gdx.files.internal("intro.ogg"));
 	// thanks http://www.freesfx.co.uk/soundeffects/lasers_weapons/
-	public static final Sound BULLET_SOUND = Gdx.audio.newSound(Gdx.files.internal("bullet_sound.mp3"));
+//	public static final Sound BULLET_SOUND = Gdx.audio.newSound(Gdx.files.internal("sounds/bullet_sound.mp3"));
+
+	public static void loadToSkin(Skin skin){
+		skin.add("player", new Texture("textures/player.png"));
+//		skin.add("sniper", new Texture("textures/sniper.png"));
+		skin.add("snake_part", new Texture("textures/snake_part.png"));
+		skin.add("cargo_ship", new Texture("textures/cargo_ship.png"));
+		skin.add("bullet", new Texture("textures/bullet.png"));
+		skin.add("cherry", new Texture("textures/cherry.png"));
+		skin.add("powerup", new Texture("textures/powerup.png"));
+		skin.add("bullet", Gdx.audio.newSound(Gdx.files.internal("sounds/bullet_sound.mp3")), Sound.class);
+
+		// TODO shark animations, bonuses
 
 
-	// initializer
-	static {
 	}
 
 

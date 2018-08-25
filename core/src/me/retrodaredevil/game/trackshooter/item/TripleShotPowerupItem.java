@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.item;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.effect.TripleShotPowerupEffect;
@@ -11,8 +12,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class TripleShotPowerupItem extends EffectItem implements PowerupActivateListenerItem {
 
-	public TripleShotPowerupItem(){
-		super(new Image(Resources.POWERUP_TEXTURE));
+	public TripleShotPowerupItem(Skin skin){
+		super(new Image(skin.getDrawable("powerup")));
 	}
 
 	@Override

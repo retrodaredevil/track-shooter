@@ -19,6 +19,6 @@ public class FruitFunction extends PowerupFunction {
 		if(level > 2){
 			points = Resources.Points.P300;
 		}
-		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(Resources.CHERRY_TEXTURE));
+		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(world.getSkin().getDrawable("cherry"))); // TODO change cherry to something else
 	}
 }

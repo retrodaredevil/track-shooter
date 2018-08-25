@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.entity.friendly;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -17,6 +18,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * Please, call him "Mr. Spaceship"
  */
 public class CargoShip extends SimpleEntity {
+
 
 	private boolean hit = false;
 
@@ -37,7 +39,7 @@ public class CargoShip extends SimpleEntity {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		setRenderComponent(new ImageRenderComponent(new Image(Resources.CARGO_SHIP), this, 1.0f, 1.0f));
+		setRenderComponent(new ImageRenderComponent(new Image(world.getSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
 	}
 
 	@Override
