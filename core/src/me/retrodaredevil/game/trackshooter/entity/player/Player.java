@@ -19,7 +19,6 @@ import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
-import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.*;
@@ -195,7 +194,7 @@ public class Player extends SimpleEntity {
 		}
 		shotsList.add(bullets);
 //		Resources.BULLET_SOUND.play(1, 4, 0);
-		world.getSkin().get("bullet", Sound.class).play(1, 4, 0);
+		world.getMainSkin().get("bullet", Sound.class).play(1, 4, 0);
 		getScoreObject().onShot(bullets.size());
 		return bullets;
 	}

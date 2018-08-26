@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -19,7 +18,6 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.WorldViewport;
-import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -31,21 +29,20 @@ public class GameScreen extends ScreenAdapter {
 	private final World world;
 
 	private final Overlay overlay;
-
-	private final Batch batch;
+	private final RenderObject renderObject;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, Overlay overlay, Batch batch, Skin skin){
+	public GameScreen(List<GameInput> gameInputs, Overlay overlay, RenderObject renderObject){
 //		this.gameInput = gameInputs.get(0);
-		this.world = new World(new GameLevelGetter(players), 18, 18, skin);
-		this.stage = new Stage(new WorldViewport(world), batch);
+		this.world = new World(new GameLevelGetter(players), 18, 18, renderObject);
+		this.stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 		this.overlay = overlay;
-		this.batch = batch;
+		this.renderObject = renderObject;
 
 
 		for(GameInput gameInput : gameInputs){
-			Player player = new Player(gameInput.getRumble(), skin);
+			Player player = new Player(gameInput.getRumble(), renderObject.getMainSkin());
 			players.add(player);
 			player.setEntityController(new PlayerController(player, gameInput));
 			world.addEntity(player);
@@ -115,7 +112,7 @@ public class GameScreen extends ScreenAdapter {
 		}
 	}
 	private void doRender(float delta){
-		RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
+		RenderUtil.clearScreen(world.getMainSkin().getColor("background"));
 
 		RenderComponent worldRender = world.getRenderComponent();
 		if(worldRender != null){
@@ -130,6 +127,7 @@ public class GameScreen extends ScreenAdapter {
 			overlayRender.render(delta, textStage);
 
 			textStage.act(delta);
+			Batch batch = renderObject.getBatch();
 			assert batch == stage.getBatch() : "stage's batch isn't our batch!";
 			assert batch == textStage.getBatch() : "Overlay's batch isn't our batch!";
 			// We use this instead of Stage#draw() because we only have to begin() batch one time

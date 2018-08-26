@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.friendly;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -11,7 +10,6 @@ import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
-import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
@@ -39,7 +37,7 @@ public class CargoShip extends SimpleEntity {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		setRenderComponent(new ImageRenderComponent(new Image(world.getSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
+		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
 	}
 
 	@Override

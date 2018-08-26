@@ -33,13 +33,15 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 	private final Collection<ControlOption> controlOptions;
 
-	private ControllerPart reliesOn = null;
+	private final ControllerPart reliesOn;
 
 	/**
 	 *
 	 * @param controller The controller to use. This will also be added as a child to this object
 	 */
 	public DefaultGameInput(StandardControllerInput controller){
+		reliesOn = controller; // TODO do we really need reliesOn?
+
 		mainJoystick = controller.getLeftJoy();
 //		mainJoystick = controller.getDPad();
 		rotateAxis = controller.getRightJoy().getXAxis();
@@ -57,10 +59,9 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		addChildren(Arrays.asList(fireButton, controller), false, false);
 
 		controlOptions = Collections.emptyList();
-
-		reliesOn = controller; // TODO do we really need reliesOn?
 	}
 	public DefaultGameInput(){
+		reliesOn = null;
 		final List<ControlOption> options = new ArrayList<>();
 
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){

@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
@@ -27,16 +28,16 @@ public class Overlay implements Renderable, Disposable {
 	private static int highScore = 10000; // TODO git rid of this terrible static variable
 
 	private final Stage stage;
-	private final Skin skin;
+	private final RenderObject renderObject;
 	private final RenderComponent component;
 	private Player[] players = null;
 	private World world = null;
 //	private final List<Player> players = new ArrayList<>(4);
 
-	public Overlay(Batch batch, Skin skin){
-		stage = new Stage(new UIViewport(640), batch);
-		this.skin = skin;
-		component = new OverlayRenderer(this, skin);
+	public Overlay(RenderObject renderObject){
+		this.renderObject = renderObject;
+		stage = new Stage(new UIViewport(640), renderObject.getBatch());
+		component = new OverlayRenderer(this, renderObject);
 	}
 	public void handleRender(float delta){
 		component.render(delta, stage);

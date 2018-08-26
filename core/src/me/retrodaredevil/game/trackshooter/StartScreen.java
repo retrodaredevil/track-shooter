@@ -1,8 +1,16 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import me.retrodaredevil.game.input.GameInput;
@@ -14,53 +22,56 @@ import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 public class StartScreen extends ScreenAdapter {
 	private final GameInput gameInput;
 	private final Overlay overlay;
-	private final Batch batch;
+	private final RenderObject renderObject;
 	private boolean start;
 
 	private final Stage uiStage;
 
-//	private final Table table;
-//	private final Button startButton;
+	private final Button startButton;
 
-	public StartScreen(GameInput gameInput, Overlay overlay, Batch batch){
+	public StartScreen(GameInput gameInput, Overlay overlay, RenderObject renderObject){
 		this.gameInput = gameInput;
 		this.overlay = overlay;
-		this.batch = batch;
-		this.uiStage = new Stage(new ScreenViewport(), batch);
+		this.renderObject = renderObject;
+		this.uiStage = new Stage(new ScreenViewport(), renderObject.getBatch());
 
-//		table = new Table(); // TODO complete table code
-//		table.center();
-//		Skin skin = new Skin();
-//        TextureAtlas buttonAtlas = new TextureAtlas(Gdx.files.internal("buttons/buttons.pack"));
-//        skin.addRegions(buttonAtlas);
-//		TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-//		style.font = new BitmapFont();
-//		style.up = skin.getDrawable("up-button");
-//		style.down = skin.getDrawable("down-button");
-//		style.checked = skin.getDrawable("checked-button");
-//		startButton = new TextButton("start", style); // do stuff with startButton.getStyle()
-//		table.add(startButton);
-//
-//		uiStage.addActor(table);
+		Table table = new Table();
+		table.setFillParent(true);
+		table.center();
+		TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
+		startButton = new TextButton("start", style); // do stuff with startButton.getStyle()
+		startButton.setChecked(false);
+		table.add(startButton).width(220);
+
+
+		uiStage.addActor(table);
 	}
 	@Override
 	public void render(float delta) {
-		RenderUtil.clearScreen(Constants.BACKGROUND_COLOR);
-		if(gameInput.startButton().isPressed()){
+		RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
+
+		if(Gdx.input.getInputProcessor() != uiStage) {
+			Gdx.input.setInputProcessor(uiStage);
+		}
+		uiStage.act(delta);
+		if(gameInput.startButton().isPressed() || startButton.isPressed()){
 			start = true;
 		}
 
-		uiStage.act(delta);
 
 		RenderComponent overlayRender = overlay.getRenderComponent();
 		if(overlayRender != null){
 			Stage stage = overlay.getStage();
 			overlayRender.render(delta, stage);
+			stage.act();
 
+			Batch batch = renderObject.getBatch();
 			batch.begin();
 			RenderUtil.drawStage(batch, uiStage);
 			RenderUtil.drawStage(batch, stage);
 			batch.end();
+//			uiStage.draw();
+//			stage.draw();
 		} else {
 			uiStage.draw();
 		}
@@ -90,6 +101,6 @@ public class StartScreen extends ScreenAdapter {
 		overlay.getStage().getViewport().update(width, height,true);
 	}
 	public boolean isReadyToStart(){
-		return start;
+		return start && !startButton.isPressed();
 	}
 }

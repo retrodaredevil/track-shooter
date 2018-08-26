@@ -1,0 +1,97 @@
+
+skin.png
+size: 256,128
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+bullet
+  rotate: false
+  xy: 138, 70
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+cargo_ship
+  rotate: false
+  xy: 138, 88
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+cherry
+  rotate: false
+  xy: 138, 52
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+even_bonus
+  rotate: false
+  xy: 2, 2
+  size: 72, 9
+  orig: 72, 9
+  offset: 0, 0
+  index: -1
+odd_bonus
+  rotate: false
+  xy: 2, 13
+  size: 90, 9
+  orig: 90, 9
+  offset: 0, 0
+  index: -1
+player
+  rotate: false
+  xy: 172, 88
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+powerup
+  rotate: false
+  xy: 206, 88
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+shark
+  rotate: false
+  xy: 2, 24
+  size: 32, 96
+  orig: 32, 96
+  offset: 0, 0
+  index: -1
+shark_hit
+  rotate: false
+  xy: 36, 24
+  size: 32, 96
+  orig: 32, 96
+  offset: 0, 0
+  index: -1
+shark_worn
+  rotate: false
+  xy: 70, 24
+  size: 32, 96
+  orig: 32, 96
+  offset: 0, 0
+  index: -1
+snake_part
+  rotate: false
+  xy: 156, 70
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+sniper
+  rotate: false
+  xy: 104, 22
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+space_station
+  rotate: false
+  xy: 104, 56
+  size: 32, 64
+  orig: 32, 64
+  offset: 0, 0
+  index: -1

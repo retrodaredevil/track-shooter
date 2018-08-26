@@ -6,6 +6,6 @@
 		"button": { "r": 1, "g": 1, "b": 1 }
 	},
 	"com.badlogic.gdx.graphics.g2d.BitmapFont": {
-		"game_label": { "file": "../fonts/main_font.fnt" }
+		"game_label": { "file": "fonts/main_font.fnt" }
 	}
 }

@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
@@ -47,8 +48,10 @@ public class OverlayRenderer implements RenderComponent {
 
 	private final Overlay overlay;
 
-	public OverlayRenderer(Overlay overlay, Skin skin){
+	public OverlayRenderer(Overlay overlay, RenderObject renderObject){
 		this.overlay = Objects.requireNonNull(overlay);
+
+		final Skin skin = renderObject.getMainSkin();
 
 		BitmapFont font = skin.getFont("game_label");
 

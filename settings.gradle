@@ -1,1 +1,2 @@
+include ':packer'
 include 'desktop', 'android', 'core'  // as of writing this comment, adding 'html' will break it

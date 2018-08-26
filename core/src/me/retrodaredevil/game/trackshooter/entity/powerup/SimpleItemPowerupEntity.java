@@ -18,7 +18,7 @@ public abstract class SimpleItemPowerupEntity extends PowerupPackage {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getSkin().getDrawable(drawableName)), this, .8f, .8f);
+		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable(drawableName)), this, .8f, .8f);
 		renderComponent.setFacingDirection(0);
 		this.setRenderComponent(renderComponent);
 	}
@@ -27,7 +27,7 @@ public abstract class SimpleItemPowerupEntity extends PowerupPackage {
 		return new SimpleItemPowerupEntity(velocity, startingTrackDistance, "powerup") {
 			@Override
 			protected Item createItem(World world, Player player) {
-				return new TripleShotPowerupItem(world.getSkin());
+				return new TripleShotPowerupItem(world.getMainSkin());
 			}
 		};
 	}

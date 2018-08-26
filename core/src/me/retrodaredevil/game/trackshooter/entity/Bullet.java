@@ -3,16 +3,13 @@ package me.retrodaredevil.game.trackshooter.entity;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
-import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Bullet extends SimpleEntity implements Entity {
@@ -47,7 +44,7 @@ public class Bullet extends SimpleEntity implements Entity {
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		setRenderComponent(new ImageRenderComponent(new Image(world.getSkin().getDrawable("bullet")), this, .5f, .5f));
+		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("bullet")), this, .5f, .5f));
 	}
 
 	@Override

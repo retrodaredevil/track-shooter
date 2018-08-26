@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
+import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -19,7 +20,7 @@ public class World implements Updateable, Renderable {
 
 
 	private final LevelGetter levelGetter;
-	private final Skin skin;
+	private final RenderObject renderObject;
 	private Level level;
 
 	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
@@ -32,9 +33,9 @@ public class World implements Updateable, Renderable {
 
 	protected RenderComponent renderComponent;
 
-	public World(LevelGetter levelGetter, float width, float height, Skin skin){
+	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject){
 		this.levelGetter = levelGetter;
-		this.skin = skin;
+		this.renderObject = renderObject;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler();
@@ -72,9 +73,10 @@ public class World implements Updateable, Renderable {
 		this.level.update(delta, this);
 	}
 
-	public Skin getSkin(){
-		return skin;
+	public Skin getMainSkin(){
+		return renderObject.getMainSkin();
 	}
+	public RenderObject getRenderObject(){ return renderObject; }
 
 	/**
 	 * This is the recommended way to get the track of the current level
