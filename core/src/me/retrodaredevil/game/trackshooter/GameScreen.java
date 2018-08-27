@@ -15,9 +15,9 @@ import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.player.Score;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
-import me.retrodaredevil.game.trackshooter.overlay.Overlay;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.WorldViewport;
+import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
+import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
 import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -28,27 +28,29 @@ public class GameScreen extends ScreenAdapter {
 	private final Stage stage;
 	private final World world;
 
-	private final Overlay overlay;
 	private final RenderObject renderObject;
+	private final RenderParts renderParts;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, Overlay overlay, RenderObject renderObject){
+	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
 //		this.gameInput = gameInputs.get(0);
 		this.world = new World(new GameLevelGetter(players), 18, 18, renderObject);
 		this.stage = new Stage(new WorldViewport(world), renderObject.getBatch());
-		this.overlay = overlay;
+		this.renderParts = renderParts;
 		this.renderObject = renderObject;
 
 
+		int i = -1;
 		for(GameInput gameInput : gameInputs){
-			Player player = new Player(gameInput.getRumble(), renderObject.getMainSkin());
+			i++;
+			Player player = new Player(gameInput.getRumble(), i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
 			players.add(player);
 			player.setEntityController(new PlayerController(player, gameInput));
 			world.addEntity(player);
 		}
 
-		overlay.setGame(players, world);
+		renderParts.getOverlay().setGame(players, world);
 	}
 
 	@Override
@@ -112,40 +114,23 @@ public class GameScreen extends ScreenAdapter {
 		}
 	}
 	private void doRender(float delta){
-		RenderUtil.clearScreen(world.getMainSkin().getColor("background"));
 
-		RenderComponent worldRender = world.getRenderComponent();
-		if(worldRender != null){
-			worldRender.render(delta, stage);
-		}
+		Renderer renderer = new Renderer(renderObject.getBatch(), stage);
+		renderer.addRenderable(renderParts.getBackground());
+		renderer.addRenderable(world);
+//		renderer.addRenderable(renderParts.getOptionsMenu());
+		renderer.addRenderable(renderParts.getOverlay());
 
-		stage.act(delta);
+		renderer.render(delta);
 
-		RenderComponent overlayRender = overlay.getRenderComponent();
-		if(overlayRender != null){
-			Stage textStage = overlay.getStage();
-			overlayRender.render(delta, textStage);
-
-			textStage.act(delta);
-			Batch batch = renderObject.getBatch();
-			assert batch == stage.getBatch() : "stage's batch isn't our batch!";
-			assert batch == textStage.getBatch() : "Overlay's batch isn't our batch!";
-			// We use this instead of Stage#draw() because we only have to begin() batch one time
-			batch.begin();
-			RenderUtil.drawStage(batch, stage);
-			RenderUtil.drawStage(batch, textStage);
-			batch.end();
-		} else {
-			System.err.println("overlayRender is null!. If this is intended, please remove this debug statement. Not doing some assertion checks.");
-			stage.draw();
-		}
 	}
 
 	@Override
 	public void resize(int width, int height) {
 		Gdx.gl.glViewport(0, 0, width, height);
 		stage             .getViewport().update(width, height,true);
-		overlay.getStage().getViewport().update(width, height,true);
+//		overlay.getStage().getViewport().update(width, height,true);
+		renderParts.resize(width, height);
 	}
 
 	@Override

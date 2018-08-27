@@ -15,10 +15,11 @@ public class TrackRenderComponent implements RenderComponent {
 	@Override
 	public void render(float delta, Stage stage) {
 		for(TrackPart part : track.getParts()){
-			RenderComponent render = part.getRenderComponent();
-			if(render != null){
-				render.render(delta, stage);
-			}
+//			RenderComponent render = part.getRenderComponent();
+//			if(render != null){
+//				render.render(delta, stage);
+//			}
+			part.autoRender(delta, stage, false);
 		}
 	}
 

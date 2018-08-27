@@ -1,15 +1,10 @@
-package me.retrodaredevil.game.trackshooter.overlay;
+package me.retrodaredevil.game.trackshooter.render.parts;
 
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +14,7 @@ import me.retrodaredevil.game.trackshooter.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.UIViewport;
-import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.render.viewports.UIViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Overlay implements Renderable, Disposable {
@@ -79,6 +73,13 @@ public class Overlay implements Renderable, Disposable {
 		}
 		return lives - 1;
 	}
+	public Player.Type getPlayerType(int playerIndex){
+		if(players == null || playerIndex >= players.length){
+			return Player.Type.NORMAL;
+		}
+		Player player = players[playerIndex];
+		return player.getPlayerType();
+	}
 	/**
 	 *
 	 * @param playerIndex The index of the player
@@ -111,17 +112,13 @@ public class Overlay implements Renderable, Disposable {
 		this.players = players.toArray(new Player[players.size()]);
 		this.world = world;
 	}
-	public Stage getStage(){
+	@Override
+	public Stage getPreferredStage(){
 		return stage;
 	}
 	@Override
 	public RenderComponent getRenderComponent() {
 		return component;
-	}
-
-	@Override
-	public void disposeRenderComponent() {
-		component.dispose();
 	}
 
 	@Override

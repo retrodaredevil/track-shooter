@@ -71,26 +71,22 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
-//		rotateJoystick = FourKeyJoystick.newArrowKeyJoystick();
-//		final JoystickPart rotateJoystick;
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen)) {
-//			rotateJoystick = new GdxDragJoystick(, 5.0f);
 			rotateAxis = new GdxMouseAxis(true, -5.0f, new Rectangle(.5f, 0, .5f, 1));
 			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
-			startButton = new GdxScreenTouchButton(new Rectangle(0, 0, 1, 1));
+//			startButton = new GdxScreenTouchButton(new Rectangle(0, 0, 1, 1));
 		} else {
-//			rotateJoystick = new GdxMouseJoystick();
 			rotateAxis = new GdxMouseAxis(false, 1.0f);
 			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
-			startButton = new KeyInputPart(Input.Keys.ENTER);
 		}
+		startButton = new KeyInputPart(Input.Keys.ENTER);
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard) || !Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
 			activatePowerup = new KeyInputPart(Input.Keys.F);
 		} else {
 			GdxShakeButton button = new GdxShakeButton();
 			options.add(new ControlOption("Powerup Activate Shake Sensitivity",
-					"How much you have to shake the device to activate the powerup in m/s^s",
+					"How much you have to shake the device to activate the powerup in m/s^2",
 					"controls.all.shake", button));
 			activatePowerup = button;
 		}

@@ -2,79 +2,67 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.game.input.GameInput;
-import me.retrodaredevil.game.trackshooter.overlay.Overlay;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 
 public class StartScreen extends ScreenAdapter {
+	private static final int BUTTON_WIDTH = 220;
+	private static final int BUTTON_HEIGHT = 60;
 	private final GameInput gameInput;
-	private final Overlay overlay;
+	private final RenderParts renderParts;
 	private final RenderObject renderObject;
 	private boolean start;
 
 	private final Stage uiStage;
 
 	private final Button startButton;
+	private final Button optionsButton;
 
-	public StartScreen(GameInput gameInput, Overlay overlay, RenderObject renderObject){
+	public StartScreen(GameInput gameInput, RenderObject renderObject, RenderParts renderParts){
 		this.gameInput = gameInput;
-		this.overlay = overlay;
+		this.renderParts = renderParts;
 		this.renderObject = renderObject;
-		this.uiStage = new Stage(new ScreenViewport(), renderObject.getBatch());
+		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
 		Table table = new Table();
 		table.setFillParent(true);
 		table.center();
 		TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with startButton.getStyle()
-		startButton.setChecked(false);
-		table.add(startButton).width(220);
+		table.add(startButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
+		table.row();
+		optionsButton = new TextButton("options", style);
+		table.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
 
 
 		uiStage.addActor(table);
 	}
 	@Override
 	public void render(float delta) {
-		RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
+//		RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
 
 		if(Gdx.input.getInputProcessor() != uiStage) {
 			Gdx.input.setInputProcessor(uiStage);
 		}
-		uiStage.act(delta);
 		if(gameInput.startButton().isPressed() || startButton.isPressed()){
 			start = true;
 		}
 
+		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
+		renderer.addRenderable(renderParts.getBackground());
+		renderer.addMainStage();
+		renderer.addRenderable(renderParts.getOptionsMenu());
+		renderer.addRenderable(renderParts.getOverlay());
 
-		RenderComponent overlayRender = overlay.getRenderComponent();
-		if(overlayRender != null){
-			Stage stage = overlay.getStage();
-			overlayRender.render(delta, stage);
-			stage.act();
+		renderer.render(delta);
 
-			Batch batch = renderObject.getBatch();
-			batch.begin();
-			RenderUtil.drawStage(batch, uiStage);
-			RenderUtil.drawStage(batch, stage);
-			batch.end();
-//			uiStage.draw();
-//			stage.draw();
-		} else {
-			uiStage.draw();
-		}
+
+
 //		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
 //		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude()
 //				* (gameInput.mainJoystick().getJoystickType().isInputSquare() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
@@ -98,8 +86,17 @@ public class StartScreen extends ScreenAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-		overlay.getStage().getViewport().update(width, height,true);
+//		overlay.getPreferredStage().getViewport().update(width, height,true);
+		uiStage.getViewport().update(width, height, true);
+		renderParts.resize(width, height);
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		uiStage.dispose(); // we created uiStage so dispose it
+	}
+
 	public boolean isReadyToStart(){
 		return start && !startButton.isPressed();
 	}

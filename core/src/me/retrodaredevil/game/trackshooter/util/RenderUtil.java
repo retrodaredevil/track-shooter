@@ -8,23 +8,32 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import me.retrodaredevil.game.trackshooter.Renderable;
+import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+
 public final class RenderUtil {
 	private RenderUtil(){}
 
 	/**
-	 * Draws the stage without starting or ending the batch.
-	 * @param batch
-	 * @param stage
+	 * Draws the stage without starting or ending the batch. Also applies the stage's viewport
+	 * @param batch The batch
+	 * @param stage The stage to draw
 	 */
 	public static void drawStage(Batch batch, Stage stage){
+		if(batch == null){
+			throw new NullPointerException("batch cannot be null!");
+		}
+		if(stage == null){
+			throw new NullPointerException("Stage cannot be null!");
+		}
 
-		Camera camera = stage.getCamera();
-		camera.update();
+		stage.getViewport().apply();
+//		camera.update(); apply updates camera
 
 		Group root = stage.getRoot();
 		if (!root.isVisible()) return;
 
-		batch.setProjectionMatrix(camera.combined);
+		batch.setProjectionMatrix(stage.getCamera().combined);
 		root.draw(batch, 1);
 	}
 

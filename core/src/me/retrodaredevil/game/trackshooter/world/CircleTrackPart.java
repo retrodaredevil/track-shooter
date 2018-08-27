@@ -45,8 +45,4 @@ public class CircleTrackPart extends TrackPart {
 		return renderComponent;
 	}
 
-	@Override
-	public void disposeRenderComponent() {
-		renderComponent.dispose();
-	}
 }

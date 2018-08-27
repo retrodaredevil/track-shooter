@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render;
+package me.retrodaredevil.game.trackshooter.render.viewports;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.Viewport;

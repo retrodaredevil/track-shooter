@@ -21,18 +21,20 @@ public class WorldRenderComponent implements RenderComponent {
 
 	@Override
 	public void render(float delta, Stage stage) {
-		RenderComponent trackRender = world.getTrack().getRenderComponent();
-		if(trackRender != null){
-			trackRender.render(delta, stage);
-		}
+//		RenderComponent trackRender = world.getTrack().getRenderComponent();
+//		if(trackRender != null){
+//			trackRender.render(delta, stage);
+//		}
+		world.getTrack().autoRender(delta, stage, false);
 		if(renderHitboxes && renderer == null){
 			renderer = new ShapeRenderer();
 		}
 		for(Entity entity : world.getEntities()){
-			RenderComponent entityRender = entity.getRenderComponent();
-			if(entityRender != null){
-				entityRender.render(delta, stage);
-			}
+//			RenderComponent entityRender = entity.getRenderComponent();
+//			if(entityRender != null){
+//				entityRender.render(delta, stage);
+//			}
+			entity.autoRender(delta, stage, false);
 			if(renderHitboxes){
 				Rectangle hitbox = entity.getHitbox();
 

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
@@ -34,18 +35,18 @@ public class Player extends SimpleEntity {
 	private static final float SHOT_GUN_DISTANCE = 7;
 	private static final float SHOT_GUN_RANDOM_EXTEND_RANGE = 5; // can now go a max of this + SHOT_GUN_DISTANCE
 
-	private final Skin skin;
 
 	private Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new HashMap<>();
 //	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
-	private Score score;
+	private final Score score;
+	private Type playerType;
 
 	private boolean hit = false;
 	private boolean triplePowerup = false;
 
 
-	public Player(ControllerRumble rumble, Skin skin){
-		this.skin = skin;
+	public Player(ControllerRumble rumble, Type playerType){
+		this.playerType = playerType;
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
 		setHitboxSize(.7f);
 		score = new PlayerScore(this, rumble);
@@ -56,13 +57,16 @@ public class Player extends SimpleEntity {
 	public void setTriplePowerup(boolean b){
 		this.triplePowerup = b;
 	}
+	public Type getPlayerType() {
+		return playerType;
+	}
 
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
 //		hit = false; // set in afterRemove()
 		assert !hit : "afterRemove() didn't set hit to false!";
-		setRenderComponent(new ImageRenderComponent(new Image(skin.getDrawable("player")), this, .8f, .8f));
+		setRenderComponent(new ImageRenderComponent(new Image(playerType.getDrawable(world.getMainSkin())), this, .8f, .8f));
 	}
 
 	public Score getScoreObject(){
@@ -239,6 +243,20 @@ public class Player extends SimpleEntity {
 					it.remove();
 				}
 			}
+		}
+	}
+
+
+	public enum Type {
+		NORMAL("player"), SNIPER("sniper");
+
+		private final String skinName;
+
+		Type(String skinName){
+			this.skinName = skinName;
+		}
+		public Drawable getDrawable(Skin skin){
+			return skin.getDrawable(skinName);
 		}
 	}
 }

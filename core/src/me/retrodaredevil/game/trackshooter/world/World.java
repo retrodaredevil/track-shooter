@@ -25,13 +25,11 @@ public class World implements Updateable, Renderable {
 
 	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
 	private final List<Entity> entities = new ArrayList<>();
-	private boolean iteratingEntities = false;
 
-	private CollisionHandler collisionHandler;
+	private final CollisionHandler collisionHandler;
 	private final Rectangle bounds;
-//	private final Rectangle largeBounds = new Rectangle(); // shouldn't be referenced without getLargeBounds()
 
-	protected RenderComponent renderComponent;
+	private final RenderComponent renderComponent;
 
 	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject){
 		this.levelGetter = levelGetter;
@@ -110,22 +108,9 @@ public class World implements Updateable, Renderable {
 		return bounds;
 	}
 
-//	public Rectangle getLargeBounds(){ maybe use in future?
-//		largeBounds.setSize(getBounds().getWidth() * 1.5f, getBounds().getHeight() * 1.5f);
-//		largeBounds.setCenter(getBounds().getCenter(temp));
-//		return largeBounds;
-//	}
-
 	@Override
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
-	}
-
-	@Override
-	public void disposeRenderComponent() {
-		if(renderComponent != null){
-			renderComponent.dispose();
-		}
 	}
 
 	/**
@@ -135,12 +120,7 @@ public class World implements Updateable, Renderable {
 	 */
 	public static void updateEntityList(List<? extends Entity> entities){
 		if(!entities.isEmpty()){
-			for(Iterator<? extends Entity> it = entities.iterator(); it.hasNext();){
-				Entity entity = it.next();
-				if(entity.isRemoved()){
-					it.remove();
-				}
-			}
+			entities.removeIf(Entity::isRemoved);
 		}
 	}
 }

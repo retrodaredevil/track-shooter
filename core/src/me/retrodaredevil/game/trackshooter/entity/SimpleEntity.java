@@ -128,13 +128,6 @@ public class SimpleEntity implements Entity {
 		return renderComponent;
 	}
 
-	@Override
-	public void disposeRenderComponent() {
-		if(renderComponent != null){
-			renderComponent.dispose();
-		}
-	}
-
 	/**
 	 *
 	 * @param renderComponent The RenderComponent to use to render this Entity

@@ -4,7 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 
-public class RenderObject implements Disposable {
+/**
+ * An object that contains other necessary objects to help render things
+ */
+public final class RenderObject implements Disposable {
 
 	private final Batch batch;
 	private final Skin mainSkin;

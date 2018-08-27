@@ -1,7 +1,5 @@
-package me.retrodaredevil.game.trackshooter.overlay;
+package me.retrodaredevil.game.trackshooter.render.parts;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
@@ -9,18 +7,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Stack;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 
 import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.util.Resources;
 
 public class OverlayRenderer implements RenderComponent {
 	private static final int SCORE_SPACES = 7;
@@ -47,9 +42,11 @@ public class OverlayRenderer implements RenderComponent {
 	private final Label highScoreLabel;
 
 	private final Overlay overlay;
+	private final RenderObject renderObject;
 
 	public OverlayRenderer(Overlay overlay, RenderObject renderObject){
 		this.overlay = Objects.requireNonNull(overlay);
+		this.renderObject = Objects.requireNonNull(renderObject);
 
 		final Skin skin = renderObject.getMainSkin();
 
@@ -75,7 +72,7 @@ public class OverlayRenderer implements RenderComponent {
 			cornerTable.add(livesTable);
 			livesTable.setHeight(24);
 			for(int j = 0; j < MAX_LIVES_DISPLAYED; j++) {
-				livesTable.add(new Image(skin.getDrawable("player"))).width(24).height(24);
+				livesTable.add(new Image(Player.Type.NORMAL.getDrawable(renderObject.getMainSkin()))).width(24).height(24);
 			}
 
 			cornerTable.row();
@@ -122,8 +119,13 @@ public class OverlayRenderer implements RenderComponent {
 			Table livesTable = livesTables[i];
 			final int numberToDraw = overlay.getShipsToDraw(i);
 			int numberDrawn = 0;
+			Drawable drawable = overlay.getPlayerType(i).getDrawable(renderObject.getMainSkin());
 			for(Actor a : livesTable.getChildren()){
 				a.setVisible(numberDrawn < numberToDraw);
+
+				Image image = (Image) a;
+				image.setDrawable(drawable);
+
 				numberDrawn++;
 			}
 

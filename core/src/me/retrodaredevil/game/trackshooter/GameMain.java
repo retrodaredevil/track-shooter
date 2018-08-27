@@ -22,16 +22,19 @@ import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
-import me.retrodaredevil.game.trackshooter.overlay.Overlay;
+import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
+import me.retrodaredevil.game.trackshooter.render.parts.Background;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
 public class GameMain extends Game {
 
 	private RenderObject renderObject;
+	private RenderParts renderParts;
 //	private Batch batch; // used for initialization and begin() and end() methods are only used when used with RenderUtil.drawStage()
 //	private Skin skin;
 //	private Skin uiSkin;
-	private Overlay overlay; // not handled in this class, passed around to current screen
+//	private Overlay overlay; // not handled in this class, passed around to current screen
 
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
@@ -46,7 +49,7 @@ public class GameMain extends Game {
 		Resources.loadToSkin(skin);
 		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin);
-		overlay = new Overlay(renderObject);
+		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject), new Overlay(renderObject));
 		controllerManager = new DefaultControllerManager();
 		for(Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext();){
 			Controller controller = it.next();
@@ -93,17 +96,17 @@ public class GameMain extends Game {
 //		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
 	}
 	private void startScreen(){
-		setScreen(new StartScreen(inputs.get(0), overlay, renderObject)); // TODO all inputs
+		setScreen(new StartScreen(inputs.get(0), renderObject, renderParts)); // TODO all inputs
 	}
 	private void gameScreen(){
-		setScreen(new GameScreen(inputs, overlay, renderObject));
+		setScreen(new GameScreen(inputs, renderObject, renderParts));
 	}
 
 	@Override
 	public void dispose() {
 		super.dispose();
-		overlay.dispose();
 		renderObject.dispose();
+		renderParts.dispose();
 		System.out.println("dispose() called on GameMain!");
 	}
 }
