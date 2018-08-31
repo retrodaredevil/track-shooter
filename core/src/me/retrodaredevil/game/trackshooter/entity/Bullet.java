@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.movement.FixedVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
-import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 

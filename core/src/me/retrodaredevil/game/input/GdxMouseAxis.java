@@ -10,6 +10,7 @@ import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class GdxMouseAxis extends AutoCachingInputPart {
 	private static final int MAX_POINTERS = 20;
+	private static final int TIME_FOR_MOUSE_CATCH_TIMEOUT = 100; // ms
 	private final boolean testForAllPointers, yAxis, needsDrag, needsTouchScreenForConnection, useDeltaMethods;
 	private final float multiplier;
 	private final Rectangle screenArea;
@@ -19,6 +20,8 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	// only used if testForAllPointers == true and useDeltaMethods == false
 	private final int[] lastPositions;
 	private final boolean[] downLastFrame;
+
+	private long lastPositionRequest = 0;
 
 	/**
 	 *
@@ -69,13 +72,21 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	@Override
 	protected void onUpdate() {
 		super.onUpdate();
+		if(lastPositionRequest + TIME_FOR_MOUSE_CATCH_TIMEOUT <= System.currentTimeMillis()){
+			Gdx.input.setCursorCatched(false);
+		}
+	}
+
+	@Override
+	public double getPosition() {
+		// TODO find a better way to enable cursor catching instead of this tightly coupled way
+		lastPositionRequest = System.currentTimeMillis();
+		Gdx.input.setCursorCatched(true);
+		return super.getPosition();
 	}
 
 	@Override
 	protected double calculatePosition() {
-		if(!Gdx.input.isCursorCatched()){
-			Gdx.input.setCursorCatched(true);
-		}
 		Rectangle area = screenArea == null ? null : Util.proportionalRectangleToScreenArea(screenArea);
 		if(!testForAllPointers){
 			if(needsDrag && !Gdx.input.isTouched()){

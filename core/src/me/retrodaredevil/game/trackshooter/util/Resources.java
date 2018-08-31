@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 public final class Resources {
@@ -105,7 +106,7 @@ public final class Resources {
 		public int getWorth(){
 			return worth;
 		}
-		public TextureRegionDrawable getDrawable(){
+		public Drawable getDrawable(){
 			return regionDrawable;
 		}
 	}

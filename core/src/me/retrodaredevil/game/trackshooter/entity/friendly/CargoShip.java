@@ -9,7 +9,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocityOnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**

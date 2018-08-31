@@ -3,8 +3,8 @@ package me.retrodaredevil.game.trackshooter.world;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.render.CircleRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.CircleRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class CircleTrackPart extends TrackPart {
@@ -14,7 +14,7 @@ public class CircleTrackPart extends TrackPart {
 	public CircleTrackPart(float radius, Color color) {
 		super(new Vector2(radius, 0), new Vector2(radius, 0));
 		this.radius = radius;
-		this.renderComponent = new CircleRenderComponent(radius, Vector2.Zero, color, 100);
+		this.renderComponent = new CircleRenderComponent(radius, 3, Vector2.Zero, color, 100);
 	}
 
 	@Override

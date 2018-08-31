@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.Renderable;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.item.Item;
 import me.retrodaredevil.game.trackshooter.level.CanLevelEnd;

@@ -9,6 +9,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.game.input.GameInput;
+import me.retrodaredevil.game.trackshooter.render.InputFocuser;
+import me.retrodaredevil.game.trackshooter.render.Renderer;
 
 public class StartScreen extends ScreenAdapter {
 	private static final int BUTTON_WIDTH = 220;
@@ -44,14 +46,15 @@ public class StartScreen extends ScreenAdapter {
 	}
 	@Override
 	public void render(float delta) {
-//		RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
-
-		if(Gdx.input.getInputProcessor() != uiStage) {
-			Gdx.input.setInputProcessor(uiStage);
+		if(optionsButton.isPressed()){
+			renderParts.getOptionsMenu().setToController(gameInput);
 		}
 		if(gameInput.startButton().isPressed() || startButton.isPressed()){
 			start = true;
 		}
+		InputFocuser focuser = new InputFocuser();
+		focuser.addInputFocus(renderParts.getOptionsMenu());
+		focuser.giveFocus(uiStage);
 
 		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
 		renderer.addRenderable(renderParts.getBackground());
@@ -86,7 +89,6 @@ public class StartScreen extends ScreenAdapter {
 
 	@Override
 	public void resize(int width, int height) {
-//		overlay.getPreferredStage().getViewport().update(width, height,true);
 		uiStage.getViewport().update(width, height, true);
 		renderParts.resize(width, height);
 	}

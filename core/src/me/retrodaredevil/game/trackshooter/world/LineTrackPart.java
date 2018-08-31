@@ -3,8 +3,8 @@ package me.retrodaredevil.game.trackshooter.world;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.render.LineRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.LineRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 import java.util.ArrayList;

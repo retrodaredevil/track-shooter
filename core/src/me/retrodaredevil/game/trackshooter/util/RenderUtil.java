@@ -1,21 +1,20 @@
 package me.retrodaredevil.game.trackshooter.util;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import me.retrodaredevil.game.trackshooter.Renderable;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-
 public final class RenderUtil {
 	private RenderUtil(){}
 
 	/**
-	 * Draws the stage without starting or ending the batch. Also applies the stage's viewport
+	 * Draws the stage without starting or ending the batch. Also applies the stage's viewport.
+	 * <p>
+	 * This expects that {@link Batch#begin()} has already been called. Calling this method will
+	 * NOT flush the batch
 	 * @param batch The batch
 	 * @param stage The stage to draw
 	 */

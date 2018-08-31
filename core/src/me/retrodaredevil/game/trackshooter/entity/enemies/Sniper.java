@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
-import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Sniper extends SimpleEntity implements Enemy {

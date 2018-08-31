@@ -7,7 +7,7 @@ import me.retrodaredevil.game.trackshooter.effect.Effect;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.item.Item;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.HitboxUtil;
 import me.retrodaredevil.game.trackshooter.util.Util;

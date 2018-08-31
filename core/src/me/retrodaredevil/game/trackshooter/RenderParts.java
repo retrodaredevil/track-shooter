@@ -4,13 +4,14 @@ import com.badlogic.gdx.utils.Disposable;
 
 import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 public final class RenderParts implements Disposable{
 	private final Background background;
-	private final Renderable optionsMenu;
+	private final OptionMenu optionsMenu;
 	private final Overlay overlay;
 
-	public RenderParts(Background background, Renderable optionsMenu, Overlay overlay){
+	public RenderParts(Background background, OptionMenu optionsMenu, Overlay overlay){
 		this.background = background;
 		this.overlay = overlay;
 		this.optionsMenu = optionsMenu;
@@ -35,7 +36,7 @@ public final class RenderParts implements Disposable{
 	public Overlay getOverlay(){
 		return overlay;
 	}
-	public Renderable getOptionsMenu(){
+	public OptionMenu getOptionsMenu(){
 		return optionsMenu;
 	}
 }

@@ -1,9 +1,9 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.render;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
 // The reason for adding Disposable as a super interface was that a Renderable may have multiple
 // render components that it switches between and calling getRenderComponent().disposeRenderComponent() would only disposeRenderComponent

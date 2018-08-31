@@ -12,15 +12,11 @@ import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
-import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocityMultiplierSetter;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
-import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
-import me.retrodaredevil.game.trackshooter.util.Resources;
+import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 import java.util.ArrayList;

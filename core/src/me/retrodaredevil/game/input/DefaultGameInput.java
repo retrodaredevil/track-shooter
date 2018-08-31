@@ -31,7 +31,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 	private final ControllerRumble rumble;
 
-	private final Collection<ControlOption> controlOptions;
+	private final Collection<? extends ControlOption> controlOptions;
 
 	private final ControllerPart reliesOn;
 
@@ -63,6 +63,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	public DefaultGameInput(){
 		reliesOn = null;
 		final List<ControlOption> options = new ArrayList<>();
+		controlOptions = options;
 
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			GdxTiltJoystick joy = new GdxTiltJoystick();
@@ -97,13 +98,13 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		} else {
 			rumble = null;
 		}
-		controlOptions = options;
 
 		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton),
 				false, false);
 		if(rumble != null){
 			addChildren(Collections.singletonList(rumble), false, false);
 		}
+		System.out.println("control options initialized: " + this.controlOptions);
 	}
 
 	@Override

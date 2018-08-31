@@ -1,41 +1,41 @@
-package me.retrodaredevil.game.trackshooter.render;
+package me.retrodaredevil.game.trackshooter.render.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class LineRenderComponent implements RenderComponent {
-	private Vector2 start;
-	private Vector2 end;
+	private final Vector2 start = new Vector2();
+	private final Vector2 end = new Vector2();
 
-	private Color color;
-	private float width;
-	private ShapeRenderer renderer;
+	private final float width;
+	private final ShapeRenderer renderer;
+
+//	private final LineActor line = new LineActor();
 
 	/**
 	 * Note when disposeRenderComponent() is called, it will NOT call renderer.disposeRenderComponent().
 	 */
 	public LineRenderComponent(Vector2 start, Vector2 end, Color color, float width, ShapeRenderer renderer){
-		this.start = start;
-		this.end = end;
-		this.color = color;
+		this.start.set(start);
+		this.end.set(end);
 		this.width = width;
 		this.renderer = renderer;
+
+		renderer.setColor(color);
 	}
 	@Override
 	public void render(float delta, Stage stage) {
-		Gdx.gl.glLineWidth(this.width);
 
 		Camera camera = stage.getCamera();
 		camera.update();
 		renderer.setProjectionMatrix(camera.combined);
-//		renderer.setTransformMatrix();
+
+		Gdx.gl.glLineWidth(this.width);
 		renderer.begin(ShapeRenderer.ShapeType.Line);
-		renderer.setColor(this.color);
 		renderer.line(start, end);
 		renderer.end();
 		Gdx.gl.glLineWidth(1);
@@ -43,6 +43,20 @@ public class LineRenderComponent implements RenderComponent {
 
 	@Override
 	public void dispose() {
-
+		renderer.dispose();
 	}
+
+//	class LineActor extends Actor{
+//		@Override
+//		public void draw(Batch batch, float parentAlpha) {
+//			super.draw(batch, parentAlpha);
+//			Gdx.gl.glLineWidth(width);
+//
+//			renderer.setProjectionMatrix(batch.getProjectionMatrix());
+//			renderer.begin(ShapeRenderer.ShapeType.Line);
+//			renderer.line(start, end);
+//			renderer.end();
+//			Gdx.gl.glLineWidth(1);
+//		}
+//	}
 }

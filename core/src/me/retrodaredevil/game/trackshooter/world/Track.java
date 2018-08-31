@@ -1,9 +1,9 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.Renderable;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.TrackRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.TrackRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 import java.util.List;

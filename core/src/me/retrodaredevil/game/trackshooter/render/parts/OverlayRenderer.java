@@ -15,7 +15,7 @@ import java.util.Objects;
 
 import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
 public class OverlayRenderer implements RenderComponent {
 	private static final int SCORE_SPACES = 7;

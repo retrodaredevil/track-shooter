@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -22,19 +21,15 @@ import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
-import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
-import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
+import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
 public class GameMain extends Game {
 
 	private RenderObject renderObject;
 	private RenderParts renderParts;
-//	private Batch batch; // used for initialization and begin() and end() methods are only used when used with RenderUtil.drawStage()
-//	private Skin skin;
-//	private Skin uiSkin;
-//	private Overlay overlay; // not handled in this class, passed around to current screen
 
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
@@ -66,7 +61,7 @@ public class GameMain extends Game {
 			controllerManager.addController(keyboardInput);
 		}
 
-		Gdx.app.setLogLevel(Application.LOG_DEBUG);
+//		Gdx.app.setLogLevel(Application.LOG_ERROR);
 		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
 	}

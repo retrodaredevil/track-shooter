@@ -2,7 +2,6 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
@@ -15,10 +14,8 @@ import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.player.Score;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
+import me.retrodaredevil.game.trackshooter.render.Renderer;
 import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
-import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class GameScreen extends ScreenAdapter {
@@ -63,6 +60,7 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doUpdate(float delta){
+		renderParts.getOptionsMenu().setToController(null); // stop displaying options menu
 		world.update(delta, world);
 //		stage.getViewport().apply(true);
 
@@ -118,7 +116,8 @@ public class GameScreen extends ScreenAdapter {
 		Renderer renderer = new Renderer(renderObject.getBatch(), stage);
 		renderer.addRenderable(renderParts.getBackground());
 		renderer.addRenderable(world);
-//		renderer.addRenderable(renderParts.getOptionsMenu());
+		renderer.addMainStage(); // world should have added this anyway
+		renderer.addRenderable(renderParts.getOptionsMenu());
 		renderer.addRenderable(renderParts.getOverlay());
 
 		renderer.render(delta);
@@ -128,8 +127,7 @@ public class GameScreen extends ScreenAdapter {
 	@Override
 	public void resize(int width, int height) {
 		Gdx.gl.glViewport(0, 0, width, height);
-		stage             .getViewport().update(width, height,true);
-//		overlay.getStage().getViewport().update(width, height,true);
+		stage.getViewport().update(width, height,true);
 		renderParts.resize(width, height);
 	}
 

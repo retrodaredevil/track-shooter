@@ -3,11 +3,10 @@ package me.retrodaredevil.game.trackshooter.util;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
 import me.retrodaredevil.game.trackshooter.entity.DisplayEntity;
-import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
-import me.retrodaredevil.game.trackshooter.render.ImageRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public final class EntityUtil {

@@ -1,12 +1,10 @@
-package me.retrodaredevil.game.trackshooter.render;
+package me.retrodaredevil.game.trackshooter.render.components;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocityMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.VelocityTargetPositionMoveComponent;
 
 public class SharkRenderComponent extends ImageRenderComponent {

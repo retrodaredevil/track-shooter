@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render;
+package me.retrodaredevil.game.trackshooter.render.components;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -11,9 +11,9 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class WorldRenderComponent implements RenderComponent {
 
-	private World world;
+	private final World world;
 	private boolean renderHitboxes = false;
-	private ShapeRenderer renderer = null;
+	private ShapeRenderer renderer = null; // initialized when hitbox debugging turns on
 
 	public WorldRenderComponent(World world){
 		this.world = world;
@@ -21,34 +21,28 @@ public class WorldRenderComponent implements RenderComponent {
 
 	@Override
 	public void render(float delta, Stage stage) {
-//		RenderComponent trackRender = world.getTrack().getRenderComponent();
-//		if(trackRender != null){
-//			trackRender.render(delta, stage);
-//		}
 		world.getTrack().autoRender(delta, stage, false);
-		if(renderHitboxes && renderer == null){
-			renderer = new ShapeRenderer();
+		if(Gdx.input.isKeyJustPressed(Input.Keys.H) && Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)){ // hell yeah hard coding
+			renderHitboxes = !renderHitboxes;
+		}
+		if(renderHitboxes){
+			if(renderer == null){
+				renderer = new ShapeRenderer();
+			}
+			Camera camera = stage.getCamera();
+			camera.update();
+			renderer.setProjectionMatrix(camera.combined);
+			renderer.begin(ShapeRenderer.ShapeType.Line);
 		}
 		for(Entity entity : world.getEntities()){
-//			RenderComponent entityRender = entity.getRenderComponent();
-//			if(entityRender != null){
-//				entityRender.render(delta, stage);
-//			}
 			entity.autoRender(delta, stage, false);
 			if(renderHitboxes){
 				Rectangle hitbox = entity.getHitbox();
-
-				Camera camera = stage.getCamera();
-				camera.update();
-				renderer.setProjectionMatrix(camera.combined);
-				renderer.begin(ShapeRenderer.ShapeType.Line);
-//				renderer.setColor(this.color);
 				renderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
-				renderer.end();
 			}
 		}
-		if(Gdx.input.isKeyJustPressed(Input.Keys.H) && Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)){
-			renderHitboxes = !renderHitboxes;
+		if(renderHitboxes){
+			renderer.end();
 		}
 	}
 

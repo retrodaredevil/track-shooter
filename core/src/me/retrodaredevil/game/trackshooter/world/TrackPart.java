@@ -1,7 +1,7 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Vector2;
-import me.retrodaredevil.game.trackshooter.Renderable;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
 
 public abstract class TrackPart implements Renderable {
 

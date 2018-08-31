@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.render;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import me.retrodaredevil.game.trackshooter.render.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.RenderUtil;
 
 /**
@@ -26,6 +25,10 @@ public class Renderer {
 		this.mainStage = mainStage;
 	}
 
+	/**
+	 * Adds the renderable and adds its preferred stage or the main stage if there's no preferred stage
+	 * @param renderable
+	 */
 	public void addRenderable(Renderable renderable){
 		if(renderable == null){
 			return;
@@ -37,24 +40,25 @@ public class Renderer {
 		}
 		stages.add(stage);
 	}
+
+	/**
+	 * Adds the main stage if it hasn't been added yet
+	 */
 	public void addMainStage(){
 		addStage(mainStage);
 	}
+
+	/**
+	 * Adds a stage to the stage
+	 * @param stage
+	 */
 	public void addStage(Stage stage){
 		stages.add(stage);
 	}
 
+	@SuppressWarnings("LibGDXFlushInsideLoop") // drawStage doesn't flush
 	public void render(float delta){
-		System.out.println();
 		for(Renderable r : renderables){
-//			RenderComponent renderComponent = r.getRenderComponent();
-//			if(renderComponent != null){
-//				Stage stage = r.getPreferredStage();
-//				if(stage == null){
-//					stage = mainStage;
-//				}
-//				renderComponent.render(delta, stage);
-//			}
 			r.autoRender(delta, mainStage, true);
 		}
 		for(Stage stage : stages){
