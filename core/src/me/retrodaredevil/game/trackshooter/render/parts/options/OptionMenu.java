@@ -1,14 +1,18 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.InputFocusRenderable;
+import me.retrodaredevil.game.trackshooter.InputFocusable;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
-public class OptionMenu implements InputFocusRenderable {
+public class OptionMenu implements Renderable, InputFocusable {
 	private final RenderObject renderObject;
 	private final Stage preferredStage;
 	private OptionMenuRenderComponent renderComponent = null;
@@ -22,9 +26,10 @@ public class OptionMenu implements InputFocusRenderable {
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
 	}
-	public void setToController(ConfigurableControllerPart configController){
+	public void setToController(ConfigurableControllerPart configController, GameInput menuController){
 		if (renderComponent != null) {
 			if(renderComponent.getConfigController() == configController){
+				System.out.println("it's the same!");
 				return; // don't do anything, it's the same
 			}
 			renderComponent.dispose();
@@ -33,13 +38,20 @@ public class OptionMenu implements InputFocusRenderable {
 			renderComponent = null;
 			return;
 		}
-		renderComponent = new OptionMenuRenderComponent(renderObject, configController);
-//		System.out.println("set new render component in options menu");
+		renderComponent = new OptionMenuRenderComponent(this, renderObject, configController, menuController);
+	}
+	public void closeMenu(){
+		setToController(null, null);
 	}
 
 	@Override
 	public Stage getPreferredStage() {
 		return preferredStage;
+	}
+
+	@Override
+	public void giveInputFocus(Stage mainStage) {
+		Gdx.input.setInputProcessor(preferredStage);
 	}
 
 	@Override

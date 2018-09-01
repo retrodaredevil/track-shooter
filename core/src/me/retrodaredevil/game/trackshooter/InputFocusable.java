@@ -1,9 +1,8 @@
-package me.retrodaredevil.game.trackshooter.render;
+package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-public interface InputFocusRenderable extends Renderable {
+public interface InputFocusable {
 	boolean isWantsToHandleInput();
 
 	/**
@@ -13,7 +12,7 @@ public interface InputFocusRenderable extends Renderable {
 	int getInputPriority();
 
 //	@Override
-//	default int compareTo(InputFocusRenderable inputFocusRenderable){
+//	default int compareTo(InputFocusable inputFocusRenderable){
 //		boolean selfWants = isWantsToHandleInput();
 //		boolean compareWants = inputFocusRenderable.isWantsToHandleInput();
 //		if(selfWants && !compareWants){
@@ -24,11 +23,5 @@ public interface InputFocusRenderable extends Renderable {
 //		return this.getInputPriority() - inputFocusRenderable.getInputPriority();
 //	}
 
-	default void giveInputFocus(Stage mainStage){
-		Stage stage = getPreferredStage();
-		if(stage == null){
-			stage = mainStage;
-		}
-		Gdx.input.setInputProcessor(stage);
-	}
+	void giveInputFocus(Stage mainStage);
 }

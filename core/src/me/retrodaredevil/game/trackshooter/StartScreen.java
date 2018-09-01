@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -9,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.game.input.GameInput;
-import me.retrodaredevil.game.trackshooter.render.InputFocuser;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
 
 public class StartScreen extends ScreenAdapter {
@@ -24,6 +22,7 @@ public class StartScreen extends ScreenAdapter {
 
 	private final Button startButton;
 	private final Button optionsButton;
+	private boolean optionsDown = false;
 
 	public StartScreen(GameInput gameInput, RenderObject renderObject, RenderParts renderParts){
 		this.gameInput = gameInput;
@@ -35,7 +34,7 @@ public class StartScreen extends ScreenAdapter {
 		table.setFillParent(true);
 		table.center();
 		TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
-		startButton = new TextButton("start", style); // do stuff with startButton.getStyle()
+		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
 		table.add(startButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
 		table.row();
 		optionsButton = new TextButton("options", style);
@@ -46,10 +45,12 @@ public class StartScreen extends ScreenAdapter {
 	}
 	@Override
 	public void render(float delta) {
-		if(optionsButton.isPressed()){
-			renderParts.getOptionsMenu().setToController(gameInput);
+		if(optionsDown && !optionsButton.isPressed()){
+			System.out.println("options is down!");
+			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
 		}
-		if(gameInput.startButton().isPressed() || startButton.isPressed()){
+		optionsDown = optionsButton.isPressed();
+		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
 			start = true;
 		}
 		InputFocuser focuser = new InputFocuser();
@@ -67,8 +68,8 @@ public class StartScreen extends ScreenAdapter {
 
 
 //		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
-//		Gdx.app.debug("magnitude", "" + gameInput.mainJoystick().getMagnitude()
-//				* (gameInput.mainJoystick().getJoystickType().isInputSquare() ? SimpleJoystickPart.getScaled(gameInput.mainJoystick().getAngle()) : 1));
+//		Gdx.app.debug("magnitude", "" + gameInput.getMainJoystick().getMagnitude()
+//				* (gameInput.getMainJoystick().getJoystickType().isInputSquare() ? SimpleJoystickPart.getScaled(gameInput.getMainJoystick().getAngle()) : 1));
 
 //		ControllerRumble rumble = gameInput.getRumble();
 //		if(rumble != null && rumble.isConnected()){
@@ -77,7 +78,7 @@ public class StartScreen extends ScreenAdapter {
 //			rumble.rumble(100, intensity); // if this stops being called, it will end
 ////			rumble.rumble(1);
 //		}
-//		JoystickPart joy = gameInput.mainJoystick();
+//		JoystickPart joy = gameInput.getMainJoystick();
 //		if(!joy.getJoystickType().isInputSquare()){
 //			System.out.println("hardware correct joystick");
 //			System.out.println("magnitude: " + joy.getMagnitude());

@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.render.parts;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Disposable;
@@ -10,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
@@ -17,21 +20,20 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.viewports.UIViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class Overlay implements Renderable, Disposable {
-	// quick and dirty high score implementation // this only updates when an optional method is called so it's even worse
-	private static int highScore = 10000; // TODO git rid of this terrible static variable
+public class Overlay implements Renderable, Updateable, Disposable {
 
 	private final Stage stage;
 	private final RenderObject renderObject;
 	private final RenderComponent component;
+	private final Preferences scorePreferences;
 	private Player[] players = null;
 	private World world = null;
-//	private final List<Player> players = new ArrayList<>(4);
 
 	public Overlay(RenderObject renderObject){
 		this.renderObject = renderObject;
 		stage = new Stage(new UIViewport(640), renderObject.getBatch());
 		component = new OverlayRenderer(this, renderObject);
+		scorePreferences = Gdx.app.getPreferences("score");
 	}
 	public void handleRender(float delta){
 		component.render(delta, stage);
@@ -53,13 +55,14 @@ public class Overlay implements Renderable, Disposable {
 		return player.getScoreObject().getScore();
 	}
 	public int getHighScore(){
-		for(int i = 0; i < getNumberPlayers(); i++){
-			int score = getCurrentScore(i);
-			if(score > highScore){
-				highScore = score;
-			}
-		}
-		return highScore;
+//		for(int i = 0; i < getNumberPlayers(); i++){
+//			int score = getCurrentScore(i);
+//			if(score > highScore){
+//				highScore = score;
+//			}
+//		}
+//		return highScore;
+		return scorePreferences.getInteger("high_score", 10000);
 	}
 	public int getShipsToDraw(int playerIndex){
 		if(players == null || playerIndex >= players.length){
@@ -105,7 +108,7 @@ public class Overlay implements Renderable, Disposable {
 
 	/**
 	 * Sets the list of players and copies it
-	 * @param players The list of players to be copied
+	 * @param players The list of players to be copied. (If mutated outside of this class, will have no effect on this class)
 	 * @param world The world of the game
 	 */
 	public void setGame(List<Player> players, World world){
@@ -119,6 +122,17 @@ public class Overlay implements Renderable, Disposable {
 	@Override
 	public RenderComponent getRenderComponent() {
 		return component;
+	}
+
+	@Override
+	public void update(float delta, World world) {
+		for(Player player : players){
+			int score = player.getScoreObject().getScore();
+			if(score > getHighScore()){
+				scorePreferences.putInteger("high_score", score);
+				scorePreferences.flush();
+			}
+		}
 	}
 
 	@Override

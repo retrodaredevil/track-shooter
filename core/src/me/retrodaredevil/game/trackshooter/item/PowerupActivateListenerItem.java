@@ -4,7 +4,7 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
- * By implementing this class, if this item is in the player's getItems(), the activatePowerup method will be
+ * By implementing this class, if this item is in the player's getItems(), the getActivatePowerup method will be
  * called when the player wishes to activate their powerup normally adding an effect
  */
 public interface PowerupActivateListenerItem extends Item {

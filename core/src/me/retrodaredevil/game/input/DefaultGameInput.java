@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.input;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
@@ -15,10 +16,13 @@ import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
+import me.retrodaredevil.game.trackshooter.util.GdxUtil;
 
 public class DefaultGameInput extends SimpleControllerPart implements GameInput {
 	private final JoystickPart mainJoystick;
@@ -28,6 +32,8 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	private final InputPart slow;
 	private final InputPart activatePowerup;
 	private final InputPart startButton;
+	private final InputPart pauseButton;
+	private final InputPart backButton;
 
 	private final ControllerRumble rumble;
 
@@ -43,13 +49,15 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		reliesOn = controller; // TODO do we really need reliesOn?
 
 		mainJoystick = controller.getLeftJoy();
-//		mainJoystick = controller.getDPad();
+//		getMainJoystick = controller.getDPad();
 		rotateAxis = controller.getRightJoy().getXAxis();
 		fireButton = new HighestPositionInputPart(controller.getRightBumper(), controller.getLeftBumper(), controller.getRightTrigger(), controller.getLeftTrigger());
-//		fireButton = controller.getLeftBumper();
+//		getFireButton = controller.getLeftBumper();
 		slow = controller.getLeftStick();
 		activatePowerup = controller.getFaceLeft();
 		startButton = controller.getStart();
+		pauseButton = controller.getStart();
+		backButton = controller.getBButton();
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
@@ -72,12 +80,14 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
+		final OptionValueObject mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.2, 2, 1);
+		options.add(new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
+				"controls.all.mouse", mouseMultiplier));
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen)) {
-			rotateAxis = new GdxMouseAxis(true, -5.0f, new Rectangle(.5f, 0, .5f, 1));
+			rotateAxis = new GdxMouseAxis(true, -5.0f, mouseMultiplier, new Rectangle(.5f, 0, .5f, 1));
 			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
-//			startButton = new GdxScreenTouchButton(new Rectangle(0, 0, 1, 1));
 		} else {
-			rotateAxis = new GdxMouseAxis(false, 1.0f);
+			rotateAxis = new GdxMouseAxis(false, 1.0f, mouseMultiplier);
 			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		}
 		startButton = new KeyInputPart(Input.Keys.ENTER);
@@ -91,6 +101,15 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 					"controls.all.shake", button));
 			activatePowerup = button;
 		}
+		if(Gdx.app.getType() == Application.ApplicationType.Android){
+			Gdx.input.setCatchBackKey(true);
+			pauseButton = new KeyInputPart(Input.Keys.BACK);
+			backButton = pauseButton;
+		} else {
+			pauseButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE),
+					new KeyInputPart(Input.Keys.ENTER));
+			backButton = new KeyInputPart(Input.Keys.ESCAPE);
+		}
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)) {
 			GdxRumble gdxRumble = new GdxRumble();
 			options.addAll(gdxRumble.getControlOptions());
@@ -101,10 +120,14 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 
 		addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton),
 				false, false);
+		if(pauseButton != backButton){
+			addChildren(Arrays.asList(pauseButton, backButton), false, false);
+		} else {
+			addChildren(Collections.singletonList(pauseButton), false, false);
+		}
 		if(rumble != null){
 			addChildren(Collections.singletonList(rumble), false, false);
 		}
-		System.out.println("control options initialized: " + this.controlOptions);
 	}
 
 	@Override
@@ -113,33 +136,43 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 	}
 
 	@Override
-	public JoystickPart mainJoystick(){
+	public JoystickPart getMainJoystick(){
 		return mainJoystick;
 	}
 
 	@Override
-	public InputPart rotateAxis() {
+	public InputPart getRotateAxis() {
 		return rotateAxis;
 	}
 
 	@Override
-	public InputPart fireButton() {
+	public InputPart getFireButton() {
 		return fireButton;
 	}
 
 	@Override
-	public InputPart slow() {
+	public InputPart getSlowButton() {
 		return slow;
 	}
 
 	@Override
-	public InputPart activatePowerup() {
+	public InputPart getActivatePowerup() {
 		return activatePowerup;
 	}
 
 	@Override
-	public InputPart startButton() {
+	public InputPart getStartButton() {
 		return startButton;
+	}
+
+	@Override
+	public InputPart getPauseButton() {
+		return pauseButton;
+	}
+
+	@Override
+	public InputPart getBackButton() {
+		return backButton;
 	}
 
 	@Override

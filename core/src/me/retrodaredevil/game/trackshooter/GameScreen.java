@@ -60,8 +60,9 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doUpdate(float delta){
-		renderParts.getOptionsMenu().setToController(null); // stop displaying options menu
+		renderParts.getOptionsMenu().closeMenu(); // stop displaying options menu
 		world.update(delta, world);
+		renderParts.getOverlay().update(delta, world);
 //		stage.getViewport().apply(true);
 
 

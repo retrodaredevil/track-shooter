@@ -12,13 +12,15 @@ import me.retrodaredevil.controller.types.RumbleCapableController;
  */
 public interface GameInput extends ControllerInput, RumbleCapableController, ConfigurableControllerPart {
 	/** @return main joystick that controls movement */
-	JoystickPart mainJoystick();
+	JoystickPart getMainJoystick();
 //	SimpleJoystickPart rotateJoystick();
 	/** @return The rotate InputPart where a positive position turns clockwise and negative turns counter clockwise*/
-	InputPart rotateAxis();
-	InputPart fireButton();
-	InputPart slow();
-	InputPart activatePowerup();
+	InputPart getRotateAxis();
+	InputPart getFireButton();
+	InputPart getSlowButton(); // maybe remove this entirely and refactor it into main joystick
+	InputPart getActivatePowerup();
 
-	InputPart startButton();
+	InputPart getStartButton();
+	InputPart getPauseButton();
+	InputPart getBackButton();
 }

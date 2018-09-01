@@ -29,8 +29,8 @@ public class PlayerController implements EntityController{
 		if(move instanceof OnTrackMoveComponent){
 			// ==== Track Movement ====
 			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) move;
-			JoystickPart movementJoy = gameInput.mainJoystick();
-			boolean slow = gameInput.slow().isDown();
+			JoystickPart movementJoy = gameInput.getMainJoystick();
+			boolean slow = gameInput.getSlowButton().isDown();
 			final float velocity;
 			if(!movementJoy.isDeadzone() || slow) {
 				float mult = slow ? .5f : 1;
@@ -65,7 +65,7 @@ public class PlayerController implements EntityController{
 			System.err.println("MoveComponent is not on track. Remove print statement if intended.");
 		}
 		// ==== Rotation ====
-		InputPart rotateAxis = gameInput.rotateAxis();
+		InputPart rotateAxis = gameInput.getRotateAxis();
 		double position = rotateAxis.getPosition();
 		if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
 			if(rotateAxis.getAxisType().isRangeOver()){
@@ -95,7 +95,7 @@ public class PlayerController implements EntityController{
 
 		// ==== Rumble and Shoot ====
 		ControllerRumble rumble = gameInput.getRumble();
-		if (gameInput.fireButton().isPressed()) {
+		if (gameInput.getFireButton().isPressed()) {
 			boolean didShoot = player.shootBullet(world, null) != null;
 			if(didShoot && rumble != null && rumble.isConnected()){
 				rumble.rumble(100, .5);
@@ -103,7 +103,7 @@ public class PlayerController implements EntityController{
 		}
 
 		// ==== Powerup ====
-		if(gameInput.activatePowerup().isPressed()){
+		if(gameInput.getActivatePowerup().isPressed()){
 			player.activatePowerup(world);
 		}
 	}
