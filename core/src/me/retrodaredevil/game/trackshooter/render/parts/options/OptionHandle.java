@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -20,6 +21,8 @@ public class OptionHandle {
 	private Label valueLabel = null;
 	private Actor container;
 
+	private boolean shouldSave = false;
+
 	OptionHandle(ControlOption controlOption, RenderObject renderObject){
 		this.controlOption = controlOption;
 		this.renderObject = renderObject;
@@ -28,12 +31,10 @@ public class OptionHandle {
 		if(value.isOptionValueBoolean()){
 			checkBox = new CheckBox(controlOption.getLabel(), renderObject.getUISkin());
 			slider = null;
-			checkBox.setChecked(value.getBooleanOptionValue());
 		} else {
 			checkBox = null;
 			slider = new Slider((float) value.getMinOptionValue(), (float) value.getMaxOptionValue(),
-					value.isOptionAnalog() ? .1f : 1, false, renderObject.getUISkin());
-			slider.setValue((float) value.getOptionValue());
+					value.isOptionAnalog() ? .05f : 1, false, renderObject.getUISkin());
 		}
 	}
 
@@ -41,12 +42,18 @@ public class OptionHandle {
 	 * Creates a new row after adding needed actors
 	 * @param table The table
 	 */
-	public void init(Table table){
+	public void init(Table table, Preferences preferences){
+		OptionValueObject value = controlOption.getOptionValueObject();
+		float savedValue = preferences.getFloat(getKey(), (float) value.getDefaultOptionValue());
+//		System.out.println("saved value: " + savedValue);
+		value.setOptionValue(savedValue);
+
 		if(checkBox != null){
+			checkBox.setChecked(value.getBooleanOptionValue());
 			table.add(checkBox);
 			this.container = checkBox;
 		} else {
-			OptionValueObject value = controlOption.getOptionValueObject();
+			slider.setValue(savedValue);
 			Table container = new Table();
 			this.container = container;
 			valueLabel = new Label("", renderObject.getUISkin());
@@ -62,15 +69,21 @@ public class OptionHandle {
 		table.row();
 	}
 
-	public void update(){
+	public void update(Preferences preferences){
 		if(valueLabel != null) {
 			valueLabel.setText("(" + getNumberText(controlOption.getOptionValueObject().getOptionValue()) + ")");
 		}
 		OptionValueObject value = controlOption.getOptionValueObject();
-		if(checkBox != null){
-			value.setOptionValue(checkBox.isChecked() ? 1 : 0);
-		} else {
-			value.setOptionValue(slider.getValue());
+		double originalValue = value.getOptionValue();
+		double newValue = (checkBox != null ? (checkBox.isChecked()?1:0) : slider.getValue());
+		value.setOptionValue(newValue);
+		if(originalValue != newValue){
+			shouldSave = true;
+		}
+		if(shouldSave && !isOver()){
+			preferences.putFloat(getKey(),(float) originalValue);
+			preferences.flush();
+			shouldSave = false;
 		}
 	}
 	private String getNumberText(double number){
@@ -79,6 +92,15 @@ public class OptionHandle {
 			return "" + ((int) Math.round(number * 100)) + "%";
 		}
 		return "" + ((int) Math.round(number));
+	}
+	private String getKey(){
+		return controlOption.getCategory() + "." + controlOption.getLabel();
+	}
+	private boolean isOver(){
+		if(checkBox != null){
+			return checkBox.isOver();
+		}
+		return slider.isDragging();
 	}
 	public void reset(){
 		OptionValueObject value = controlOption.getOptionValueObject();
@@ -90,7 +112,7 @@ public class OptionHandle {
 		if(container == null){
 			throw new NullPointerException("Cannot remove because container was not initialized.");
 		}
-		container.remove();
+		container.remove(); // TODO I don't think this will work. Might have to clear children
 		System.out.println("removed OptionHandle");
 	}
 }

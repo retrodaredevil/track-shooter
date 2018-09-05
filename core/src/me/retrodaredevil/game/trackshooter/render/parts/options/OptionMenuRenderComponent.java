@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
-import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -22,6 +23,7 @@ public class OptionMenuRenderComponent implements RenderComponent {
 	private final GameInput menuController;
 
 	private final Table table;
+	private final Preferences optionPreferences;
 	private final Map<ControlOption, OptionHandle> handleMap = new HashMap<>();
 
 	private boolean disposed = false;
@@ -35,6 +37,8 @@ public class OptionMenuRenderComponent implements RenderComponent {
 
 		table = new Table();
 		table.setFillParent(true);
+
+		optionPreferences = Gdx.app.getPreferences("options");
 	}
 	@Override
 	public void render(float delta, Stage stage) {
@@ -53,10 +57,10 @@ public class OptionMenuRenderComponent implements RenderComponent {
 			if(handle == null){
 				handle = new OptionHandle(option, renderObject);
 				handleMap.put(option, handle);
-				handle.init(table);
+				handle.init(table, optionPreferences);
 			}
 			handledOptions.add(handle);
-			handle.update();
+			handle.update(optionPreferences);
 		}
 		for(OptionHandle handle : handleMap.values()){
 			if(!handledOptions.contains(handle)){

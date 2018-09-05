@@ -15,6 +15,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	private final boolean testForAllPointers, yAxis, needsDrag, needsTouchScreenForConnection, useDeltaMethods;
 	private final float multiplier;
 	private final OptionValueObject multiplierOption;
+	private final OptionValueObject isInvertedBooleanOption; // may be null
 	private final Rectangle proportionalScreenArea;
 
 	private int lastPosition = 0; // only changed if useDeltaMethods == false and testForAllPointers == false
@@ -39,13 +40,15 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	 *                        setting this to false is a better option otherwise setting to true may be more optimised.
 	 */
 	public GdxMouseAxis(boolean testForAllPointers, boolean yAxis, boolean needsDrag, float multiplier, OptionValueObject multiplierOption,
-						boolean needsTouchScreenForConnection, Rectangle proportionalScreenArea, boolean useDeltaMethods) {
+						OptionValueObject isInvertedBooleanOption, boolean needsTouchScreenForConnection,
+						Rectangle proportionalScreenArea, boolean useDeltaMethods) {
 		super(new AxisType(true, true, true, false), false);
 		this.testForAllPointers = testForAllPointers;
 		this.yAxis = yAxis;
 		this.needsDrag = needsDrag;
 		this.multiplier = multiplier;
 		this.multiplierOption = multiplierOption;
+		this.isInvertedBooleanOption = isInvertedBooleanOption;
 		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
 		this.proportionalScreenArea = proportionalScreenArea == null ? null : new Rectangle(proportionalScreenArea);
 		this.useDeltaMethods = useDeltaMethods;
@@ -62,18 +65,24 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	/**
 	 * Creates a GdxMouseAxis used for just a mouse
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption){
-		this(false, yAxis, false, multiplier, multiplierOption, false, null, false);
+	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption, OptionValueObject isInvertedBooleanOption){
+		this(false, yAxis, false, multiplier, multiplierOption, isInvertedBooleanOption, false, null, false);
 	}
 
 	/**
 	 * Creates a GdxMouseAxis used for dragging in a certain area of the screen
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption, Rectangle proportionalScreenArea){
-		this(true, yAxis, true, multiplier, multiplierOption, true, proportionalScreenArea, true);
+	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption,
+						OptionValueObject isInvertedBooleanOption, Rectangle proportionalScreenArea){
+		this(true, yAxis, true, multiplier, multiplierOption, isInvertedBooleanOption,
+				true, proportionalScreenArea, true);
 	}
 	private float getMultiplier(){
-		return multiplier * (float) multiplierOption.getOptionValue();
+		float inverted = 1;
+		if(isInvertedBooleanOption != null){
+			inverted = isInvertedBooleanOption.getBooleanOptionValue() ? -1 : 1;
+		}
+		return multiplier * (float) multiplierOption.getOptionValue() * inverted;
 	}
 
 	@Override

@@ -31,6 +31,8 @@ public class World implements Updateable, Renderable {
 
 	private final RenderComponent renderComponent;
 
+	private float timeInSeconds = 0;
+
 	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject){
 		this.levelGetter = levelGetter;
 		this.renderObject = renderObject;
@@ -45,6 +47,7 @@ public class World implements Updateable, Renderable {
 
 	@Override
 	public void update(float delta, World theWorld) {
+		timeInSeconds += delta;
 		assert theWorld == this || theWorld == null;
 		if(level == null || level.isDone()){
 			level = levelGetter.nextLevel();
@@ -111,6 +114,10 @@ public class World implements Updateable, Renderable {
 	@Override
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
+	}
+
+	public float getTimeInSeconds(){
+		return timeInSeconds;
 	}
 
 	/**

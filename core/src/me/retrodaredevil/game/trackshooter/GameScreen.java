@@ -21,7 +21,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class GameScreen extends ScreenAdapter {
 
 //	private final GameInput gameInput;
-	private final List<Player> players = new ArrayList<>(); // elements may be removed
+	private final List<Player> players = new ArrayList<>(); // elements may be removed // initialized in constructor
+	private final List<GameInput> gameInputs;
 	private final Stage stage;
 	private final World world;
 
@@ -29,9 +30,10 @@ public class GameScreen extends ScreenAdapter {
 	private final RenderParts renderParts;
 
 	private boolean shouldExit = false;
+	private boolean paused = false;
 
 	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
-//		this.gameInput = gameInputs.get(0);
+		this.gameInputs = gameInputs;
 		this.world = new World(new GameLevelGetter(players), 18, 18, renderObject);
 		this.stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 		this.renderParts = renderParts;
@@ -60,9 +62,18 @@ public class GameScreen extends ScreenAdapter {
 
 	}
 	private void doUpdate(float delta){
+		for(GameInput input : gameInputs){
+			if(input.getPauseButton().isPressed()){
+				paused = !paused; // TODO even when paused, the current time still increments
+				break;
+			}
+		}
 		renderParts.getOptionsMenu().closeMenu(); // stop displaying options menu
-		world.update(delta, world);
 		renderParts.getOverlay().update(delta, world);
+		if(paused){
+			return;
+		}
+		world.update(delta, world);
 //		stage.getViewport().apply(true);
 
 

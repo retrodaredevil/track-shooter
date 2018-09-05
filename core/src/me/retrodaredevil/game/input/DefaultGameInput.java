@@ -81,13 +81,16 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
 		final OptionValueObject mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.2, 2, 1);
+		final OptionValueObject mouseInvert = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier));
+		options.add(new ControlOption("Invert Rotation", "Should the rotation be inverted",
+				"controls.all.mouse", mouseInvert));
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen)) {
-			rotateAxis = new GdxMouseAxis(true, -5.0f, mouseMultiplier, new Rectangle(.5f, 0, .5f, 1));
+			rotateAxis = new GdxMouseAxis(true, -5.0f, mouseMultiplier, mouseInvert, new Rectangle(.5f, 0, .5f, 1));
 			fireButton = new GdxScreenTouchButton(new Rectangle(0, 0, .5f, 1));
 		} else {
-			rotateAxis = new GdxMouseAxis(false, 1.0f, mouseMultiplier);
+			rotateAxis = new GdxMouseAxis(false, 1.0f, mouseMultiplier, mouseInvert);
 			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		}
 		startButton = new KeyInputPart(Input.Keys.ENTER);
