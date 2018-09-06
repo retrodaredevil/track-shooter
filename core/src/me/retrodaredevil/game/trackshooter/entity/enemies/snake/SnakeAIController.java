@@ -26,7 +26,7 @@ public class SnakeAIController implements EntityController {
 		}
 		Level level = world.getLevel();
 		if(level.getMode() == LevelMode.NORMAL){
-			if(level.getModeTime() >= 35000){
+			if(level.getModeTimeMillis() >= 35000){
 				part.switchToManualTarget(target.getX(), target.getY());
 			} else {
 				part.switchToSmartSight(target);

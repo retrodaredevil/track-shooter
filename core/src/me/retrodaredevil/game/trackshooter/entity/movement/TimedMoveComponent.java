@@ -22,9 +22,12 @@ public class TimedMoveComponent extends SimpleMoveComponent{
 
 	@Override
 	protected void onStart(World world) {
-		startTime = System.currentTimeMillis();
+		startTime = world.getTimeMillis();
 	}
-
+	@Override
+	protected void onUpdate(float delta, World world) {
+		done = startTime + time <= world.getTimeMillis();
+	}
 	@Override
 	protected void onEnd() {
 		startTime = null;
@@ -32,12 +35,7 @@ public class TimedMoveComponent extends SimpleMoveComponent{
 
 	@Override
 	public boolean isDone() {
-		done = startTime != null && startTime + time <= System.currentTimeMillis();
 		return super.isDone();
 	}
 
-	@Override
-	protected void onUpdate(float delta, World world) {
-		assert startTime != null : "start wasn't called";
-	}
 }

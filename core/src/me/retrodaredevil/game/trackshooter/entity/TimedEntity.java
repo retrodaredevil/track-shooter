@@ -20,12 +20,12 @@ public class TimedEntity extends SimpleEntity {
 	public void update(float delta, World world) {
 		super.update(delta, world);
 		if(startTime == null){
-			startTime = System.currentTimeMillis();
+			startTime = world.getTimeMillis();
 		}
 	}
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return startTime != null && startTime + time <= System.currentTimeMillis();
+		return startTime != null && startTime + time <= world.getTimeMillis();
 	}
 }

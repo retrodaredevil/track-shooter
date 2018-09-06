@@ -57,10 +57,9 @@ public class OptionMenuRenderComponent implements RenderComponent {
 			if(handle == null){
 				handle = new OptionHandle(option, renderObject);
 				handleMap.put(option, handle);
-				handle.init(table, optionPreferences);
 			}
 			handledOptions.add(handle);
-			handle.update(optionPreferences);
+			handle.update(table, optionPreferences);
 		}
 		for(OptionHandle handle : handleMap.values()){
 			if(!handledOptions.contains(handle)){

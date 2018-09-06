@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.effect;
 
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public interface Effect extends Updateable {
 	/**
@@ -15,5 +16,5 @@ public interface Effect extends Updateable {
 	 *
 	 * @return A number from 0 to 1 where 1 is done and 0 is not close to done OR 1 is out of ammo and 0 is full ammo etc.
 	 */
-	float percentDone();
+	float percentDone(World world);
 }

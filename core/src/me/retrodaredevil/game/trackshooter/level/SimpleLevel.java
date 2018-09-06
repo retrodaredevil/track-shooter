@@ -14,10 +14,12 @@ public abstract class SimpleLevel implements Level {
 
 	private final int number;
 	private final Track track;
-	private Long startTime = null;
+//	private Long startTime = null;
+	private float time = 0;
 
 	private LevelMode mode = null; // initialized in first call to update()
-	private Long modeStartTime = null; // changed and first initialized in setMode()
+//	private Long modeStartTime = null; // changed and first initialized in setMode()
+	private float modeTime = 0; // reset when mode changes
 
 	private final List<Entity> entityList = new ArrayList<>(); // list of entities handled by the level
 
@@ -41,10 +43,10 @@ public abstract class SimpleLevel implements Level {
 	@Override
 	public void update(float delta, World world) {
 		assert !done : "Level wasn't terminated correctly!";
-
-		final boolean firstRun = startTime == null;
+		final boolean firstRun = time == 0;
+		time += delta;
+		modeTime += delta;
 		if(firstRun){
-			startTime = System.currentTimeMillis();
 			assert mode == null;
 			setMode(LevelMode.RESET);
 			onStart(world);
@@ -115,7 +117,7 @@ public abstract class SimpleLevel implements Level {
 	}
 
 	protected boolean isStarted(){
-		return startTime != null;
+		return time != 0;
 	}
 
 	@Override
@@ -149,7 +151,7 @@ public abstract class SimpleLevel implements Level {
 		if(mode != this.mode){
 			LevelMode previousMode = this.mode;
 			this.mode = mode;
-			modeStartTime = System.currentTimeMillis();
+			modeTime = 0;
 			onModeChange(mode, previousMode);
 			for(LevelFunction function : functions){
 				function.onModeChange(this, mode, previousMode);
@@ -162,11 +164,13 @@ public abstract class SimpleLevel implements Level {
 	}
 
 	@Override
-	public long getModeTime() {
-		if(modeStartTime == null || getMode() == null){
-			throw new IllegalStateException();
-		}
-		return System.currentTimeMillis() - modeStartTime;
+	public long getModeTimeMillis() {
+		return (long) (modeTime * 1000L);
+	}
+
+	@Override
+	public float getModeTime() {
+		return modeTime;
 	}
 
 	@Override
@@ -182,11 +186,12 @@ public abstract class SimpleLevel implements Level {
 	protected abstract void onModeChange(LevelMode mode, LevelMode previousMode);
 
 	@Override
-	public long getLevelTime(){
-		if(startTime == null){
-			return -1;
-		}
-		return System.currentTimeMillis() - startTime;
+	public long getLevelTimeMillis(){
+		return (long) (time * 1000L);
+	}
+	@Override
+	public float getLevelTime(){
+		return time;
 	}
 
 }

@@ -42,7 +42,7 @@ public class SharkAIController implements EntityController {
 		MoveComponent moveComponent = shark.getMoveComponent();
 		if(moveComponent instanceof TargetPositionMoveComponent){
 			TargetPositionMoveComponent pointMove = (TargetPositionMoveComponent) moveComponent;
-			long time = System.currentTimeMillis();
+			long time = world.getTimeMillis();
 			double offset = time / 1000D;
 			offset %= world.getTrack().getTotalDistance();
 			offset *= timeMultiplier;

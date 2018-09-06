@@ -28,7 +28,7 @@ public class SnakeFunction implements LevelFunction {
 		if(level.getMode() != LevelMode.NORMAL){
 			return false;
 		}
-		long time = level.getModeTime();
+		long time = level.getModeTimeMillis();
 		if(time < 10000){
 			return false;
 		}

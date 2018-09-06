@@ -10,7 +10,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValueObject;
 import me.retrodaredevil.game.trackshooter.RenderObject;
-import me.retrodaredevil.game.trackshooter.util.StringUtil;
 
 public class OptionHandle {
 	private final ControlOption controlOption;
@@ -21,6 +20,7 @@ public class OptionHandle {
 	private Label valueLabel = null;
 	private Actor container;
 
+	private boolean initialized = false;
 	private boolean shouldSave = false;
 
 	OptionHandle(ControlOption controlOption, RenderObject renderObject){
@@ -42,7 +42,11 @@ public class OptionHandle {
 	 * Creates a new row after adding needed actors
 	 * @param table The table
 	 */
-	public void init(Table table, Preferences preferences){
+	private void tryInit(Table table, Preferences preferences){
+		if(initialized){
+			return;
+		}
+		initialized = true;
 		OptionValueObject value = controlOption.getOptionValueObject();
 		float savedValue = preferences.getFloat(getKey(), (float) value.getDefaultOptionValue());
 //		System.out.println("saved value: " + savedValue);
@@ -69,7 +73,8 @@ public class OptionHandle {
 		table.row();
 	}
 
-	public void update(Preferences preferences){
+	public void update(Table table, Preferences preferences){
+		tryInit(table, preferences);
 		if(valueLabel != null) {
 			valueLabel.setText("(" + getNumberText(controlOption.getOptionValueObject().getOptionValue()) + ")");
 		}
@@ -80,7 +85,7 @@ public class OptionHandle {
 		if(originalValue != newValue){
 			shouldSave = true;
 		}
-		if(shouldSave && !isOver()){
+		if(shouldSave && !isInteractingWith()){
 			preferences.putFloat(getKey(),(float) originalValue);
 			preferences.flush();
 			shouldSave = false;
@@ -96,23 +101,31 @@ public class OptionHandle {
 	private String getKey(){
 		return controlOption.getCategory() + "." + controlOption.getLabel();
 	}
-	private boolean isOver(){
+	private boolean isInteractingWith(){
 		if(checkBox != null){
-			return checkBox.isOver();
+//			return checkBox.isOver();
+			return checkBox.isPressed();
 		}
 		return slider.isDragging();
 	}
+
+	/**
+	 * Should reset the control option to its default value
+	 */
 	public void reset(){
 		OptionValueObject value = controlOption.getOptionValueObject();
 		value.setToDefaultOptionValue();
 	}
 
-
+	/**
+	 * Should make this OptionHandle invisible and should remove it from the table
+	 */
 	public void remove() {
 		if(container == null){
 			throw new NullPointerException("Cannot remove because container was not initialized.");
 		}
-		container.remove(); // TODO I don't think this will work. Might have to clear children
+		container.remove();
+		initialized = false;
 		System.out.println("removed OptionHandle");
 	}
 }

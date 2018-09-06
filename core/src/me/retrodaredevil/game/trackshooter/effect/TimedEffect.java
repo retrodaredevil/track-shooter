@@ -17,17 +17,17 @@ public abstract class TimedEffect implements Effect {
 	}
 
 	@Override
-	public float percentDone() {
+	public float percentDone(World world) {
 		if(startTime == null){
 			return 1;
 		}
-		float r = (float) (System.currentTimeMillis() - startTime) / timeLast;
-		return Math.min(1, r);
+		double r = (world.getTimeMillis() - startTime) / (double) timeLast;
+		return (float) Math.min(1, r);
 	}
 
 	@Override
 	public void update(float delta, World world) {
-		long now = System.currentTimeMillis();
+		long now = world.getTimeMillis();
 		if(startTime == null){
 			startTime = now;
 			onStart(world);

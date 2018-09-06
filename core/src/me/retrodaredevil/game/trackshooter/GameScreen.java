@@ -96,7 +96,7 @@ public class GameScreen extends ScreenAdapter {
 
 		if(!players.isEmpty()){
 			if(mode == LevelMode.STANDBY){
-				long time = level.getModeTime();
+				long time = level.getModeTimeMillis();
 				if(time > 750){
 					for(Player player : players){
 						if(player.isRemoved()){
@@ -112,7 +112,7 @@ public class GameScreen extends ScreenAdapter {
 			if(mode == LevelMode.NORMAL){
 				level.setMode(LevelMode.RESET);
 			} else if (mode == LevelMode.STANDBY) { // all enemies have returned to start
-				if (level.getModeTime() > 4000) {
+				if (level.getModeTimeMillis() > 4000) {
 					shouldExit = true;
 					System.out.println("Exiting game.");
 					for(Player player : players){

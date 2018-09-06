@@ -21,7 +21,7 @@ public abstract class PowerupFunction implements LevelFunction {
 	@Override
 	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
 		Level level = world.getLevel();
-		long modeTime = level.getModeTime();
+		long modeTime = level.getModeTimeMillis();
 		if(powerup != null){
 			if(powerup.isRemoved()){
 				return true; // the powerup must have been eaten so we are done here

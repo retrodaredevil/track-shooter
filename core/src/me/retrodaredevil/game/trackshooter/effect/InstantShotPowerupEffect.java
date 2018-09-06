@@ -21,7 +21,7 @@ public class InstantShotPowerupEffect implements Effect {
 	}
 
 	@Override
-	public float percentDone() {
+	public float percentDone(World world) {
 		return done ? 1 : 0; // likely will always be 0 but we'll put this line here just in case
 	}
 

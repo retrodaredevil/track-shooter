@@ -76,18 +76,6 @@ public class Player extends SimpleEntity {
 	@Override
 	public void update(float delta, World world) {
 		super.update(delta, world);
-
-//		 old code that changes the shotType every 10 / ShotType.values().length seconds
-//		long now = System.currentTimeMillis();
-//		float percent = (now % 10000) / 10000.0f;
-//		Bullet.ShotType[] values = Bullet.ShotType.values();
-//		float between = 1.0f / (values.length);
-//		for(int i = 0; i < values.length; i++){
-//			if((i + 1) * between >= percent){
-//				this.shotType = values[i];
-//				break;
-//			}
-//		}
 	}
 
 
@@ -169,7 +157,7 @@ public class Player extends SimpleEntity {
 			case FULL:
 				final float speed = Constants.BULLET_SPEED;
 				final float SPACE_BETWEEN = 360.0f / FULL_BULLETS;
-				float offset = (float) ((System.currentTimeMillis() / 30.0) % 360.0);
+				float offset = (float) ((world.getTimeMillis() / 30.0) % 360.0);
 				offset += SPACE_BETWEEN * MathUtils.random(FULL_BULLETS); // make it so the first bullet is random
 				for(int i = 0; i < FULL_BULLETS; i++){
 					float rotation = i * SPACE_BETWEEN;

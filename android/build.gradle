@@ -46,7 +46,7 @@ android {
     }
     defaultConfig {
         applicationId "me.retrodaredevil.game.trackshooter"
-        minSdkVersion 24
+        minSdkVersion 19 // 24
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

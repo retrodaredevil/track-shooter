@@ -116,8 +116,16 @@ public class World implements Updateable, Renderable {
 		return renderComponent;
 	}
 
-	public float getTimeInSeconds(){
+	/**
+	 *
+	 * @return The number of seconds this world has been active
+	 */
+	public float getTime(){
 		return timeInSeconds;
+	}
+
+	public long getTimeMillis(){
+		return (long) (timeInSeconds * 1000L);
 	}
 
 	/**
@@ -127,7 +135,13 @@ public class World implements Updateable, Renderable {
 	 */
 	public static void updateEntityList(List<? extends Entity> entities){
 		if(!entities.isEmpty()){
-			entities.removeIf(Entity::isRemoved);
+//			entities.removeIf(Entity::isRemoved);
+			for(Iterator<? extends Entity> it = entities.iterator(); it.hasNext();){
+				Entity entity = it.next();
+				if(entity.isRemoved()){
+					it.remove();
+				}
+			}
 		}
 	}
 }
