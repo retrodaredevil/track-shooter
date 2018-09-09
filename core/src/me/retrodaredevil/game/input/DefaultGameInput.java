@@ -22,7 +22,6 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
-import me.retrodaredevil.game.trackshooter.util.GdxUtil;
 
 public class DefaultGameInput extends SimpleControllerPart implements GameInput {
 	private final JoystickPart mainJoystick;
@@ -80,7 +79,7 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
-		final OptionValueObject mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.2, 2, 1);
+		final OptionValueObject mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.5, 2, 1);
 		final OptionValueObject mouseInvert = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier));

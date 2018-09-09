@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.render.parts.options;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
@@ -19,7 +20,7 @@ public class OptionMenu implements Renderable, InputFocusable {
 	public OptionMenu(RenderObject renderObject) {
 		this.renderObject = renderObject;
 
-		this.preferredStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
+		this.preferredStage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
 	}
 
 	@Override

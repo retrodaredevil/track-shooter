@@ -62,11 +62,11 @@ public class OptionHandle {
 			this.container = container;
 			valueLabel = new Label("", renderObject.getUISkin());
 
-			container.add(new Label(getNumberText(value.getMinOptionValue()), renderObject.getUISkin())).width(50);
-			container.add(slider).width(160);
-			container.add(new Label(getNumberText(value.getMaxOptionValue()), renderObject.getUISkin())).width(50);
-			container.add(valueLabel).width(70);
-			container.add(new Label("" + controlOption.getLabel(), renderObject.getUISkin())).width(260);
+			container.add(valueLabel).width(80);
+//			container.add(new Label(getNumberText(value.getMinOptionValue()), renderObject.getUISkin())).width(45);
+			container.add(slider).width(120);
+//			container.add(new Label(getNumberText(value.getMaxOptionValue()), renderObject.getUISkin())).width(45);
+			container.add(new Label("" + controlOption.getLabel(), renderObject.getUISkin())).width(200);
 
 			table.add(container).center();
 		}
@@ -76,7 +76,7 @@ public class OptionHandle {
 	public void update(Table table, Preferences preferences){
 		tryInit(table, preferences);
 		if(valueLabel != null) {
-			valueLabel.setText("(" + getNumberText(controlOption.getOptionValueObject().getOptionValue()) + ")");
+			valueLabel.setText(getNumberText(controlOption.getOptionValueObject().getOptionValue()));
 		}
 		OptionValueObject value = controlOption.getOptionValueObject();
 		double originalValue = value.getOptionValue();

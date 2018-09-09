@@ -42,7 +42,8 @@ public class GameMain extends Game {
 		Batch batch = new SpriteBatch();
 		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
 		Resources.loadToSkin(skin);
-		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
+//		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
+		Skin uiSkin = new Skin(Gdx.files.internal("skins/sgx/sgx-ui.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin);
 		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject), new Overlay(renderObject));
 		controllerManager = new DefaultControllerManager();
