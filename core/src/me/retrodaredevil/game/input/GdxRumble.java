@@ -10,13 +10,13 @@ import java.util.Collections;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
 public class GdxRumble extends SimpleControllerPart implements ControllerRumble, ConfigurableControllerPart {
-	private final OptionValueObject simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
-	private final OptionValueObject enableRumbleOption = OptionValues.createBooleanOptionValue(true);
+	private final OptionValue simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
+	private final OptionValue enableRumbleOption = OptionValues.createBooleanOptionValue(true);
 	private final ControlOption simulateAnalogControlOption = new ControlOption("Simulate Analog Rumble",
 					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", "output.rumble.simulateAnalog", simulateAnalogOption);
 	private final ControlOption enableRumbleControlOption = new ControlOption("Enable Rumble", "Should the rumble/vibrator be enabled", "output.rumble.enable", enableRumbleOption);

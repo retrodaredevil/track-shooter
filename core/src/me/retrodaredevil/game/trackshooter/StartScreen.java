@@ -45,7 +45,6 @@ public class StartScreen extends ScreenAdapter {
 	}
 	@Override
 	public void render(float delta) {
-		startButton.isOver();
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
 			System.out.println("options is down!");
 			renderParts.getOptionsMenu().setToController(gameInput, gameInput);

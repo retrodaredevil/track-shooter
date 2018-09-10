@@ -16,14 +16,14 @@ import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 
-public class DefaultGameInput extends SimpleControllerPart implements GameInput {
+public class DefaultGameInput extends SimpleControllerPart implements UsableGameInput {
 	private final JoystickPart mainJoystick;
 //	private final JoystickPart rotateJoystick;
 	private final InputPart rotateAxis;
@@ -79,8 +79,8 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		} else {
 			mainJoystick = FourKeyJoystick.newWASDJoystick();
 		}
-		final OptionValueObject mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.5, 2, 1);
-		final OptionValueObject mouseInvert = OptionValues.createBooleanOptionValue(false);
+		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.5, 2, 1);
+		final OptionValue mouseInvert = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier));
 		options.add(new ControlOption("Invert Rotation", "Should the rotation be inverted",
@@ -97,10 +97,11 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		if (Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard) || !Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer)) {
 			activatePowerup = new KeyInputPart(Input.Keys.F);
 		} else {
-			GdxShakeButton button = new GdxShakeButton();
+			OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 8);
+			GdxShakeButton button = new GdxShakeButton(shakeThresholdValue);
 			options.add(new ControlOption("Powerup Activate Shake Sensitivity",
 					"How much you have to shake the device to activate the powerup in m/s^2",
-					"controls.all.shake", button));
+					"controls.all.shake", shakeThresholdValue));
 			activatePowerup = button;
 		}
 		if(Gdx.app.getType() == Application.ApplicationType.Android){
@@ -130,6 +131,11 @@ public class DefaultGameInput extends SimpleControllerPart implements GameInput 
 		if(rumble != null){
 			addChildren(Collections.singletonList(rumble), false, false);
 		}
+	}
+
+	@Override
+	public String getRadioOptionName() {
+		return "Temporary Radio Option Name";
 	}
 
 	@Override

@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.RenderObject;
 
 public class OptionHandle {
@@ -27,7 +27,7 @@ public class OptionHandle {
 		this.controlOption = controlOption;
 		this.renderObject = renderObject;
 
-		OptionValueObject value = controlOption.getOptionValueObject();
+		OptionValue value = controlOption.getOptionValue();
 		if(value.isOptionValueBoolean()){
 			checkBox = new CheckBox(controlOption.getLabel(), renderObject.getUISkin());
 			slider = null;
@@ -47,7 +47,7 @@ public class OptionHandle {
 			return;
 		}
 		initialized = true;
-		OptionValueObject value = controlOption.getOptionValueObject();
+		OptionValue value = controlOption.getOptionValue();
 		float savedValue = preferences.getFloat(getKey(), (float) value.getDefaultOptionValue());
 //		System.out.println("saved value: " + savedValue);
 		value.setOptionValue(savedValue);
@@ -76,9 +76,9 @@ public class OptionHandle {
 	public void update(Table table, Preferences preferences){
 		tryInit(table, preferences);
 		if(valueLabel != null) {
-			valueLabel.setText(getNumberText(controlOption.getOptionValueObject().getOptionValue()));
+			valueLabel.setText(getNumberText(controlOption.getOptionValue().getOptionValue()));
 		}
-		OptionValueObject value = controlOption.getOptionValueObject();
+		OptionValue value = controlOption.getOptionValue();
 		double originalValue = value.getOptionValue();
 		double newValue = (checkBox != null ? (checkBox.isChecked()?1:0) : slider.getValue());
 		value.setOptionValue(newValue);
@@ -92,7 +92,7 @@ public class OptionHandle {
 		}
 	}
 	private String getNumberText(double number){
-		OptionValueObject value = controlOption.getOptionValueObject();
+		OptionValue value = controlOption.getOptionValue();
 		if(value.isOptionAnalog()){
 			return "" + ((int) Math.round(number * 100)) + "%";
 		}
@@ -113,7 +113,7 @@ public class OptionHandle {
 	 * Should reset the control option to its default value
 	 */
 	public void reset(){
-		OptionValueObject value = controlOption.getOptionValueObject();
+		OptionValue value = controlOption.getOptionValue();
 		value.setToDefaultOptionValue();
 	}
 

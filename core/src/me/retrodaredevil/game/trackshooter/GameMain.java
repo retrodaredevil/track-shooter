@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -18,9 +19,11 @@ import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.types.StandardControllerInput;
+import me.retrodaredevil.game.input.ChangeableGameInput;
 import me.retrodaredevil.game.input.DefaultGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
+import me.retrodaredevil.game.input.UsableGameInput;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
 import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
@@ -52,14 +55,22 @@ public class GameMain extends Game {
 			StandardControllerInput standardController = new StandardUSBControllerInput(controller);
 //			controllerManager.addController(standardController);
 
-			GameInput controllerInput = new DefaultGameInput(standardController);
-			inputs.add(controllerInput);
+			UsableGameInput controllerInput = new DefaultGameInput(standardController);
+//			inputs.add(controllerInput);
+			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(controllerInput));
+			inputs.add(realGameInput);
 			controllerManager.addController(controllerInput);
+			controllerManager.addController(realGameInput);
+
 		}
 		if(inputs.isEmpty()) { // use keyboard and mouse as a last resort
-			GameInput keyboardInput = new DefaultGameInput();
-			inputs.add(keyboardInput);
+			UsableGameInput keyboardInput = new DefaultGameInput();
+//			inputs.add(keyboardInput);
+			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(keyboardInput));
+			inputs.add(realGameInput);
 			controllerManager.addController(keyboardInput);
+			controllerManager.addController(realGameInput);
+
 		}
 
 //		Gdx.app.setLogLevel(Application.LOG_ERROR);

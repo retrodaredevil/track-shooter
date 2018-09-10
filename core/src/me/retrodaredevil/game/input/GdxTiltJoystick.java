@@ -12,12 +12,12 @@ import me.retrodaredevil.controller.input.JoystickType;
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableControllerPart {
-	private final OptionValueObject maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 70, 15);
+	private final OptionValue maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 70, 15);
 	private double x, y;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);

@@ -5,31 +5,24 @@ import com.badlogic.gdx.Input;
 
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.controller.options.OptionValueObject;
-
-import static java.lang.Math.sqrt;
+import me.retrodaredevil.controller.options.OptionValue;
 
 /**
  * This class does not implement {@link me.retrodaredevil.controller.options.ConfigurableControllerPart} because
  * it has many use cases and the label and description may vary from use case to use case.
  */
-public class GdxShakeButton extends AutoCachingInputPart implements OptionValueObject{
+public class GdxShakeButton extends AutoCachingInputPart {
 
-	private int threshold;
+//	private int threshold;
+	private final OptionValue thresholdValue;
 
-	public GdxShakeButton(Integer threshold) {
+	/**
+	 *
+	 * @param thresholdValue The OptionValue representing how much you have to shake it in m/s. Recommended range is [3, 16] with default of 8
+	 */
+	public GdxShakeButton(OptionValue thresholdValue){
 		super(new AxisType(false, false), false);
-		if(threshold != null){
-			setOptionValue(threshold);
-		} else {
-			setToDefaultOptionValue();
-		}
-	}
-	public GdxShakeButton(int threshold){
-		this((Integer) threshold);
-	}
-	public GdxShakeButton(){
-		this(null);
+		this.thresholdValue = thresholdValue;
 	}
 
 
@@ -38,12 +31,12 @@ public class GdxShakeButton extends AutoCachingInputPart implements OptionValueO
 		float x = Gdx.input.getAccelerometerX();
 		float y = Gdx.input.getAccelerometerY();
 		float z = Gdx.input.getAccelerometerZ();
-//		float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
-		double magnitude = sqrt(sqrt(x * x + y * y) + z * z);
+		float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
+//		double magnitude = sqrt(sqrt(x * x + y * y) + z * z);
 		magnitude -= 9.8f;
 		// magnitude may be less than 0
 //		System.out.println("magnitude: " + magnitude);
-		return (magnitude >= threshold) ? 1 : 0;
+		return (magnitude >= thresholdValue.getOptionValue()) ? 1 : 0;
 	}
 
 	@Override
@@ -51,38 +44,4 @@ public class GdxShakeButton extends AutoCachingInputPart implements OptionValueO
 		return Gdx.input.isPeripheralAvailable(Input.Peripheral.Accelerometer);
 	}
 
-	@Override
-	public double getMaxOptionValue() {
-		return 16;
-	}
-
-	@Override
-	public double getMinOptionValue() {
-		return 3;
-	}
-
-	@Override
-	public boolean isOptionAnalog() {
-		return false;
-	}
-
-	@Override
-	public double getOptionValue() {
-		return threshold;
-	}
-
-	@Override
-	public void setOptionValue(double threshold) {
-		this.threshold = (int) threshold;
-	}
-
-	@Override
-	public double getDefaultOptionValue() {
-		return 8;
-	}
-
-	@Override
-	public void setToDefaultOptionValue() {
-		this.threshold = 8;
-	}
 }

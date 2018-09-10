@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.controller.options.OptionValueObject;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class GdxMouseAxis extends AutoCachingInputPart {
@@ -14,8 +14,8 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	private static final int TIME_FOR_MOUSE_CATCH_TIMEOUT = 500; // ms
 	private final boolean testForAllPointers, yAxis, needsDrag, needsTouchScreenForConnection, useDeltaMethods;
 	private final float multiplier;
-	private final OptionValueObject multiplierOption;
-	private final OptionValueObject isInvertedBooleanOption; // may be null
+	private final OptionValue multiplierOption;
+	private final OptionValue isInvertedBooleanOption; // may be null
 	private final Rectangle proportionalScreenArea;
 
 	private int lastPosition = 0; // only changed if useDeltaMethods == false and testForAllPointers == false
@@ -39,8 +39,8 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	 *                        and use that to determine how much the mouse has moved. For a mouse on desktop,
 	 *                        setting this to false is a better option otherwise setting to true may be more optimised.
 	 */
-	public GdxMouseAxis(boolean testForAllPointers, boolean yAxis, boolean needsDrag, float multiplier, OptionValueObject multiplierOption,
-						OptionValueObject isInvertedBooleanOption, boolean needsTouchScreenForConnection,
+	public GdxMouseAxis(boolean testForAllPointers, boolean yAxis, boolean needsDrag, float multiplier, OptionValue multiplierOption,
+						OptionValue isInvertedBooleanOption, boolean needsTouchScreenForConnection,
 						Rectangle proportionalScreenArea, boolean useDeltaMethods) {
 		super(new AxisType(true, true, true, false), false);
 		this.testForAllPointers = testForAllPointers;
@@ -65,15 +65,15 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	/**
 	 * Creates a GdxMouseAxis used for just a mouse
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption, OptionValueObject isInvertedBooleanOption){
+	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValue multiplierOption, OptionValue isInvertedBooleanOption){
 		this(false, yAxis, false, multiplier, multiplierOption, isInvertedBooleanOption, false, null, false);
 	}
 
 	/**
 	 * Creates a GdxMouseAxis used for dragging in a certain area of the screen
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValueObject multiplierOption,
-						OptionValueObject isInvertedBooleanOption, Rectangle proportionalScreenArea){
+	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValue multiplierOption,
+						OptionValue isInvertedBooleanOption, Rectangle proportionalScreenArea){
 		this(true, yAxis, true, multiplier, multiplierOption, isInvertedBooleanOption,
 				true, proportionalScreenArea, true);
 	}
