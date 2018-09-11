@@ -1,27 +1,29 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.Collection;
+
 public interface InputFocusable {
-	boolean isWantsToHandleInput();
+	boolean isWantsToFocus();
 
 	/**
 	 *
 	 * @return The input priority. A higher value represents a higher priority
 	 */
-	int getInputPriority();
+	int getFocusPriority();
 
-//	@Override
-//	default int compareTo(InputFocusable inputFocusRenderable){
-//		boolean selfWants = isWantsToHandleInput();
-//		boolean compareWants = inputFocusRenderable.isWantsToHandleInput();
-//		if(selfWants && !compareWants){
-//			return 1;
-//		} else if(!selfWants && compareWants){
-//			return -1;
-//		}
-//		return this.getInputPriority() - inputFocusRenderable.getInputPriority();
-//	}
+	/**
+	 * Called when it's going to focus on the {@link InputProcessor}s returned from {@link #getInputProcessorsToFocus(Stage)}
+	 * @param mainStage
+	 */
+	void onFocusGiven(Stage mainStage);
 
-	void giveInputFocus(Stage mainStage);
+
+	/**
+	 * @param mainStage The main stage. If you do not have an InputProcessor that you want to return, you should return this mainStage in a Collection
+	 * @return A Collection usually with a size of 1 representing the InputProcessor(s) that should gain focus
+	 */
+	Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage);
 }

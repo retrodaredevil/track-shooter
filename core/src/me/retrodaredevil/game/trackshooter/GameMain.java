@@ -1,7 +1,9 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.Controllers;
@@ -20,7 +22,8 @@ import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.ChangeableGameInput;
-import me.retrodaredevil.game.input.DefaultGameInput;
+import me.retrodaredevil.game.input.GameInputs;
+import me.retrodaredevil.game.input.OldGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.input.UsableGameInput;
@@ -48,14 +51,14 @@ public class GameMain extends Game {
 //		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
 		Skin uiSkin = new Skin(Gdx.files.internal("skins/sgx/sgx-ui.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin);
-		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject), new Overlay(renderObject));
+		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject), new Overlay(renderObject), new InputMultiplexer());
 		controllerManager = new DefaultControllerManager();
 		for(Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext();){
 			Controller controller = it.next();
 			StandardControllerInput standardController = new StandardUSBControllerInput(controller);
 //			controllerManager.addController(standardController);
 
-			UsableGameInput controllerInput = new DefaultGameInput(standardController);
+			UsableGameInput controllerInput = new OldGameInput(standardController);
 //			inputs.add(controllerInput);
 			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(controllerInput));
 			inputs.add(realGameInput);
@@ -64,11 +67,17 @@ public class GameMain extends Game {
 
 		}
 		if(inputs.isEmpty()) { // use keyboard and mouse as a last resort
-			UsableGameInput keyboardInput = new DefaultGameInput();
+			List<UsableGameInput> gameInputs = new ArrayList<>();
+			if(Gdx.app.getType() == Application.ApplicationType.Android){
+				gameInputs.add(GameInputs.createTouchGyroInput());
+			}
+			gameInputs.add(GameInputs.createKeyboardInput());
 //			inputs.add(keyboardInput);
-			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(keyboardInput));
+			GameInput realGameInput = new ChangeableGameInput(gameInputs);
 			inputs.add(realGameInput);
-			controllerManager.addController(keyboardInput);
+			for(UsableGameInput input : gameInputs){
+				controllerManager.addController(input);
+			}
 			controllerManager.addController(realGameInput);
 
 		}

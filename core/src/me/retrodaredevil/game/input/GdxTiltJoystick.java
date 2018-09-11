@@ -53,9 +53,35 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 	public void onUpdate() {
 		super.onUpdate();
 
+		// works in landscape mode
 		float gyroX = -Gdx.input.getPitch(); // up and down
 		float gyroY = Gdx.input.getRoll(); // side to side
-//		float gyroZ = Gdx.input.getAzimuth();
+
+//		System.out.println(Gdx.input.getRotation());
+		final float originalX = gyroX;
+		final float originalY = gyroY;
+		switch(Gdx.input.getRotation()){
+			case 90:
+				break; // landscape, good
+			case 0: // portrait
+				gyroX = originalY;
+				gyroY = -originalX;
+
+				break;
+			case 270: // landscape flipped
+				gyroX = -originalX;
+				gyroY = - originalY;
+
+				break;
+			case 180: // portrait flipped
+				gyroX = -originalY;
+				gyroY = originalX;
+
+				break;
+			default:
+				System.out.println("unknown rotation: " + Gdx.input.getRotation());
+				break;
+		}
 
 		x = degreesToFullAnalog(gyroX, maxDegreesOption.getOptionValue());
 		y = degreesToFullAnalog(gyroY, maxDegreesOption.getOptionValue());

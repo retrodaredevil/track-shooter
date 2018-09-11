@@ -53,8 +53,9 @@ public class StartScreen extends ScreenAdapter {
 		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
 			start = true;
 		}
-		InputFocuser focuser = new InputFocuser();
+		InputFocuser focuser = new InputFocuser(renderParts.getInputMultiplexer());
 		focuser.addInputFocus(renderParts.getOptionsMenu());
+//		focuser.addParallelInputProcessor(inputCancellerTester);
 		focuser.giveFocus(uiStage);
 
 		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);

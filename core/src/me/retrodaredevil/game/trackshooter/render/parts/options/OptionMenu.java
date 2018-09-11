@@ -1,15 +1,16 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+
+import java.util.Collection;
+import java.util.Collections;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.game.input.GameInput;
-import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
+import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
@@ -50,18 +51,23 @@ public class OptionMenu implements Renderable, InputFocusable {
 		return preferredStage;
 	}
 
+
 	@Override
-	public void giveInputFocus(Stage mainStage) {
-		Gdx.input.setInputProcessor(preferredStage);
+	public void onFocusGiven(Stage mainStage) {
 	}
 
 	@Override
-	public boolean isWantsToHandleInput() {
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+		return Collections.singleton(preferredStage);
+	}
+
+	@Override
+	public boolean isWantsToFocus() {
 		return renderComponent != null;
 	}
 
 	@Override
-	public int getInputPriority() {
+	public int getFocusPriority() {
 		return 0;
 	}
 }

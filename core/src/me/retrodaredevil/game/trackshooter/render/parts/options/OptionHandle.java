@@ -50,7 +50,11 @@ public class OptionHandle {
 		OptionValue value = controlOption.getOptionValue();
 		float savedValue = preferences.getFloat(getKey(), (float) value.getDefaultOptionValue());
 //		System.out.println("saved value: " + savedValue);
-		value.setOptionValue(savedValue);
+		if(savedValue < value.getMinOptionValue() || savedValue > value.getMaxOptionValue()){
+			value.setToDefaultOptionValue();
+		} else {
+			value.setOptionValue(savedValue);
+		}
 
 		if(checkBox != null){
 			checkBox.setChecked(value.getBooleanOptionValue());

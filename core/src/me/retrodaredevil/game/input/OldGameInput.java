@@ -23,7 +23,8 @@ import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 
-public class DefaultGameInput extends SimpleControllerPart implements UsableGameInput {
+@Deprecated
+public class OldGameInput extends SimpleControllerPart implements UsableGameInput {
 	private final JoystickPart mainJoystick;
 //	private final JoystickPart rotateJoystick;
 	private final InputPart rotateAxis;
@@ -44,7 +45,7 @@ public class DefaultGameInput extends SimpleControllerPart implements UsableGame
 	 *
 	 * @param controller The controller to use. This will also be added as a child to this object
 	 */
-	public DefaultGameInput(StandardControllerInput controller){
+	public OldGameInput(StandardControllerInput controller){
 		reliesOn = controller; // TODO do we really need reliesOn?
 
 		mainJoystick = controller.getLeftJoy();
@@ -67,7 +68,7 @@ public class DefaultGameInput extends SimpleControllerPart implements UsableGame
 
 		controlOptions = Collections.emptyList();
 	}
-	public DefaultGameInput(){
+	public OldGameInput(){
 		reliesOn = null;
 		final List<ControlOption> options = new ArrayList<>();
 		controlOptions = options;

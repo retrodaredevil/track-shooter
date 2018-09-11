@@ -62,7 +62,8 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	public Collection<? extends ControlOption> getControlOptions() {
 		List<ControlOption> r = new ArrayList<>();
 		r.add(radioControlOption);
-		r.addAll(getCurrentGameInput().getControlOptions());
+		Collection<? extends ControlOption> options = getCurrentGameInput().getControlOptions();
+		r.addAll(options);
 
 		return r;
 	}

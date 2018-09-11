@@ -68,12 +68,11 @@ public class PlayerController implements EntityController{
 		InputPart rotateAxis = gameInput.getRotateAxis();
 		double position = rotateAxis.getPosition();
 		if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
-			if(rotateAxis.getAxisType().isRangeOver()){
-				if(Math.abs(position) > 1){
-					position = Math.signum(position);
-				}
-			}
-//				System.out.println(position); // .004
+//			if(rotateAxis.getAxisType().isRangeOver()){
+//				if(Math.abs(position) > 1){
+//					position = Math.signum(position);
+//				}
+//			}
 			float desired = (float) (ROTATE_PER_SECOND * position);
 			if (rotateAxis.isDeadzone()) {
 				desired = 0;

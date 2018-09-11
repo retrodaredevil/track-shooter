@@ -25,6 +25,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	private final boolean[] downLastFrame;
 
 	private long lastPositionRequest = 0;
+	private boolean isCatched = false;
 
 	/**
 	 *
@@ -85,11 +86,20 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 		return multiplier * (float) multiplierOption.getOptionValue() * inverted;
 	}
 
+	private void setCatched(boolean b){
+		if(!b && !isCatched){ // if we want it to be catched, just make sure
+			return;
+		}
+		isCatched = b;
+		Gdx.input.setCursorCatched(b);
+
+	}
+
 	@Override
 	protected void onUpdate() {
 		super.onUpdate();
 		if(lastPositionRequest + TIME_FOR_MOUSE_CATCH_TIMEOUT <= System.currentTimeMillis()){
-			Gdx.input.setCursorCatched(false);
+			setCatched(false);
 		}
 	}
 
@@ -97,7 +107,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	public double getPosition() {
 		// TODO find a better way to enable cursor catching instead of this tightly coupled way
 		lastPositionRequest = System.currentTimeMillis();
-		Gdx.input.setCursorCatched(true);
+		setCatched(true);
 		return super.getPosition();
 	}
 
