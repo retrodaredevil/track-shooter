@@ -66,27 +66,6 @@ public class StartScreen extends ScreenAdapter {
 
 		renderer.render(delta);
 
-
-
-//		Gdx.app.debug("dpad x", "" + Controllers.getControllers().first().getPov(0));
-//		Gdx.app.debug("magnitude", "" + gameInput.getMainJoystick().getMagnitude()
-//				* (gameInput.getMainJoystick().getJoystickType().isInputSquare() ? SimpleJoystickPart.getScaled(gameInput.getMainJoystick().getAngle()) : 1));
-
-//		ControllerRumble rumble = gameInput.getRumble();
-//		if(rumble != null && rumble.isConnected()){
-//			double intensity = System.currentTimeMillis() % 1400 < 700 ? .9 : .3;
-////			System.out.println("intensity: " + intensity);
-//			rumble.rumble(100, intensity); // if this stops being called, it will end
-////			rumble.rumble(1);
-//		}
-//		JoystickPart joy = gameInput.getMainJoystick();
-//		if(!joy.getJoystickType().isInputSquare()){
-//			System.out.println("hardware correct joystick");
-//			System.out.println("magnitude: " + joy.getMagnitude());
-//			System.out.println("angle: " + joy.getAngle());
-//			System.out.println("angle rad: " + joy.getAngleRadians());
-//			System.out.println();
-//		}
 	}
 
 	@Override

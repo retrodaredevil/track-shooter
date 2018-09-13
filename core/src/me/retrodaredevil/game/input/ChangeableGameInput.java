@@ -8,8 +8,8 @@ import me.retrodaredevil.controller.SimpleControllerInput;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
+import me.retrodaredevil.controller.options.RadioOptionOptionValue;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
 /**
@@ -21,17 +21,17 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 public class ChangeableGameInput extends SimpleControllerInput implements GameInput {
 
 	private final ControlOption radioControlOption;
+	private final RadioOptionOptionValue<UsableGameInput> gameInputOptionValue;
 
-	public ChangeableGameInput(List<UsableGameInput> gameInputs){
+	public ChangeableGameInput(List<? extends UsableGameInput> gameInputs){
+		this.gameInputOptionValue = OptionValues.createRadioOptionValue(gameInputs, 0);
 		radioControlOption = new ControlOption("Game Input Options",
-				"What type of control scheme do you want?", "controls.main.options",
-				OptionValues.createRadioOptionValue(gameInputs, 0));
+				"What type of control scheme do you want?", "controls.main.options", gameInputOptionValue);
 	}
 
 
 	private GameInput getCurrentGameInput(){
-		OptionValue value = radioControlOption.getOptionValue();
-		return (UsableGameInput) value.getRadioOptions().get((int) value.getOptionValue());
+		return gameInputOptionValue.getRadioOptions().get((int) gameInputOptionValue.getOptionValue());
 	}
 
 	@Override

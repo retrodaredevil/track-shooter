@@ -23,7 +23,7 @@ import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 import me.retrodaredevil.game.input.ChangeableGameInput;
 import me.retrodaredevil.game.input.GameInputs;
-import me.retrodaredevil.game.input.OldGameInput;
+import me.retrodaredevil.game.input.ControllerGameInput;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.input.UsableGameInput;
@@ -55,10 +55,8 @@ public class GameMain extends Game {
 		controllerManager = new DefaultControllerManager();
 		for(Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext();){
 			Controller controller = it.next();
-			StandardControllerInput standardController = new StandardUSBControllerInput(controller);
-//			controllerManager.addController(standardController);
 
-			UsableGameInput controllerInput = new OldGameInput(standardController);
+			UsableGameInput controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
 //			inputs.add(controllerInput);
 			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(controllerInput));
 			inputs.add(realGameInput);
