@@ -1,16 +1,17 @@
 package me.retrodaredevil.game.input;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.SensitiveInputPart;
+import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
@@ -31,37 +32,49 @@ public class ControllerGameInput extends SimpleControllerPart implements UsableG
 
 	private final ControllerRumble rumble;
 
-	private final Collection<? extends ControlOption> controlOptions;
+	private final OptionTracker controlOptions = new OptionTracker();
 
 	/**
-	 *
+	 * If the passed controller is an instanceof {@link ConfigurableControllerPart}, its ControlOptions
+	 * will be added and used
 	 * @param controller The controller to use. This will also be added as a child to this object. When passed, it CANNOT have a parent
 	 */
-	public ControllerGameInput(StandardControllerInput controller){
+	public ControllerGameInput(final StandardControllerInput controller){
 		addChildren(false, false, controller);
 		reliesOn = controller;
 
-		mainJoystick = controller.getLeftJoy();
+		mainJoystick = References.create(controller::getLeftJoy);
 //		getMainJoystick = controller.getDPad();
 		ControlOption rotateAxisSensitivity = new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
 				"controls.all", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
-		rotateAxis = new SensitiveInputPart(controller.getRightJoy().getXAxis(), rotateAxisSensitivity.getOptionValue(),null);
-		fireButton = new HighestPositionInputPart(controller.getRightBumper(), controller.getLeftBumper(), controller.getRightTrigger(), controller.getLeftTrigger());
-//		getFireButton = controller.getLeftBumper();
-		slow = controller.getLeftStick();
-		activatePowerup = controller.getFaceLeft();
-		startButton = controller.getStart();
-		pauseButton = controller.getStart();
-		backButton = controller.getBButton();
+		rotateAxis = new SensitiveInputPart(
+				References.create(() -> controller.getRightJoy().getXAxis()),
+				rotateAxisSensitivity.getOptionValue(),null);
+		fireButton = new HighestPositionInputPart(
+				References.create(controller::getRightBumper),
+				References.create(controller::getLeftBumper),
+				References.create(controller::getRightTrigger),
+				References.create(controller::getLeftTrigger)
+		);
+		slow = References.create(controller::getLeftStick);
+		activatePowerup = References.create(controller::getFaceLeft);
+		startButton = References.create(controller::getStart);
+		pauseButton = startButton; // pause button same as start. Add as children if this changes in the future
+		backButton = References.create(controller::getBButton);
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
 			rumble = null;
 		}
 
-		addChildren(Arrays.asList(rotateAxis, fireButton), false, false);
+		addChildren(false, false,
+				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+				startButton, backButton);
 
-		controlOptions = Arrays.asList(rotateAxisSensitivity);
+		controlOptions.addControlOption(rotateAxisSensitivity);
+		if(controller instanceof ConfigurableControllerPart){
+			controlOptions.addController((ConfigurableControllerPart) controller);
+		}
 	}
 
 	@Override
@@ -71,7 +84,7 @@ public class ControllerGameInput extends SimpleControllerPart implements UsableG
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		return controlOptions;
+		return controlOptions.getOptions();
 	}
 
 	@Override

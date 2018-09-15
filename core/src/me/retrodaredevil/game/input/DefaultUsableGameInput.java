@@ -11,6 +11,7 @@ import me.retrodaredevil.controller.SimpleControllerInput;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
 public class DefaultUsableGameInput extends SimpleControllerInput implements UsableGameInput {
@@ -29,13 +30,14 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 
 	private final ControllerRumble rumble;
 
-	private final Collection<? extends ControlOption> controlOptions;
+//	private final Collection<? extends ControlOption> controlOptions;
+	private final OptionTracker controlOptions;
 
 	private final Collection<ControllerPart> reliesOnCollection;
 
 	public DefaultUsableGameInput(String controlName, JoystickPart mainJoystick, InputPart rotateAxis,
 								  InputPart fireButton, InputPart slow, InputPart activatePowerup, InputPart startButton,
-								  InputPart pauseButton, InputPart backButton, ControllerRumble rumble, Collection<? extends ControlOption> controlOptions,
+								  InputPart pauseButton, InputPart backButton, ControllerRumble rumble, OptionTracker controlOptions,
 								  Collection<ControllerPart> reliesOnCollection){
 		this.controlName = controlName;
 		this.mainJoystick = mainJoystick;
@@ -66,7 +68,7 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		return controlOptions;
+		return controlOptions.getOptions();
 	}
 
 	@Override

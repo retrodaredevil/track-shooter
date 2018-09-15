@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 
 import me.retrodaredevil.controller.input.SimpleJoystickPart;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
+import me.retrodaredevil.game.input.implementations.KeyInputPart;
 
 public final class FourKeyJoystick {
 	private FourKeyJoystick(){}

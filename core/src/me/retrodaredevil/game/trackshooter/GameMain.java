@@ -58,6 +58,7 @@ public class GameMain extends Game {
 
 			UsableGameInput controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
 //			inputs.add(controllerInput);
+			// TODO Make using ChangeableGameInput here useful
 			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(controllerInput));
 			inputs.add(realGameInput);
 			controllerManager.addController(controllerInput);
@@ -78,6 +79,9 @@ public class GameMain extends Game {
 			}
 			controllerManager.addController(realGameInput);
 
+		}
+		for(GameInput input : inputs) {
+			renderParts.getOptionsMenu().loadControllerConfiguration(input);
 		}
 
 //		Gdx.app.setLogLevel(Application.LOG_ERROR);

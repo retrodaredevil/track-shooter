@@ -46,7 +46,6 @@ public class StartScreen extends ScreenAdapter {
 	@Override
 	public void render(float delta) {
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
-			System.out.println("options is down!");
 			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
@@ -66,6 +65,7 @@ public class StartScreen extends ScreenAdapter {
 
 		renderer.render(delta);
 
+//		System.out.println(gameInput.getActivatePowerup().isDown());
 	}
 
 	@Override

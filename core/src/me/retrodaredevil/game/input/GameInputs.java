@@ -14,34 +14,41 @@ import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.game.input.implementations.GdxMouseAxis;
+import me.retrodaredevil.game.input.implementations.GdxRumble;
+import me.retrodaredevil.game.input.implementations.GdxScreenTouchButton;
+import me.retrodaredevil.game.input.implementations.GdxShakeButton;
+import me.retrodaredevil.game.input.implementations.GdxTiltJoystick;
+import me.retrodaredevil.game.input.implementations.KeyInputPart;
 
 public final class GameInputs {
 	private GameInputs(){}
 
-	private static ControlOption createMouseMultiplier(Collection<? super ControlOption> optionsToBeAddedTo){
+	private static ControlOption createMouseMultiplier(OptionTracker options){
 		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.5, 2, 1);
 		return new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier)
 		{{
-			optionsToBeAddedTo.add(this);
+			options.addControlOption(this);
 		}};
 	}
-	private static ControlOption createMouseInvert(Collection<? super ControlOption> optionsToBeAddedTo){
+	private static ControlOption createMouseInvert(OptionTracker options){
 		final OptionValue mouseInvert = OptionValues.createBooleanOptionValue(false);
 		return new ControlOption("Invert Rotation", "Should the rotation be inverted",
 				"controls.all.mouse", mouseInvert)
 		{{
-			optionsToBeAddedTo.add(this);
+			options.addControlOption(this);
 		}};
 	}
 
 	public static UsableGameInput createKeyboardInput(){
 		final JoystickPart mainJoystick = FourKeyJoystick.newWASDJoystick();
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseButton, backButton;
-		final List<ControlOption> options = new ArrayList<>();
+		final OptionTracker options = new OptionTracker();
 
 		rotateAxis = new GdxMouseAxis(false, 1.0f, createMouseMultiplier(options).getOptionValue(), createMouseInvert(options).getOptionValue());
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
@@ -57,8 +64,7 @@ public final class GameInputs {
 				pauseButton, backButton, null, options, Collections.emptyList())
 		{{
 
-			addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseButton, backButton),
-					false, false);
+			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseButton, backButton);
 
 		}};
 	}
@@ -71,7 +77,8 @@ public final class GameInputs {
 		final GdxTiltJoystick mainJoystick = new GdxTiltJoystick();
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton;
 		final ControllerRumble rumble;
-		final List<ControlOption> options = new ArrayList<>(mainJoystick.getControlOptions());
+		final OptionTracker options = new OptionTracker();
+		options.addController(mainJoystick);
 
 		rotateAxis = new GdxMouseAxis(true, -5.0f, createMouseMultiplier(options).getOptionValue(),
 				createMouseInvert(options).getOptionValue(), new Rectangle(.5f, 0, .5f, 1));
@@ -83,7 +90,7 @@ public final class GameInputs {
 
 		OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 8);
 		GdxShakeButton button = new GdxShakeButton(shakeThresholdValue);
-		options.add(new ControlOption("Powerup Activate Shake Sensitivity",
+		options.addControlOption(new ControlOption("Powerup Activate Shake Sensitivity",
 				"How much you have to shake the device to activate the powerup in m/s^2",
 				"controls.all.shake", shakeThresholdValue));
 		activatePowerup = button;
@@ -91,16 +98,15 @@ public final class GameInputs {
 		pauseBackButton = new KeyInputPart(Input.Keys.BACK);
 
 		GdxRumble gdxRumble = new GdxRumble();
-		options.addAll(gdxRumble.getControlOptions());
+		options.addController(gdxRumble);
 		rumble = gdxRumble;
 
-		return new DefaultUsableGameInput("Keyboard Controls",
+		return new DefaultUsableGameInput("Phone Gyro Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
 				pauseBackButton, pauseBackButton, rumble, options, Collections.emptyList())
 		{{
 
-			addChildren(Arrays.asList(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseBackButton, rumble),
-					false, false);
+			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseBackButton, rumble);
 
 		}};
 	}
