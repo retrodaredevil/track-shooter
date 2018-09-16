@@ -29,6 +29,7 @@ public class CheckBoxSingleOption extends SimpleSingleOption {
 	@Override
 	protected void onInit(Table container, OptionMenu optionMenu) {
 		container.add(checkBox);
+		checkBox.setChecked(controlOption.getOptionValue().getBooleanOptionValue());
 	}
 
 	@Override

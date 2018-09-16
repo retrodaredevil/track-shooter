@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.controllers.Controller;
@@ -68,7 +69,10 @@ public class GameMain extends Game {
 		if(inputs.isEmpty()) { // use keyboard and mouse as a last resort
 			List<UsableGameInput> gameInputs = new ArrayList<>();
 			if(Gdx.app.getType() == Application.ApplicationType.Android){
-				gameInputs.add(GameInputs.createTouchGyroInput());
+				if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
+					gameInputs.add(GameInputs.createTouchGyroInput());
+				}
+				gameInputs.add(GameInputs.createHiddenJoystickInput());
 			}
 			gameInputs.add(GameInputs.createKeyboardInput());
 //			inputs.add(keyboardInput);

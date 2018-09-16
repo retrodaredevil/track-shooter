@@ -10,7 +10,8 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class GdxMouseAxis extends AutoCachingInputPart {
-	private static final int MAX_POINTERS = 20;
+	public static final int MAX_POINTERS = 20;
+
 	private static final int TIME_FOR_MOUSE_CATCH_TIMEOUT = 500; // ms
 	private final boolean testForAllPointers, yAxis, needsDrag, needsTouchScreenForConnection, useDeltaMethods;
 	private final float multiplier;

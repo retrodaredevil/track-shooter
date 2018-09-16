@@ -48,6 +48,11 @@ public class OptionMenu implements Renderable, InputFocusable {
 		}
 		renderComponent = new OptionMenuRenderComponent(this, renderObject, configController, menuController, optionPreferences);
 	}
+	public void closeMenu(){
+		setToController(null, null);
+	}
+
+	//region loading/saving
 	public void loadControllerConfiguration(ConfigurableControllerPart configController){
 		Collection<? extends ControlOption> options = configController.getControlOptions();
 		for(ControlOption option : options){
@@ -87,10 +92,7 @@ public class OptionMenu implements Renderable, InputFocusable {
 	public void saveControlOption(ControlOption controlOption){
 		this.saveControlOption(controlOption, true);
 	}
-
-	public void closeMenu(){
-		setToController(null, null);
-	}
+	//endregion
 
 	@Override
 	public Stage getPreferredStage() {

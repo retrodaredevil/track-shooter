@@ -2,10 +2,15 @@ package me.retrodaredevil.game.trackshooter.render.parts.options;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,11 +27,10 @@ public class OptionMenuRenderComponent implements RenderComponent {
 	private final ConfigurableControllerPart configController;
 	private final GameInput menuController;
 
-	private final Table table;
+//	private final Table table;
+	private final Dialog dialog;
 	private final Preferences optionPreferences;
 	private final Map<ControlOption, SingleOption> handleMap = new HashMap<>();
-
-	private boolean disposed = false;
 
 	OptionMenuRenderComponent(OptionMenu optionMenu, RenderObject renderObject,
 							  ConfigurableControllerPart configController, GameInput menuController, Preferences optionPreferences){
@@ -35,45 +39,57 @@ public class OptionMenuRenderComponent implements RenderComponent {
 		this.configController = configController;
 		this.menuController = menuController;
 
-		table = new Table();
-		table.setFillParent(true);
+		this.dialog = new Dialog("Options", renderObject.getUISkin());
+		this.dialog.setMovable(false);
+		this.dialog.setResizable(false);
 
 		this.optionPreferences = optionPreferences;
 	}
 	@Override
 	public void render(float delta, Stage stage) {
-		if(disposed) {
-			System.err.println("Rendering when already disposed!");
-		}
 		if(menuController.getBackButton().isDown()){
 			optionMenu.closeMenu();
+			return;
 		}
 
-		stage.addActor(table);
+		stage.addActor(dialog);
+		dialog.setSize(stage.getWidth() * .8f, stage.getHeight() * .7f);
+		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() / 2f - dialog.getHeight() / 2f);
 
-		Set<SingleOption> handledOptions = new HashSet<>();
+		Set<SingleOption> handledOptionsSet = new HashSet<>();
 		for(ControlOption controlOption : configController.getControlOptions()){
 			SingleOption singleOption = handleMap.get(controlOption);
 			if(singleOption == null){
-				OptionValue value = controlOption.getOptionValue();
-				if(value.isOptionValueBoolean()){
-					singleOption = new CheckBoxSingleOption(controlOption, renderObject);
-				} else if(value.isOptionValueRadio()){
-					singleOption = new DropDownSingleOption(controlOption, renderObject);
-				} else {
-					singleOption = new SliderSingleOption(controlOption, renderObject);
-				}
+				singleOption = getSingleOption(controlOption);
 				handleMap.put(controlOption, singleOption);
 			}
-			handledOptions.add(singleOption);
-			singleOption.update(table, optionMenu);
+			handledOptionsSet.add(singleOption);
+			singleOption.update(dialog.getContentTable(), optionMenu);
+
 		}
-		for(SingleOption singleOption : handleMap.values()){
-			if(!handledOptions.contains(singleOption)){
+		boolean shouldReset = false;
+		for(Iterator<SingleOption> it = handleMap.values().iterator(); it.hasNext(); ){
+			SingleOption singleOption = it.next();
+			if(!handledOptionsSet.contains(singleOption)){
 				singleOption.remove();
+				it.remove();
+				shouldReset = true;
 			}
 		}
+		if(shouldReset){
+			dialog.getContentTable().clearChildren();
+		}
 
+	}
+	private SingleOption getSingleOption(ControlOption controlOption){
+		OptionValue value = controlOption.getOptionValue();
+		if(value.isOptionValueBoolean()){
+			return new CheckBoxSingleOption(controlOption, renderObject);
+		} else if(value.isOptionValueRadio()){
+			return new DropDownSingleOption(controlOption, renderObject);
+		} else {
+			return new SliderSingleOption(controlOption, renderObject);
+		}
 	}
 
 	public ConfigurableControllerPart getConfigController() {
@@ -82,12 +98,9 @@ public class OptionMenuRenderComponent implements RenderComponent {
 
 	@Override
 	public void dispose() {
-		disposed = true;
-		table.remove();
-		table.reset();
 		for(SingleOption option : handleMap.values()){
 			option.remove();
 		}
-//		System.out.println("Disposing!");
+		dialog.remove();
 	}
 }

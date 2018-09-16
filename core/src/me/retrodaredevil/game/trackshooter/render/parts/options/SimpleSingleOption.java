@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Array;
 
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
@@ -9,6 +11,7 @@ public abstract class SimpleSingleOption implements SingleOption{
 
 	protected final ControlOption controlOption;
 	private final Table container = new Table();
+
 	private boolean initialized = false;
 	private boolean shouldSave = false;
 
@@ -21,7 +24,6 @@ public abstract class SimpleSingleOption implements SingleOption{
 	protected abstract double getSetValue();
 	protected abstract void onInit(Table container, OptionMenu optionMenu);
 	protected abstract void onUpdate(Table container, OptionMenu optionMenu);
-	protected void onRemove(){}
 
 	@Override
 	public void update(Table table, OptionMenu optionMenu) {
@@ -59,8 +61,6 @@ public abstract class SimpleSingleOption implements SingleOption{
 	@Override
 	public void remove() {
 		container.remove();
-		onRemove();
-//		initialized = false;
 	}
 
 
