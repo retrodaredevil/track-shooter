@@ -46,7 +46,7 @@ public class OptionMenu implements Renderable, InputFocusable {
 			renderComponent = null;
 			return;
 		}
-		renderComponent = new OptionMenuRenderComponent(this, renderObject, configController, menuController, optionPreferences);
+		renderComponent = new OptionMenuRenderComponent(this, renderObject, configController, menuController);
 	}
 	public void closeMenu(){
 		setToController(null, null);

@@ -1,8 +1,13 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
+import java.util.Collection;
+
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.game.trackshooter.RenderObject;
 
@@ -36,4 +41,16 @@ public class CheckBoxSingleOption extends SimpleSingleOption {
 	protected void onUpdate(Table container, OptionMenu optionMenu) {
 	}
 
+	@Override
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
+		fireInputEvents(checkBox, InputEvent.Type.enter);
+		if(select.isPressed()){
+			checkBox.toggle();
+		}
+	}
+
+	@Override
+	public void deselect() {
+		fireInputEvents(checkBox, InputEvent.Type.exit);
+	}
 }

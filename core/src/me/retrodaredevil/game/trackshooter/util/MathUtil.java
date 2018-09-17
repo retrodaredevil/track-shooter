@@ -18,6 +18,13 @@ public final class MathUtil {
 		}
 		return r;
 	}
+	public static int mod(int a, int b){
+		int r = a % b;
+		if(r < 0){
+			r += b;
+		}
+		return r;
+	}
 
 	/**
 	 * returns a - b or, when |a - b| > wrap / 2, it finds a quicker way

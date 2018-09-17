@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -114,8 +115,10 @@ public final class GameInputs {
 		rotateAxis = new GdxMouseAxis(true, -5.0f, createMouseMultiplier(options).getOptionValue(),
 				createMouseInvert(options).getOptionValue(), rotateArea);
 
-		startButton = new KeyInputPart(Input.Keys.ENTER);
-		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
+//		startButton = new KeyInputPart(Input.Keys.ENTER);
+//		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
+		startButton = new DummyInputPart(0, false);
+		slow = new DummyInputPart(0, false);
 
 		OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 8);
 		GdxShakeButton button = new GdxShakeButton(shakeThresholdValue);

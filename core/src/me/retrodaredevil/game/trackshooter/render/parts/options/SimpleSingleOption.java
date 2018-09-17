@@ -1,9 +1,19 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.Pools;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 
@@ -58,10 +68,24 @@ public abstract class SimpleSingleOption implements SingleOption{
 		controlOption.getOptionValue().setToDefaultOptionValue();
 	}
 
+	public static boolean fireInputEvents(Actor actor, InputEvent.Type... types){
+		boolean eitherHandled = false;
+		for(InputEvent.Type type : types){
+			InputEvent event = Pools.obtain(InputEvent.class);
+			event.setType(type);
+			event.setButton(Input.Buttons.LEFT);
+
+			actor.fire(event);
+			if(!eitherHandled){
+				eitherHandled = event.isHandled();
+			}
+			Pools.free(event);
+		}
+		return eitherHandled;
+	}
+
 	@Override
 	public void remove() {
 		container.remove();
 	}
-
-
 }

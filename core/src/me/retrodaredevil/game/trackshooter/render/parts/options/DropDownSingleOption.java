@@ -1,11 +1,14 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Collection;
 
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
@@ -59,5 +62,41 @@ public class DropDownSingleOption extends SimpleSingleOption {
 	@Override
 	protected void onUpdate(Table container, OptionMenu optionMenu) {
 		updateItems();
+	}
+
+	private boolean isShown(){
+		return selectBox.getList().isTouchable();
+	}
+	private void show(){
+		selectBox.showList();
+	}
+	private void hide(){
+		selectBox.hideList();
+	}
+
+	@Override
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
+		fireInputEvents(selectBox, InputEvent.Type.enter);
+		if(isShown()){
+			requestedActions.clear();
+			if(back.isDown()){
+				hide();
+			}
+			if(select.isPressed()){
+				fireInputEvents(selectBox, InputEvent.Type.touchDown);
+				fireInputEvents(selectBox, InputEvent.Type.touchUp);
+			}
+		} else {
+			if(select.isPressed()){
+				show();
+			}
+		}
+
+	}
+
+	@Override
+	public void deselect() {
+		hide();
+		fireInputEvents(selectBox, InputEvent.Type.exit);
 	}
 }
