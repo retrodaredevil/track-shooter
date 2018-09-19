@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -12,6 +12,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 public class SliderSingleOption extends SimpleSingleOption{
 	private static final float SLIDER_PERCENT_MULTIPLIER = .5f;

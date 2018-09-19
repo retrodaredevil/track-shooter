@@ -1,21 +1,14 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-
-import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 public abstract class SimpleSingleOption implements SingleOption{
 
@@ -36,7 +29,7 @@ public abstract class SimpleSingleOption implements SingleOption{
 	protected abstract void onUpdate(Table container, OptionMenu optionMenu);
 
 	@Override
-	public void update(Table table, OptionMenu optionMenu) {
+	public void renderUpdate(Table table, OptionMenu optionMenu) {
 		if(!initialized){
 			optionMenu.loadControlOption(controlOption);
 			onInit(container, optionMenu);

@@ -17,12 +17,13 @@ import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.OptionMenuRenderComponent;
 
 public class OptionMenu implements Renderable, InputFocusable {
 	private final RenderObject renderObject;
 	private final Stage preferredStage;
 	private final Preferences optionPreferences;
-	private OptionMenuRenderComponent renderComponent = null;
+	private me.retrodaredevil.game.trackshooter.render.selection.OptionMenuRenderComponent renderComponent = null;
 	public OptionMenu(RenderObject renderObject) {
 		this.renderObject = renderObject;
 

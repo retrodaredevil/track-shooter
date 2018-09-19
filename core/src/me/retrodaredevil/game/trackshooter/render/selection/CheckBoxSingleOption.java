@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
@@ -10,6 +10,7 @@ import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 public class CheckBoxSingleOption extends SimpleSingleOption {
 

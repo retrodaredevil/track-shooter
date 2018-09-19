@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -18,22 +18,26 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class OptionMenuRenderComponent implements RenderComponent {
+	/*
+	Some credit and help found at http://brokenshotgun.com/2014/02/08/libgdx-control-scene2d-buttons-with-a-controller/
+	 */
+	private static final int DEFAULT_INDEX = 0;
 	private final OptionMenu optionMenu;
 	private final RenderObject renderObject;
 	private final ConfigurableControllerPart configController;
 	private final GameInput menuController;
 
-//	private final Table table;
 	private final Dialog dialog;
 	private final Map<ControlOption, SingleOption> handleMap = new HashMap<>();
 
-	private int selectedOptionIndex = 0;
+	private Integer selectedOptionIndex = null; // null represents none selected
 
-	OptionMenuRenderComponent(OptionMenu optionMenu, RenderObject renderObject,
-							  ConfigurableControllerPart configController, GameInput menuController){
+	public OptionMenuRenderComponent(OptionMenu optionMenu, RenderObject renderObject,
+									 ConfigurableControllerPart configController, GameInput menuController){
 		this.optionMenu = optionMenu;
 		this.renderObject = renderObject;
 		this.configController = configController;
@@ -52,23 +56,27 @@ public class OptionMenuRenderComponent implements RenderComponent {
 		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() / 2f - dialog.getHeight() / 2f);
 
 		// TODO These are all very temporary ways to get the inputs
-		JoystickPart selectJoystick = menuController.getMainJoystick();
-		InputPart selectButton = menuController.getFireButton();
-		InputPart backButton = menuController.getBackButton();
-		Collection<SingleOption.SelectAction> requestingActions = new ArrayList<>();
-		int newOptionIndex = selectedOptionIndex;
+		final JoystickPart selectJoystick = menuController.getMainJoystick();
+		final InputPart selectButton = menuController.getFireButton();
+		final InputPart backButton = menuController.getBackButton();
+		final Collection<SingleOption.SelectAction> requestingActions = new ArrayList<>();
+		Integer newOptionIndex = selectedOptionIndex;
 		if(selectJoystick.getYAxis().isPressed()){ // will be true if digital position just changed to 1 or -1
 			int digitalY = selectJoystick.getYAxis().getDigitalPosition();
-			newOptionIndex -= digitalY; // minus equals because the menu is shown top to bottom
+			if(newOptionIndex == null){
+				newOptionIndex = DEFAULT_INDEX;
+			} else {
+				newOptionIndex -= digitalY; // minus equals because the menu is shown top to bottom
+			}
 			requestingActions.add(SingleOption.SelectAction.CHANGE_OPTION);
 		}
 		if(backButton.isPressed()){
 			requestingActions.add(SingleOption.SelectAction.EXIT_MENU);
 		}
 
-		Collection<? extends ControlOption> controlOptions = configController.getControlOptions();
-		newOptionIndex = MathUtil.mod(newOptionIndex, controlOptions.size());
-		List<SingleOption> handledOptions = new ArrayList<>(); // maintains order
+		final Collection<? extends ControlOption> controlOptions = configController.getControlOptions();
+		newOptionIndex = newOptionIndex == null ? null : MathUtil.mod(newOptionIndex, controlOptions.size());
+		final List<SingleOption> handledOptions = new ArrayList<>(); // maintains order
 		int i = 0;
 		for(ControlOption controlOption : controlOptions){
 			SingleOption singleOption = handleMap.get(controlOption);
@@ -77,8 +85,9 @@ public class OptionMenuRenderComponent implements RenderComponent {
 				handleMap.put(controlOption, singleOption);
 			}
 			handledOptions.add(singleOption);
-			singleOption.update(dialog.getContentTable(), optionMenu);
-			if(i == selectedOptionIndex){
+			singleOption.renderUpdate(dialog.getContentTable(), optionMenu);
+			if(selectedOptionIndex != null && i == selectedOptionIndex){
+//				System.out.println("updating selected");
 				singleOption.selectUpdate(delta, selectJoystick, selectButton, backButton, requestingActions);
 			}
 
@@ -100,14 +109,15 @@ public class OptionMenuRenderComponent implements RenderComponent {
 		}
 
 		if(requestingActions.contains(SingleOption.SelectAction.CHANGE_OPTION)){
-			handledOptions.get(selectedOptionIndex).deselect();
+			if(selectedOptionIndex != null) {
+				handledOptions.get(selectedOptionIndex).deselect();
+			}
 			selectedOptionIndex = newOptionIndex;
 		}
 		if(requestingActions.contains(SingleOption.SelectAction.EXIT_MENU)){
 			optionMenu.closeMenu();
-			return;
+//			return;
 		}
-//		System.out.println("selectedOptionIndex: " + selectedOptionIndex);
 
 	}
 	private SingleOption getSingleOption(ControlOption controlOption){

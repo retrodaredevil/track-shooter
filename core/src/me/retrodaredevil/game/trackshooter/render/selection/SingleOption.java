@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -6,13 +6,14 @@ import java.util.Collection;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 /**
  * As of right now, this is for representing a single, selectable and updatable option. In the future,
  * this may be able to represent a button, or just anything that can fit on a menu
  */
 public interface SingleOption {
-	void update(Table table, OptionMenu optionMenu);
+	void renderUpdate(Table table, OptionMenu optionMenu);
 
 	/**
 	 * Should reset the control option to its original value
@@ -20,7 +21,7 @@ public interface SingleOption {
 	void reset();
 
 	/**
-	 * Should remove whatever was added to the table in {@link #update(Table, OptionMenu)}
+	 * Should remove whatever was added to the table in {@link #renderUpdate(Table, OptionMenu)}
 	 */
 	void remove();
 

@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.parts.options;
+package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -13,11 +13,13 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
 import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 public class DropDownSingleOption extends SimpleSingleOption {
 
 	private final SelectBox<String> selectBox;
 	private final Array<String> itemsArray;
+	private boolean isShown = false;
 
 	public DropDownSingleOption(ControlOption controlOption, RenderObject renderObject){
 		super(controlOption);
@@ -64,27 +66,38 @@ public class DropDownSingleOption extends SimpleSingleOption {
 		updateItems();
 	}
 
-	private boolean isShown(){
-		return selectBox.getList().isTouchable();
-	}
 	private void show(){
 		selectBox.showList();
+		isShown = true;
 	}
 	private void hide(){
 		selectBox.hideList();
+		isShown = false;
 	}
 
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
 		fireInputEvents(selectBox, InputEvent.Type.enter);
-		if(isShown()){
+		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
+		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)
+		// and because of that, we think it's already down on the frame isPressed() for 'back' returns true.
+		// Using isShown is just an extra precaution to make sure it does what we want
+		if(isShown != selectBox.getList().isTouchable()){
+			if(isShown){
+				show();
+			} else {
+				hide();
+			}
+		}
+		if(isShown){
 			requestedActions.clear();
-			if(back.isDown()){
+			if(back.isPressed()){
 				hide();
 			}
 			if(select.isPressed()){
 				fireInputEvents(selectBox, InputEvent.Type.touchDown);
 				fireInputEvents(selectBox, InputEvent.Type.touchUp);
+				hide();
 			}
 		} else {
 			if(select.isPressed()){
