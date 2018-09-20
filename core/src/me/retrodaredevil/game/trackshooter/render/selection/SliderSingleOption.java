@@ -11,10 +11,10 @@ import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
-import me.retrodaredevil.game.trackshooter.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public class SliderSingleOption extends SimpleSingleOption{
+public class SliderSingleOption extends ControlOptionSingleOption {
 	private static final float SLIDER_PERCENT_MULTIPLIER = .5f;
 	private final RenderObject renderObject;
 
@@ -22,8 +22,8 @@ public class SliderSingleOption extends SimpleSingleOption{
 	private Label valueLabel = null;
 	private Float sliderPercent = null;
 
-	SliderSingleOption(ControlOption controlOption, RenderObject renderObject){
-		super(controlOption);
+	public SliderSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(controlOption, optionSaver);
 		this.renderObject = renderObject;
 
 		OptionValue value = controlOption.getOptionValue();
@@ -33,7 +33,7 @@ public class SliderSingleOption extends SimpleSingleOption{
 	}
 
 	@Override
-	protected void onInit(Table container, OptionMenu optionMenu){
+	protected void onInit(Table container){
 		OptionValue value = controlOption.getOptionValue();
 
 		slider.setValue((float) value.getOptionValue());
@@ -45,7 +45,7 @@ public class SliderSingleOption extends SimpleSingleOption{
 	}
 
 	@Override
-	public void onUpdate(Table table, OptionMenu optionMenu){
+	public void onUpdate(Table table){
 		valueLabel.setText(getNumberText(controlOption.getOptionValue().getOptionValue()));
 	}
 

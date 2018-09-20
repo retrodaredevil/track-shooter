@@ -8,6 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import me.retrodaredevil.game.input.GameInput;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
 
 public class StartScreen extends ScreenAdapter {

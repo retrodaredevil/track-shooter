@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter.render.parts;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.RenderUtil;

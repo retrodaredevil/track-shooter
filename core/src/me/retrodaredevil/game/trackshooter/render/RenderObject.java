@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.render;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;

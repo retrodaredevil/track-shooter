@@ -8,31 +8,33 @@ import com.badlogic.gdx.utils.Pools;
 
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
+import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public abstract class SimpleSingleOption implements SingleOption{
+public abstract class ControlOptionSingleOption implements SingleOption{
 
 	protected final ControlOption controlOption;
+	protected final OptionSaver optionSaver;
 	private final Table container = new Table();
 
 	private boolean initialized = false;
 	private boolean shouldSave = false;
 
-	protected SimpleSingleOption(ControlOption controlOption){
+	protected ControlOptionSingleOption(ControlOption controlOption, OptionSaver optionSaver){
 		this.controlOption = controlOption;
+		this.optionSaver = optionSaver;
 	}
 
 
 	protected abstract boolean canSave();
 	protected abstract double getSetValue();
-	protected abstract void onInit(Table container, OptionMenu optionMenu);
-	protected abstract void onUpdate(Table container, OptionMenu optionMenu);
+	protected abstract void onInit(Table container);
+	protected abstract void onUpdate(Table container);
 
 	@Override
-	public void renderUpdate(Table table, OptionMenu optionMenu) {
+	public void renderUpdate(Table table) {
 		if(!initialized){
-			optionMenu.loadControlOption(controlOption);
-			onInit(container, optionMenu);
+			optionSaver.loadControlOption(controlOption);
+			onInit(container);
 		}
 		initialized = true;
 		if(container.getParent() != table){
@@ -49,11 +51,11 @@ public abstract class SimpleSingleOption implements SingleOption{
 			shouldSave = true;
 		}
 		if(shouldSave && canSave()){
-			optionMenu.saveControlOption(controlOption);
+			optionSaver.saveControlOption(controlOption);
 			shouldSave = false;
 		}
 
-		onUpdate(container, optionMenu);
+		onUpdate(container);
 	}
 
 	@Override

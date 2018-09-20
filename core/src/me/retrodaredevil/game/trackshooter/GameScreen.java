@@ -14,6 +14,8 @@ import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.player.Score;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
 import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;

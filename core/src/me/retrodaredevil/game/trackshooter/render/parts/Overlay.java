@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;

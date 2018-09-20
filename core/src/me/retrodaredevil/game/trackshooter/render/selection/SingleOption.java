@@ -13,7 +13,7 @@ import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
  * this may be able to represent a button, or just anything that can fit on a menu
  */
 public interface SingleOption {
-	void renderUpdate(Table table, OptionMenu optionMenu);
+	void renderUpdate(Table table);
 
 	/**
 	 * Should reset the control option to its original value

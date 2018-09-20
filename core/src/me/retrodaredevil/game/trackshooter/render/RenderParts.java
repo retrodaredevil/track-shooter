@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.render;
 
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.utils.Disposable;

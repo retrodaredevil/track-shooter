@@ -9,15 +9,15 @@ import java.util.Collection;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.game.trackshooter.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public class CheckBoxSingleOption extends SimpleSingleOption {
+public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
 	private final CheckBox checkBox;
 
-	public CheckBoxSingleOption(ControlOption controlOption, RenderObject renderObject){
-		super(controlOption);
+	public CheckBoxSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(controlOption, optionSaver);
 
 		checkBox = new CheckBox(controlOption.getLabel(), renderObject.getUISkin());
 	}
@@ -33,13 +33,13 @@ public class CheckBoxSingleOption extends SimpleSingleOption {
 	}
 
 	@Override
-	protected void onInit(Table container, OptionMenu optionMenu) {
+	protected void onInit(Table container) {
 		container.add(checkBox);
 		checkBox.setChecked(controlOption.getOptionValue().getBooleanOptionValue());
 	}
 
 	@Override
-	protected void onUpdate(Table container, OptionMenu optionMenu) {
+	protected void onUpdate(Table container) {
 	}
 
 	@Override

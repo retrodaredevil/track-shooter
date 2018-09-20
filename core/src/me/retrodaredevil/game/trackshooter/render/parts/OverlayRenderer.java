@@ -13,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import java.util.Collection;
 import java.util.Objects;
 
-import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 

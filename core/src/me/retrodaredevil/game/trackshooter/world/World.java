@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
-import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;

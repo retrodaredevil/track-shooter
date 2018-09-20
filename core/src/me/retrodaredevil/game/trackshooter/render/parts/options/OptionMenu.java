@@ -1,8 +1,6 @@
 package me.retrodaredevil.game.trackshooter.render.parts.options;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
@@ -10,25 +8,23 @@ import java.util.Collection;
 import java.util.Collections;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
-import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
-import me.retrodaredevil.game.trackshooter.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.OptionMenuRenderComponent;
+import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
 public class OptionMenu implements Renderable, InputFocusable {
 	private final RenderObject renderObject;
+	private final SaveObject saveObject;
 	private final Stage preferredStage;
-	private final Preferences optionPreferences;
-	private me.retrodaredevil.game.trackshooter.render.selection.OptionMenuRenderComponent renderComponent = null;
-	public OptionMenu(RenderObject renderObject) {
+	private OptionMenuRenderComponent renderComponent = null;
+	public OptionMenu(RenderObject renderObject, SaveObject saveObject) {
 		this.renderObject = renderObject;
+		this.saveObject = saveObject;
 
 		this.preferredStage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
-		this.optionPreferences = Gdx.app.getPreferences("options");
 	}
 
 	@Override
@@ -47,52 +43,13 @@ public class OptionMenu implements Renderable, InputFocusable {
 			renderComponent = null;
 			return;
 		}
-		renderComponent = new OptionMenuRenderComponent(this, renderObject, configController, menuController);
+		renderComponent = new OptionMenuRenderComponent(renderObject, menuController, configController, this, saveObject);
 	}
 	public void closeMenu(){
 		setToController(null, null);
 	}
 
 	//region loading/saving
-	public void loadControllerConfiguration(ConfigurableControllerPart configController){
-		Collection<? extends ControlOption> options = configController.getControlOptions();
-		for(ControlOption option : options){
-			loadControlOption(option);
-		}
-		System.out.println("Loaded " + options.size() + " options");
-	}
-
-	/**
-	 * Overrides the value of the control option using the saved value or leaves it untouched if
-	 * there was no saved value found
-	 * @param controlOption
-	 */
-	public void loadControlOption(ControlOption controlOption){
-		OptionValue value = controlOption.getOptionValue();
-		float savedValue = optionPreferences.getFloat(controlOption.getKey(), (float) value.getDefaultOptionValue());
-		if(savedValue < value.getMinOptionValue() || savedValue > value.getMaxOptionValue()){
-			value.setToDefaultOptionValue();
-		} else {
-			value.setOptionValue(savedValue);
-		}
-	}
-
-	/**
-	 * Saves the value of the control option to a file
-	 * @param controlOption The control option
-	 */
-	public void saveControlOption(ControlOption controlOption, boolean flush){
-		optionPreferences.putFloat(controlOption.getKey(), (float) controlOption.getOptionValue().getOptionValue());
-		if(flush){
-			optionPreferences.flush();
-		}
-	}
-	/**
-	 * @see #saveControlOption(ControlOption, boolean)
-	 */
-	public void saveControlOption(ControlOption controlOption){
-		this.saveControlOption(controlOption, true);
-	}
 	//endregion
 
 	@Override

@@ -12,17 +12,17 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
-import me.retrodaredevil.game.trackshooter.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public class DropDownSingleOption extends SimpleSingleOption {
+public class DropDownSingleOption extends ControlOptionSingleOption {
 
 	private final SelectBox<String> selectBox;
 	private final Array<String> itemsArray;
 	private boolean isShown = false;
 
-	public DropDownSingleOption(ControlOption controlOption, RenderObject renderObject){
-		super(controlOption);
+	public DropDownSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(controlOption, optionSaver);
 		OptionValue value = controlOption.getOptionValue();
 		if(!value.isOptionValueRadio()){
 			throw new IllegalArgumentException("Cannot create a " + getClass().getSimpleName() + " with an OptionValue that is not 'radio'!");
@@ -55,14 +55,14 @@ public class DropDownSingleOption extends SimpleSingleOption {
 	}
 
 	@Override
-	protected void onInit(Table container, OptionMenu optionMenu) {
+	protected void onInit(Table container) {
 		updateItems();
 		container.add(selectBox);
 		selectBox.setSelectedIndex((int) controlOption.getOptionValue().getOptionValue());
 	}
 
 	@Override
-	protected void onUpdate(Table container, OptionMenu optionMenu) {
+	protected void onUpdate(Table container) {
 		updateItems();
 	}
 
