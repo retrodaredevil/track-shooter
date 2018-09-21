@@ -29,6 +29,7 @@ public class ControllerGameInput extends SimpleControllerPart implements UsableG
 	private final InputPart startButton;
 	private final InputPart pauseButton;
 	private final InputPart backButton;
+	private final InputPart enterButton;
 
 	private final ControllerRumble rumble;
 
@@ -61,6 +62,7 @@ public class ControllerGameInput extends SimpleControllerPart implements UsableG
 		startButton = References.create(controller::getStart);
 		pauseButton = startButton; // pause button same as start. Add as children if this changes in the future
 		backButton = References.create(controller::getBButton);
+		enterButton = References.create(controller::getAButton);
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
@@ -125,6 +127,16 @@ public class ControllerGameInput extends SimpleControllerPart implements UsableG
 	@Override
 	public InputPart getBackButton() {
 		return backButton;
+	}
+
+	@Override
+	public JoystickPart getSelectorJoystick() {
+		return mainJoystick;
+	}
+
+	@Override
+	public InputPart getEnterButton() {
+		return enterButton;
 	}
 
 	@Override

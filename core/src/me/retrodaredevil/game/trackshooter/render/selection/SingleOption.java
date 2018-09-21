@@ -13,6 +13,14 @@ import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
  * this may be able to represent a button, or just anything that can fit on a menu
  */
 public interface SingleOption {
+	/**
+	 * Should update or add anything that is desired to the table. Note that even if something is added,
+	 * the table may be reset so if you find that an Actor that you added to the table no longer has a parent,
+	 * you must re-add that actor to the table.
+	 * <p>
+	 * If you add something to the table, it is expected that you also add a new row after adding things
+	 * @param table The table to add something to
+	 */
 	void renderUpdate(Table table);
 
 	/**
@@ -21,7 +29,7 @@ public interface SingleOption {
 	void reset();
 
 	/**
-	 * Should remove whatever was added to the table in {@link #renderUpdate(Table, OptionMenu)}
+	 * Should remove whatever was added to the table in {@link #renderUpdate(Table)}
 	 */
 	void remove();
 

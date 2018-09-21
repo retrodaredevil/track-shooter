@@ -61,9 +61,8 @@ public abstract class SelectionMenuRenderComponent implements RenderComponent {
 	public void render(float delta, Stage stage) {
 
 
-		// TODO These are all very temporary ways to get the inputs
-		final JoystickPart selectJoystick = menuController.getMainJoystick();
-		final InputPart selectButton = menuController.getFireButton();
+		final JoystickPart selectJoystick = menuController.getSelectorJoystick();
+		final InputPart selectButton = menuController.getEnterButton();
 		final InputPart backButton = menuController.getBackButton();
 		final Collection<SingleOption.SelectAction> requestingActions = new ArrayList<>();
 		Integer newOptionIndex = selectedOptionIndex;
@@ -106,7 +105,7 @@ public abstract class SelectionMenuRenderComponent implements RenderComponent {
 		}
 
 		if(requestingActions.contains(SingleOption.SelectAction.CHANGE_OPTION)){
-			if(selectedOptionIndex != null) {
+			if(selectedOptionIndex != null && selectedOptionIndex >= 0 && selectedOptionIndex < singleOptions.size()) {
 				singleOptions.get(selectedOptionIndex).deselect();
 			}
 			newOptionIndex = newOptionIndex == null ? null : MathUtil.mod(newOptionIndex, singleOptions.size());

@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +52,15 @@ public class OptionMenuRenderComponent extends SelectionMenuRenderComponent {
 		stage.addActor(dialog);
 		dialog.setSize(stage.getWidth() * .92f, stage.getHeight() * .7f);
 		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() / 2f - dialog.getHeight() / 2f);
+
+		for(Iterator<SingleOption> it = singleControlOptionMap.keySet().iterator(); it.hasNext(); ){
+			// This for loop removes SingleOptions that are cached, but aren't being used and therefore,
+			// should be removed.
+			SingleOption key = it.next();
+			if(!getOptions().contains(key)){
+				it.remove();
+			}
+		}
 
 		super.render(delta, stage);
 		if(isShouldExit()){

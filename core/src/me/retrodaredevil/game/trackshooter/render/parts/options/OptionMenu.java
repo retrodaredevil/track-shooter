@@ -49,6 +49,10 @@ public class OptionMenu implements Renderable, InputFocusable {
 		setToController(null, null);
 	}
 
+	public boolean isOpen() {
+		return renderComponent != null;
+	}
+
 	//region loading/saving
 	//endregion
 
@@ -76,4 +80,5 @@ public class OptionMenu implements Renderable, InputFocusable {
 	public int getFocusPriority() {
 		return 0;
 	}
+
 }

@@ -28,6 +28,9 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 	private final InputPart pauseButton;
 	private final InputPart backButton;
 
+	private final JoystickPart selectorJoystick;
+	private final InputPart enterButton;
+
 	private final ControllerRumble rumble;
 
 //	private final Collection<? extends ControlOption> controlOptions;
@@ -37,7 +40,8 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 
 	public DefaultUsableGameInput(String controlName, JoystickPart mainJoystick, InputPart rotateAxis,
 								  InputPart fireButton, InputPart slow, InputPart activatePowerup, InputPart startButton,
-								  InputPart pauseButton, InputPart backButton, ControllerRumble rumble, OptionTracker controlOptions,
+								  InputPart pauseButton, InputPart backButton, JoystickPart selectorJoystick, InputPart enterButton,
+								  ControllerRumble rumble, OptionTracker controlOptions,
 								  Collection<ControllerPart> reliesOnCollection){
 		this.controlName = controlName;
 		this.mainJoystick = mainJoystick;
@@ -48,6 +52,10 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 		this.startButton = startButton;
 		this.pauseButton = pauseButton;
 		this.backButton = backButton;
+
+		this.selectorJoystick = selectorJoystick;
+		this.enterButton = enterButton;
+
 		this.rumble = rumble;
 		this.controlOptions = controlOptions;
 		this.reliesOnCollection = reliesOnCollection;
@@ -109,6 +117,16 @@ public class DefaultUsableGameInput extends SimpleControllerInput implements Usa
 	@Override
 	public InputPart getBackButton() {
 		return backButton;
+	}
+
+	@Override
+	public JoystickPart getSelectorJoystick() {
+		return selectorJoystick;
+	}
+
+	@Override
+	public InputPart getEnterButton() {
+		return enterButton;
 	}
 
 	@Override

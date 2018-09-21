@@ -17,7 +17,7 @@ import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableControllerPart {
-	private final OptionValue maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 70, 15);
+	private final OptionValue maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 20, 15);
 	private double x, y;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
@@ -29,7 +29,7 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 
 	/**
 	 *
-	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach max (1 or -1) corresponding to (20 or -20)
+	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach a magnitude of 1 in
 	 */
 	public GdxTiltJoystick(Integer maxDegrees) {
 		super(new JoystickType(true, true, true, true), false, false);

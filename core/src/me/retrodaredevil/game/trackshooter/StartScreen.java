@@ -1,16 +1,29 @@
 package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 
 public class StartScreen extends ScreenAdapter {
 	private static final int BUTTON_WIDTH = 220;
@@ -21,6 +34,7 @@ public class StartScreen extends ScreenAdapter {
 	private boolean start;
 
 	private final Stage uiStage;
+	private final Renderable menuRenderable;
 
 	private final Button startButton;
 	private final Button optionsButton;
@@ -32,18 +46,12 @@ public class StartScreen extends ScreenAdapter {
 		this.renderObject = renderObject;
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
-		Table table = new Table();
-		table.setFillParent(true);
-		table.center();
 		TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
-		table.add(startButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
-		table.row();
 		optionsButton = new TextButton("options", style);
-		table.add(optionsButton).width(BUTTON_WIDTH).height(BUTTON_HEIGHT);
 
+		this.menuRenderable = new StartScreenRenderable();
 
-		uiStage.addActor(table);
 	}
 	@Override
 	public void render(float delta) {
@@ -51,9 +59,6 @@ public class StartScreen extends ScreenAdapter {
 			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
-		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
-			start = true;
-		}
 		InputFocuser focuser = new InputFocuser(renderParts.getInputMultiplexer());
 		focuser.addInputFocus(renderParts.getOptionsMenu());
 //		focuser.addParallelInputProcessor(inputCancellerTester);
@@ -62,7 +67,7 @@ public class StartScreen extends ScreenAdapter {
 		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
 		renderer.addRenderable(renderParts.getBackground());
 		renderer.addMainStage();
-		renderer.addRenderable(renderParts.getOptionsMenu());
+		renderer.addRenderable(renderParts.getOptionsMenu().isOpen() ? renderParts.getOptionsMenu() : menuRenderable);
 		renderer.addRenderable(renderParts.getOverlay());
 
 		renderer.render(delta);
@@ -84,5 +89,69 @@ public class StartScreen extends ScreenAdapter {
 
 	public boolean isReadyToStart(){
 		return start && !startButton.isPressed();
+	}
+
+	class StartScreenRenderable implements Renderable {
+		private final RenderComponent renderComponent = new StartScreenMenuRenderComponent();
+
+		@Override
+		public RenderComponent getRenderComponent() {
+			return renderComponent;
+		}
+
+	}
+	class StartScreenMenuRenderComponent extends SelectionMenuRenderComponent{
+		private final Table table = new Table(){{
+			setFillParent(true);
+			center();
+		}};
+		private final Map<Actor, SingleOption> actorSingleOptionMap = new HashMap<>();
+
+		StartScreenMenuRenderComponent() {
+			super(StartScreen.this.renderObject, gameInput);
+		}
+
+		@Override
+		public void render(float delta, Stage stage) {
+
+			if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
+				start = true;
+			}
+			stage.addActor(table);
+
+			Collection<? extends SingleOption> options = getOptions();
+			for(Iterator<SingleOption> it = actorSingleOptionMap.values().iterator(); it.hasNext(); ){
+				SingleOption singleOption = it.next();
+				if(!options.contains(singleOption)){
+					it.remove();
+				}
+			}
+			super.render(delta, stage);
+		}
+
+		@Override
+		protected Table getContentTable() {
+			return table;
+		}
+
+		@Override
+		protected Collection<? extends SingleOption> getOptionsToAdd() {
+			List<SingleOption> r = new ArrayList<>();
+			tryAddActorAsSingleOption(startButton, r);
+			tryAddActorAsSingleOption(optionsButton, r);
+			return r;
+		}
+		private void tryAddActorAsSingleOption(Actor actor, Collection<? super SingleOption> optionCollection){
+			if(actorSingleOptionMap.get(actor) == null){
+				SingleOption option = new PlainActorSingleOption(actor, BUTTON_WIDTH, BUTTON_HEIGHT);
+				optionCollection.add(option);
+				actorSingleOptionMap.put(actor, option);
+			}
+		}
+
+		@Override
+		protected boolean shouldKeep(SingleOption singleOption) {
+			return true;
+		}
 	}
 }

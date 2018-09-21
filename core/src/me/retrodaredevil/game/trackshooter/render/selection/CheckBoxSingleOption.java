@@ -34,12 +34,9 @@ public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	protected void onInit(Table container) {
+		super.onInit(container);
 		container.add(checkBox);
 		checkBox.setChecked(controlOption.getOptionValue().getBooleanOptionValue());
-	}
-
-	@Override
-	protected void onUpdate(Table container) {
 	}
 
 	@Override

@@ -36,27 +36,25 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 
 	@Override
 	public JoystickPart getMainJoystick() { return getCurrentGameInput().getMainJoystick(); }
-
 	@Override
 	public InputPart getRotateAxis() { return getCurrentGameInput().getRotateAxis(); }
-
 	@Override
 	public InputPart getFireButton() { return getCurrentGameInput().getFireButton(); }
-
 	@Override
 	public InputPart getSlowButton() { return getCurrentGameInput().getSlowButton(); }
-
 	@Override
 	public InputPart getActivatePowerup() { return getCurrentGameInput().getActivatePowerup(); }
-
 	@Override
 	public InputPart getStartButton() { return getCurrentGameInput().getStartButton(); }
-
 	@Override
 	public InputPart getPauseButton() { return getCurrentGameInput().getPauseButton(); }
-
 	@Override
 	public InputPart getBackButton() { return getCurrentGameInput().getBackButton(); }
+
+	@Override
+	public JoystickPart getSelectorJoystick() { return getCurrentGameInput().getSelectorJoystick(); }
+	@Override
+	public InputPart getEnterButton() { return getCurrentGameInput().getEnterButton(); }
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {

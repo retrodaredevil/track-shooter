@@ -23,4 +23,7 @@ public interface GameInput extends ControllerInput, RumbleCapableController, Con
 	InputPart getStartButton();
 	InputPart getPauseButton();
 	InputPart getBackButton();
+
+	JoystickPart getSelectorJoystick();
+	InputPart getEnterButton();
 }

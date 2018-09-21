@@ -14,6 +14,7 @@ import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
@@ -50,7 +51,8 @@ public final class GameInputs {
 
 	public static UsableGameInput createKeyboardInput(){
 		final JoystickPart mainJoystick = FourKeyJoystick.newWASDJoystick();
-		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseButton, backButton;
+		final JoystickPart selectorJoystick = FourKeyJoystick.newArrowKeyJoystick();
+		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseButton, backButton, enterButton;
 		final OptionTracker options = new OptionTracker();
 
 		rotateAxis = new GdxMouseAxis(false, 1.0f, createMouseMultiplier(options).getOptionValue(), createMouseInvert(options).getOptionValue());
@@ -60,14 +62,16 @@ public final class GameInputs {
 		activatePowerup = new KeyInputPart(Input.Keys.F);
 		pauseButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE),
 				new KeyInputPart(Input.Keys.ENTER));
-		backButton = new KeyInputPart(Input.Keys.ESCAPE);
+		backButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE));
+		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
 
 		return new DefaultUsableGameInput("Keyboard Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseButton, backButton, null, options, Collections.emptyList())
+				pauseButton, backButton, selectorJoystick, enterButton, null, options, Collections.emptyList())
 		{{
 
-			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseButton, backButton);
+			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+					startButton, pauseButton, backButton, selectorJoystick, enterButton);
 
 		}};
 	}
@@ -95,7 +99,8 @@ public final class GameInputs {
 		}
 
 		final JoystickPart mainJoystick;
-		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton;
+		final JoystickPart dummySelector;
+		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
 		if(useHiddenJoystick){
@@ -129,16 +134,20 @@ public final class GameInputs {
 		Gdx.input.setCatchBackKey(true);
 		pauseBackButton = new KeyInputPart(Input.Keys.BACK);
 
+		dummySelector = new TwoAxisJoystickPart(new DummyInputPart(0, true), new DummyInputPart(0, true));
+		dummyEnter = new DummyInputPart(0, false);
+
 		GdxRumble gdxRumble = new GdxRumble();
 		options.addController(gdxRumble);
 		rumble = gdxRumble;
 
 		return new DefaultUsableGameInput(useHiddenJoystick ? "Phone Hidden Joystick Controls" : "Phone Gyro Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseBackButton, pauseBackButton, rumble, options, Collections.emptyList())
+				pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList())
 		{{
 
-			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, pauseBackButton, rumble);
+			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+					startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
 
 		}};
 	}

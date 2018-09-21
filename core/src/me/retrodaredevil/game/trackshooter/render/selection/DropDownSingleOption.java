@@ -56,6 +56,7 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	protected void onInit(Table container) {
+		super.onInit(container);
 		updateItems();
 		container.add(selectBox);
 		selectBox.setSelectedIndex((int) controlOption.getOptionValue().getOptionValue());
@@ -63,6 +64,7 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	protected void onUpdate(Table container) {
+		super.onUpdate(container);
 		updateItems();
 	}
 

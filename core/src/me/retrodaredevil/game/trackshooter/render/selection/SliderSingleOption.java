@@ -34,6 +34,7 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	protected void onInit(Table container){
+		super.onInit(container);
 		OptionValue value = controlOption.getOptionValue();
 
 		slider.setValue((float) value.getOptionValue());
@@ -46,6 +47,7 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void onUpdate(Table table){
+		super.onUpdate(table);
 		valueLabel.setText(getNumberText(controlOption.getOptionValue().getOptionValue()));
 	}
 

@@ -10,13 +10,10 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public abstract class ControlOptionSingleOption implements SingleOption{
+public abstract class ControlOptionSingleOption extends ContainerSingleOption{
 
 	protected final ControlOption controlOption;
 	protected final OptionSaver optionSaver;
-	private final Table container = new Table();
-
-	private boolean initialized = false;
 	private boolean shouldSave = false;
 
 	protected ControlOptionSingleOption(ControlOption controlOption, OptionSaver optionSaver){
@@ -27,20 +24,16 @@ public abstract class ControlOptionSingleOption implements SingleOption{
 
 	protected abstract boolean canSave();
 	protected abstract double getSetValue();
-	protected abstract void onInit(Table container);
-	protected abstract void onUpdate(Table container);
 
 	@Override
-	public void renderUpdate(Table table) {
-		if(!initialized){
-			optionSaver.loadControlOption(controlOption);
-			onInit(container);
-		}
-		initialized = true;
-		if(container.getParent() != table){
-			table.add(container);
-			table.row();
-		}
+	protected void onInit(Table container) {
+		super.onInit(container);
+		optionSaver.loadControlOption(controlOption);
+	}
+
+	@Override
+	protected void onUpdate(Table container) {
+		super.onUpdate(container);
 
 		OptionValue value = controlOption.getOptionValue();
 		final double originalValue = value.getOptionValue();
@@ -54,33 +47,13 @@ public abstract class ControlOptionSingleOption implements SingleOption{
 			optionSaver.saveControlOption(controlOption);
 			shouldSave = false;
 		}
-
-		onUpdate(container);
 	}
+
 
 	@Override
 	public void reset() {
+		super.reset();
 		controlOption.getOptionValue().setToDefaultOptionValue();
 	}
 
-	public static boolean fireInputEvents(Actor actor, InputEvent.Type... types){
-		boolean eitherHandled = false;
-		for(InputEvent.Type type : types){
-			InputEvent event = Pools.obtain(InputEvent.class);
-			event.setType(type);
-			event.setButton(Input.Buttons.LEFT);
-
-			actor.fire(event);
-			if(!eitherHandled){
-				eitherHandled = event.isHandled();
-			}
-			Pools.free(event);
-		}
-		return eitherHandled;
-	}
-
-	@Override
-	public void remove() {
-		container.remove();
-	}
 }
