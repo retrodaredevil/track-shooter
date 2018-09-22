@@ -3,6 +3,8 @@ package me.retrodaredevil.game.input;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,7 +29,9 @@ import me.retrodaredevil.game.input.implementations.GdxRumble;
 import me.retrodaredevil.game.input.implementations.GdxScreenTouchButton;
 import me.retrodaredevil.game.input.implementations.GdxShakeButton;
 import me.retrodaredevil.game.input.implementations.GdxTiltJoystick;
+import me.retrodaredevil.game.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.input.implementations.KeyInputPart;
+import me.retrodaredevil.game.trackshooter.render.RenderParts;
 
 public final class GameInputs {
 	private GameInputs(){}
@@ -76,7 +80,13 @@ public final class GameInputs {
 		}};
 	}
 
-	private static UsableGameInput createPhoneInput(boolean useHiddenJoystick, boolean leftHanded) {
+	/**
+	 *
+	 * @param renderParts if not null, we should create a touchpad joystick
+	 * @param leftHanded
+	 * @return
+	 */
+	private static UsableGameInput createPhoneInput(RenderParts renderParts, boolean leftHanded) {
 //		if(!Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 //			throw new UnsupportedOperationException("Cannot create gyro input without gyroscope");
 //		}
@@ -103,11 +113,13 @@ public final class GameInputs {
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
-		if(useHiddenJoystick){
-			mainJoystick = new GdxHiddenTouchJoystick(joystickArea);
-			OptionValue mainJoystickDiameter = ((GdxHiddenTouchJoystick) mainJoystick).getMinimumProportionalDiameterOptionValue();
-			options.addControlOption(new ControlOption("Hidden Joystick Proportional Diameter", "How large should the joystick be",
-					"controls.all.joystick.diameter", mainJoystickDiameter));
+		if(renderParts != null){
+			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(() -> true, new Vector2(.13f, .5f), .35f);
+			mainJoystick = new GdxTouchpadJoystick(touchpad);
+//			mainJoystick = new GdxHiddenTouchJoystick(joystickArea);
+//			OptionValue mainJoystickDiameter = ((GdxHiddenTouchJoystick) mainJoystick).getMinimumProportionalDiameterOptionValue();
+//			options.addControlOption(new ControlOption("Hidden Joystick Proportional Diameter", "How large should the joystick be",
+//					"controls.all.joystick.diameter", mainJoystickDiameter));
 
 //			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.VOLUME_UP), new KeyInputPart(Input.Keys.VOLUME_DOWN));
 			fireButton = new HighestPositionInputPart(Arrays.asList(new GdxScreenTouchButton(rotateArea), new GdxScreenTouchButton(fireArea)), true);
@@ -141,7 +153,7 @@ public final class GameInputs {
 		options.addController(gdxRumble);
 		rumble = gdxRumble;
 
-		return new DefaultUsableGameInput(useHiddenJoystick ? "Phone Hidden Joystick Controls" : "Phone Gyro Controls",
+		return new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
 				pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList())
 		{{
@@ -152,10 +164,10 @@ public final class GameInputs {
 		}};
 	}
 	public static UsableGameInput createTouchGyroInput(){
-		return createPhoneInput(false, false);
+		return createPhoneInput(null, false);
 	}
 
-	public static UsableGameInput createHiddenJoystickInput(){
-		return createPhoneInput(true, false);
+	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts){
+		return createPhoneInput(renderParts, false);
 	}
 }

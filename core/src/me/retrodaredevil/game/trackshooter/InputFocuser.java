@@ -49,8 +49,8 @@ public class InputFocuser {
 				processorsToFocus.add(mainStage);
 			}
 		} else {
-			primaryFocus.onFocusGiven(mainStage);
 			processorsToFocus.addAll(primaryFocus.getInputProcessorsToFocus(mainStage));
+			primaryFocus.onFocusGiven(mainStage);
 		}
 		processorsToFocus.addAll(parallelProcessors);
 

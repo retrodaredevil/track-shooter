@@ -131,10 +131,17 @@ public class GameScreen extends ScreenAdapter {
 		renderer.addRenderable(renderParts.getBackground());
 		renderer.addRenderable(world);
 		renderer.addMainStage(); // world should have added this anyway
+		renderer.addRenderable(renderParts.getTouchpadRenderer());
 		renderer.addRenderable(renderParts.getOptionsMenu());
 		renderer.addRenderable(renderParts.getOverlay());
 
 		renderer.render(delta);
+
+		InputFocuser inputFocuser = new InputFocuser(renderParts.getInputMultiplexer());
+		inputFocuser.addInputFocus(renderParts.getTouchpadRenderer());
+		inputFocuser.giveFocus(stage);
+
+
 
 	}
 

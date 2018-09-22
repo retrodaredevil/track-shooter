@@ -15,6 +15,7 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class GdxHiddenTouchJoystick extends SimpleJoystickPart {
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);

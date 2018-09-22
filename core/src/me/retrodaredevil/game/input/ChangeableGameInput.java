@@ -23,6 +23,11 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	private final ControlOption radioControlOption;
 	private final RadioOptionOptionValue<UsableGameInput> gameInputOptionValue;
 
+	/**
+	 *
+	 * @param gameInputs A list where each element in it is used as an option.
+	 *                      Each element should be updated as well since this class will not update them
+	 */
 	public ChangeableGameInput(List<? extends UsableGameInput> gameInputs){
 		this.gameInputOptionValue = OptionValues.createRadioOptionValue(gameInputs, 0);
 		radioControlOption = new ControlOption("Game Input Options",

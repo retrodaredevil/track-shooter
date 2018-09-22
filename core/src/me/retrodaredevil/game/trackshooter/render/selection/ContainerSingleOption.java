@@ -21,11 +21,11 @@ public abstract class ContainerSingleOption implements SingleOption {
 
 	@Override
 	public void renderUpdate(Table table) {
-
 		if(!initialized){
 			onInit(container);
+			initialized = true;
 		}
-		initialized = true;
+
 		if(container.getParent() != table){
 			containerCell = table.add(container);
 			table.row();
@@ -36,15 +36,24 @@ public abstract class ContainerSingleOption implements SingleOption {
 
 	@Override
 	public void reset() {
-
 	}
 
 	@Override
 	public void remove() {
-//		System.out.println("cell's actor before: " + containerCell.getActor());
-		container.remove();
-//		System.out.println("cell's actor: " + containerCell.getActor());
+		if(!initialized){
+			return;
+		}
+		Table table = (Table) container.getParent();
 		initialized = false;
+
+		if(table == null){
+			return;
+		}
+
+		container.remove();
+		// thanks for simple solution https://stackoverflow.com/a/49285366/5434860
+		table.getCells().removeValue(containerCell, true);
+		table.invalidate();
 	}
 
 	public static boolean fireInputEvents(Actor actor, InputEvent.Type... types){

@@ -31,7 +31,8 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
 import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
@@ -54,9 +55,11 @@ public class GameMain extends Game {
 		Resources.loadToSkin(skin);
 //		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
 		Skin uiSkin = new Skin(Gdx.files.internal("skins/sgx/sgx-ui.json"));
-		renderObject = new RenderObject(batch, skin, uiSkin);
+		Skin arcadeSkin = new Skin(Gdx.files.internal("skins/arcade/arcade-ui.json"));
+		renderObject = new RenderObject(batch, skin, uiSkin, arcadeSkin);
 		saveObject = new SaveObject();
-		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject, saveObject), new Overlay(renderObject), new InputMultiplexer());
+		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject, saveObject),
+				new Overlay(renderObject), new TouchpadRenderer(renderObject), new InputMultiplexer());
 		controllerManager = new DefaultControllerManager();
 		for(Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext();){
 			Controller controller = it.next();
@@ -76,7 +79,7 @@ public class GameMain extends Game {
 				if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
 					gameInputs.add(GameInputs.createTouchGyroInput());
 				}
-				gameInputs.add(GameInputs.createHiddenJoystickInput());
+				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
 			}
 			gameInputs.add(GameInputs.createKeyboardInput());
 //			inputs.add(keyboardInput);

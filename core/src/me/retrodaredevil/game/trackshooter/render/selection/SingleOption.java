@@ -6,7 +6,6 @@ import java.util.Collection;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.game.trackshooter.render.parts.options.OptionMenu;
 
 /**
  * As of right now, this is for representing a single, selectable and updatable option. In the future,
