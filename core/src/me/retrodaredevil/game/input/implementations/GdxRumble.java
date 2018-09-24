@@ -142,7 +142,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	}
 
 	private enum VibratePattern{
-		OFF(), FULL(), P90(new long[]{4, 30}), P70(new long[]{12, 25}), P50(new long[]{10, 18}), P35(new long[]{15, 15}), P10(new long[]{22, 15});
+		OFF(), FULL(), P90(new long[]{4, 30}), P70(new long[]{15, 20}), P50(new long[]{15, 15}), P35(new long[]{20, 8}), P10(new long[]{30, 3});
 
 		private final long[] pattern;
 

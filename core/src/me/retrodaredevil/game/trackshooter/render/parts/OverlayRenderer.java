@@ -40,6 +40,7 @@ public class OverlayRenderer implements RenderComponent {
 	private final Table[] itemsTables = new Table[4];
 
 	private final Label highScoreLabel;
+	private final Label levelCounterLabel; // Later will will replace this with pac-man or galaga style level counter
 
 	private final Overlay overlay;
 	private final RenderObject renderObject;
@@ -95,6 +96,12 @@ public class OverlayRenderer implements RenderComponent {
 		highScoreLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score")));
 		highScoreTable.add(highScoreLabel).padTop(-10);
 
+		Table levelCounterTable = new Table();
+		group.addActor(levelCounterTable);
+		levelCounterTable.setFillParent(true);
+		levelCounterTable.center().bottom();
+		levelCounterLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score_label")));
+		levelCounterTable.add(levelCounterLabel);
 	}
 
 	@Override
@@ -159,6 +166,7 @@ public class OverlayRenderer implements RenderComponent {
 			}
 		}
 		highScoreLabel.setText(getScoreText(overlay.getHighScore()));
+		levelCounterLabel.setText("" + overlay.getLevelNumber());
 
 	}
 	private static String getScoreText(int scoreValue){

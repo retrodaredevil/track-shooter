@@ -6,11 +6,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
@@ -23,7 +20,6 @@ import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
-import me.retrodaredevil.game.input.implementations.GdxHiddenTouchJoystick;
 import me.retrodaredevil.game.input.implementations.GdxMouseAxis;
 import me.retrodaredevil.game.input.implementations.GdxRumble;
 import me.retrodaredevil.game.input.implementations.GdxScreenTouchButton;
@@ -31,6 +27,7 @@ import me.retrodaredevil.game.input.implementations.GdxShakeButton;
 import me.retrodaredevil.game.input.implementations.GdxTiltJoystick;
 import me.retrodaredevil.game.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.input.implementations.KeyInputPart;
+import me.retrodaredevil.game.input.implementations.ReleaseButtonPress;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 
 public final class GameInputs {
@@ -92,19 +89,15 @@ public final class GameInputs {
 //		}
 		final Rectangle fireArea;
 		final Rectangle rotateArea;
-		final Rectangle joystickArea;
 		{
 			final Rectangle leftSide = new Rectangle(0, 0, .5f, 1);
 			final Rectangle rightSide = new Rectangle(.5f, 0, .5f, 1);
-			final float centerJoystickCutoff = .2f;
 			if(leftHanded){
 				rotateArea = leftSide;
 				fireArea = rightSide;
-				joystickArea = new Rectangle(.5f + centerJoystickCutoff, 0, 1 - centerJoystickCutoff, 1);
 			} else {
 				fireArea = leftSide;
 				rotateArea = rightSide;
-				joystickArea = new Rectangle(0, 0, .5f - centerJoystickCutoff, 1);
 			}
 		}
 
@@ -114,15 +107,19 @@ public final class GameInputs {
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
 		if(renderParts != null){
+			// TODO figure out a better way to tell if this is active. Using () -> true right now (always active)
 			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(() -> true, new Vector2(.13f, .5f), .35f);
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
-//			mainJoystick = new GdxHiddenTouchJoystick(joystickArea);
 //			OptionValue mainJoystickDiameter = ((GdxHiddenTouchJoystick) mainJoystick).getMinimumProportionalDiameterOptionValue();
 //			options.addControlOption(new ControlOption("Hidden Joystick Proportional Diameter", "How large should the joystick be",
 //					"controls.all.joystick.diameter", mainJoystickDiameter));
 
-//			fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.VOLUME_UP), new KeyInputPart(Input.Keys.VOLUME_DOWN));
-			fireButton = new HighestPositionInputPart(Arrays.asList(new GdxScreenTouchButton(rotateArea), new GdxScreenTouchButton(fireArea)), true);
+			fireButton = new HighestPositionInputPart(
+					Arrays.asList(
+							new GdxScreenTouchButton(fireArea),
+							new ReleaseButtonPress(new GdxScreenTouchButton(rotateArea))
+					),
+					true);
 		} else {
 			mainJoystick = new GdxTiltJoystick();
 			options.addController((ConfigurableControllerPart) mainJoystick);

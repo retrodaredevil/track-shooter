@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.Updateable;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
@@ -141,4 +142,14 @@ public class Overlay implements Renderable, Updateable, Disposable {
 		stage.dispose();
 	}
 
+	public int getLevelNumber() {
+		if(world == null){
+			return 0;
+		}
+		Level level = world.getLevel();
+		if(level == null){
+			return 0;
+		}
+		return level.getNumber();
+	}
 }

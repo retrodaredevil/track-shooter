@@ -11,17 +11,24 @@ import java.util.List;
 public class Track implements Renderable {
 
 	private final List<? extends TrackPart> parts;
-	private float totalDistance;
+	private final float totalDistance;
 
 	protected RenderComponent renderComponent;
 
 	public Track(List<? extends TrackPart> parts){
 		this.parts = parts;
-		this.totalDistance = calculateTotalDistance();
+		this.totalDistance = calculateTotalDistance(parts);
 
 		this.renderComponent = new TrackRenderComponent(this);
 	}
-	protected float calculateTotalDistance(){
+
+	/**
+	 * If overridden, this must not rely on instance variables as this is called from the superclass
+	 * constructor.
+	 * @param parts The list of track parts
+	 * @return The total distance of the parts
+	 */
+	protected float calculateTotalDistance(List<? extends TrackPart> parts){
 		float r = 0;
 		for(TrackPart part : parts){
 			r += part.getDistance();
@@ -55,7 +62,8 @@ public class Track implements Renderable {
 			}
 			current = newCurrent;
 		}
-		assert currentPart != null : "currentPart is null. Something must be wrong with the distances";
+		assert currentPart != null : "currentPart is null. Something must be wrong with the distances. " +
+				"current: " + current + " distanceGone: " + distanceGone + " totalDistance: " + totalDistance + " recalculated total distance: " + calculateTotalDistance(parts);
 		return currentPart.getDesiredPosition(distanceGone - current);
 	}
 	public float getMovePercent(float angleDegrees, float distanceGone){
