@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.selection;
+package me.retrodaredevil.game.trackshooter.render.selection.options;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
@@ -13,6 +13,8 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
+import me.retrodaredevil.game.trackshooter.render.selection.ContainerSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
 public class DropDownSingleOption extends ControlOptionSingleOption {
@@ -78,8 +80,8 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
-		fireInputEvents(selectBox, InputEvent.Type.enter);
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SingleOption.SelectAction> requestedActions) {
+		ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.enter);
 		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
 		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)
 		// and because of that, we think it's already down on the frame isPressed() for 'back' returns true.
@@ -97,8 +99,8 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 				hide();
 			}
 			if(select.isPressed()){
-				fireInputEvents(selectBox, InputEvent.Type.touchDown);
-				fireInputEvents(selectBox, InputEvent.Type.touchUp);
+				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchDown);
+				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchUp);
 				hide();
 			}
 		} else {
@@ -112,6 +114,6 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	@Override
 	public void deselect() {
 		hide();
-		fireInputEvents(selectBox, InputEvent.Type.exit);
+		ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.exit);
 	}
 }

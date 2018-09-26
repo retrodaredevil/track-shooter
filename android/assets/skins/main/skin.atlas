@@ -4,9 +4,16 @@ size: 256,128
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-bullet
+apple
   rotate: false
   xy: 138, 70
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+bullet
+  rotate: false
+  xy: 138, 52
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -20,7 +27,7 @@ cargo_ship
   index: -1
 cherry
   rotate: false
-  xy: 138, 52
+  xy: 156, 70
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -32,11 +39,25 @@ even_bonus
   orig: 72, 9
   offset: 0, 0
   index: -1
+grapes
+  rotate: false
+  xy: 138, 34
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
 odd_bonus
   rotate: false
   xy: 2, 13
   size: 90, 9
   orig: 90, 9
+  offset: 0, 0
+  index: -1
+pizza
+  rotate: false
+  xy: 156, 52
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1
 player
@@ -76,7 +97,7 @@ shark_worn
   index: -1
 snake_part
   rotate: false
-  xy: 156, 70
+  xy: 174, 70
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -93,5 +114,12 @@ space_station
   xy: 104, 56
   size: 32, 64
   orig: 32, 64
+  offset: 0, 0
+  index: -1
+strawberry
+  rotate: false
+  xy: 156, 34
+  size: 16, 16
+  orig: 16, 16
   offset: 0, 0
   index: -1

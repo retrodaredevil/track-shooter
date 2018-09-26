@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.selection;
+package me.retrodaredevil.game.trackshooter.render.selection.options;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;

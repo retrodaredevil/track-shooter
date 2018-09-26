@@ -13,7 +13,6 @@ import me.retrodaredevil.controller.options.OptionValue;
  */
 public class GdxShakeButton extends AutoCachingInputPart {
 
-//	private int threshold;
 	private final OptionValue thresholdValue;
 
 	/**
@@ -32,10 +31,8 @@ public class GdxShakeButton extends AutoCachingInputPart {
 		float y = Gdx.input.getAccelerometerY();
 		float z = Gdx.input.getAccelerometerZ();
 		float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
-//		double magnitude = sqrt(sqrt(x * x + y * y) + z * z);
 		magnitude -= 9.8f;
 		// magnitude may be less than 0
-//		System.out.println("magnitude: " + magnitude);
 		return (magnitude >= thresholdValue.getOptionValue()) ? 1 : 0;
 	}
 

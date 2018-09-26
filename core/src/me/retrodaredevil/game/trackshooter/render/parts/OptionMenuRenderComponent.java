@@ -16,11 +16,11 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.selection.CheckBoxSingleOption;
-import me.retrodaredevil.game.trackshooter.render.selection.DropDownSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.CheckBoxSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.DropDownSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
-import me.retrodaredevil.game.trackshooter.render.selection.SliderSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.SliderSingleOption;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
 public class OptionMenuRenderComponent extends SelectionMenuRenderComponent {

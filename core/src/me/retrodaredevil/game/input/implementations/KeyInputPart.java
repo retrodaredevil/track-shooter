@@ -7,8 +7,8 @@ import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
 
 public class KeyInputPart extends AutoCachingInputPart {
-	private int code;
-	private boolean isButton;
+	private final int code;
+	private final boolean isButton;
 
 	public KeyInputPart(int code, boolean isButton) {
 		super(new AxisType(false, false));
@@ -29,6 +29,6 @@ public class KeyInputPart extends AutoCachingInputPart {
 
 	@Override
 	public boolean isConnected() {
-		return isButton || Gdx.input.isPeripheralAvailable(Input.Peripheral.HardwareKeyboard);
+		return true;
 	}
 }

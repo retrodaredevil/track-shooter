@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.selection;
+package me.retrodaredevil.game.trackshooter.render.selection.options;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -8,9 +8,10 @@ import com.badlogic.gdx.utils.Pools;
 
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
+import me.retrodaredevil.game.trackshooter.render.selection.ContainerSingleOption;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
-public abstract class ControlOptionSingleOption extends ContainerSingleOption{
+public abstract class ControlOptionSingleOption extends ContainerSingleOption {
 
 	protected final ControlOption controlOption;
 	protected final OptionSaver optionSaver;

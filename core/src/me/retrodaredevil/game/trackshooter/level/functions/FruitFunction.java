@@ -16,9 +16,20 @@ public class FruitFunction extends PowerupFunction {
 	protected PowerupEntity createPowerup(World world) {
 		int level = world.getLevel().getNumber();
 		Resources.Points points = Resources.Points.P100;
-		if(level > 2){
+		String name = "cherry";
+		if(level >= 15){
+			points = Resources.Points.P1000;
+			name = "pizza";
+		} else if (level >= 10){
+			points = Resources.Points.P700;
+			name = "grapes";
+		} else if (level >= 6){
+			points = Resources.Points.P500;
+			name = "strawberry";
+		} else if(level >= 3){
 			points = Resources.Points.P300;
+			name = "apple";
 		}
-		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(world.getMainSkin().getDrawable("cherry"))); // TODO change cherry to something else
+		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(world.getMainSkin().getDrawable(name)));
 	}
 }

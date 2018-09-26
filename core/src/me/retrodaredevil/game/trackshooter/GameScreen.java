@@ -66,7 +66,7 @@ public class GameScreen extends ScreenAdapter {
 	private void doUpdate(float delta){
 		for(GameInput input : gameInputs){
 			if(input.getPauseButton().isPressed()){
-				paused = !paused; // TODO even when paused, the current time still increments
+				paused = !paused;
 				break;
 			}
 		}
@@ -76,7 +76,6 @@ public class GameScreen extends ScreenAdapter {
 			return;
 		}
 		world.update(delta, world);
-//		stage.getViewport().apply(true);
 
 
 		Level level = world.getLevel();
@@ -86,6 +85,10 @@ public class GameScreen extends ScreenAdapter {
 			Player player = it.next();
 			Score score = player.getScoreObject();
 
+			// TODO There's a rare bug where the player dies, lives goes to 0, then gets an extra...
+			// life from a previously shot bullet. Because of this, the player is removed before
+			// we have a chance to see if the player gets that extra life. We may fix this in the
+			// future or we may leave it the way it is because it might create more bugs with multiplayer.
 			if(score.getLives() > 0){
 				if(player.isRemoved() && mode == LevelMode.NORMAL){
 					level.setMode(LevelMode.RESET);
@@ -140,9 +143,6 @@ public class GameScreen extends ScreenAdapter {
 		InputFocuser inputFocuser = new InputFocuser(renderParts.getInputMultiplexer());
 		inputFocuser.addInputFocus(renderParts.getTouchpadRenderer());
 		inputFocuser.giveFocus(stage);
-
-
-
 	}
 
 	@Override
@@ -156,7 +156,6 @@ public class GameScreen extends ScreenAdapter {
 	public void dispose() {
 		world.disposeRenderComponent();
 		stage.dispose();
-
 	}
 	public boolean isGameCompletelyOver(){
 		return shouldExit;

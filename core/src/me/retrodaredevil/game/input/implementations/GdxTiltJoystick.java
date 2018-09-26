@@ -31,7 +31,7 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 	 *
 	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach a magnitude of 1 in
 	 */
-	public GdxTiltJoystick(Integer maxDegrees) {
+	private GdxTiltJoystick(Integer maxDegrees) {
 		super(new JoystickType(true, true, true, true), false, false);
 		if(maxDegrees != null) {
 			maxDegreesOption.setOptionValue(maxDegrees);
