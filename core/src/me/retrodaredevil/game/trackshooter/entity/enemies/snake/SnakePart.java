@@ -13,6 +13,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.SmoothOppositePositionTarget;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
@@ -38,11 +39,15 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	private static final float HITBOX_SIZE_RATIO = .625f;
 	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
 
+	private static final float MIN_SPEED = 6;
+
 	private final EntityDifficulty difficulty;
+	private final Skin skin;
 //	private final MoveComponent returnToStart;
 	private final ImageRenderComponent renderComponent;
 	private final SmoothTravelMoveComponent smoothTravel;
 	private SmartSightMoveComponent smartSightCache = null; // will use smoothTravel
+	private SmoothOppositePositionTarget smoothOppositeCache = null;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
@@ -55,6 +60,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 
 	public SnakePart(EntityDifficulty difficulty, Skin skin){
 		this.difficulty = difficulty;
+		this.skin = skin;
 
 		this.smoothTravel = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0); // values that are 0 will be reset
 		this.renderComponent = new ImageRenderComponent(new Image(skin.getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
@@ -62,7 +68,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		setSize(.4f, true);
 
 		canRespawn = false;
-		collisionIdentity = CollisionIdentity.ENEMY;
+		collisionIdentity = CollisionIdentity.ENEMY_EATER;
 		levelEndStateWhenActive = LevelEndState.CANNOT_END;
 
 		this.follow(null);
@@ -103,6 +109,15 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 //			updateSpeedAndRotation(null, smartSightCache);
 		}
 		setMoveComponent(smartSightCache);
+	}
+	public void switchToOppositeTrackPositionTarget(Entity target){
+		if (!isHead()) {
+			throw new UnsupportedOperationException("Only the head can use this method.");
+		}
+		if(smoothOppositeCache == null || smoothOppositeCache.getEntityTarget() != target){
+			smoothOppositeCache = new SmoothOppositePositionTarget(this, target, smoothTravel);
+		}
+		setMoveComponent(smoothOppositeCache);
 	}
 	public void switchToManualTarget(float x, float y){
 		if(!isHead()){
@@ -165,6 +180,13 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 			head = head.inFront;
 		}
 		return head;
+	}
+	public SnakePart getTail(){
+		SnakePart tail = this;
+		while(tail.behind != null){
+			tail = tail.behind;
+		}
+		return tail;
 	}
 
 	@Override
@@ -257,38 +279,34 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		if(!this.isHead()){
 			throw new UnsupportedOperationException("This method is only allowed to be called on a head SnakePark");
 		}
-//		final boolean canMultiplyRotation = moveComponent instanceof RotationalVelocityMultiplierSetter;
-//		final boolean canSetTravelSpeed = moveComponent instanceof TravelVelocitySetter;
-//		if(!canSetTravelSpeed && !canMultiplyRotation){
-//			return; // we can't do anything so why calculate anything
-//		}
 		if(numberParts == null){
 			numberParts = this.getNumberBehind() + 1;
 		}
-		float speed = 5;
+		float speed = MIN_SPEED;
 		float rotMultiplier = 2;
 		if (numberParts <= 10) {
 			if (difficulty.value >= EntityDifficulty.NORMAL.value) {
 				if (difficulty.value >= EntityDifficulty.HARD.value) {
-					speed = 15 - numberParts;
+					speed = 10 + MIN_SPEED - numberParts;
 				} else if (numberParts <= 5) {
-					speed = 5 + (5 - numberParts) * .5f;
+					speed = MIN_SPEED + (5 - numberParts) * .5f;
 				}
 				rotMultiplier = 4.5f - (numberParts * .25f);
 			}
 		}
 		smoothTravel.setRotationalMultiplier(rotMultiplier);
 		smoothTravel.getTravelVelocitySetter().setVelocity(speed);
-//		if(canMultiplyRotation) {
-//			((RotationalVelocityMultiplierSetter) moveComponent).setRotationalMultiplier(rotMultiplier);
-//		}
-//		if(canSetTravelSpeed){
-//			((TravelVelocitySetter) moveComponent).getTravelVelocitySetter().setVelocity(speed);
-//		}
 	}
 
 	@Override
 	public void onHit(World world, Entity other)  {
+		if(other.getCollisionIdentity() == CollisionIdentity.POWERUP){ // eat it!!
+			SnakePart newTail = new SnakePart(difficulty, skin);
+			world.addEntity(newTail);
+			newTail.follow(getTail());
+			addEffect(new TimedSpeedEffect(1000, 2));
+			return;
+		}
 		Player player = null;
 		if(other instanceof Player){
 			player = (Player) other;

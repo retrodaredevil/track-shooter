@@ -207,10 +207,6 @@ public class SimpleEntity implements Entity {
 		return forceRemove;
 	}
 
-	protected boolean isInBounds(World world){
-		return world.getBounds().overlaps(this.getHitbox());
-	}
-
 	@Override
 	public void afterRemove(World world) {
 		if(this.removed){

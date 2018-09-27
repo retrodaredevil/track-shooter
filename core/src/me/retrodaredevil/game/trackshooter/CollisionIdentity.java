@@ -20,7 +20,8 @@ public enum CollisionIdentity {
 
 	FRIENDLY_PROJECTILE(ENEMY),
 	ENEMY_PROJECTILE(FRIENDLY),
-	POWERUP(FRIENDLY)
+	POWERUP(FRIENDLY),
+	ENEMY_EATER(POWERUP, FRIENDLY_ALLY, FRIENDLY, FRIENDLY_PROJECTILE)
 	;
 	static{
 		// The reason for putting this here is that when creating an EnumSet, the enum must be fully initialized

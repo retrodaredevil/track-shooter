@@ -39,6 +39,7 @@ public class Fruit extends SimplePowerup {
 	@Override
 	public void onHit(World world, Entity other)  {
 		if(!(other instanceof Player)){
+			eaten = true;
 			return;
 		}
 		Player player = (Player) other;

@@ -6,11 +6,10 @@ import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.game.trackshooter.entity.DifficultEntity;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
-import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmartSightMoveComponent extends NestedComponentMoveComponent {
+public class SmartSightMoveComponent extends NestedComponentMoveComponent implements EntityTargetingMoveComponent {
 	private static final float IN_FRONT_DISTANCE = 5;
 	private static final float MAX_AWAY = 12;
 
@@ -36,6 +35,7 @@ public class SmartSightMoveComponent extends NestedComponentMoveComponent {
 		this.smoothTravel = smoothTravel;
 	}
 
+	@Override
 	public Entity getEntityTarget(){
 		return target;
 	}
@@ -60,7 +60,7 @@ public class SmartSightMoveComponent extends NestedComponentMoveComponent {
 		float angleAway = MathUtil.minDistance(rotation, angle, 360); // the amount of degrees the target is away from looking right at the head
 		if(difficulty.value >= EntityDifficulty.HARD.value && angleAway < 25){ // give speed boast to snake when player is looking right at it
 			float speed = smoothTravel.getTravelVelocity();
-			speed += (angleAway / 25) * 3;
+			speed += (1 - (angleAway / 25)) * 3;
 			smoothTravel.getTravelVelocitySetter().setVelocity(speed);
 		}
 		if(angleAway < VIEW_ANGLE){ // the target is looking at the head

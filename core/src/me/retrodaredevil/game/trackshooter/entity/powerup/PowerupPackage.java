@@ -23,7 +23,8 @@ public abstract class PowerupPackage extends SimplePowerup {
 	@Override
 	public void onHit(World world, Entity other)  {
 		if(!(other instanceof Player)){
-			throw new CannotHitException(other, this);
+			eaten = true;
+			return;
 		}
 		Player player = (Player) other;
 		onHit(world, player);

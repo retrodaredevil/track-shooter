@@ -43,7 +43,7 @@ public class SmoothResetPositionMoveComponent extends ResetPositionMoveComponent
 			setNestedMoveComponent(new SmoothTravelMoveComponent(entity, startingPosition, speed, rotationalSpeedMultiplier));
 			return;
 		}
-		if (moveComponent instanceof TargetPositionMoveComponent) {
+		if (moveComponent instanceof TargetPositionMoveComponent) { // true when instanceof SmoothTravelMoveComponent (it's like this to be more generic)
 			TargetPositionMoveComponent smoothTravel = (TargetPositionMoveComponent) moveComponent;
 			smoothTravel.setTargetPosition(startingPosition);
 		} else {

@@ -84,4 +84,29 @@ public final class MathUtil {
 		float bigger = Math.max(positive, negative);
 		return sign * (90 - bigger) / 90.0f;
 	}
+
+	/**
+	 * This function oscillates starting at -1 to 1 and back down to -1
+	 * <p>
+	 * oscillateFullAnalog(0) = -1
+	 * <br/>
+	 * oscillateFullAnalog(.25) = 0
+	 * <br/>
+	 * oscillateFullAnalog(.5) = 1
+	 * <br/>
+	 * oscillateFullAnalog(.75) = 0
+	 * <br/>
+	 * oscillateFullAnalog(1) = -1
+	 * @param a The input value
+	 * @return returns the output value
+	 */
+	public static float oscillateFullAnalog(float a){
+		float r = (a * 4) % 4; // 0 to 4VAR
+
+		if(r > 2){ // 0 to 2VAR
+			r = 4 - r;
+		}
+		r -= 1; // -1VAR to 1VAR
+		return r;
+	}
 }
