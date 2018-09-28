@@ -8,7 +8,7 @@ import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class TravelVelocityOnTrackMoveComponent extends SimpleMoveComponent
-		implements OnTrackMoveComponent, TravelVelocitySetter {
+		implements OnTrackMoveComponent, TravelVelocitySetterMoveComponent {
 
 	protected final Entity entity;
 

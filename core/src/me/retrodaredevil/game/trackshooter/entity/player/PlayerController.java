@@ -7,8 +7,8 @@ import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetter;
-import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetter;
+import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetterMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetterMoveComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PlayerController implements EntityController{
@@ -54,8 +54,8 @@ public class PlayerController implements EntityController{
 				velocity = 0;
 			}
 			// now velocity is initialized
-			if(move instanceof TravelVelocitySetter) {
-				((TravelVelocitySetter) move).getTravelVelocitySetter().setVelocity(velocity);
+			if(move instanceof TravelVelocitySetterMoveComponent) {
+				((TravelVelocitySetterMoveComponent) move).getTravelVelocitySetter().setVelocity(velocity);
 			} else {
 				System.err.println("move not instanceof TravelVelocityMoveComponent. Remove print error if intended.");
 				trackMove.setDistanceOnTrack(trackMove.getDistanceOnTrack() + delta * velocity);
@@ -78,15 +78,15 @@ public class PlayerController implements EntityController{
 				desired = 0;
 			}
 
-			if(move instanceof RotationalVelocitySetter){
-				((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(desired);
+			if(move instanceof RotationalVelocitySetterMoveComponent){
+				((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(desired);
 			} else {
 				System.err.println("move not instanceof RotationalVelocityMoveComponent. Remove print error if intended.");
 				player.setRotation(player.getRotation() + delta * desired);
 			}
 		} else { // probably a mouse
-			if(move instanceof RotationalVelocitySetter){ // 0 velocity just in case
-				((RotationalVelocitySetter) move).getRotationalVelocitySetter().setVelocity(0);
+			if(move instanceof RotationalVelocitySetterMoveComponent){ // 0 velocity just in case
+				((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(0);
 			}
 			// change rotation manually
 			player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative

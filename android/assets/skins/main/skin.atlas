@@ -116,9 +116,16 @@ space_station
   orig: 32, 64
   offset: 0, 0
   index: -1
-strawberry
+starfish
   rotate: false
   xy: 156, 34
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+strawberry
+  rotate: false
+  xy: 174, 52
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

@@ -62,7 +62,7 @@ public enum CollisionIdentity {
 		return triggersWith;
 	}
 
-	/**
+	/*tar
 	 * NOTE: If a call with a given parameters returns true, then calling it the other way around returns false:<p>
 	 * if a.triggersCollision(b) then b.triggersCollision(a) == false
 	 *

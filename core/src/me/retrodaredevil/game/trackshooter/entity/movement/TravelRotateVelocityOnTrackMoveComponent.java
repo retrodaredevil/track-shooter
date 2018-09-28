@@ -14,7 +14,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * that this class implements
  */
 public class TravelRotateVelocityOnTrackMoveComponent extends TravelVelocityOnTrackMoveComponent
-		implements RotationalVelocitySetter {
+		implements RotationalVelocitySetterMoveComponent {
 
 	private final VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 

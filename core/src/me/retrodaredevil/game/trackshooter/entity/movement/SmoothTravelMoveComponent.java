@@ -7,11 +7,10 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.util.VelocityHandler;
 import me.retrodaredevil.game.trackshooter.util.VelocitySetter;
-import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class SmoothTravelMoveComponent extends SimpleMoveComponent implements VelocityTargetPositionMoveComponent, TravelVelocitySetter,
-		RotationalVelocityMoveComponent, RotationalVelocityMultiplierSetter{
+public class SmoothTravelMoveComponent extends SimpleMoveComponent implements VelocityTargetPositionMoveComponent, TravelVelocitySetterMoveComponent,
+		RotationalVelocityMoveComponent, RotationalVelocityMultiplierSetterMoveComponent {
 	private static final Vector2 temp = new Vector2();
 
 	private final Entity entity;
