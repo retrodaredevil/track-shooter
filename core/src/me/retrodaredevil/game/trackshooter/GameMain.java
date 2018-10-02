@@ -76,10 +76,10 @@ public class GameMain extends Game {
 		if(inputs.isEmpty()) { // use keyboard and mouse as a last resort
 			List<UsableGameInput> gameInputs = new ArrayList<>();
 			if(Gdx.app.getType() == Application.ApplicationType.Android){
+				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
 				if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
 					gameInputs.add(GameInputs.createTouchGyroInput());
 				}
-				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
 			}
 			gameInputs.add(GameInputs.createKeyboardInput());
 //			inputs.add(keyboardInput);

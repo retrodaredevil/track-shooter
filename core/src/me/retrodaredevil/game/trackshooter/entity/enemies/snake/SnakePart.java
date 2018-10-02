@@ -2,7 +2,9 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.snake;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.effect.Effect;
@@ -20,9 +22,6 @@ import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * A SnakePart is an entity that is able to "follow" another SnakePart. If this SnakePart isn't following
  * another SnakePart, its behaviour will be different and its MoveComponent should be a SmoothTravelMoveComponent.
@@ -36,36 +35,30 @@ import java.util.List;
  * to reset to its starting position.
  */
 public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
-	private static final float HITBOX_SIZE_RATIO = .625f;
+	private static final float HITBOX_SIZE_RATIO = .625f; // whenever the size is set, it's hitbox size will be multiplied by this
 	private static final float DONE_GOING_TO_START_DISTANCE2 = 3 * 3;
 
 	private static final float MIN_SPEED = 6;
 
 	private final EntityDifficulty difficulty;
-	private final Skin skin;
-//	private final MoveComponent returnToStart;
-	private final ImageRenderComponent renderComponent;
 	private final SmoothTravelMoveComponent smoothTravel;
+	private ImageRenderComponent renderComponent; // initialized before spawning
 	private SmartSightMoveComponent smartSightCache = null; // will use smoothTravel
 	private SmoothOppositePositionTarget smoothOppositeCache = null;
 
 	private SnakePart inFront = null; // the part in front of us
 	private SnakePart behind = null;   // the part behind us
 
-	private float followDistance = 0;
+	private float followDistance = 0; // set when setSize() is called
 
 	private boolean hit = false;
 
 
 
-	public SnakePart(EntityDifficulty difficulty, Skin skin){
+	public SnakePart(EntityDifficulty difficulty){
 		this.difficulty = difficulty;
-		this.skin = skin;
 
 		this.smoothTravel = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0); // values that are 0 will be reset
-		this.renderComponent = new ImageRenderComponent(new Image(skin.getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
-		setRenderComponent(renderComponent);
-		setSize(.4f, true);
 
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY_EATER;
@@ -74,18 +67,26 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		this.follow(null);
 	}
 
+	@Override
+	public void beforeSpawn(World world) {
+		super.beforeSpawn(world);
+		this.renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
+		setRenderComponent(renderComponent);
+
+	}
+
 	/**
 	 * Creates many SnakeParts to create a fully functioning snake but, however, it does not add the created SnakeParts
 	 * to a world and does not give them an EntityController
 	 * @param amount The amount of SnakeParts there should be
 	 * @return A list of SnakeParts with a length of amount
 	 */
-	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty, Skin skin){
+	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty){
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
 		for(int i = 0; i < amount; i++){
-			SnakePart part = new SnakePart(difficulty, skin);
+			SnakePart part = new SnakePart(difficulty);
 			part.follow(last);
 			r.add(part);
 
@@ -128,8 +129,8 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 
-	public void setSize(float size, boolean applyToAll){
-		if(followDistance == size){
+	private void setSize(float size, boolean applyToAll){
+		if(followDistance == size || renderComponent == null){
 			//  && (inFront == null || inFront.followDistance == size) && (behind == null || behind.followDistance == size)
 			return;
 		}
@@ -301,10 +302,11 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	@Override
 	public void onHit(World world, Entity other)  {
 		if(other.getCollisionIdentity() == CollisionIdentity.POWERUP){ // eat it!!
-			SnakePart newTail = new SnakePart(difficulty, skin);
-			world.addEntity(newTail);
+			SnakePart newTail = new SnakePart(difficulty);
+			world.getLevel().addEntity(world, newTail);
 			newTail.follow(getTail());
-			addEffect(new TimedSpeedEffect(1000, 2));
+
+			getHead().addEffect(new TimedSpeedEffect(1000, 2));
 			return;
 		}
 		Player player = null;

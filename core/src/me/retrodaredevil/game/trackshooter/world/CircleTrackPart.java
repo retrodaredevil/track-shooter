@@ -9,12 +9,23 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class CircleTrackPart extends TrackPart {
 	private final float radius;
+	private final Vector2 center = new Vector2();
+	private final float zeroAngle;
 	private final RenderComponent renderComponent;
 
-	public CircleTrackPart(float radius, Color color) {
+	/**
+	 *
+	 * @param radius The radius of the circle
+	 * @param center The center point
+	 * @param zeroAngle The angle where the distance on the track is 0
+	 * @param color The color of the circle
+	 */
+	public CircleTrackPart(float radius, Vector2 center, float zeroAngle, Color color) {
 		super(new Vector2(radius, 0), new Vector2(radius, 0));
 		this.radius = radius;
-		this.renderComponent = new CircleRenderComponent(radius, 3, Vector2.Zero, color, 100);
+		this.center.set(center);
+		this.zeroAngle = zeroAngle;
+		this.renderComponent = new CircleRenderComponent(radius, 3, center, color, 100);
 	}
 
 	@Override
@@ -24,7 +35,7 @@ public class CircleTrackPart extends TrackPart {
 
 	@Override
 	public float getForwardDirection(float distance) {
-		return distance * 360.0f / getDistance() + 90;
+		return distance * 360.0f / getDistance() + 90 + zeroAngle;
 	}
 
 	@Override
@@ -34,10 +45,9 @@ public class CircleTrackPart extends TrackPart {
 
 	@Override
 	public Vector2 getDesiredPosition(float distanceGone) {
-		float radians = distanceGone / getDistance();
-		radians *= MathUtils.PI2;
+		final float radians = distanceGone * MathUtils.PI2 / getDistance() + zeroAngle * MathUtils.degreesToRadians;
 
-		return new Vector2(MathUtils.cos(radians), MathUtils.sin(radians)).scl(radius);
+		return new Vector2(MathUtils.cos(radians), MathUtils.sin(radians)).scl(radius).add(center);
 	}
 
 	@Override

@@ -15,23 +15,30 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class StarFish extends SimpleEntity implements Enemy {
 
 	private final TravelVelocityOnTrackMoveComponent moveComponent;
+	private final float speed;
 	private boolean remove;
 
-	public StarFish(){
+	/**
+	 * @param speed The speed of the starfish where the sign doesn't matter
+	 * @param startingDistance The starting distance of this starfish
+	 */
+	public StarFish(float speed, float startingDistance){
+		this.speed = speed;
 		moveComponent = new TravelVelocityOnTrackMoveComponent(this);
+		moveComponent.setDistanceOnTrack(startingDistance);
 		setMoveComponent(moveComponent);
 		setHitboxSize(.5f);
 
 		canSetToRemove = true; // so the level can remove it
 		levelEndStateWhenActive = LevelEndState.CAN_END; // default value // this line is just to be more explicit
-		collisionIdentity = CollisionIdentity.ENEMY_EATER;
+		collisionIdentity = CollisionIdentity.ENEMY_EATER; // enemy and eats fruit
 		canRespawn = false;
 	}
 
 	@Override
 	public void beforeSpawn(World world) {
 		super.beforeSpawn(world);
-		moveComponent.getTravelVelocitySetter().setVelocity(MathUtils.randomSign() * 14);
+		moveComponent.getTravelVelocitySetter().setVelocity(MathUtils.randomSign() * speed);
 		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("starfish")), this, .6f, .6f);
 		renderComponent.setFacingDirection(0);
 		setRenderComponent(renderComponent);

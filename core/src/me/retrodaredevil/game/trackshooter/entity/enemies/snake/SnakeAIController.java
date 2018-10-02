@@ -26,9 +26,11 @@ public class SnakeAIController implements EntityController {
 		}
 		Level level = world.getLevel();
 		if(level.getMode() == LevelMode.NORMAL){
-			float time = level.getLevelTime();
+			float time = level.getModeTime();
 			time %= 60;
-			if(time < 15){
+			if(time < 12){
+				part.switchToSmartSight(target);
+			} else if(time < 15){
 				part.switchToOppositeTrackPositionTarget(target);
 			} else if(time < 27){
 				part.switchToSmartSight(target);

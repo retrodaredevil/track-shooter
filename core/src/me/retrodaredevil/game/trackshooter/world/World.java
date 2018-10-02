@@ -102,6 +102,8 @@ public class World implements Updateable, Renderable {
 	/**
 	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
 	 * so it is initialized correctly
+	 * <p>
+	 * NOTE: Most of the time, you should use {@link Level#addEntity(World, Entity)}
 	 * @param entity The entity to add to the list of entities next frame
 	 */
 	public void addEntity(Entity entity){

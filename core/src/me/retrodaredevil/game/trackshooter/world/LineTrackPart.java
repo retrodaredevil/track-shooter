@@ -68,7 +68,7 @@ public class LineTrackPart extends TrackPart {
 			return this.connect(new Vector2(x, y));
 		}
 		public List<LineTrackPart> build(boolean connectToFirst){
-			if(connectToFirst){
+			if(connectToFirst && !first.equals(previous)){
 				parts.add(new LineTrackPart(previous, first, color));
 			}
 			return parts;

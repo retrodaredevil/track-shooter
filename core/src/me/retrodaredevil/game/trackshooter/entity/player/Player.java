@@ -176,7 +176,7 @@ public class Player extends SimpleEntity {
 				break;
 		}
 		for(Bullet bullet : bullets) {
-			world.addEntity(bullet);
+			world.getLevel().addEntity(world, bullet);
 		}
 //		activeBullets.add(bullets.get(0));
 		List<List<Bullet>> shotsList = activeBulletsMap.get(shotType);

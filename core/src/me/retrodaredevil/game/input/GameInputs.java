@@ -13,6 +13,7 @@ import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
@@ -35,19 +36,49 @@ public final class GameInputs {
 
 	private static ControlOption createMouseMultiplier(OptionTracker options){
 		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(.5, 2, 1);
-		return new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
-				"controls.all.mouse", mouseMultiplier)
-		{{
-			options.addControlOption(this);
-		}};
+		ControlOption r = new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
+				"controls.all.mouse", mouseMultiplier);
+		options.addControlOption(r);
+		return r;
 	}
+
+	/**
+	 * Creates, returns, and adds a ControlOption to the passed {@link OptionTracker}
+	 * @param options The OptionTracker
+	 * @return The created ControlOption
+	 */
 	private static ControlOption createMouseInvert(OptionTracker options){
 		final OptionValue mouseInvert = OptionValues.createBooleanOptionValue(false);
-		return new ControlOption("Invert Rotation", "Should the rotation be inverted",
-				"controls.all.mouse", mouseInvert)
-		{{
-			options.addControlOption(this);
-		}};
+		ControlOption r = new ControlOption("Invert Rotation", "Should the rotation be inverted",
+				"controls.all.mouse", mouseInvert);
+		options.addControlOption(r);
+		return r;
+	}
+	private static InputPart createAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String controlType){
+		final OptionValue useY = OptionValues.createBooleanOptionValue(useYByDefault);
+		options.addControlOption(new ControlOption("Use Y Axis", "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
+
+		InputPart r = References.create(() -> useY.getBooleanOptionValue() ? yAxis : xAxis);
+		r.addChild(xAxis);
+		r.addChild(yAxis);
+		return r;
+	}
+	private static InputPart createMouseAxis(OptionTracker options){
+		OptionValue mouseMultiplier = createMouseMultiplier(options).getOptionValue();
+		OptionValue mouseInverted = createMouseInvert(options).getOptionValue();
+		return createAxisChooser(
+				new GdxMouseAxis(false, 1.0f, mouseMultiplier, mouseInverted),
+				new GdxMouseAxis(true, -1.0f, mouseMultiplier, mouseInverted),
+				options, false, "mouse");
+	}
+	private static InputPart createPhoneAxis(OptionTracker options, Rectangle proportionalScreenArea){
+
+		OptionValue mouseMultiplier = createMouseMultiplier(options).getOptionValue();
+		OptionValue mouseInverted = createMouseInvert(options).getOptionValue();
+		return createAxisChooser(
+				new GdxMouseAxis(false, 5.0f, mouseMultiplier, mouseInverted, proportionalScreenArea),
+				new GdxMouseAxis(true, -5.0f, mouseMultiplier, mouseInverted, proportionalScreenArea),
+				options, true, "phone");
 	}
 
 	public static UsableGameInput createKeyboardInput(){
@@ -56,7 +87,7 @@ public final class GameInputs {
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseButton, backButton, enterButton;
 		final OptionTracker options = new OptionTracker();
 
-		rotateAxis = new GdxMouseAxis(false, 1.0f, createMouseMultiplier(options).getOptionValue(), createMouseInvert(options).getOptionValue());
+		rotateAxis = createMouseAxis(options);
 		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
 		startButton = new KeyInputPart(Input.Keys.ENTER);
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
@@ -66,15 +97,13 @@ public final class GameInputs {
 		backButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE));
 		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
 
-		return new DefaultUsableGameInput("Keyboard Controls",
+		DefaultUsableGameInput r = new DefaultUsableGameInput("Keyboard Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseButton, backButton, selectorJoystick, enterButton, null, options, Collections.emptyList())
-		{{
+				pauseButton, backButton, selectorJoystick, enterButton, null, options, Collections.emptyList());
 
-			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-					startButton, pauseButton, backButton, selectorJoystick, enterButton);
-
-		}};
+		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+				startButton, pauseButton, backButton, selectorJoystick, enterButton);
+		return r;
 	}
 
 	/**
@@ -126,11 +155,10 @@ public final class GameInputs {
 
 			fireButton = new GdxScreenTouchButton(fireArea);
 		}
-		rotateAxis = new GdxMouseAxis(true, -5.0f, createMouseMultiplier(options).getOptionValue(),
-				createMouseInvert(options).getOptionValue(), rotateArea);
+//		rotateAxis = new GdxMouseAxis(true, -5.0f, createMouseMultiplier(options).getOptionValue(),
+//				createMouseInvert(options).getOptionValue(), rotateArea);
+		rotateAxis = createPhoneAxis(options, rotateArea);
 
-//		startButton = new KeyInputPart(Input.Keys.ENTER);
-//		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		startButton = new DummyInputPart(0, false);
 		slow = new DummyInputPart(0, false);
 

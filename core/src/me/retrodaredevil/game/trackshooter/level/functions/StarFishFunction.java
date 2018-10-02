@@ -16,8 +16,8 @@ import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class StarFishFunction implements LevelFunction {
+	private static final float GRACE_DISTANCE = 10;
 
-	private static final float GRACE_DISTANCE = 5;
 	private final Collection<? extends Entity> entities;
 	private final float spawnAfter;
 
@@ -33,13 +33,25 @@ public class StarFishFunction implements LevelFunction {
 
 	@Override
 	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
-		if(world.getLevel().getModeTime() > spawnAfter){
-			Entity entity = new StarFish();
+		Level level = world.getLevel();
+
+		if(level.getMode() == LevelMode.NORMAL && level.getModeTime() > spawnAfter){
+			final int levelNumber = world.getLevel().getNumber();
+			float speed = 5;
+			if(levelNumber >= 20){
+				speed = 10.5f;
+			} else if(levelNumber >= 13){
+				speed = 8;
+			} else if (levelNumber >= 6){
+				speed = 6.5f;
+			}
+
 			float distance;
 			do { // HEY!!! A USE FOR A DO WHILE LOOP! THIS IS EXCITING!!
+				// TODO If there are many, many players, this *could* result in an infinite loop.
 				distance = world.getTrack().getTotalDistance() * MathUtils.random();
 			} while (!canSpawn(distance, world.getTrack()));
-			((OnTrackMoveComponent) entity.getMoveComponent()).setDistanceOnTrack(distance);
+			Entity entity = new StarFish(speed, distance);
 			world.getLevel().addEntity(world, entity);
 			return true;
 		}
@@ -50,7 +62,7 @@ public class StarFishFunction implements LevelFunction {
 			MoveComponent moveComponent = entity.getMoveComponent();
 			if(moveComponent instanceof OnTrackMoveComponent){
 				OnTrackMoveComponent trackMove = (OnTrackMoveComponent) moveComponent;
-				if(MathUtil.minDistance(trackMove.getDistanceOnTrack(), spawnDistance, track.getTotalDistance()) < GRACE_DISTANCE){
+				if(MathUtil.minDistance(trackMove.getDistanceOnTrack(), spawnDistance, track.getTotalDistance()) <= GRACE_DISTANCE){
 					return false;
 				}
 			}

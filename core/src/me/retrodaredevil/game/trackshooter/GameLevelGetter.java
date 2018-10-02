@@ -41,7 +41,7 @@ public class GameLevelGetter implements LevelGetter {
 	 */
 	public GameLevelGetter(Collection<? extends Player> players){
 		this.players = players;
-		this.tracks = new Track[] {Tracks.newMazeTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
+		this.tracks = new Track[] { Tracks.newMazeTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newWeirdTrack(), Tracks.newCircleTrack() };
 	}
 
 	@Override
@@ -73,6 +73,12 @@ public class GameLevelGetter implements LevelGetter {
 						spawnAfter = 13;
 					}
 					addFunction(new StarFishFunction(spawnAfter, players));
+				} else {
+					if(levelNumber <= 2){
+						addFunction(new StarFishFunction(100, players));
+					} else {
+						addFunction(new StarFishFunction(50, players));
+					}
 				}
 
 

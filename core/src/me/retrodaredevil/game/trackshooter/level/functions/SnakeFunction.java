@@ -73,7 +73,7 @@ public class SnakeFunction implements LevelFunction {
 			amount = 22;
 		}
 
-		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty, world.getMainSkin());
+		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
 //			part.setEntityController(new SnakeAIController(part, target));

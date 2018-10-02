@@ -26,6 +26,7 @@ public enum CollisionIdentity {
 	static{
 		// The reason for putting this here is that when creating an EnumSet, the enum must be fully initialized
 		// example of problem: https://stackoverflow.com/q/24584161/5434860 Credit there for a solution
+		// Obviously, we don't have to do this and this is definitely premature optimization but we'll leave it here anyway.
 		for(CollisionIdentity identity : values()){ // make all triggers that aren't empty EnumSets for performance
 			Set<CollisionIdentity> triggers = identity.triggersWith;
 			if(triggers == null){
@@ -62,7 +63,7 @@ public enum CollisionIdentity {
 		return triggersWith;
 	}
 
-	/*tar
+	/**
 	 * NOTE: If a call with a given parameters returns true, then calling it the other way around returns false:<p>
 	 * if a.triggersCollision(b) then b.triggersCollision(a) == false
 	 *
