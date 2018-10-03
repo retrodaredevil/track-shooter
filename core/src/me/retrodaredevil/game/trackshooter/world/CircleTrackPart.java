@@ -17,7 +17,7 @@ public class CircleTrackPart extends TrackPart {
 	 *
 	 * @param radius The radius of the circle
 	 * @param center The center point
-	 * @param zeroAngle The angle where the distance on the track is 0
+	 * @param zeroAngle The angle where the distance on the track is 0 (in degrees)
 	 * @param color The color of the circle
 	 */
 	public CircleTrackPart(float radius, Vector2 center, float zeroAngle, Color color) {

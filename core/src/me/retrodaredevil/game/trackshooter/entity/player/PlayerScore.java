@@ -70,7 +70,7 @@ public class PlayerScore implements Score {
 	    	if(getLives() <= 0){
 	    		time = 600;
 			}
-	    	rumble.rumble(time, 1);
+	    	rumble.rumbleTime(time, 1);
 		}
 	}
 

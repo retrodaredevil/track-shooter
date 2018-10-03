@@ -7,25 +7,17 @@ import java.util.*;
 
 public final class Tracks {
 	private static final Color DEFAULT_COLOR = Color.GRAY;
-	public static Track newWeirdTrack(){
-		final float radius = 2;
-
-		Vector2 bRight = new Vector2(7, -7), bLeft = new Vector2(-7, -7),
-				uRight = new Vector2(7, 7), uLeft = new Vector2(-7, 7);
-		Vector2 u = new Vector2(0, 7), r = new Vector2(7, 0),
-				b = new Vector2(0, -7), l = new Vector2(-7, 0);
-		List<TrackPart> parts = new ArrayList<>();
-		parts.add(new CircleTrackPart(radius, u.cpy().add(0, -radius), 90, DEFAULT_COLOR));
-		parts.addAll(new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR, u).connect(uLeft).connect(l).build(false));
-		parts.add(new CircleTrackPart(radius, l.cpy().add(radius, 0), 180, DEFAULT_COLOR));
-		parts.addAll(new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR, l).connect(bLeft).connect(b).build(false));
-		parts.add(new CircleTrackPart(radius, b.cpy().add(0, radius), -90, DEFAULT_COLOR));
-		parts.addAll(new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR, b).connect(bRight).connect(r).build(false));
-		parts.add(new CircleTrackPart(radius, r.cpy().add(-radius, 0), 0, DEFAULT_COLOR));
-		parts.addAll(new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR, r).connect(uRight).connect(u).build(false));
-
-		return new Track(parts);
-	}
+//	public static Track newWeirdTrack(){
+//		final float radius = 2;
+//
+//		Vector2 bRight = new Vector2(7, -7), bLeft = new Vector2(-7, -7),
+//				uRight = new Vector2(7, 7), uLeft = new Vector2(-7, 7);
+//		Vector2 u = new Vector2(0, 7), r = new Vector2(7, 0),
+//				b = new Vector2(0, -7), l = new Vector2(-7, 0);
+//		List<TrackPart> parts = new ArrayList<>();
+//
+//		return new Track(parts);
+//	}
 	public static Track newCircleTrack(){
 		return new Track(Collections.singletonList(new CircleTrackPart(7, Vector2.Zero, -90, DEFAULT_COLOR)));
 	}

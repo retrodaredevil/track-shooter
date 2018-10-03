@@ -51,6 +51,9 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 			throw new IllegalArgumentException("This method cannot handle the OFF value. use cancel() instead");
 		}
 		if(pattern != vibratePattern){
+			if(pattern == VibratePattern.MANUAL){
+				return;
+			}
 			Gdx.input.cancelVibrate();
 			if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
 				Gdx.input.vibrate(Integer.MAX_VALUE);
@@ -58,44 +61,74 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 				Gdx.input.vibrate(pattern.pattern, 0);
 			}
 			vibratePattern = pattern;
-			System.out.println("changed to pattern: " + pattern);
+//			System.out.println("changed to pattern: " + pattern);
 		}
 	}
 
 	@Override
-	public void rumble(double amount) {
-		checkRange(amount);
+	public void rumbleForever(double intensity) {
+		checkRange(intensity);
 		checkEnabled();
-		if(amount == 0){
+		if(intensity == 0){
 			cancel();
 		} else {
-			requestPattern(VibratePattern.getPattern(amount));
+			requestPattern(VibratePattern.getPattern(intensity));
 			vibrateUntil = Long.MAX_VALUE;
 		}
 	}
 
 	@Override
-	public void rumble(double left, double right) {
-		checkRange(left);
-		checkRange(right);
-		this.rumble((left + right) / 2.0);
+	public void rumbleForever(double leftIntensity, double rightIntensity) {
+		checkRange(leftIntensity);
+		checkRange(rightIntensity);
+		this.rumbleForever((leftIntensity + rightIntensity) / 2.0);
 	}
 
 	@Override
-	public void rumble(long millis, double amount) {
-		checkRange(amount);
+	public void rumbleTimeout(long millis, double intensity) {
+		checkRange(intensity);
 		checkEnabled();
-		if(amount == 0) {
+		if(intensity == 0) {
 			cancel();
 		} else {
-			requestPattern(VibratePattern.getPattern(amount));
+			requestPattern(VibratePattern.getPattern(intensity));
 			vibrateUntil = System.currentTimeMillis() + millis;
 		}
 	}
 	@Override
-	public void rumble(long millis, double left, double right) {
-		rumble(millis, (left + right) / 2.0);
+	public void rumbleTimeout(long millis, double left, double right) {
+		rumbleTimeout(millis, (left + right) / 2.0);
 	}
+
+	@Override
+	public void rumbleTime(long millis, double intensity) {
+		VibratePattern pattern = VibratePattern.getPattern(intensity);
+		if(pattern == VibratePattern.OFF){
+			Gdx.input.cancelVibrate();
+			return;
+		}
+		vibrateUntil = System.currentTimeMillis() + millis; // might as well set this accurately even if it isn't necessary
+		if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
+			Gdx.input.vibrate((int) millis);
+			requestPattern(VibratePattern.FULL);
+			return;
+		}
+		requestPattern(VibratePattern.MANUAL);
+
+		final long period = pattern.pattern[0] + pattern.pattern[1];
+		final int repeat = (int) (millis / period);
+		final long[] timePattern = new long[repeat];
+		for(int i = 0; i < repeat; i++){
+			timePattern[i] = pattern.pattern[i % 2];
+		}
+		Gdx.input.vibrate(timePattern, -1);
+	}
+
+	@Override
+	public void rumbleTime(long millis, double leftIntensity, double rightIntensity) {
+		rumbleTime(millis, (leftIntensity + rightIntensity) / 2.0);
+	}
+
 	private static void checkRange(double check){
 		if(check < 0){
 			throw new IllegalArgumentException("intensity cannot be < 0");
@@ -107,11 +140,6 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 		if(!enableRumbleOption.getBooleanOptionValue()){
 			throw new IllegalStateException("The rumble is not connected because it's not enabled! You can't use the gyro right now! Remember to check isConnected()");
 		}
-	}
-
-	@Override
-	public boolean isTimingNativelyImplemented() {
-		return true;
 	}
 
 	@Override
@@ -142,7 +170,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	}
 
 	private enum VibratePattern{
-		OFF(), FULL(), P90(new long[]{4, 30}), P70(new long[]{15, 20}), P50(new long[]{15, 15}), P35(new long[]{20, 8}), P10(new long[]{30, 3});
+		OFF(), MANUAL(), FULL(), P90(new long[]{4, 30}), P70(new long[]{15, 20}), P50(new long[]{15, 15}), P35(new long[]{20, 8}), P10(new long[]{30, 3});
 
 		private final long[] pattern;
 

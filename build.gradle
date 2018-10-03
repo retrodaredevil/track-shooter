@@ -89,7 +89,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.github.retrodaredevil:abstract-controller-lib:v1.1.3"
+        compile "com.github.retrodaredevil:abstract-controller-lib:v1.2.0"
 
     }
 }
