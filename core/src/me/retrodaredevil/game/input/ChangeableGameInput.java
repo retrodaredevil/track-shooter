@@ -22,6 +22,7 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 
 	private final ControlOption radioControlOption;
 	private final RadioOptionOptionValue<UsableGameInput> gameInputOptionValue;
+	private UsableGameInput lastActiveInput = null;
 
 	/**
 	 *
@@ -35,7 +36,7 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	}
 
 
-	private GameInput getCurrentGameInput(){
+	private UsableGameInput getCurrentGameInput(){
 		return gameInputOptionValue.getRadioOptions().get((int) gameInputOptionValue.getOptionValue());
 	}
 
@@ -60,6 +61,17 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	public JoystickPart getSelectorJoystick() { return getCurrentGameInput().getSelectorJoystick(); }
 	@Override
 	public InputPart getEnterButton() { return getCurrentGameInput().getEnterButton(); }
+
+	@Override
+	protected void onUpdate() {
+		super.onUpdate();
+		UsableGameInput activeInput = getCurrentGameInput();
+		if(activeInput != lastActiveInput && lastActiveInput != null){
+			lastActiveInput.setActiveInput(false);
+		}
+		activeInput.setActiveInput(true);
+		lastActiveInput = activeInput;
+	}
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {

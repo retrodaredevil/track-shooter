@@ -6,6 +6,7 @@ import com.badlogic.gdx.Input;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.LongStream;
 
 import me.retrodaredevil.controller.SimpleControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
@@ -13,6 +14,7 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class GdxRumble extends SimpleControllerPart implements ControllerRumble, ConfigurableControllerPart {
 	private final OptionValue simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
@@ -28,7 +30,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	public GdxRumble(){
 	}
 	public GdxRumble(boolean simulateAnalog){
-		simulateAnalogOption.setOptionValue(simulateAnalog ? 1 : 0);
+		simulateAnalogOption.setBooleanOptionValue(simulateAnalog);
 	}
 
 	private void cancel(){
@@ -50,10 +52,10 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 		if(pattern == VibratePattern.OFF){
 			throw new IllegalArgumentException("This method cannot handle the OFF value. use cancel() instead");
 		}
+		if(pattern == VibratePattern.MANUAL){
+			throw new IllegalArgumentException("This method cannot handle the MANUAL value. You should deal with that yourself.");
+		}
 		if(pattern != vibratePattern){
-			if(pattern == VibratePattern.MANUAL){
-				return;
-			}
 			Gdx.input.cancelVibrate();
 			if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
 				Gdx.input.vibrate(Integer.MAX_VALUE);
@@ -104,23 +106,21 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	public void rumbleTime(long millis, double intensity) {
 		VibratePattern pattern = VibratePattern.getPattern(intensity);
 		if(pattern == VibratePattern.OFF){
-			Gdx.input.cancelVibrate();
+			cancel();
 			return;
 		}
-		vibrateUntil = System.currentTimeMillis() + millis; // might as well set this accurately even if it isn't necessary
+		vibrateUntil = Long.MAX_VALUE; // we don't want to to cancel it
+		vibratePattern = VibratePattern.MANUAL;
 		if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
 			Gdx.input.vibrate((int) millis);
-			requestPattern(VibratePattern.FULL);
 			return;
 		}
-		requestPattern(VibratePattern.MANUAL);
 
-		final long period = pattern.pattern[0] + pattern.pattern[1];
+		final long[] shortPattern = pattern.pattern;
+
+		final long period = MathUtil.sum(shortPattern);
 		final int repeat = (int) (millis / period);
-		final long[] timePattern = new long[repeat];
-		for(int i = 0; i < repeat; i++){
-			timePattern[i] = pattern.pattern[i % 2];
-		}
+		final long[] timePattern = MathUtil.repeatNew(shortPattern, repeat * shortPattern.length);
 		Gdx.input.vibrate(timePattern, -1);
 	}
 

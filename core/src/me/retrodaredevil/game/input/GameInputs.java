@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Objects;
 
 import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
@@ -21,6 +22,7 @@ import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.input.implementations.GdxMouseAxis;
 import me.retrodaredevil.game.input.implementations.GdxRumble;
 import me.retrodaredevil.game.input.implementations.GdxScreenTouchButton;
@@ -30,6 +32,7 @@ import me.retrodaredevil.game.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.input.implementations.KeyInputPart;
 import me.retrodaredevil.game.input.implementations.ReleaseButtonPress;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
+import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 
 public final class GameInputs {
 	private GameInputs(){}
@@ -99,7 +102,7 @@ public final class GameInputs {
 
 		DefaultUsableGameInput r = new DefaultUsableGameInput("Keyboard Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseButton, backButton, selectorJoystick, enterButton, null, options, Collections.emptyList());
+				pauseButton, backButton, selectorJoystick, enterButton, new DisconnectedRumble(), options, Collections.emptyList());
 
 		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, pauseButton, backButton, selectorJoystick, enterButton);
@@ -135,9 +138,10 @@ public final class GameInputs {
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
+		final TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger visibilityChanger;
 		if(renderParts != null){
-			// TODO figure out a better way to tell if this is active. Using () -> true right now (always active)
-			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(() -> true, new Vector2(.13f, .5f), .35f);
+			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
+			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new Vector2(.13f, .5f), .35f);
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
 //			OptionValue mainJoystickDiameter = ((GdxHiddenTouchJoystick) mainJoystick).getMinimumProportionalDiameterOptionValue();
 //			options.addControlOption(new ControlOption("Hidden Joystick Proportional Diameter", "How large should the joystick be",
@@ -150,13 +154,12 @@ public final class GameInputs {
 					),
 					true);
 		} else {
+			visibilityChanger = null;
 			mainJoystick = new GdxTiltJoystick();
 			options.addController((ConfigurableControllerPart) mainJoystick);
 
 			fireButton = new GdxScreenTouchButton(fireArea);
 		}
-//		rotateAxis = new GdxMouseAxis(true, -5.0f, createMouseMultiplier(options).getOptionValue(),
-//				createMouseInvert(options).getOptionValue(), rotateArea);
 		rotateAxis = createPhoneAxis(options, rotateArea);
 
 		startButton = new DummyInputPart(0, false);
@@ -178,21 +181,23 @@ public final class GameInputs {
 		options.addController(gdxRumble);
 		rumble = gdxRumble;
 
-		return new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
+		DefaultUsableGameInput r = new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList())
-		{{
+				pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList());
 
-			addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-					startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
-
-		}};
+		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+				startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
+		if(visibilityChanger != null){
+			visibilityChanger.setGameInput(r);
+		}
+		return r;
 	}
 	public static UsableGameInput createTouchGyroInput(){
 		return createPhoneInput(null, false);
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts){
-		return createPhoneInput(renderParts, false);
+		Objects.requireNonNull(renderParts);
+		return createPhoneInput(renderParts,false);
 	}
 }

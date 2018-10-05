@@ -17,7 +17,7 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 
-public class ControllerGameInput extends SimpleControllerPart implements UsableGameInput {
+public class ControllerGameInput extends SimpleUsableGameInput {
 	private final ControllerPart reliesOn;
 
 	private final JoystickPart mainJoystick;

@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import java.util.Collection;
 import java.util.Collections;
 
+import me.retrodaredevil.game.input.UsableGameInput;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
@@ -135,6 +136,23 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 	}
 	public interface TouchpadVisibilityChanger {
 		boolean shouldShowTouchpad();
+	}
+
+	/**
+	 * A simple concrete class for {@link TouchpadVisibilityChanger}. This allows you to set
+	 * a {@link UsableGameInput} that if active, will show the touchpad.
+	 */
+	public static class UsableGameInputTouchpadVisibilityChanger implements TouchpadVisibilityChanger{
+		private UsableGameInput gameInput = null;
+
+		@Override
+		public boolean shouldShowTouchpad() {
+			return gameInput != null && gameInput.isActiveInput();
+		}
+		public void setGameInput(UsableGameInput gameInput){
+			this.gameInput = gameInput;
+		}
+		public UsableGameInput getGameInput(){ return gameInput; }
 	}
 
 }

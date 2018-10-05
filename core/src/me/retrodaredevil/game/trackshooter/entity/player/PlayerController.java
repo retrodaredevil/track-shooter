@@ -97,7 +97,7 @@ public class PlayerController implements EntityController{
 			boolean didShoot = player.shootBullet(world, null) != null;
 			ControllerRumble rumble = gameInput.getRumble();
 			if(didShoot && rumble.isConnected()){
-				rumble.rumbleTime(100, .1);
+				rumble.rumbleTime(70, .1);
 			}
 		}
 

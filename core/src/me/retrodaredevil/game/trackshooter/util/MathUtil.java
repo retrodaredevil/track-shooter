@@ -2,6 +2,8 @@ package me.retrodaredevil.game.trackshooter.util;
 
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.Arrays;
+
 public final class MathUtil {
 	private static final Vector2 temp = new Vector2();
 
@@ -108,5 +110,41 @@ public final class MathUtil {
 		}
 		r -= 1; // -1VAR to 1VAR
 		return r;
+	}
+	public static long sum(long[] array){
+		long r = 0;
+		for(long l : array){
+			r += l;
+		}
+		return r;
+	}
+//	public static <T> T[] repeatNew(final T[] array, final int newLength){
+//		T[] r = Arrays.copyOf(array, newLength);
+//		repeatCopied(r, array.length);
+//		return r;
+//	}
+//	public static <T> void repeatCopied(final T[] copiedArray, final int originalLength){
+//		// credit to https://stackoverflow.com/a/32309129/5434860
+//		final int newLength = copiedArray.length;
+//		for(int last = originalLength; last != 0 && last < newLength; last <<= 1){
+//			System.arraycopy(copiedArray, 0, copiedArray, last, Math.min(last << 1, newLength) - last);
+//		}
+//	}
+
+	public static long[] repeatNew(final long[] array, final int newLength){
+		long[] r = Arrays.copyOf(array, newLength);
+		repeatCopied(r, array.length);
+		return r;
+	}
+	/**
+	 * @param copiedArray The array to be mutated
+	 * @param originalLength The length of the original array.
+	 */
+	private static void repeatCopied(final long[] copiedArray, final int originalLength){
+		// credit to https://stackoverflow.com/a/32309129/5434860
+		final int newLength = copiedArray.length;
+		for(int last = originalLength; last != 0 && last < newLength; last <<= 1){
+			System.arraycopy(copiedArray, 0, copiedArray, last, Math.min(last << 1, newLength) - last);
+		}
 	}
 }

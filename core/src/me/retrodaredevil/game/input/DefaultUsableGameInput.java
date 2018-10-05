@@ -1,10 +1,6 @@
 package me.retrodaredevil.game.input;
 
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.SimpleControllerInput;
@@ -14,7 +10,7 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.output.ControllerRumble;
 
-public class DefaultUsableGameInput extends SimpleControllerInput implements UsableGameInput {
+public class DefaultUsableGameInput extends SimpleUsableGameInput {
 
 	private final String controlName;
 
