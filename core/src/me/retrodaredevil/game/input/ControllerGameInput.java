@@ -14,6 +14,7 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 
@@ -66,7 +67,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
-			rumble = null;
+			rumble = new DisconnectedRumble();
 		}
 
 		addChildren(false, false,

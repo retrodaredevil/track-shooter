@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.Objects;
+
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.controller.options.OptionValue;
@@ -14,10 +16,11 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 
 	private static final int TIME_FOR_MOUSE_CATCH_TIMEOUT = 500; // ms
 	private final boolean testForAllPointers, yAxis, needsDrag, needsTouchScreenForConnection, useDeltaMethods;
-	private final float multiplier;
-	private final OptionValue multiplierOption;
-	private final OptionValue isInvertedBooleanOption; // may be null
-	private final Rectangle proportionalScreenArea;
+//	private final float multiplier;
+//	private final OptionValue multiplierOption;
+//	private final OptionValue isInvertedBooleanOption; // may be null
+	private final MultiplierGetter multiplierGetter;
+	private final ScreenAreaGetter proportionalScreenAreaGetter; // not null, but may return null
 
 	private int lastPosition = 0; // only changed if useDeltaMethods == false and testForAllPointers == false
 
@@ -33,26 +36,26 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	 * @param testForAllPointers Should this test for multiple pointers (Useful on mobile devies)
 	 * @param yAxis false for x, true for y
 	 * @param needsDrag Does the left mouse button/is touched need to be down for this to return a non zero value
-	 * @param multiplier The multiplier for this axis which will be multiplied by multiplierOption
-	 * @param multiplierOption The multiplier option for the output of this axis. (Mutated outside of this class)
+//	 * @param multiplier The multiplier for this axis which will be multiplied by multiplierOption
+//	 * @param multiplierOption The multiplier option for the output of this axis. (Mutated outside of this class)
 	 * @param needsTouchScreenForConnection set to true if the touchscreen Peripheral needs to be available for isConnected() to return true
-	 * @param proportionalScreenArea Area of the screen relative to bottom left. NOTE: Not in pixels. in percentage
+	 * @param proportionalScreenAreaGetter Getter to get the area of the screen relative to bottom left. NOTE: Not in pixels. in percentage
 	 * @param useDeltaMethods if true, will use Gdx.input.getDeltaX/Y. If false, it will store the last position
 	 *                        and use that to determine how much the mouse has moved. For a mouse on desktop,
 	 *                        setting this to false is a better option otherwise setting to true may be more optimised.
 	 */
-	public GdxMouseAxis(boolean testForAllPointers, boolean yAxis, boolean needsDrag, float multiplier, OptionValue multiplierOption,
-						OptionValue isInvertedBooleanOption, boolean needsTouchScreenForConnection,
-						Rectangle proportionalScreenArea, boolean useDeltaMethods) {
+	public GdxMouseAxis(boolean testForAllPointers, boolean yAxis, boolean needsDrag, MultiplierGetter multiplierGetter,
+						boolean needsTouchScreenForConnection, ScreenAreaGetter proportionalScreenAreaGetter, boolean useDeltaMethods) {
 		super(new AxisType(true, true, true, false), false);
 		this.testForAllPointers = testForAllPointers;
 		this.yAxis = yAxis;
 		this.needsDrag = needsDrag;
-		this.multiplier = multiplier;
-		this.multiplierOption = multiplierOption;
-		this.isInvertedBooleanOption = isInvertedBooleanOption;
+//		this.multiplier = multiplier;
+//		this.multiplierOption = multiplierOption;
+//		this.isInvertedBooleanOption = isInvertedBooleanOption;
+		this.multiplierGetter = multiplierGetter;
 		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
-		this.proportionalScreenArea = proportionalScreenArea == null ? null : new Rectangle(proportionalScreenArea);
+		this.proportionalScreenAreaGetter = Objects.requireNonNull(proportionalScreenAreaGetter);
 		this.useDeltaMethods = useDeltaMethods;
 
 		if(testForAllPointers && !useDeltaMethods){
@@ -67,24 +70,24 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	/**
 	 * Creates a GdxMouseAxis used for just a mouse
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValue multiplierOption, OptionValue isInvertedBooleanOption){
-		this(false, yAxis, false, multiplier, multiplierOption, isInvertedBooleanOption, false, null, false);
+	public GdxMouseAxis(boolean yAxis, MultiplierGetter multiplierGetter){
+		this(false, yAxis, false, multiplierGetter, false, () -> null, false);
 	}
 
 	/**
 	 * Creates a GdxMouseAxis used for dragging in a certain area of the screen
 	 */
-	public GdxMouseAxis(boolean yAxis, float multiplier, OptionValue multiplierOption,
-						OptionValue isInvertedBooleanOption, Rectangle proportionalScreenArea){
-		this(true, yAxis, true, multiplier, multiplierOption, isInvertedBooleanOption,
-				true, proportionalScreenArea, true);
+	public GdxMouseAxis(boolean yAxis, MultiplierGetter multiplierGetter, ScreenAreaGetter proportionalScreenAreaGetter){
+		this(true, yAxis, true, multiplierGetter,
+				true, proportionalScreenAreaGetter, true);
 	}
 	private float getMultiplier(){
-		float inverted = 1;
-		if(isInvertedBooleanOption != null){
-			inverted = isInvertedBooleanOption.getBooleanOptionValue() ? -1 : 1;
-		}
-		return multiplier * (float) multiplierOption.getOptionValue() * inverted;
+//		float inverted = 1;
+//		if(isInvertedBooleanOption != null){
+//			inverted = isInvertedBooleanOption.getBooleanOptionValue() ? -1 : 1;
+//		}
+//		return multiplier * (float) multiplierOption.getOptionValue() * inverted;
+		return multiplierGetter.getMultiplier();
 	}
 
 	private void setCatched(boolean b){
@@ -114,7 +117,9 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 
 	@Override
 	protected double calculatePosition() {
-		Rectangle area = proportionalScreenArea == null ? null : Util.proportionalRectangleToScreenArea(proportionalScreenArea);
+		final Rectangle proportionalScreenArea = proportionalScreenAreaGetter.getProportionalScreenArea();
+		final Rectangle area = proportionalScreenArea == null ? null : Util.proportionalRectangleToScreenArea(proportionalScreenArea);
+
 		if(!testForAllPointers){
 			if(needsDrag && !Gdx.input.isTouched()){
 				return 0;
@@ -168,5 +173,8 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	@Override
 	public boolean isConnected() {
 		return !needsTouchScreenForConnection || Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen);
+	}
+	public interface MultiplierGetter {
+		float getMultiplier();
 	}
 }

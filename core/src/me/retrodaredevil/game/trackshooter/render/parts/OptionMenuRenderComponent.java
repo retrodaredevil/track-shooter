@@ -1,7 +1,9 @@
 package me.retrodaredevil.game.trackshooter.render.parts;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
 public class OptionMenuRenderComponent extends SelectionMenuRenderComponent {
 	private final Dialog dialog;
+	private final Table contentTable;
 	private final ConfigurableControllerPart configController;
 	private final OptionMenu optionMenu;
 	private final SaveObject saveObject;
@@ -38,9 +41,11 @@ public class OptionMenuRenderComponent extends SelectionMenuRenderComponent {
 		this.optionMenu = optionMenu;
 		this.saveObject = saveObject;
 
-		this.dialog = new Dialog("Options", renderObject.getUISkin());
-		this.dialog.setMovable(false);
-		this.dialog.setResizable(false);
+		dialog = new Dialog("Options", renderObject.getUISkin());
+		dialog.setMovable(false);
+		dialog.setResizable(false);
+		contentTable = new Table();
+		dialog.getContentTable().add(new ScrollPane(contentTable)).center();
 	}
 	public ConfigurableControllerPart getConfigController() {
 		return configController;
@@ -76,7 +81,7 @@ public class OptionMenuRenderComponent extends SelectionMenuRenderComponent {
 
 	@Override
 	protected Table getContentTable() {
-		return dialog.getContentTable();
+		return contentTable;
 	}
 
 	@Override
