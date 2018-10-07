@@ -27,7 +27,7 @@ public abstract class SelectionMenuRenderComponent implements RenderComponent {
 //	private final OptionMenu optionMenu;
 	protected final RenderObject renderObject;
 //	private final ConfigurableControllerPart configController;
-	private final GameInput menuController;
+	protected final GameInput menuController;
 
 	private final List<SingleOption> singleOptions = new ArrayList<>();
 

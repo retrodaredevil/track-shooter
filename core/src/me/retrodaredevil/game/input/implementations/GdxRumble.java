@@ -115,6 +115,10 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 			Gdx.input.vibrate((int) millis);
 			return;
 		}
+		// Basically, instead of turning the rumble off in an open loop, we use the exact
+		// pattern that we want and create a new array that repeats it a certain number of times.
+		// This can actually be a lot of resource intensive on some devices but it can vibrate
+		// for the exact amount of time that we want it to.
 
 		final long[] shortPattern = pattern.pattern;
 

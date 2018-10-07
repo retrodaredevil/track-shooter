@@ -97,11 +97,19 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 			requestedActions.clear();
 			if(back.isPressed()){
 				hide();
-			}
-			if(select.isPressed()){
+			} else if(select.isPressed()){
 				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchDown);
 				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchUp);
 				hide();
+			} else if(selector.getYAxis().isPressed()){
+				final int y = selector.getYAxis().getDigitalPosition();
+				final int currentIndex = selectBox.getSelectedIndex();
+				final int size = selectBox.getItems().size;
+
+				final int newIndex = currentIndex - y;
+				if(newIndex >= 0 && newIndex < size){
+					selectBox.setSelectedIndex(newIndex);
+				}
 			}
 		} else {
 			if(select.isPressed()){

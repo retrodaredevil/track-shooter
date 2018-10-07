@@ -36,7 +36,7 @@ public class Bullet extends SimpleEntity implements Entity {
 		canRespawn = false;
 //		canLevelEndWithEntityActive = false;
 //		levelEndStateWhenActive = LevelEndState.CAN_END_SOON;
-		// TODO This may cause bugs in the future V. Maybe provide a better way to change levelEndStateWhenActive
+		// TODO This may cause bugs in the future when enemies shoot bullets. Maybe provide a better way to change levelEndStateWhenActive
 		levelEndStateWhenActive = collisionIdentity == CollisionIdentity.ENEMY_PROJECTILE ? LevelEndState.CANNOT_END : LevelEndState.CAN_END_SOON;
 		this.collisionIdentity = collisionIdentity; // super.collisionIdentity same thing
 	}

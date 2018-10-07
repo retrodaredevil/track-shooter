@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.render.selection.options;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.Collection;
 
@@ -37,6 +38,13 @@ public class CheckBoxSingleOption extends ControlOptionSingleOption {
 		super.onInit(container);
 		container.add(checkBox);
 		checkBox.setChecked(controlOption.getOptionValue().getBooleanOptionValue());
+	}
+
+	@Override
+	protected void onUpdate(Table container) {
+		super.onUpdate(container);
+		checkBox.getLabel().setAlignment(Align.center);
+		checkBox.getLabelCell().width(400 - checkBox.getImage().getWidth());
 	}
 
 	@Override

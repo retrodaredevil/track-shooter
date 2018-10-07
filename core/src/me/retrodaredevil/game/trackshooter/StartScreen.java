@@ -10,10 +10,12 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import me.retrodaredevil.game.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -25,9 +27,10 @@ import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOpti
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 
-public class StartScreen extends ScreenAdapter {
+public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private static final int BUTTON_WIDTH = 220;
 	private static final int BUTTON_HEIGHT = 60;
+	private final List<GameInput> gameInputs;
 	private final GameInput gameInput;
 	private final RenderParts renderParts;
 	private final RenderObject renderObject;
@@ -40,16 +43,18 @@ public class StartScreen extends ScreenAdapter {
 	private final Button optionsButton;
 	private boolean optionsDown = false;
 
-	public StartScreen(GameInput gameInput, RenderObject renderObject, RenderParts renderParts){
-		this.gameInput = gameInput;
-		this.renderParts = renderParts;
-		this.renderObject = renderObject;
+	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
+		this.gameInputs = Collections.unmodifiableList(gameInputs);
+		this.gameInput = gameInputs.get(0); // TODO Allow other inputs to control as well
+		this.renderParts = Objects.requireNonNull(renderParts);
+		this.renderObject = Objects.requireNonNull(renderObject);
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
-		TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
+		final TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
 		optionsButton = new TextButton("options", style);
 
+		// this is initialized after each button because it uses them
 		this.menuRenderable = new StartScreenRenderable();
 
 	}
@@ -59,10 +64,10 @@ public class StartScreen extends ScreenAdapter {
 			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
-		InputFocuser focuser = new InputFocuser(renderParts.getInputMultiplexer());
-		focuser.addInputFocus(renderParts.getOptionsMenu());
-//		focuser.addParallelInputProcessor(inputCancellerTester);
-		focuser.giveFocus(uiStage);
+		InputFocuser focuser = new InputFocuser();
+		focuser.add(renderParts.getOptionsMenu());
+//		System.out.println("wants to focus: " + renderParts.getOptionsMenu().isWantsToFocus());
+		focuser.giveFocus(uiStage, renderParts.getInputMultiplexer());
 
 		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
 		renderer.addRenderable(renderParts.getBackground());
@@ -71,8 +76,6 @@ public class StartScreen extends ScreenAdapter {
 		renderer.addRenderable(renderParts.getOverlay());
 
 		renderer.render(delta);
-
-//		System.out.println(gameInput.getActivatePowerup().isDown());
 	}
 
 	@Override
@@ -87,8 +90,14 @@ public class StartScreen extends ScreenAdapter {
 		uiStage.dispose(); // we created uiStage so dispose it
 	}
 
-	public boolean isReadyToStart(){
+	@Override
+	public boolean isScreenDone() {
 		return start && !startButton.isPressed();
+	}
+
+	@Override
+	public UsableScreen createNextScreen() {
+		return new GameScreen(gameInputs, renderObject, renderParts);
 	}
 
 	class StartScreenRenderable implements Renderable {
@@ -114,7 +123,7 @@ public class StartScreen extends ScreenAdapter {
 		@Override
 		public void render(float delta, Stage stage) {
 
-			if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
+			if(menuController.getStartButton().isPressed() || startButton.isPressed()){
 				start = true;
 			}
 			stage.addActor(table);

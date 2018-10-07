@@ -111,7 +111,9 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	public double getPosition() {
 		// TODO find a better way to enable cursor catching instead of this tightly coupled way
 		lastPositionRequest = System.currentTimeMillis();
-		setCatched(true);
+		if(!needsDrag) {
+			setCatched(true);
+		}
 		return super.getPosition();
 	}
 

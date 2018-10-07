@@ -44,20 +44,15 @@ public final class GameInputs {
 		final double max = 2;
 		final double def = Math.min(max, Math.max(min, getDefaultMouseMultiplier(mobile)));
 		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(min, max, def);
-		System.out.println("def: " + def);
 		ControlOption r = new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier);
 		options.addControlOption(r);
 		return r;
 	}
 	private static double getDefaultMouseMultiplier(boolean mobile){
-//		final float dpi = 160 * Gdx.graphics.getDensity();
-//		System.out.println("dpi: " + dpi);
 		if(mobile) {
 			double def = 2 / (Gdx.graphics.getDensity() + .3);
-			double r = Math.round(def * 10.0) / 10.0;
-			System.out.println("multiplier r: " + r);
-			return r;
+			return Math.round(def * 10.0) / 10.0;
 		}
 		return 1;
 	}
@@ -223,8 +218,13 @@ public final class GameInputs {
 				"How much you have to shake the device to activate the powerup in m/s^2",
 				"controls.all.shake", shakeThresholdValue));
 		activatePowerup = button;
-		Gdx.input.setCatchBackKey(true);
-		pauseBackButton = new KeyInputPart(Input.Keys.BACK);
+		if(Gdx.app.getType() == Application.ApplicationType.Android) {
+			pauseBackButton = new KeyInputPart(Input.Keys.BACK);
+			Gdx.input.setCatchBackKey(true);
+		} else {
+			// TODO Provide replacement button for non-android devices
+			pauseBackButton = new DummyInputPart(0, false);
+		}
 
 		dummySelector = new TwoAxisJoystickPart(new DummyInputPart(0, true), new DummyInputPart(0, true));
 		dummyEnter = new DummyInputPart(0, false);

@@ -62,9 +62,6 @@ public class OptionMenu implements Renderable, InputFocusable {
 	}
 
 
-	@Override
-	public void onFocusGiven(Stage mainStage) {
-	}
 
 	@Override
 	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {

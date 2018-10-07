@@ -47,5 +47,6 @@ public final class RenderParts implements Disposable{
 		return optionsMenu;
 	}
 	public TouchpadRenderer getTouchpadRenderer() { return touchpadRenderer; }
+
 	public InputMultiplexer getInputMultiplexer(){ return inputMultiplexer; }
 }

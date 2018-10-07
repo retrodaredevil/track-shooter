@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 
 public class SliderSingleOption extends ControlOptionSingleOption {
 	private static final float SLIDER_PERCENT_MULTIPLIER = .5f;
+	private static final String STYLE_NAME = "small";
 	private final RenderObject renderObject;
 
 	private final Slider slider;
@@ -38,11 +39,12 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 		OptionValue value = controlOption.getOptionValue();
 
 		slider.setValue((float) value.getOptionValue());
-		valueLabel = new Label("", renderObject.getUISkin());
+		valueLabel = new Label("", renderObject.getUISkin(), STYLE_NAME);
 
-		container.add(valueLabel).width(80);
-		container.add(slider).width(120);
-		container.add(new Label("" + controlOption.getLabel(), renderObject.getUISkin())).width(200);
+		container.add(valueLabel).width(60);
+		container.add(slider).width(115);
+		container.add().width(5);
+		container.add(new Label("" + controlOption.getLabel(), renderObject.getUISkin(), STYLE_NAME)).width(220);
 	}
 
 	@Override

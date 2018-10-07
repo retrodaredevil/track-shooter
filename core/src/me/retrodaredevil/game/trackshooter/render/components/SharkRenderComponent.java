@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.render.components;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
@@ -10,7 +11,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.VelocityTargetPositio
 public class SharkRenderComponent extends ImageRenderComponent {
 	private static final int LEFT_FRAME = 2, RIGHT_FRAME = 0, STRAIGHT_FRAME = 1;
 
-	private final TextureRegionDrawable[] frames;
+	private final Drawable[] frames;
 
 
 	/**
@@ -21,7 +22,7 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	 * @param width The width of the image
 	 * @param height The height of the image
 	 */
-	public SharkRenderComponent(TextureRegionDrawable[] frames, Entity entity, float width, float height){
+	public SharkRenderComponent(Drawable[] frames, Entity entity, float width, float height){
 		super(new Image(), entity, width, height);
 //		this.frames = new TextureRegionDrawable[frames.length];
 //		for(int i = 0; i < frames.length; i++){

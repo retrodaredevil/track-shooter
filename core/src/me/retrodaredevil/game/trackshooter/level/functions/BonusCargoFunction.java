@@ -46,7 +46,7 @@ public class BonusCargoFunction implements LevelFunction {
 		}
 		if(world.getLevel().isEndingSoon()){
 			cargoEntity.setToRemove();
-			EntityUtil.displayScore(world, cargoEntity.getLocation(), points.getDrawable());
+			EntityUtil.displayScore(world, cargoEntity.getLocation(), points.getDrawable(world.getRenderObject()));
 			for(Player player : players) {
 				player.getScoreObject().onScore(points.getWorth());
 			}

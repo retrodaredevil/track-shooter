@@ -14,14 +14,11 @@ public interface InputFocusable {
 	 */
 	int getFocusPriority();
 
-	/**
-	 * Called when it's going to focus on the {@link InputProcessor}s returned from {@link #getInputProcessorsToFocus(Stage)}
-	 * @param mainStage
-	 */
-	void onFocusGiven(Stage mainStage);
 
 
 	/**
+	 * When this is called, it means that this InputFocusable is receiving focus and that these
+	 * InputProcessors will be focused on.
 	 * @param mainStage The main stage. If you do not have an InputProcessor that you want to return, you should return this mainStage in a Collection
 	 * @return A Collection usually with a size of 1 representing the InputProcessor(s) that should gain focus
 	 */

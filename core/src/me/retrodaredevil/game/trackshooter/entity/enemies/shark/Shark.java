@@ -2,6 +2,9 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+
+import java.util.Optional;
+
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.*;
@@ -23,24 +26,28 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
 	private final MoveComponent smoothTravel;
 
-	private final RenderComponent fullRender; // NOTE These will be disposed as the Shark loses lives
-	private final RenderComponent hitRender;
-	private final RenderComponent wornRender;
+	private RenderComponent fullRender = null; // NOTE These will be disposed as the Shark loses lives
+	private RenderComponent hitRender = null;
+	private RenderComponent wornRender = null;
 
 	public Shark(Vector2 startingPosition, float startingRotation){
 		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
 		smoothTravel = new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, ROTATIONAL_SPEED);
 
-		// TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
-		// possibly only rely on one RenderComponent if that is more elegant
-		fullRender = new SharkRenderComponent(Resources.SHARK_REGIONS, this, 1.0f, 1.0f);
-		hitRender = new SharkRenderComponent(Resources.SHARK_REGIONS_HIT, this, 1.0f, 1.0f);
-		wornRender = new SharkRenderComponent(Resources.SHARK_REGIONS_WORN, this, 1.0f, 1.0f);
 		setHitboxSize(.7f);
 		canRespawn = false;
 		collisionIdentity = CollisionIdentity.ENEMY;
-//		canLevelEndWithEntityActive = false;
 		levelEndStateWhenActive = LevelEndState.CANNOT_END;
+	}
+
+	@Override
+	public void beforeSpawn(World world) {
+		super.beforeSpawn(world);
+		// TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
+		// possibly only rely on one RenderComponent if that is more elegant
+		fullRender = new SharkRenderComponent(Resources.Shark.FULL_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
+		hitRender = new SharkRenderComponent(Resources.Shark.MIDDLE_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
+		wornRender = new SharkRenderComponent(Resources.Shark.LOW_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
 	}
 
 	@Override
@@ -134,7 +141,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		boolean spinDeath = spinLives <= 0;
 		if(lives <= 0 || spinDeath) {
 			Resources.Points points = spinDeath ? Resources.Points.P400 : Resources.Points.P200;
-			EntityUtil.displayScore(world, this.getLocation(), points.getDrawable()); // display 200
+			EntityUtil.displayScore(world, this.getLocation(), points.getDrawable(world.getRenderObject())); // display 200
 
 			Player player = null;
 			if (other instanceof Player) {

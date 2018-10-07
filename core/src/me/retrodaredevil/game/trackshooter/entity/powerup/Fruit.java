@@ -49,7 +49,7 @@ public class Fruit extends SimplePowerup {
 	}
 
 	protected void displayScore(World world){
-		EntityUtil.displayScore(world, this.getLocation(), points.getDrawable());
+		EntityUtil.displayScore(world, this.getLocation(), points.getDrawable(world.getRenderObject()));
 	}
 
 	@Override

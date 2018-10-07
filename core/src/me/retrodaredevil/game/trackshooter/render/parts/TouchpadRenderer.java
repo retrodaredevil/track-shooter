@@ -60,9 +60,6 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		return 0;
 	}
 
-	@Override
-	public void onFocusGiven(Stage mainStage) {
-	}
 
 	@Override
 	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {

@@ -20,7 +20,7 @@ import me.retrodaredevil.game.trackshooter.render.Renderer;
 import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class GameScreen extends ScreenAdapter {
+public class GameScreen implements UsableScreen {
 
 //	private final GameInput gameInput;
 	private final List<Player> players = new ArrayList<>(); // elements may be removed // initialized in constructor
@@ -41,14 +41,15 @@ public class GameScreen extends ScreenAdapter {
 		this.renderParts = renderParts;
 		this.renderObject = renderObject;
 
-
-		int i = -1;
-		for(GameInput gameInput : gameInputs){
-			i++;
-			Player player = new Player(gameInput.getRumble(), i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
-			players.add(player);
-			player.setEntityController(new PlayerController(player, gameInput));
-			world.addEntity(player);
+		{
+			int i = 0;
+			for (GameInput gameInput : gameInputs) {
+				Player player = new Player(gameInput.getRumble(), i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				players.add(player);
+				player.setEntityController(new PlayerController(player, gameInput));
+				world.addEntity(player);
+				i++;
+			}
 		}
 
 		renderParts.getOverlay().setGame(players, world);
@@ -56,9 +57,7 @@ public class GameScreen extends ScreenAdapter {
 
 	@Override
 	public void render(float delta) {
-		if(delta > 1 / 30.0f){
-			delta = 1 / 30.0f;
-		}
+		delta = Math.min(delta, 1 / 30f);
 		doUpdate(delta);
 		doRender(delta);
 
@@ -118,12 +117,7 @@ public class GameScreen extends ScreenAdapter {
 				level.setMode(LevelMode.RESET);
 			} else if (mode == LevelMode.STANDBY) { // all enemies have returned to start
 				if (level.getModeTimeMillis() > 4000) {
-					shouldExit = true;
-					System.out.println("Exiting game.");
-					for(Player player : players){
-						Score score = player.getScoreObject();
-						score.printOut();
-					}
+					setToExit();
 				}
 			}
 		}
@@ -140,14 +134,49 @@ public class GameScreen extends ScreenAdapter {
 
 		renderer.render(delta);
 
-		InputFocuser inputFocuser = new InputFocuser(renderParts.getInputMultiplexer());
-		inputFocuser.addInputFocus(renderParts.getTouchpadRenderer());
-		inputFocuser.giveFocus(stage);
+		InputFocuser inputFocuser = new InputFocuser();
+		{
+			InputFocuser inGameFocuser = new InputFocuser(0);
+
+			inGameFocuser.addParallel(renderParts.getTouchpadRenderer());
+
+			inputFocuser.add(inGameFocuser);
+		}
+		if(paused){
+
+		}
+		inputFocuser.giveFocus(stage, renderParts.getInputMultiplexer());
+	}
+	public void setToExit(){
+		shouldExit = true;
+		System.out.println("Exiting game.");
+		for(Player player : players){
+			Score score = player.getScoreObject();
+			score.printOut();
+		}
+	}
+
+	@Override
+	public void pause() {
+		// called when exiting app when still open
+		paused = true;
+	}
+
+	@Override
+	public void resume() {
+		// Called when reentering opened app
+	}
+
+	@Override
+	public void hide() { // called usually before dispose
+	}
+
+	@Override
+	public void show() {
 	}
 
 	@Override
 	public void resize(int width, int height) {
-		Gdx.gl.glViewport(0, 0, width, height);
 		stage.getViewport().update(width, height,true);
 		renderParts.resize(width, height);
 	}
@@ -157,7 +186,17 @@ public class GameScreen extends ScreenAdapter {
 		world.disposeRenderComponent();
 		stage.dispose();
 	}
-	public boolean isGameCompletelyOver(){
+
+	@Override
+	public boolean isScreenDone() {
 		return shouldExit;
+	}
+
+	@Override
+	public UsableScreen createNextScreen() {
+		if(!shouldExit){
+			throw new IllegalStateException("Cannot create a StartScreen if we aren't done!");
+		}
+		return new StartScreen(gameInputs, renderObject, renderParts);
 	}
 }

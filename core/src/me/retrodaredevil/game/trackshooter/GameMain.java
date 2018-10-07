@@ -82,12 +82,12 @@ public class GameMain extends Game {
 				}
 			}
 			gameInputs.add(GameInputs.createKeyboardInput());
-//			inputs.add(keyboardInput);
-			GameInput realGameInput = new ChangeableGameInput(gameInputs);
-			inputs.add(realGameInput);
 			for(UsableGameInput input : gameInputs){
 				controllerManager.addController(input);
 			}
+
+			GameInput realGameInput = new ChangeableGameInput(gameInputs);
+			inputs.add(realGameInput);
 			controllerManager.addController(realGameInput);
 
 		}
@@ -101,6 +101,27 @@ public class GameMain extends Game {
 	}
 
 	@Override
+	public UsableScreen getScreen() {
+		return (UsableScreen) super.getScreen();
+	}
+
+	@Override
+	public void setScreen(Screen screen) {
+		if (!(screen instanceof UsableScreen)) {
+			throw new IllegalArgumentException("The screen must be a UsableScreen! got: " + screen);
+		}
+		UsableScreen old = getScreen();
+		if(old != null) old.dispose();
+		super.setScreen(screen);
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		Gdx.gl.glViewport(0, 0, width, height);
+		super.resize(width, height);
+	}
+
+	@Override
 	public void render() {
 		controllerManager.update();
 		super.render(); // renders current screen
@@ -110,25 +131,13 @@ public class GameMain extends Game {
 //			}
 //		}
 
-		Screen screen = getScreen(); // TODO create our own screen interface instead of this ugly mess
-		if(screen instanceof GameScreen){
-			GameScreen game = (GameScreen) screen;
-			if(game.isGameCompletelyOver()){
-				startScreen();
-			}
-		} else if(screen instanceof StartScreen){
-			StartScreen startScreen = (StartScreen) screen;
-			if(startScreen.isReadyToStart()){
-				gameScreen();
-			}
+		UsableScreen screen = getScreen();
+		if(screen.isScreenDone()){
+			setScreen(screen.createNextScreen());
 		}
-//		Gdx.graphics.setTitle("Track Shooter - FPS:" + Gdx.graphics.getFramesPerSecond());
 	}
 	private void startScreen(){
-		setScreen(new StartScreen(inputs.get(0), renderObject, renderParts)); // TODO all inputs
-	}
-	private void gameScreen(){
-		setScreen(new GameScreen(inputs, renderObject, renderParts));
+		setScreen(new StartScreen(inputs, renderObject, renderParts));
 	}
 
 	@Override
