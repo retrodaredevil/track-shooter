@@ -18,6 +18,11 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 /**
  * An abstract class that deals with rendering and logic for a selection menu
+ * <p>
+ * TODO This class is abstract for good reason. However, in the future, we may be able to make...
+ * this less abstract and have a list/collection of things that can add SingleOptions. This way,
+ * instead of providing implementation for a content table and SingleOptions to add, it can just
+ * do one of those things which will make this easier to extend and make changes to.
  */
 public abstract class SelectionMenuRenderComponent implements RenderComponent {
 	/*

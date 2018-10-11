@@ -53,7 +53,7 @@ public class World implements Updateable, Renderable {
 			level = levelGetter.nextLevel();
 		}
 
-		while(true){
+		while(true){ // add all entities necessary
 			Entity entity = entitiesToAdd.poll();
 			if(entity == null){
 				break;
@@ -61,7 +61,9 @@ public class World implements Updateable, Renderable {
 			entity.beforeSpawn(this);
 			entities.add(entity);
 		}
-		for(Iterator<Entity> it = entities.listIterator(); it.hasNext(); ){
+		this.level.update(delta, this); // update level
+
+		for(Iterator<Entity> it = entities.listIterator(); it.hasNext(); ){ // update entities
 			Entity entity = it.next();
 			assert !entity.isRemoved();
 			entity.update(delta, this);
@@ -70,8 +72,7 @@ public class World implements Updateable, Renderable {
 				entity.afterRemove(this);
 			}
 		}
-		this.collisionHandler.update(delta, this);
-		this.level.update(delta, this);
+		this.collisionHandler.update(delta, this); // do collisions
 	}
 
 	public Skin getMainSkin(){

@@ -11,12 +11,16 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.friendly.CargoShip;
+import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
+import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
+import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.level.functions.BonusCargoFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
+import me.retrodaredevil.game.trackshooter.level.functions.LevelFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.StarFishFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
@@ -52,6 +56,10 @@ public class GameLevelGetter implements LevelGetter {
 			@Override
 			protected void onStart(World world) {
 				super.onStart(world);
+				for(Player player : players){ // move all players to a random spot
+					((OnTrackMoveComponent) player.getMoveComponent()).setDistanceOnTrack(MathUtils.random(world.getTrack().getTotalDistance()));
+				}
+
 				addFunction(new FruitFunction());
 				if(levelNumber != 1 && levelNumber != 3 && levelNumber % 4 != 0){ // on all levels except 1, 3 and any multiples of 4
 					for(Player player : players) {

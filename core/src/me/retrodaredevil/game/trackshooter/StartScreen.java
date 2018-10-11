@@ -44,7 +44,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private boolean optionsDown = false;
 
 	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
-		this.gameInputs = Collections.unmodifiableList(gameInputs);
+		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
 		this.gameInput = gameInputs.get(0); // TODO Allow other inputs to control as well
 		this.renderParts = Objects.requireNonNull(renderParts);
 		this.renderObject = Objects.requireNonNull(renderObject);
