@@ -58,6 +58,7 @@ public class GameLevelGetter implements LevelGetter {
 				super.onStart(world);
 				for(Player player : players){ // move all players to a random spot
 					((OnTrackMoveComponent) player.getMoveComponent()).setDistanceOnTrack(MathUtils.random(world.getTrack().getTotalDistance()));
+					if(levelNumber == 1) player.setRotation(90); // facing up
 				}
 
 				addFunction(new FruitFunction());

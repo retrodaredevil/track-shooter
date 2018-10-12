@@ -58,6 +58,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		this.menuRenderable = new StartScreenRenderable();
 
 	}
+	private Renderer createRenderer(){
+		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
+		renderer.addRenderable(renderParts.getBackground());
+		renderer.addMainStage();
+		renderer.addRenderable(renderParts.getOptionsMenu().isOpen() ? renderParts.getOptionsMenu() : menuRenderable);
+		renderer.addRenderable(renderParts.getOverlay());
+		return renderer;
+	}
 	@Override
 	public void render(float delta) {
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
@@ -69,13 +77,8 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 //		System.out.println("wants to focus: " + renderParts.getOptionsMenu().isWantsToFocus());
 		focuser.giveFocus(uiStage, renderParts.getInputMultiplexer());
 
-		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
-		renderer.addRenderable(renderParts.getBackground());
-		renderer.addMainStage();
-		renderer.addRenderable(renderParts.getOptionsMenu().isOpen() ? renderParts.getOptionsMenu() : menuRenderable);
-		renderer.addRenderable(renderParts.getOverlay());
 
-		renderer.render(delta);
+		createRenderer().render(delta);
 	}
 
 	@Override

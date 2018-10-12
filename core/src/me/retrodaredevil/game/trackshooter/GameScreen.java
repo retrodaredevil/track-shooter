@@ -122,8 +122,7 @@ public class GameScreen implements UsableScreen {
 			}
 		}
 	}
-	private void doRender(float delta){
-
+	private Renderer createRenderer(){
 		Renderer renderer = new Renderer(renderObject.getBatch(), stage);
 		renderer.addRenderable(renderParts.getBackground());
 		renderer.addRenderable(world);
@@ -131,8 +130,12 @@ public class GameScreen implements UsableScreen {
 		renderer.addRenderable(renderParts.getTouchpadRenderer());
 		renderer.addRenderable(renderParts.getOptionsMenu());
 		renderer.addRenderable(renderParts.getOverlay());
+		return renderer;
+	}
+	private void doRender(float delta){
 
-		renderer.render(delta);
+
+		createRenderer().render(delta);
 
 		InputFocuser inputFocuser = new InputFocuser();
 		{
@@ -179,6 +182,7 @@ public class GameScreen implements UsableScreen {
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height,true);
 		renderParts.resize(width, height);
+//		createRenderer().resize(width, height);
 	}
 
 	@Override

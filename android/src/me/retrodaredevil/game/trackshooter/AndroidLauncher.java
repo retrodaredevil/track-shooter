@@ -16,8 +16,6 @@ public class AndroidLauncher extends AndroidApplication {
 		config.useAccelerometer = true;
 		config.useCompass = true;
 		config.useRotationVectorSensor = true; // may not work on all devices
-		config.useWakelock = true;
-		config.hideStatusBar = true;
 
 		initialize(new GameMain(), config);
 	}

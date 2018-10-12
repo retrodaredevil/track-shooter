@@ -18,6 +18,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
@@ -46,7 +47,7 @@ public final class GameInputs {
 		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(min, max, def);
 		ControlOption r = new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
 				"controls.all.mouse", mouseMultiplier);
-		options.addControlOption(r);
+		options.add(r);
 		return r;
 	}
 	private static double getDefaultMouseMultiplier(boolean mobile){
@@ -66,12 +67,12 @@ public final class GameInputs {
 		final OptionValue mouseInvert = OptionValues.createBooleanOptionValue(false);
 		ControlOption r = new ControlOption("Invert Rotation", "Should the rotation be inverted",
 				"controls.all.mouse", mouseInvert);
-		options.addControlOption(r);
+		options.add(r);
 		return r;
 	}
 	private static InputPart createAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String controlType){
 		final OptionValue useY = OptionValues.createBooleanOptionValue(useYByDefault);
-		options.addControlOption(new ControlOption("Use Y Axis", "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
+		options.add(new ControlOption("Use Y Axis", "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
 
 		InputPart r = References.create(() -> useY.getBooleanOptionValue() ? yAxis : xAxis);
 		r.addChild(xAxis);
@@ -141,7 +142,7 @@ public final class GameInputs {
 		final TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger visibilityChanger;
 
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
-		options.addControlOption(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
+		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
 				"controls.all.phone.hand", isLeftHanded));
 		final ScreenAreaGetter fireAreaGetter;
 		final ScreenAreaGetter rotateAreaGetter;
@@ -168,11 +169,11 @@ public final class GameInputs {
 			OptionValue distanceAwayX = OptionValues.createAnalogRangedOptionValue(.05, .5, .15);
 			OptionValue heightOption = OptionValues.createAnalogRangedOptionValue(.25, .75, .5);
 			OptionValue radiusOption = OptionValues.createAnalogRangedOptionValue(.2, .5, .35);
-			options.addControlOption(new ControlOption("Joystick X Position",
+			options.add(new ControlOption("Joystick X Position",
 					"The x position of the joystick.", "controls.joystick.position.x", distanceAwayX));
-			options.addControlOption(new ControlOption("Joystick Y Position",
+			options.add(new ControlOption("Joystick Y Position",
 					"The y position of the joystick.", "controls.joystick.position.y", heightOption));
-			options.addControlOption(new ControlOption("Joystick size",
+			options.add(new ControlOption("Joystick size",
 					"The size of the joystick relative to the height", "controls.joystick.size", radiusOption));
 			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
@@ -203,7 +204,7 @@ public final class GameInputs {
 		} else {
 			visibilityChanger = null;
 			mainJoystick = new GdxTiltJoystick();
-			options.addController((ConfigurableControllerPart) mainJoystick);
+			options.add((ConfigurableObject) mainJoystick);
 
 			fireButton = new GdxScreenTouchButton(fireAreaGetter);
 		}
@@ -214,7 +215,7 @@ public final class GameInputs {
 
 		OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 8);
 		GdxShakeButton button = new GdxShakeButton(shakeThresholdValue);
-		options.addControlOption(new ControlOption("Powerup Activate Shake Sensitivity",
+		options.add(new ControlOption("Powerup Activate Shake Sensitivity",
 				"How much you have to shake the device to activate the powerup in m/s^2",
 				"controls.all.shake", shakeThresholdValue));
 		activatePowerup = button;
@@ -232,7 +233,7 @@ public final class GameInputs {
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)){
 			final GdxRumble gdxRumble = new GdxRumble();
 			rumble = gdxRumble;
-			options.addController(gdxRumble);
+			options.add(gdxRumble);
 		} else {
 			rumble = new DisconnectedRumble();
 		}

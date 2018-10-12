@@ -6,6 +6,9 @@ import com.badlogic.gdx.Input;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.LongStream;
 
 import me.retrodaredevil.controller.SimpleControllerPart;
@@ -22,6 +25,8 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	private final ControlOption simulateAnalogControlOption = new ControlOption("Simulate Analog Rumble",
 					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", "output.rumble.simulateAnalog", simulateAnalogOption);
 	private final ControlOption enableRumbleControlOption = new ControlOption("Enable Rumble", "Should the rumble/vibrator be enabled", "output.rumble.enable", enableRumbleOption);
+
+	private final Map<VibratePattern, Map<Integer, long[]>> patternRepeatCache = new EnumMap<>(VibratePattern.class);
 
 
 	private long vibrateUntil = 0;
@@ -117,15 +122,27 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 		}
 		// Basically, instead of turning the rumble off in an open loop, we use the exact
 		// pattern that we want and create a new array that repeats it a certain number of times.
-		// This can actually be a lot of resource intensive on some devices but it can vibrate
+		// This can actually be a very resource intensive on some devices (so we use a cache) but it can vibrate
 		// for the exact amount of time that we want it to.
-
-		final long[] shortPattern = pattern.pattern;
-
-		final long period = MathUtil.sum(shortPattern);
+		final long period = MathUtil.sum(pattern.pattern);
 		final int repeat = (int) (millis / period);
-		final long[] timePattern = MathUtil.repeatNew(shortPattern, repeat * shortPattern.length);
-		Gdx.input.vibrate(timePattern, -1);
+
+		Gdx.input.vibrate(getAndCacheVibratePatternRepeat(pattern, repeat), -1);
+	}
+	private long[] getAndCacheVibratePatternRepeat(VibratePattern pattern, int repeat){
+		Map<Integer, long[]> repeatMap = patternRepeatCache.get(pattern);
+		if(repeatMap == null){
+			repeatMap = new HashMap<>();
+			patternRepeatCache.put(pattern, repeatMap);
+		}
+		final long[] cachedPattern = repeatMap.get(repeat);
+		if(cachedPattern != null){
+			return cachedPattern;
+		}
+		final long[] shortPattern = pattern.pattern;
+		final long[] r = MathUtil.repeatNew(shortPattern, repeat * shortPattern.length);
+		repeatMap.put(repeat, r);
+		return r;
 	}
 
 	@Override

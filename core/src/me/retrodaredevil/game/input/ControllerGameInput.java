@@ -10,6 +10,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.SensitiveInputPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValues;
@@ -74,9 +75,9 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, backButton);
 
-		controlOptions.addControlOption(rotateAxisSensitivity);
-		if(controller instanceof ConfigurableControllerPart){
-			controlOptions.addController((ConfigurableControllerPart) controller);
+		controlOptions.add(rotateAxisSensitivity);
+		if(controller instanceof ConfigurableObject){
+			controlOptions.add((ConfigurableObject) controller);
 		}
 	}
 

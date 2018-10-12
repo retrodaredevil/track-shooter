@@ -70,4 +70,16 @@ public class Renderer {
 		}
 		batch.end();
 	}
+
+	/**
+	 * This resizes everything added to this Renderable. Sometimes, you should not use this because
+	 * it would be easier to just resize whatever you're using individually.
+	 * @param width
+	 * @param height
+	 */
+	public void resize(int width, int height){
+		for(Stage stage : stages){
+			stage.getViewport().update(width, height, true);
+		}
+	}
 }
