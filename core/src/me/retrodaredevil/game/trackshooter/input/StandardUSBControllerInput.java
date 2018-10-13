@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.input;
+package me.retrodaredevil.game.trackshooter.input;
 
 import com.badlogic.gdx.controllers.Controller;
 
@@ -17,9 +17,9 @@ import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
-import me.retrodaredevil.game.input.implementations.ControllerInputPart;
-import me.retrodaredevil.game.input.implementations.ControllerPovJoystick;
-import me.retrodaredevil.game.input.implementations.GdxControllerRumble;
+import me.retrodaredevil.game.trackshooter.input.implementations.ControllerInputPart;
+import me.retrodaredevil.game.trackshooter.input.implementations.ControllerPovJoystick;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerRumble;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class StandardUSBControllerInput extends SimpleControllerInput implements StandardControllerInput, RumbleCapableController, ConfigurableControllerPart {

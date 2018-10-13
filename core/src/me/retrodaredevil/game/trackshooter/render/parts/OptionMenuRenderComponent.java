@@ -16,7 +16,7 @@ import java.util.Map;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
-import me.retrodaredevil.game.input.GameInput;
+import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.selection.options.CheckBoxSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.DropDownSingleOption;

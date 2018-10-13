@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
-import me.retrodaredevil.game.input.GameInput;
+import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;

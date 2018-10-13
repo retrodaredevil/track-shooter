@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import me.retrodaredevil.game.input.UsableGameInput;
+import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;

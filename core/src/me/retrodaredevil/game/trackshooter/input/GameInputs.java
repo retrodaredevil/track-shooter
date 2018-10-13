@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.input;
+package me.retrodaredevil.game.trackshooter.input;
 
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
@@ -25,15 +25,15 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
-import me.retrodaredevil.game.input.implementations.GdxMouseAxis;
-import me.retrodaredevil.game.input.implementations.GdxRumble;
-import me.retrodaredevil.game.input.implementations.GdxScreenTouchButton;
-import me.retrodaredevil.game.input.implementations.GdxShakeButton;
-import me.retrodaredevil.game.input.implementations.GdxTiltJoystick;
-import me.retrodaredevil.game.input.implementations.GdxTouchpadJoystick;
-import me.retrodaredevil.game.input.implementations.KeyInputPart;
-import me.retrodaredevil.game.input.implementations.ReleaseButtonPress;
-import me.retrodaredevil.game.input.implementations.ScreenAreaGetter;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxMouseAxis;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxScreenTouchButton;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxShakeButton;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxTiltJoystick;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxTouchpadJoystick;
+import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
+import me.retrodaredevil.game.trackshooter.input.implementations.ReleaseButtonPress;
+import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreaGetter;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 

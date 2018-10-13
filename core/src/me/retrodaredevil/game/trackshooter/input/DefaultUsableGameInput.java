@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.input;
+package me.retrodaredevil.game.trackshooter.input;
 
 import java.util.Collection;
 

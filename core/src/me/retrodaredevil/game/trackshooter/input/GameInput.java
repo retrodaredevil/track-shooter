@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.input;
+package me.retrodaredevil.game.trackshooter.input;
 
 import me.retrodaredevil.controller.ControllerInput;
 import me.retrodaredevil.controller.input.InputPart;

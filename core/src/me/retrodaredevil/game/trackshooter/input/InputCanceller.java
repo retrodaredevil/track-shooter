@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.input;
+package me.retrodaredevil.game.trackshooter.input;
 
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
