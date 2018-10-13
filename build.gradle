@@ -25,6 +25,7 @@ allprojects {
     apply plugin: "idea"
 
     version = '1.0'
+	project.ext.set("controllerLibVersion", "v1.2.1")
     ext {
         appName = "Track Shooter"
         gdxVersion = '1.9.8'
@@ -88,7 +89,7 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        implementation "com.github.retrodaredevil:abstract-controller-lib:v1.2.1"
+        implementation "com.github.retrodaredevil:abstract-controller-lib:$controllerLibVersion"
 
     }
 }
