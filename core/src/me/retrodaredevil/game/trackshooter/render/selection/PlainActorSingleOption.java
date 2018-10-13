@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.render.selection;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.Collection;
@@ -12,9 +13,9 @@ import me.retrodaredevil.controller.input.JoystickPart;
 
 public class PlainActorSingleOption extends ContainerSingleOption{
 	private final Actor actor;
-	private final float width, height;
+	private final Float width, height;
 
-	public PlainActorSingleOption(Actor actor, float width, float height){
+	public PlainActorSingleOption(Actor actor, Float width, Float height){
 		super();
 		this.actor = actor;
 		this.width = width;
@@ -24,7 +25,13 @@ public class PlainActorSingleOption extends ContainerSingleOption{
 	@Override
 	protected void onInit(Table container) {
 		super.onInit(container);
-		container.add(actor).width(this.width).height(this.height);
+		Cell<Actor> cell = container.add(actor);
+		if(width != null){
+			cell.width(width);
+		}
+		if(height != null){
+			cell.height(height);
+		}
 	}
 
 	@Override

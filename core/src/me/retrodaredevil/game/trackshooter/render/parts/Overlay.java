@@ -1,8 +1,10 @@
 package me.retrodaredevil.game.trackshooter.render.parts;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.Disposable;
 
@@ -11,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.Updateable;
@@ -21,14 +24,16 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.viewports.UIViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
 
-public class Overlay implements Renderable, Updateable, Disposable {
+public class Overlay implements Renderable, Updateable, Disposable, InputFocusable {
 
 	private final Stage stage;
 	private final RenderObject renderObject;
-	private final RenderComponent component;
+	private final OverlayRenderer component;
 	private final Preferences scorePreferences;
 	private Player[] players = null;
 	private World world = null;
+	private boolean isPauseJustPressed = false;
+	private boolean wasPauseDown = false;
 
 	public Overlay(RenderObject renderObject){
 		this.renderObject = renderObject;
@@ -36,11 +41,18 @@ public class Overlay implements Renderable, Updateable, Disposable {
 		component = new OverlayRenderer(this, renderObject);
 		scorePreferences = Gdx.app.getPreferences("score");
 	}
-	public void handleRender(float delta){
-		component.render(delta, stage);
+	private Button getPauseButton(){
+		return component.getPauseButton();
+	}
 
-		stage.act(delta);
-		stage.draw();
+	/**
+	 * @return returns true the first frame the on screen pause button was pressed
+	 */
+	public boolean isPausePressed(){
+		return isPauseJustPressed;
+	}
+	public void setPauseVisible(boolean visible){
+		getPauseButton().setVisible(visible);
 	}
 	public int getNumberPlayers(){
 		return players == null ? 0 : players.length;
@@ -56,13 +68,6 @@ public class Overlay implements Renderable, Updateable, Disposable {
 		return player.getScoreObject().getScore();
 	}
 	public int getHighScore(){
-//		for(int i = 0; i < getNumberPlayers(); i++){
-//			int score = getCurrentScore(i);
-//			if(score > highScore){
-//				highScore = score;
-//			}
-//		}
-//		return highScore;
 		return scorePreferences.getInteger("high_score", 10000);
 	}
 	public int getShipsToDraw(int playerIndex){
@@ -113,7 +118,7 @@ public class Overlay implements Renderable, Updateable, Disposable {
 	 * @param world The world of the game
 	 */
 	public void setGame(List<Player> players, World world){
-		this.players = players.toArray(new Player[players.size()]);
+		this.players = players.toArray(new Player[players.size()]); // copy this list so it won't change on us
 		this.world = world;
 	}
 	@Override
@@ -134,6 +139,10 @@ public class Overlay implements Renderable, Updateable, Disposable {
 				scorePreferences.flush();
 			}
 		}
+		final boolean down = getPauseButton().isPressed();
+		isPauseJustPressed = !isPauseJustPressed && !wasPauseDown && down;
+		wasPauseDown = down;
+
 	}
 
 	@Override
@@ -151,5 +160,20 @@ public class Overlay implements Renderable, Updateable, Disposable {
 			return 0;
 		}
 		return level.getNumber();
+	}
+
+	@Override
+	public boolean isWantsToFocus() {
+		return getPauseButton().isVisible();
+	}
+
+	@Override
+	public int getFocusPriority() {
+		return 0;
+	}
+
+	@Override
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+		return Collections.singleton(this.stage);
 	}
 }

@@ -6,6 +6,7 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Objects;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
@@ -13,13 +14,18 @@ import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.options.ConfigurableObjectOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
 public class OptionMenu implements Renderable, InputFocusable {
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
 	private final Stage preferredStage;
-	private OptionMenuRenderComponent renderComponent = null;
+	private SelectionMenuRenderComponent renderComponent = null;
+	private ConfigurableControllerPart currentController = null;
+
 	public OptionMenu(RenderObject renderObject, SaveObject saveObject) {
 		this.renderObject = renderObject;
 		this.saveObject = saveObject;
@@ -33,8 +39,8 @@ public class OptionMenu implements Renderable, InputFocusable {
 	}
 	public void setToController(ConfigurableControllerPart configController, GameInput menuController){
 		if (renderComponent != null) {
-			if(renderComponent.getConfigController() == configController){
-				System.out.println("it's the same!");
+			if(currentController == configController){
+				System.err.println("it's the same!");
 				return; // don't do anything, it's the same
 			}
 			renderComponent.dispose();
@@ -43,7 +49,10 @@ public class OptionMenu implements Renderable, InputFocusable {
 			renderComponent = null;
 			return;
 		}
-		renderComponent = new OptionMenuRenderComponent(renderObject, menuController, configController, this, saveObject);
+		renderComponent = new SelectionMenuRenderComponent(renderObject, menuController,
+				new DialogTable("Options", renderObject),
+				Collections.singleton(new ConfigurableObjectOptionProvider(menuController, renderObject, saveObject)), this::closeMenu);
+		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}
 	public void closeMenu(){
 		setToController(null, null);
@@ -53,8 +62,6 @@ public class OptionMenu implements Renderable, InputFocusable {
 		return renderComponent != null;
 	}
 
-	//region loading/saving
-	//endregion
 
 	@Override
 	public Stage getPreferredStage() {

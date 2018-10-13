@@ -13,6 +13,9 @@ import me.retrodaredevil.game.trackshooter.util.RenderUtil;
  * A short lived class that helps with the rendering of {@link Renderable}s and {@link Stage}s.
  * <p>
  * Renderables are rendered first, in order, and then, stages are rendered, in order.
+ * <p>
+ * Because most Renderables utilize stages, renderables or stages added last will be shown on top.
+ * Some Renderables don't use stages meaning they will be drawn under everything.
  */
 public class Renderer {
 	private final Batch batch;

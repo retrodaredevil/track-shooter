@@ -23,7 +23,7 @@ public interface SingleOption {
 	void renderUpdate(Table table);
 
 	/**
-	 * Should reset the control option to its original value
+	 * Should reset the control option to its original state
 	 */
 	void reset();
 

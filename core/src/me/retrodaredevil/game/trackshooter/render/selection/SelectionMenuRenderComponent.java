@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -24,50 +22,38 @@ import me.retrodaredevil.game.trackshooter.util.MathUtil;
  * instead of providing implementation for a content table and SingleOptions to add, it can just
  * do one of those things which will make this easier to extend and make changes to.
  */
-public abstract class SelectionMenuRenderComponent implements RenderComponent {
+public class SelectionMenuRenderComponent implements RenderComponent {
 	/*
 	Some credit and help found at http://brokenshotgun.com/2014/02/08/libgdx-control-scene2d-buttons-with-a-controller/
 	 */
-	private static final int DEFAULT_INDEX = 0;
-//	private final OptionMenu optionMenu;
-	protected final RenderObject renderObject;
-//	private final ConfigurableControllerPart configController;
-	protected final GameInput menuController;
 
-	private final List<SingleOption> singleOptions = new ArrayList<>();
+	private static final int DEFAULT_INDEX = 0;
+
+	private final RenderObject renderObject;
+	private final GameInput menuController;
+	private final ContentTableProvider contentTableProvider;
+	private final Collection<? extends SingleOptionProvider> optionProviders;
+	private final ExitRequestListener exitRequestListener;
+	private final List<OptionPair> singleOptionPairs = new ArrayList<>();
 
 
 	private Integer selectedOptionIndex = null; // null represents none selected
-	private boolean shouldExit = false;
 
-	public SelectionMenuRenderComponent(RenderObject renderObject, GameInput menuController){
+	public SelectionMenuRenderComponent(RenderObject renderObject, GameInput menuController,
+										ContentTableProvider contentTableProvider,
+										Collection<? extends SingleOptionProvider> optionProviders,
+										ExitRequestListener exitRequestListener){
 		this.renderObject = renderObject;
 		this.menuController = menuController;
+		this.contentTableProvider = contentTableProvider;
+		this.optionProviders = optionProviders;
+		this.exitRequestListener = exitRequestListener;
 
+	}
 
-	}
-	public boolean isShouldExit(){
-		return shouldExit;
-	}
-	public Collection<? extends SingleOption> getOptions(){
-		return singleOptions;
-	}
-	protected abstract Table getContentTable();
-
-	/**
-	 * When this is called, the elements the the returned Collection are GUARANTEED to be added to the
-	 * list/collection of SingleOptions. This means that you can do whatever logic you need to do to
-	 * the returned value before returning it.
-	 * @return The options to add
-	 */
-	protected abstract Collection<? extends SingleOption> getOptionsToAdd();
-	protected abstract boolean shouldKeep(SingleOption singleOption);
-	protected void resetTable(){
-		getContentTable().clearChildren();
-	}
 	@Override
 	public void render(float delta, Stage stage) {
-
+		contentTableProvider.render(delta, stage);
 
 		final JoystickPart selectJoystick = menuController.getSelectorJoystick();
 		final InputPart selectButton = menuController.getEnterButton();
@@ -87,17 +73,22 @@ public abstract class SelectionMenuRenderComponent implements RenderComponent {
 			requestingActions.add(SingleOption.SelectAction.EXIT_MENU);
 		}
 
-		Collection<? extends SingleOption> optionsToAdd = getOptionsToAdd();
-		singleOptions.addAll(optionsToAdd);
+		for(SingleOptionProvider provider : optionProviders){
+			for(SingleOption option : provider.getOptionsToAdd()){
+				singleOptionPairs.add(new OptionPair(option, provider));
+			}
+		}
 		{
 			int i = 0;
-			for (Iterator<SingleOption> it = singleOptions.iterator(); it.hasNext(); i++) {
-				SingleOption singleOption = it.next();
-				if (!this.shouldKeep(singleOption)) {
+			for (Iterator<OptionPair> it = singleOptionPairs.iterator(); it.hasNext(); i++) {
+				OptionPair optionPair = it.next();
+				SingleOption singleOption = optionPair.getSingleOption();
+				SingleOptionProvider provider = optionPair.getProvider();
+				if (!provider.shouldKeep(singleOption)) {
 					singleOption.remove();
 					it.remove();
 				} else {
-					singleOption.renderUpdate(getContentTable());
+					singleOption.renderUpdate(contentTableProvider.getContentTable());
 					if(selectedOptionIndex != null && i == selectedOptionIndex){
 						singleOption.selectUpdate(delta, selectJoystick, selectButton, backButton, requestingActions);
 					}
@@ -106,22 +97,37 @@ public abstract class SelectionMenuRenderComponent implements RenderComponent {
 		}
 
 		if(requestingActions.contains(SingleOption.SelectAction.CHANGE_OPTION)){
-			if(selectedOptionIndex != null && selectedOptionIndex >= 0 && selectedOptionIndex < singleOptions.size()) {
-				singleOptions.get(selectedOptionIndex).deselect();
+			if(selectedOptionIndex != null && selectedOptionIndex >= 0 && selectedOptionIndex < singleOptionPairs.size()) {
+				singleOptionPairs.get(selectedOptionIndex).getSingleOption().deselect();
 			}
-			newOptionIndex = newOptionIndex == null ? null : MathUtil.mod(newOptionIndex, singleOptions.size());
+			newOptionIndex = newOptionIndex == null ? null : MathUtil.mod(newOptionIndex, singleOptionPairs.size());
 			selectedOptionIndex = newOptionIndex;
 		}
 		if(requestingActions.contains(SingleOption.SelectAction.EXIT_MENU)){
-			shouldExit = true;
+			exitRequestListener.onExit();
 		}
 
 	}
 
 	@Override
 	public void dispose() {
-		for(SingleOption option : singleOptions){
-			option.remove();
+		contentTableProvider.dispose();
+		for(OptionPair pair : singleOptionPairs){
+			pair.getSingleOption().remove();
 		}
+	}
+	private static class OptionPair {
+		private final SingleOption singleOption;
+		private final SingleOptionProvider provider;
+
+		OptionPair(SingleOption singleOption, SingleOptionProvider provider){
+			this.singleOption = singleOption;
+			this.provider = provider;
+		}
+		SingleOption getSingleOption(){ return singleOption; }
+		SingleOptionProvider getProvider(){ return provider; }
+	}
+	public interface ExitRequestListener {
+		void onExit();
 	}
 }

@@ -1,6 +1,8 @@
 package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,11 +25,12 @@ public class GameScreen implements UsableScreen {
 //	private final GameInput gameInput;
 	private final List<Player> players = new ArrayList<>(); // elements may be removed // initialized in constructor
 	private final List<GameInput> gameInputs;
-	private final Stage stage;
 	private final World world;
 
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
+
+	private final Stage stage;
 
 	private boolean shouldExit = false;
 	private boolean paused = false;
@@ -35,9 +38,9 @@ public class GameScreen implements UsableScreen {
 	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
 		this.gameInputs = gameInputs;
 		this.world = new World(new GameLevelGetter(players), 18, 18, renderObject);
-		this.stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 		this.renderParts = renderParts;
 		this.renderObject = renderObject;
+		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		{
 			int i = 0;
@@ -66,6 +69,10 @@ public class GameScreen implements UsableScreen {
 				paused = !paused;
 				break;
 			}
+		}
+		renderParts.getOverlay().setPauseVisible(true);
+		if(renderParts.getOverlay().isPausePressed()){
+			paused = !paused;
 		}
 		renderParts.getOptionsMenu().closeMenu(); // stop displaying options menu
 		renderParts.getOverlay().update(delta, world);
@@ -143,9 +150,10 @@ public class GameScreen implements UsableScreen {
 
 			inputFocuser.add(inGameFocuser);
 		}
-		if(paused){
-
-		}
+		inputFocuser.addParallel(renderParts.getOverlay());
+//		if(paused){ // TODO pause menu
+//
+//		}
 		inputFocuser.giveFocus(stage, renderParts.getInputMultiplexer());
 	}
 	public void setToExit(){

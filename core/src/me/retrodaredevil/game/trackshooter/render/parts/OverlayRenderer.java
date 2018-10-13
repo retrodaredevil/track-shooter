@@ -4,10 +4,12 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import java.util.Collection;
@@ -22,14 +24,8 @@ public class OverlayRenderer implements RenderComponent {
 	private static final int MAX_LIVES_DISPLAYED = 5;
 	private static final int MAX_ITEMS_DISPLAYED = 5;
 
-//	private static final Color textColor = new Color(1, 0, 0, 1);
-//	private static final Color scoreColor = new Color(1, 1, 1, 1);
-
-//	private final BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/main_font.fnt"),
-//			Gdx.files.internal("fonts/main_font.png"), false, true);
 
 	private final Group group = new Table(){{setFillParent(true);}};
-//	private final Group group = new Stack();
 
 	private final Table[] cornerTables = new Table[4];
 	private final Label[] currentScores = new Label[4];
@@ -45,14 +41,25 @@ public class OverlayRenderer implements RenderComponent {
 	private final Overlay overlay;
 	private final RenderObject renderObject;
 
-	public OverlayRenderer(Overlay overlay, RenderObject renderObject){
+	private final Button pauseButton;
+
+	OverlayRenderer(Overlay overlay, RenderObject renderObject){
 		this.overlay = Objects.requireNonNull(overlay);
 		this.renderObject = Objects.requireNonNull(renderObject);
 
 		final Skin skin = renderObject.getMainSkin();
+		final BitmapFont font = skin.getFont("game_label");
 
-		BitmapFont font = skin.getFont("game_label");
+		// ===== Pause Button ======
+		Table buttonTable = new Table();
+		group.addActor(buttonTable);
+		buttonTable.setFillParent(true);
+		buttonTable.add(pauseButton = new TextButton("pause", renderObject.getUISkin()));
+		buttonTable.top().right();
+		pauseButton.setVisible(false); // by default not visible
 
+
+		// ====== Player Scores ========
 		for(int i = 0; i < cornerTables.length; i++){
 			Table cornerTable = new Table();
 			cornerTables[i] = cornerTable;
@@ -87,6 +94,7 @@ public class OverlayRenderer implements RenderComponent {
 		cornerTables[2].bottom().left();
 		cornerTables[3].bottom().right();
 
+		// ======== High Score ========
 		Table highScoreTable = new Table();
 		group.addActor(highScoreTable);
 		highScoreTable.setFillParent(true);
@@ -96,12 +104,16 @@ public class OverlayRenderer implements RenderComponent {
 		highScoreLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score")));
 		highScoreTable.add(highScoreLabel).padTop(-10);
 
+		// ========= Level Counter =======
 		Table levelCounterTable = new Table();
 		group.addActor(levelCounterTable);
 		levelCounterTable.setFillParent(true);
 		levelCounterTable.center().bottom();
 		levelCounterLabel = new Label("", new Label.LabelStyle(font, skin.getColor("score_label")));
 		levelCounterTable.add(levelCounterLabel);
+	}
+	public Button getPauseButton(){
+		return pauseButton;
 	}
 
 	@Override

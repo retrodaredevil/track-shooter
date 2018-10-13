@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import me.retrodaredevil.game.trackshooter.input.GameInput;
+import me.retrodaredevil.game.trackshooter.render.ComponentRenderable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
@@ -26,6 +27,8 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private static final int BUTTON_WIDTH = 220;
@@ -34,13 +37,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final GameInput gameInput;
 	private final RenderParts renderParts;
 	private final RenderObject renderObject;
-	private boolean start;
+	private UsableScreen nextScreen = null;
 
 	private final Stage uiStage;
 	private final Renderable menuRenderable;
 
 	private final Button startButton;
 	private final Button optionsButton;
+	private final Button creditsButton;
 	private boolean optionsDown = false;
 
 	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
@@ -53,9 +57,11 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		final TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
 		optionsButton = new TextButton("options", style);
+		creditsButton = new TextButton("info", style);
 
 		// this is initialized after each button because it uses them
-		this.menuRenderable = new StartScreenRenderable();
+		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(renderObject, gameInput,
+				new PlainTable(), Collections.singleton(new MultiActorOptionProvider((float) BUTTON_WIDTH, (float) BUTTON_HEIGHT, startButton, optionsButton, creditsButton)), () -> {}));
 
 	}
 	private Renderer createRenderer(){
@@ -68,13 +74,23 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	}
 	@Override
 	public void render(float delta) {
+		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
+			if(nextScreen == null) {
+				nextScreen = new GameScreen(gameInputs, renderObject, renderParts);
+			}
+			return;
+		}
+		if(creditsButton.isPressed()){
+			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts);
+			return;
+		}
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
 			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
+		renderParts.getOverlay().setPauseVisible(false);
 		InputFocuser focuser = new InputFocuser();
-		focuser.add(renderParts.getOptionsMenu());
-//		System.out.println("wants to focus: " + renderParts.getOptionsMenu().isWantsToFocus());
+		focuser.add(renderParts.getOptionsMenu()); // may or may not get focus
 		focuser.giveFocus(uiStage, renderParts.getInputMultiplexer());
 
 
@@ -95,24 +111,15 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	@Override
 	public boolean isScreenDone() {
-		return start && !startButton.isPressed();
+		return nextScreen != null && !startButton.isPressed() && !creditsButton.isPressed();
 	}
 
 	@Override
 	public UsableScreen createNextScreen() {
-		return new GameScreen(gameInputs, renderObject, renderParts);
+		return nextScreen;
 	}
 
-	class StartScreenRenderable implements Renderable {
-		private final RenderComponent renderComponent = new StartScreenMenuRenderComponent();
-
-		@Override
-		public RenderComponent getRenderComponent() {
-			return renderComponent;
-		}
-
-	}
-	class StartScreenMenuRenderComponent extends SelectionMenuRenderComponent{
+	/*class StartScreenMenuRenderComponent extends SelectionMenuRenderComponent{
 		private final Table table = new Table(){{
 			setFillParent(true);
 			center();
@@ -126,9 +133,6 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		@Override
 		public void render(float delta, Stage stage) {
 
-			if(menuController.getStartButton().isPressed() || startButton.isPressed()){
-				start = true;
-			}
 			stage.addActor(table);
 
 			Collection<? extends SingleOption> options = getOptions();
@@ -151,6 +155,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			List<SingleOption> r = new ArrayList<>();
 			tryAddActorAsSingleOption(startButton, r);
 			tryAddActorAsSingleOption(optionsButton, r);
+			tryAddActorAsSingleOption(creditsButton, r);
 			return r;
 		}
 		private void tryAddActorAsSingleOption(Actor actor, Collection<? super SingleOption> optionCollection){
@@ -165,5 +170,5 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		protected boolean shouldKeep(SingleOption singleOption) {
 			return true;
 		}
-	}
+	}*/
 }
