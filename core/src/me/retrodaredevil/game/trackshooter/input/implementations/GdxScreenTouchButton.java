@@ -13,12 +13,10 @@ import me.retrodaredevil.game.trackshooter.util.Util;
 public class GdxScreenTouchButton extends AutoCachingInputPart {
 	private static final int NUM_TOUCHES = 20;
 	private final boolean needsTouchScreenForConnection;
-//	private final Rectangle proportionalScreenArea = new Rectangle();
 	private final ScreenAreaGetter proportionalScreenAreaGetter;
 	public GdxScreenTouchButton(boolean needsTouchScreenForConnection, ScreenAreaGetter proportionalScreenAreaGetter) {
 		super(new AxisType(false, false, false, true), false);
 		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
-//		this.proportionalScreenArea.set(proportionalScreenArea);
 		this.proportionalScreenAreaGetter = proportionalScreenAreaGetter;
 	}
 	public GdxScreenTouchButton(ScreenAreaGetter proportionalScreenAreaGetter){
@@ -39,6 +37,7 @@ public class GdxScreenTouchButton extends AutoCachingInputPart {
 				} catch(IndexOutOfBoundsException ex){
 					ex.printStackTrace();
 					System.err.println("index: " + i + " is too big to be a pointer.");
+					break;
 				}
 			}
 		}

@@ -44,7 +44,7 @@ android {
         applicationId "me.retrodaredevil.game.trackshooter"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 1
+        versionCode 5 // make public versions multiple of 10
         versionName "1.0"
     }
     buildTypes {

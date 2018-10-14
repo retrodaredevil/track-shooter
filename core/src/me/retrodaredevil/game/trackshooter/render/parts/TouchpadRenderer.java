@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter.render.parts;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -20,6 +20,7 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponentMultiplexer;
+import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 
 /**
  * As of right now, this is only set up to handle a single Touchpad. In the future, we may support
@@ -34,8 +35,8 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		this.renderObject = renderObject;
 		stage = new Stage(new ScreenViewport());
 	}
-	public Touchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalRadiusGetter proportionalRadiusGetter){
-		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(visibilityChanger, proportionalPositionGetter, proportionalRadiusGetter, renderObject);
+	public Touchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalDiameterGetter proportionalDiameterGetter){
+		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(visibilityChanger, proportionalPositionGetter, proportionalDiameterGetter, renderObject);
 		renderComponent.addComponent(touchpadRenderComponent);
 		return touchpadRenderComponent.touchpad;
 	}
@@ -72,21 +73,21 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		private final Touchpad touchpad;
 //		private final Vector2 proportionalPosition;
 		private final ProportionalPositionGetter proportionalPositionGetter;
-		private final ProportionalRadiusGetter proportionalRadiusGetter;
+		private final ProportionalDiameterGetter proportionalDiameterGetter;
 		private final Drawable[] drawableArray;
 		private final Drawable centerDrawable;
 
 		private final Touchpad.TouchpadStyle style = new Touchpad.TouchpadStyle();
 
 		TouchpadRenderComponent(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter,
-								ProportionalRadiusGetter proportionalRadiusGetter, RenderObject renderObject){
+								ProportionalDiameterGetter proportionalDiameterGetter, RenderObject renderObject){
 			this.visibilityChanger = Objects.requireNonNull(visibilityChanger);
 			final Skin skin = renderObject.getArcadeSkin();
 			touchpad = new Touchpad(0, skin);
 			touchpad.setResetOnTouchUp(true);
 			touchpad.setTouchable(Touchable.enabled);
 			this.proportionalPositionGetter = Objects.requireNonNull(proportionalPositionGetter);
-			this.proportionalRadiusGetter = proportionalRadiusGetter;
+			this.proportionalDiameterGetter = proportionalDiameterGetter;
 			drawableArray = new Drawable[] {
 					skin.getDrawable("joystick-r"), skin.getDrawable("joystick-ur"),
 					skin.getDrawable("joystick-u"), skin.getDrawable("joystick-ul"),
@@ -101,12 +102,17 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 			if(visibilityChanger.shouldShowTouchpad()) {
 				stage.addActor(touchpad);
 			} else {
+				// normally, we don't actually get a chance to do this because the render stops getting called altogether
 				touchpad.remove();
+				ActorUtil.fireInputEvents(touchpad, InputEvent.Type.touchUp);
+				return;
 			}
-			touchpad.setPosition(stage.getWidth() * proportionalPositionGetter.getX() - touchpad.getWidth() / 2f,
-				stage.getHeight() * proportionalPositionGetter.getY() - touchpad.getHeight() / 2f);
+			touchpad.setPosition(
+					stage.getWidth()  * proportionalPositionGetter.getX() - touchpad.getWidth()  / 2f,
+					stage.getHeight() * proportionalPositionGetter.getY() - touchpad.getHeight() / 2f
+			);
 
-			final float size = Math.min(stage.getWidth(), stage.getHeight()) * proportionalRadiusGetter.getProportionalRadius();
+			final float size = Math.min(stage.getWidth(), stage.getHeight()) * proportionalDiameterGetter.getProportionalDiameter();
 			touchpad.setSize(size, size);
 
 			final Drawable newDrawable;
@@ -141,8 +147,8 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		float getX();
 		float getY();
 	}
-	public interface ProportionalRadiusGetter {
-		float getProportionalRadius();
+	public interface ProportionalDiameterGetter {
+		float getProportionalDiameter();
 	}
 
 	/**

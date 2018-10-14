@@ -33,7 +33,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * This is the default level getter used all of the time
  */
 public class GameLevelGetter implements LevelGetter {
-//	private static final Vector2 temp = new Vector2();
+	private final int STARTING_GRACE_PERIOD = 12;
+	private final int END_GRACE_PERIOD = 19;
 
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
@@ -74,7 +75,7 @@ public class GameLevelGetter implements LevelGetter {
 					this.addEntity(world, cargoEntity);
 					addFunction(new BonusCargoFunction(cargoEntity, players, levelNumber >= 8 ? Resources.Points.P1600 : Resources.Points.P1000));
 				}
-				if(levelNumber % 3 == 0 && levelNumber % 9 != 0){ // 3, 6, 12, 15, 21
+				if(levelNumber > 3 && levelNumber % 3 == 0 && levelNumber % 9 != 0){ // 6, 12, 15, 21
 					float spawnAfter = 20;
 					if(levelNumber >= 20){
 						spawnAfter = 5;
@@ -91,7 +92,13 @@ public class GameLevelGetter implements LevelGetter {
 				}
 
 
-				final int amount = 4 + (levelNumber / 2); // add a shark every 2 levels
+				final int amountLevelNumber;
+				if(levelNumber >= STARTING_GRACE_PERIOD){
+					amountLevelNumber = levelNumber >= END_GRACE_PERIOD ? levelNumber - (END_GRACE_PERIOD - STARTING_GRACE_PERIOD) : STARTING_GRACE_PERIOD;
+				} else {
+					amountLevelNumber = levelNumber;
+				}
+				final int amount = 4 + (amountLevelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;
 				for(int i = 0; i < amount; i++){
 					int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(1, i), we use this

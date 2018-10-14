@@ -289,6 +289,9 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 			if (difficulty.value >= EntityDifficulty.NORMAL.value) {
 				if (difficulty.value >= EntityDifficulty.HARD.value) {
 					speed = 10 + MIN_SPEED - numberParts;
+					if(difficulty == EntityDifficulty.HARD){ // EXTREME is implicitly harder
+						speed = (speed + MIN_SPEED) / 2f;
+					}
 				} else if (numberParts <= 5) {
 					speed = MIN_SPEED + (5 - numberParts) * .5f;
 				}

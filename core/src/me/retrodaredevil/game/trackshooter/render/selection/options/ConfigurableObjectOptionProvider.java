@@ -15,6 +15,9 @@ import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
 public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
+	/*
+	Some credit and help found at http://brokenshotgun.com/2014/02/08/libgdx-control-scene2d-buttons-with-a-controller/
+	 */
 
 	private final ConfigurableObject configurableObject;
 	private final RenderObject renderObject;

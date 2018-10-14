@@ -15,21 +15,12 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 /**
- * An abstract class that deals with rendering and logic for a selection menu
- * <p>
- * TODO This class is abstract for good reason. However, in the future, we may be able to make...
- * this less abstract and have a list/collection of things that can add SingleOptions. This way,
- * instead of providing implementation for a content table and SingleOptions to add, it can just
- * do one of those things which will make this easier to extend and make changes to.
+ * A class that deals with rendering and logic for a selection menu
  */
 public class SelectionMenuRenderComponent implements RenderComponent {
-	/*
-	Some credit and help found at http://brokenshotgun.com/2014/02/08/libgdx-control-scene2d-buttons-with-a-controller/
-	 */
 
 	private static final int DEFAULT_INDEX = 0;
 
-	private final RenderObject renderObject;
 	private final GameInput menuController;
 	private final ContentTableProvider contentTableProvider;
 	private final Collection<? extends SingleOptionProvider> optionProviders;
@@ -43,7 +34,6 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 										ContentTableProvider contentTableProvider,
 										Collection<? extends SingleOptionProvider> optionProviders,
 										ExitRequestListener exitRequestListener){
-		this.renderObject = renderObject;
 		this.menuController = menuController;
 		this.contentTableProvider = contentTableProvider;
 		this.optionProviders = optionProviders;
@@ -80,7 +70,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		}
 		{
 			int i = 0;
-			for (Iterator<OptionPair> it = singleOptionPairs.iterator(); it.hasNext(); i++) {
+			for (final Iterator<OptionPair> it = singleOptionPairs.iterator(); it.hasNext(); i++) {
 				OptionPair optionPair = it.next();
 				SingleOption singleOption = optionPair.getSingleOption();
 				SingleOptionProvider provider = optionPair.getProvider();

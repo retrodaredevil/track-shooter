@@ -2,7 +2,6 @@ package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Cell;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
@@ -10,6 +9,7 @@ import java.util.Collection;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 
 public class PlainActorSingleOption extends ContainerSingleOption{
 	private final Actor actor;
@@ -36,10 +36,9 @@ public class PlainActorSingleOption extends ContainerSingleOption{
 
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
-		fireInputEvents(actor, InputEvent.Type.enter);
+		ActorUtil.fireInputEvents(actor, InputEvent.Type.enter);
 		if(select.isPressed()){
-			fireInputEvents(actor, InputEvent.Type.touchDown);
-			fireInputEvents(actor, InputEvent.Type.touchUp);
+			ActorUtil.fireInputEvents(actor, InputEvent.Type.touchDown, InputEvent.Type.touchUp);
 		}
 //		if(select.isReleased()){
 //		}
@@ -47,7 +46,7 @@ public class PlainActorSingleOption extends ContainerSingleOption{
 
 	@Override
 	public void deselect() {
-		fireInputEvents(actor, InputEvent.Type.exit);
+		ActorUtil.fireInputEvents(actor, InputEvent.Type.exit);
 
 	}
 }

@@ -89,9 +89,10 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 		optionsDown = optionsButton.isPressed();
 		renderParts.getOverlay().setPauseVisible(false);
-		InputFocuser focuser = new InputFocuser();
-		focuser.add(renderParts.getOptionsMenu()); // may or may not get focus
-		focuser.giveFocus(uiStage, renderParts.getInputMultiplexer());
+		new InputFocuser()
+				.add(new InputFocuser(0).addParallel(renderParts.getTouchpadRenderer()).addParallel(uiStage))
+				.add(renderParts.getOptionsMenu()) // may or may not get focus
+				.giveFocus(uiStage, renderParts.getInputMultiplexer());
 
 
 		createRenderer().render(delta);

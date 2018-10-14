@@ -82,7 +82,7 @@ public class OptionMenu implements Renderable, InputFocusable {
 
 	@Override
 	public int getFocusPriority() {
-		return 0;
+		return 1;
 	}
 
 }

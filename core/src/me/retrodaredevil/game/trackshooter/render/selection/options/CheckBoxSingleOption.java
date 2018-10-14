@@ -12,6 +12,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
+import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 
 public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
@@ -49,7 +50,7 @@ public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
-		fireInputEvents(checkBox, InputEvent.Type.enter);
+		ActorUtil.fireInputEvents(checkBox, InputEvent.Type.enter);
 		if(select.isPressed()){
 			checkBox.toggle();
 		}
@@ -57,6 +58,6 @@ public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void deselect() {
-		fireInputEvents(checkBox, InputEvent.Type.exit);
+		ActorUtil.fireInputEvents(checkBox, InputEvent.Type.exit);
 	}
 }

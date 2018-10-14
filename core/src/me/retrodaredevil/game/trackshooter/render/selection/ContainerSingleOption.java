@@ -8,7 +8,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Pools;
 
 /**
- *
+ * A SingleOption which provides some implementation and uses a "container" to add actors to instead
+ * of the table itself.
  */
 public abstract class ContainerSingleOption implements SingleOption {
 	private final Table container = new Table();
@@ -56,20 +57,4 @@ public abstract class ContainerSingleOption implements SingleOption {
 		table.invalidate();
 	}
 
-	public static boolean fireInputEvents(Actor actor, InputEvent.Type... types){
-		boolean eitherHandled = false;
-		for(InputEvent.Type type : types){
-			InputEvent event = Pools.obtain(InputEvent.class);
-			event.setPointer(-1); // fix for hard coded ClickListener mouse pointer requirement
-			event.setType(type);
-			event.setButton(Input.Buttons.LEFT);
-
-			actor.fire(event);
-			if(!eitherHandled){
-				eitherHandled = event.isHandled();
-			}
-			Pools.free(event);
-		}
-		return eitherHandled;
-	}
 }

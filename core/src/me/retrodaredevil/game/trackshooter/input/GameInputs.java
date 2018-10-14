@@ -17,7 +17,6 @@ import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
-import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
@@ -70,9 +69,9 @@ public final class GameInputs {
 		options.add(r);
 		return r;
 	}
-	private static InputPart createAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String controlType){
+	private static InputPart createAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String controlType, String label){
 		final OptionValue useY = OptionValues.createBooleanOptionValue(useYByDefault);
-		options.add(new ControlOption("Use Y Axis", "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
+		options.add(new ControlOption(label, "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
 
 		InputPart r = References.create(() -> useY.getBooleanOptionValue() ? yAxis : xAxis);
 		r.addChild(xAxis);
@@ -85,7 +84,8 @@ public final class GameInputs {
 		return createAxisChooser(
 				new GdxMouseAxis(false, () -> 1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
 				new GdxMouseAxis(true, () -> -1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
-				options, false, "mouse");
+				options, false, "mouse", "Use Y Axis for Rotation"
+		);
 	}
 	private static InputPart createPhoneAxis(OptionTracker options, ScreenAreaGetter proportionalScreenAreaGetter, OptionValue isLeftHanded){
 
@@ -96,7 +96,8 @@ public final class GameInputs {
 				new GdxMouseAxis(true,
 						() -> -7.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
 						proportionalScreenAreaGetter),
-				options, true, "phone");
+				options, true, "phone", "Use Y Axis for Rotation"
+		);
 	}
 
 	public static UsableGameInput createKeyboardInput(){
@@ -139,7 +140,7 @@ public final class GameInputs {
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
-		final TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger visibilityChanger;
+		final TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger visibilityChanger; // may be null
 
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
@@ -168,13 +169,13 @@ public final class GameInputs {
 			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
 			OptionValue distanceAwayX = OptionValues.createAnalogRangedOptionValue(.05, .5, .15);
 			OptionValue heightOption = OptionValues.createAnalogRangedOptionValue(.25, .75, .5);
-			OptionValue radiusOption = OptionValues.createAnalogRangedOptionValue(.2, .5, .35);
+			OptionValue diameterOption = OptionValues.createAnalogRangedOptionValue(.2, .5, .35);
 			options.add(new ControlOption("Joystick X Position",
 					"The x position of the joystick.", "controls.joystick.position.x", distanceAwayX));
 			options.add(new ControlOption("Joystick Y Position",
 					"The y position of the joystick.", "controls.joystick.position.y", heightOption));
 			options.add(new ControlOption("Joystick size",
-					"The size of the joystick relative to the height", "controls.joystick.size", radiusOption));
+					"The size of the joystick relative to the height", "controls.joystick.size", diameterOption));
 			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
 				public float getX() {
@@ -189,11 +190,8 @@ public final class GameInputs {
 				public float getY() {
 					return (float) heightOption.getOptionValue();
 				}
-			}, () -> (float) radiusOption.getOptionValue());
+			}, () -> (float) diameterOption.getOptionValue());
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
-//			OptionValue mainJoystickDiameter = ((GdxHiddenTouchJoystick) mainJoystick).getMinimumProportionalDiameterOptionValue();
-//			options.addControlOption(new ControlOption("Hidden Joystick Proportional Diameter", "How large should the joystick be",
-//					"controls.all.joystick.diameter", mainJoystickDiameter));
 
 			fireButton = new HighestPositionInputPart(
 					Arrays.asList(

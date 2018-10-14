@@ -32,19 +32,22 @@ public class InputFocuser implements InputFocusable{
 		this.priority = priority;
 	}
 
-	public void add(InputFocusable inputFocusable){
+	public InputFocuser add(InputFocusable inputFocusable){
 		if(inputFocusable == this){
 			throw new IllegalArgumentException("Cannot focus on myself!");
 		}
 		if((primaryFocus == null || primaryFocus.getFocusPriority() < inputFocusable.getFocusPriority()) && inputFocusable.isWantsToFocus()){
 			primaryFocus = inputFocusable;
 		}
+		return this;
 	}
-	public void addParallel(InputProcessor processor){
+	public InputFocuser addParallel(InputProcessor processor){
 		parallelProcessors.add(processor);
+		return this;
 	}
-	public void addParallel(InputFocusable inputFocusable){
+	public InputFocuser addParallel(InputFocusable inputFocusable){
 		parallelFocusables.add(inputFocusable);
+		return this;
 	}
 
 

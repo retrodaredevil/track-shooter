@@ -13,6 +13,7 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
+import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 
 public class SliderSingleOption extends ControlOptionSingleOption {
 	private static final float SLIDER_PERCENT_MULTIPLIER = .5f;
@@ -72,7 +73,7 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
-		fireInputEvents(slider, InputEvent.Type.enter);
+		ActorUtil.fireInputEvents(slider, InputEvent.Type.enter);
 		if(selector.getXAxis().isDown()) {
 			if (sliderPercent == null) {
 				sliderPercent = slider.getPercent();
@@ -92,7 +93,7 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void deselect() {
-		fireInputEvents(slider, InputEvent.Type.exit);
+		ActorUtil.fireInputEvents(slider, InputEvent.Type.exit);
 		sliderPercent = null;
 	}
 }

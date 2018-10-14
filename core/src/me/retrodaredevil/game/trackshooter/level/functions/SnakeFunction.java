@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 public class SnakeFunction implements LevelFunction {
+	private static final float WAIT_TO_SPAWN = 10; // seconds
 	private final Player target;
 
 	public SnakeFunction(Player target){
@@ -28,55 +29,57 @@ public class SnakeFunction implements LevelFunction {
 		if(level.getMode() != LevelMode.NORMAL){
 			return false;
 		}
-		long time = level.getModeTimeMillis();
-		if(time < 10000){
+		if(level.getModeTime() < WAIT_TO_SPAWN){
 			return false;
 		}
-		EntityDifficulty difficulty = EntityDifficulty.EASY;
-
-		if(level.getNumber() >= 2){
+		final EntityDifficulty difficulty;
+		if(level.getNumber() >= 13){
+			difficulty = EntityDifficulty.EXTREME;
+		} else if(level.getNumber() >= 6){
+			difficulty = EntityDifficulty.HARD;
+		} else if(level.getNumber() >= 3){
 			difficulty = EntityDifficulty.NORMAL;
-			if(level.getNumber() >= 6){
-				difficulty = EntityDifficulty.EXTREME;
-			} else if(level.getNumber() >= 4){
-				difficulty = EntityDifficulty.HARD;
-			}
+		} else {
+			difficulty = EntityDifficulty.EASY;
 		}
 		createSnake(world, difficulty);
 		return true;
 	}
 	protected void createSnake(World world, EntityDifficulty difficulty){
-		Level level = world.getLevel();
-
-		Rectangle bounds = world.getBounds();
+		final Level level = world.getLevel();
+		final Rectangle bounds = world.getBounds();
 
 		final float x, y, rotation;
 		if(MathUtils.randomBoolean()){ // up or down
 			x = bounds.getX() + bounds.getWidth() / 2.0f; // center
-			boolean up = MathUtils.randomBoolean();
+			final boolean up = MathUtils.randomBoolean();
 			y = bounds.getY() + (up ? 2 * bounds.getHeight() : -bounds.getHeight());
 			rotation = up ? -90 : 90;
 		} else { // left or right
-			boolean left = MathUtils.randomBoolean();
+			final boolean left = MathUtils.randomBoolean();
 			x = bounds.getX() + (left ? -bounds.getWidth() : 2 * bounds.getWidth());
 			y = bounds.getY() + bounds.getHeight() / 2.0f; // center
 			rotation = left ? 0 : 180;
 		}
-		int amount = 10;
-		if(level.getNumber() == 2){
+		final int levelNumber = level.getNumber();
+		final int amount;
+		if(levelNumber == 2){
 			amount = 15;
-		} else if(level.getNumber() == 3){
-			amount = 20;
-		} else if(level.getNumber() >= 7){
+		} else if(levelNumber >= 22){
+			amount = 35;
+		} else if(levelNumber >= 14){
 			amount = 30;
-		} else if(level.getNumber() >= 4){
-			amount = 22;
+		} else if(levelNumber >= 8){
+			amount = 25;
+		} else if(levelNumber >= 3){
+			amount = 20;
+		} else { // level 1
+			amount = 10;
 		}
 
-		List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
+		final List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
-//			part.setEntityController(new SnakeAIController(part, target));
 			level.addEntity(world, part);
 			part.setEntityController(new SnakeAIController(part, target));
 		}
@@ -92,6 +95,6 @@ public class SnakeFunction implements LevelFunction {
 
 	@Override
 	public LevelEndState canLevelEnd(World world) {
-		return LevelEndState.CAN_END; // Snake should return false on its own if needed
+		return LevelEndState.CANNOT_END; // while the snake hasn't been added, the player cannot go to the next level
 	}
 }

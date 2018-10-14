@@ -13,9 +13,9 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.selection.ContainerSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
+import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 
 public class DropDownSingleOption extends ControlOptionSingleOption {
 
@@ -81,7 +81,7 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SingleOption.SelectAction> requestedActions) {
-		ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.enter);
+		ActorUtil.fireInputEvents(selectBox, InputEvent.Type.enter);
 		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
 		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)
 		// and because of that, we think it's already down on the frame isPressed() for 'back' returns true.
@@ -98,8 +98,7 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 			if(back.isPressed()){
 				hide();
 			} else if(select.isPressed()){
-				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchDown);
-				ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.touchUp);
+				ActorUtil.fireInputEvents(selectBox, InputEvent.Type.touchDown, InputEvent.Type.touchUp);
 				hide();
 			} else if(selector.getYAxis().isPressed()){
 				final int y = selector.getYAxis().getDigitalPosition();
@@ -122,6 +121,6 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	@Override
 	public void deselect() {
 		hide();
-		ContainerSingleOption.fireInputEvents(selectBox, InputEvent.Type.exit);
+		ActorUtil.fireInputEvents(selectBox, InputEvent.Type.exit);
 	}
 }
