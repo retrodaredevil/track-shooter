@@ -57,9 +57,14 @@ public class GameLevelGetter implements LevelGetter {
 			@Override
 			protected void onStart(World world) {
 				super.onStart(world);
+				final Track track = world.getTrack();
 				for(Player player : players){ // move all players to a random spot
-					((OnTrackMoveComponent) player.getMoveComponent()).setDistanceOnTrack(MathUtils.random(world.getTrack().getTotalDistance()));
-					if(levelNumber == 1) player.setRotation(90); // facing up
+					float distance = MathUtils.random(track.getTotalDistance());
+					((OnTrackMoveComponent) player.getMoveComponent()).setDistanceOnTrack(distance);
+					if(levelNumber == 1) { // point to the center
+						Vector2 position = track.getDesiredLocation(distance);
+						player.setRotation(Vector2.Zero.cpy().sub(position).angle());
+					}
 				}
 
 				addFunction(new FruitFunction());
@@ -100,14 +105,30 @@ public class GameLevelGetter implements LevelGetter {
 				}
 				final int amount = 4 + (amountLevelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;
+				final int waitTimeIndexShift = MathUtils.random(amount);
 				for(int i = 0; i < amount; i++){
-					int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(1, i), we use this
-					float trackDistanceAway = sign * ((i / 2f) * spacing);
-					float positionAngle = (i * 360f) / amount;
-					positionAngle += 45;
-					Vector2 location = new Vector2(MathUtils.cosDeg(positionAngle), MathUtils.sinDeg(positionAngle));
-					float angle = positionAngle;
-					Shark shark = new Shark(location, angle);
+					final int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(1, i), we use this
+					final float trackDistanceAway = sign * ((i / 2f) * spacing);
+					final float angle = (i * 360f) / amount + 45;
+					Vector2 location = new Vector2(MathUtils.cosDeg(angle), MathUtils.sinDeg(angle));
+
+					final float waitTimeIndex = (i + waitTimeIndexShift) % amount;
+					final float waitBeforeMoveTime;
+					if(levelNumber <= 3 || (levelNumber - 2) % 8 == 0) { // 10, 18, 26 & <=3
+						waitBeforeMoveTime = Math.min(waitTimeIndex * waitTimeIndex * .5f, 10);
+					} else if(levelNumber >= 18) {
+						waitBeforeMoveTime = 0;
+					} else if(levelNumber >= 12){
+						waitBeforeMoveTime = waitTimeIndex / levelNumber * 2;
+					} else if(levelNumber >= 9){
+						waitBeforeMoveTime = waitTimeIndex * .25f;
+					} else if(levelNumber >= 6){
+						waitBeforeMoveTime = waitTimeIndex * .5f;
+					} else {
+						waitBeforeMoveTime = waitTimeIndex;
+					}
+
+					Shark shark = new Shark(location, angle, waitBeforeMoveTime);
 					shark.setEntityController(new SharkAIController(shark, players, trackDistanceAway, sign * (2f + (i * .5f / amount))));
 					// start in the start position
 					shark.setLocation(location, angle);

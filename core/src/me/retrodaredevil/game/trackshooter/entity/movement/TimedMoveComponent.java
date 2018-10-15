@@ -4,29 +4,29 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class TimedMoveComponent extends SimpleMoveComponent{
 
-	private Long startTime;
-	private final long time;
+	private Float startTime = null;
+	private final float time;
 
-	public TimedMoveComponent(long time, MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
+	public TimedMoveComponent(float time, MoveComponent nextComponent, boolean canHaveNext, boolean canRecycle){
 		super(nextComponent, canHaveNext, canRecycle);
 		this.time = time;
 	}
-	public TimedMoveComponent(long time, MoveComponent nextComponent){
+	public TimedMoveComponent(float time, MoveComponent nextComponent){
 		this(time, nextComponent, true, true);
 
 	}
 
-	public TimedMoveComponent(long time){
+	public TimedMoveComponent(float time){
 		this(time, null);
 	}
 
 	@Override
 	protected void onStart(World world) {
-		startTime = world.getTimeMillis();
+		startTime = world.getTime();
 	}
 	@Override
 	protected void onUpdate(float delta, World world) {
-		done = startTime + time <= world.getTimeMillis();
+		done = startTime + time <= world.getTime();
 	}
 	@Override
 	protected void onEnd() {

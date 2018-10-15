@@ -20,19 +20,21 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private static final float VELOCITY_SPEED = 5; // units per second
 	private static final float ROTATIONAL_SPEED = 2; // rotations per second
 
+	private final MoveComponent smoothTravel;
+	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
+	private final float waitBeforeMoveTime;
+
 	private int lives = 3;
 	private int spinLives = 40; // hitting many times while spinning is hard and is worth double points
-
-	private final MoveComponent resetPosition; // when we call Shark#setMoveComponent(), make sure to setNextComponent(null):
-	private final MoveComponent smoothTravel;
 
 	private RenderComponent fullRender = null; // NOTE These will be disposed as the Shark loses lives
 	private RenderComponent hitRender = null;
 	private RenderComponent wornRender = null;
 
-	public Shark(Vector2 startingPosition, float startingRotation){
-		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
+	public Shark(Vector2 startingPosition, float startingRotation, float waitBeforeMoveTime){
 		smoothTravel = new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, ROTATIONAL_SPEED);
+		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
+		this.waitBeforeMoveTime = waitBeforeMoveTime;
 
 		setHitboxSize(.7f);
 		canRespawn = false;
@@ -82,7 +84,13 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 
 	@Override
 	public void goNormalMode() {
-		setMoveComponent(smoothTravel);
+		float multiplier = 1;
+		if(lives == 1){
+			multiplier = 0;
+		} else if(lives == 2){
+			multiplier = .25f;
+		}
+		setMoveComponent(new TimedMoveComponent(waitBeforeMoveTime * multiplier, smoothTravel));
 
 	}
 
@@ -112,48 +120,49 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	@Override
 	public void onHit(World world, Entity other)  {
 		MoveComponent wantedComponent = getMoveComponent();
-		boolean spinning = false;
 		SpinMoveComponent lastSpin = null;
-		if(wantedComponent instanceof SpinMoveComponent){
-			spinning = true;
+		if(wantedComponent instanceof SpinMoveComponent){ // current component is spinning
 			lastSpin = (SpinMoveComponent) wantedComponent;
 			wantedComponent = wantedComponent.getNextComponent();
-			while(wantedComponent instanceof TimedMoveComponent){
-				// if Shark is still and the player shoots them, we search until there are no more spins or waits.
-				wantedComponent = wantedComponent.getNextComponent();
-			}
+		}
+		while(wantedComponent instanceof TimedMoveComponent){
+			// if Shark is still and the player shoots them, we search until there are no more spins or waits.
+			wantedComponent = wantedComponent.getNextComponent();
 		}
 		SpinMoveComponent spin;
-		long spinTime = (long) (1000 * (1.75f + .5f * MathUtils.random()));
+		float spinTime =  1.75f + .5f * MathUtils.random();
 		if(lastSpin != null){
-//			assert spinning; // commented out because according to intellij, unnecessary check
 			spin = new SpinMoveComponent(this, spinTime, lastSpin.getRotationalVelocity() * -1);
 		} else {
 			spin = new SpinMoveComponent(this, spinTime, 360 * 2 * MathUtils.randomSign());
 		}
 		spin.setNextComponent(wantedComponent);
 		this.setMoveComponent(spin);
-		if(spinning){
+		if(lastSpin != null){ // we are spinning
 			spinLives--;
 		} else {
 			lives--;
 		}
-		boolean spinDeath = spinLives <= 0;
+		final boolean spinDeath = spinLives <= 0;
+		Player player = null;
+		if (other instanceof Player) {
+			player = (Player) other;
+		} else {
+			Entity shooter = other.getShooter();
+			if (shooter instanceof Player) {
+				player = (Player) shooter;
+			}
+		}
 		if(lives <= 0 || spinDeath) {
 			Resources.Points points = spinDeath ? Resources.Points.P400 : Resources.Points.P200;
-			EntityUtil.displayScore(world, this.getLocation(), points.getDrawable(world.getRenderObject())); // display 200
+			EntityUtil.displayScore(world, this.getLocation(), points.getDrawable(world.getRenderObject())); // display points
 
-			Player player = null;
-			if (other instanceof Player) {
-				player = (Player) other;
-			} else {
-				Entity shooter = other.getShooter();
-				if (shooter instanceof Player) {
-					player = (Player) shooter;
-				}
-			}
 			if(player != null) {
 				player.getScoreObject().onKill(this, other, points.getWorth());
+			}
+		} else if (lastSpin == null){ // their lives counter went down
+			if(player != null){
+				player.getScoreObject().onScore(lives == 2 ? 10 : 30);
 			}
 		}
 

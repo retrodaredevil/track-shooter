@@ -42,7 +42,10 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.add("Release the right side of the screen to shoot").center().row();
 		table.add("The back button is used to exit menus and pause the game").center().row();
 		table.add("").center().row();
+		table.add("If you get a power-up, shake your device to use it!").center().row();
+		table.add("").center().row();
 		table.add("The control scheme can be changed in options").center().row();
+		table.add("Try out the gyro control scheme if your phone supports it!").center().row();
 	}
 	private Renderer createRenderer(){
 		Renderer r = new Renderer(renderObject.getBatch(), stage);

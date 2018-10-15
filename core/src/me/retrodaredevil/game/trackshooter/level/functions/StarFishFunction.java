@@ -37,13 +37,15 @@ public class StarFishFunction implements LevelFunction {
 
 		if(level.getMode() == LevelMode.NORMAL && level.getModeTime() > spawnAfter){
 			final int levelNumber = world.getLevel().getNumber();
-			float speed = 5;
-			if(levelNumber >= 20){
+			float speed = 4.5f;
+			if(levelNumber >= 23){
 				speed = 10.5f;
-			} else if(levelNumber >= 13){
-				speed = 8;
-			} else if (levelNumber >= 6){
-				speed = 6.5f;
+			} else if(levelNumber >= 13) {
+				speed = 7;
+			} else if(levelNumber >= 8){
+				speed = 6;
+			} else if (levelNumber >= 3){
+				speed = 5;
 			}
 
 			float distance;
