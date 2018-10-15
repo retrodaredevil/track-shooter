@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.util;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public final class MathUtil {
 	private static final Vector2 temp = new Vector2();

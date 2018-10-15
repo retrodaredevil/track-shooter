@@ -12,6 +12,8 @@ public class TravelVelocityOnTrackMoveComponent extends SimpleMoveComponent
 
 	protected final Entity entity;
 
+	private World lastWorld;
+
 	private float distance = 0; // total distance
 
 	private final VelocityHandler travelVelocityHandler = new VelocityHandler(Constants.TRAVEL_VELOCITY_SET_GOTO_DEADBAND);
@@ -27,10 +29,13 @@ public class TravelVelocityOnTrackMoveComponent extends SimpleMoveComponent
 
 	@Override
 	public void onUpdate(float delta, World world) {
+		lastWorld = world;
 		this.distance += delta * getTravelVelocity();
 
+		updateLocation(world);
+	}
+	private void updateLocation(World world){
 		entity.setLocation(world.getTrack().getDesiredLocation(distance));
-
 	}
 
 	@Override
@@ -38,7 +43,12 @@ public class TravelVelocityOnTrackMoveComponent extends SimpleMoveComponent
 	}
 
 	@Override
-	public void setDistanceOnTrack(float distance){ this.distance = distance;}
+	public void setDistanceOnTrack(float distance){
+		this.distance = distance;
+		if(lastWorld != null){
+			updateLocation(lastWorld);
+		}
+	}
 	@Override
 	public float getDistanceOnTrack(){ return distance; }
 

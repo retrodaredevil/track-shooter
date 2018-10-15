@@ -132,6 +132,8 @@ public class Player extends SimpleEntity {
 		if(!canShootBullet(world, shotType)){
 			return null;
 		}
+		System.out.println("going to shoot a bullet. level mode: " + world.getLevel().getMode()
+				+ " mode time: " + world.getLevel().getModeTime() + " levelNumber: " + world.getLevel().getNumber());
 		final CollisionIdentity collisionIdentity = CollisionIdentity.FRIENDLY_PROJECTILE;
 
 		List<Bullet> bullets = new ArrayList<>();

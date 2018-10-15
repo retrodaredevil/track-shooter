@@ -1,12 +1,14 @@
 package me.retrodaredevil.game.trackshooter.level.functions;
 
+import com.badlogic.gdx.Gdx;
+
+import java.util.Collection;
+
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
-
-import java.util.Collection;
 
 public abstract class PowerupFunction implements LevelFunction {
 	private final long addAt; // 15 seconds
@@ -37,6 +39,9 @@ public abstract class PowerupFunction implements LevelFunction {
 		if(level.getMode() == LevelMode.NORMAL && modeTime > addAt){
 			this.powerup = createPowerup(world);
 			level.addEntity(world, powerup);
+			if(!powerup.canSetToRemove()){
+				Gdx.app.error("created powerup", "We will be unable to remove powerup. Expect crash in future!");
+			}
 		}
 		return false;
 	}
@@ -48,7 +53,7 @@ public abstract class PowerupFunction implements LevelFunction {
 
 	/**
 	 * Should create the powerup object but SHOULD NOT add it to world's entities
-	 * @param world The world the Fruit will be added too
+	 * @param world The world the Fruit WILL be added too (the implementation won't add it but the caller should)
 	 * @return The Powerup to be added to world
 	 */
 	protected abstract PowerupEntity createPowerup(World world);
@@ -56,7 +61,7 @@ public abstract class PowerupFunction implements LevelFunction {
 
 	@Override
 	public void onModeChange(Level level, LevelMode mode, LevelMode previous) {
-		if(powerup != null){
+		if(powerup != null && !powerup.isRemoved()){
 			powerup.setToRemove();
 		}
 	}

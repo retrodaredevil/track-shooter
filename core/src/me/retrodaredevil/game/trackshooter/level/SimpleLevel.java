@@ -73,33 +73,11 @@ public abstract class SimpleLevel implements Level {
 			}
 		}
 	}
-	private void end(World world){
-		for(Entity entity : entityList){
-			if(entity.canSetToRemove()){
-				entity.setToRemove();
-			}
-		}
-		for(LevelFunction function : functions){
-			function.levelEnd(world);
-		}
-		onEnd(world);
-	}
-
-	@Override
-	public boolean isEndingSoon() {
-		return lastLevelEndState == LevelEndState.CAN_END_SOON;
-	}
-
-	protected abstract void onStart(World world);
-
-	protected abstract void onUpdate(float delta, World world);
-	protected abstract void onEnd(World world);
-
 	/**
 	 * Should be called once every update() call
 	 * @return true if this level is able to end, false otherwise
 	 */
-	protected boolean shouldLevelEnd(World world){
+	private boolean shouldLevelEnd(World world){
 		Collection<CanLevelEnd> endCheckCollection = new ArrayList<>();
 		endCheckCollection.addAll(world.getEntities());
 		endCheckCollection.addAll(functions);
@@ -115,6 +93,28 @@ public abstract class SimpleLevel implements Level {
 //		System.out.println("level: " + getNumber() + " is ending. checks: " + endCheckCollection);
 		return highest.value <= LevelEndState.CAN_END.value;
 	}
+	private void end(World world){
+		for(Entity entity : entityList){
+			if(entity.canSetToRemove()){
+				entity.setToRemove();
+			}
+		}
+		for(LevelFunction function : functions){
+			function.levelEnd(world);
+		}
+		onEnd(world);
+	}
+
+	@Override
+	public boolean isEndingSoon() {
+		return lastLevelEndState == LevelEndState.CAN_END_SOON || lastLevelEndState == LevelEndState.CAN_END;
+	}
+
+	protected abstract void onStart(World world);
+
+	protected abstract void onUpdate(float delta, World world);
+	protected abstract void onEnd(World world);
+
 
 	protected boolean isStarted(){
 		return time != 0;
@@ -152,6 +152,7 @@ public abstract class SimpleLevel implements Level {
 			LevelMode previousMode = this.mode;
 			this.mode = mode;
 			modeTime = 0;
+			System.out.println("changing level mode! mode: " + mode + " previous: " + previousMode);
 			onModeChange(mode, previousMode);
 			for(LevelFunction function : functions){
 				function.onModeChange(this, mode, previousMode);

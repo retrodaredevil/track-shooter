@@ -4,7 +4,6 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.Arrays;
@@ -24,6 +23,7 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
+import me.retrodaredevil.game.trackshooter.input.implementations.DigitalPatternInputPart;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxMouseAxis;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxScreenTouchButton;
@@ -31,7 +31,7 @@ import me.retrodaredevil.game.trackshooter.input.implementations.GdxShakeButton;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTiltJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.ReleaseButtonPress;
+import me.retrodaredevil.game.trackshooter.input.implementations.helper.DigitalChildPositionInputPart;
 import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreaGetter;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
@@ -131,9 +131,9 @@ public final class GameInputs {
 	 * @return
 	 */
 	private static UsableGameInput createPhoneInput(RenderParts renderParts) {
-//		if(!Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
-//			throw new UnsupportedOperationException("Cannot create gyro input without gyroscope");
-//		}
+		if(renderParts == null && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
+			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
+		}
 
 		final JoystickPart mainJoystick;
 		final JoystickPart dummySelector;
@@ -194,11 +194,15 @@ public final class GameInputs {
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
 
 			fireButton = new HighestPositionInputPart(
-					Arrays.asList(
-							new GdxScreenTouchButton(fireAreaGetter),
-							new ReleaseButtonPress(new GdxScreenTouchButton(rotateAreaGetter))
+					new DigitalChildPositionInputPart(new HighestPositionInputPart(
+							Arrays.asList(
+									new GdxScreenTouchButton(fireAreaGetter),
+									new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter), InputPart::isReleased) // will fire if released
+							), true),
+							InputPart::isPressed // will only be down if it's being pressed
 					),
-					true);
+					new DigitalPatternInputPart(160, 80) // for 80ms, the above InputPart won't register - this is on purpose to avoid lots of shots at once
+			);
 		} else {
 			visibilityChanger = null;
 			mainJoystick = new GdxTiltJoystick();

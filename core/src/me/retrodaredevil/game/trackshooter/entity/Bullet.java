@@ -34,8 +34,6 @@ public class Bullet extends SimpleEntity implements Entity {
 		setMoveComponent(new FixedVelocityMoveComponent(this, velocity));
 		setLocation(start, rotation);
 		canRespawn = false;
-//		canLevelEndWithEntityActive = false;
-//		levelEndStateWhenActive = LevelEndState.CAN_END_SOON;
 		// TODO This may cause bugs in the future when enemies shoot bullets. Maybe provide a better way to change levelEndStateWhenActive
 		levelEndStateWhenActive = collisionIdentity == CollisionIdentity.ENEMY_PROJECTILE ? LevelEndState.CANNOT_END : LevelEndState.CAN_END_SOON;
 		this.collisionIdentity = collisionIdentity; // super.collisionIdentity same thing

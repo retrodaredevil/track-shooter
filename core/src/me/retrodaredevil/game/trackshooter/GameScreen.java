@@ -106,7 +106,7 @@ public class GameScreen implements UsableScreen {
 		if(!players.isEmpty()){
 			if(mode == LevelMode.STANDBY){
 				long time = level.getModeTimeMillis();
-				if(time > 750){
+				if(time > 600){
 					for(Player player : players){
 						if(player.isRemoved()){
 							world.addEntity(player);
