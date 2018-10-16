@@ -10,10 +10,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Objects;
 
+import me.retrodaredevil.controller.input.DigitalChildPositionInputPart;
 import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.LowestPositionInputPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableObject;
@@ -31,7 +33,6 @@ import me.retrodaredevil.game.trackshooter.input.implementations.GdxShakeButton;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTiltJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.helper.DigitalChildPositionInputPart;
 import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreaGetter;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
@@ -167,15 +168,21 @@ public final class GameInputs {
 
 		if(renderParts != null){
 			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
+			OptionValue constantShoot = OptionValues.createBooleanOptionValue(true);
 			OptionValue distanceAwayX = OptionValues.createAnalogRangedOptionValue(.05, .5, .15);
 			OptionValue heightOption = OptionValues.createAnalogRangedOptionValue(.25, .75, .5);
 			OptionValue diameterOption = OptionValues.createAnalogRangedOptionValue(.2, .5, .35);
+
+			options.add(new ControlOption("Constant Shoot",
+					"Should you be constantly shooting when holding down on the rotation area",
+					"controls.all.constant_shoot", constantShoot));
 			options.add(new ControlOption("Joystick X Position",
 					"The x position of the joystick.", "controls.joystick.position.x", distanceAwayX));
 			options.add(new ControlOption("Joystick Y Position",
 					"The y position of the joystick.", "controls.joystick.position.y", heightOption));
 			options.add(new ControlOption("Joystick size",
 					"The size of the joystick relative to the height", "controls.joystick.size", diameterOption));
+
 			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
 				public float getX() {
@@ -201,7 +208,9 @@ public final class GameInputs {
 							), true),
 							InputPart::isPressed // will only be down if it's being pressed
 					),
-					new DigitalPatternInputPart(160, 80) // for 80ms, the above InputPart won't register - this is on purpose to avoid lots of shots at once
+					// for 80ms, the above InputPart won't register - this is on purpose to avoid lots of shots at once
+					new DigitalChildPositionInputPart(new LowestPositionInputPart(new DigitalPatternInputPart(160, 80), new GdxScreenTouchButton(rotateAreaGetter)),
+							(childInputPart) -> childInputPart.isDown() && constantShoot.getBooleanOptionValue())
 			);
 		} else {
 			visibilityChanger = null;

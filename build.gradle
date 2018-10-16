@@ -25,7 +25,7 @@ allprojects {
     apply plugin: "idea"
 
     version = '1.0'
-	project.ext.set("controllerLibVersion", "v1.2.1")
+	project.ext.set("controllerLibVersion", "v1.2.5")
     ext {
         appName = "Track Shooter"
         gdxVersion = '1.9.8'
