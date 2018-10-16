@@ -106,13 +106,17 @@ public class GameLevelGetter implements LevelGetter {
 				final int amount = 4 + (amountLevelNumber / 2); // add a shark every 2 levels
 				final float spacing = world.getTrack().getTotalDistance() / amount;
 				final int waitTimeIndexShift = MathUtils.random(amount);
+				final boolean invertWaitTimeIndex = MathUtils.randomBoolean();
 				for(int i = 0; i < amount; i++){
-					final int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(1, i), we use this
+					final int sign = ((i % 2) * 2) - 1; // instead of using Math.pow(-1, i), we use this
 					final float trackDistanceAway = sign * ((i / 2f) * spacing);
 					final float angle = (i * 360f) / amount + 45;
 					Vector2 location = new Vector2(MathUtils.cosDeg(angle), MathUtils.sinDeg(angle));
 
-					final float waitTimeIndex = (i + waitTimeIndexShift) % amount;
+					float waitTimeIndex = (i + waitTimeIndexShift) % amount;
+					if(invertWaitTimeIndex){
+						waitTimeIndex = amount - waitTimeIndex - 1;
+					}
 					final float waitBeforeMoveTime;
 					if(levelNumber <= 3 || (levelNumber - 2) % 8 == 0) { // 10, 18, 26 & <=3
 						waitBeforeMoveTime = Math.min(waitTimeIndex * waitTimeIndex * .5f, 10);

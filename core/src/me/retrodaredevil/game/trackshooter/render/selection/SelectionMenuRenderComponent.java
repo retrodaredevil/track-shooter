@@ -87,16 +87,22 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		}
 
 		if(requestingActions.contains(SingleOption.SelectAction.CHANGE_OPTION)){
-			if(selectedOptionIndex != null && selectedOptionIndex >= 0 && selectedOptionIndex < singleOptionPairs.size()) {
-				singleOptionPairs.get(selectedOptionIndex).getSingleOption().deselect();
-			}
+			deselectCurrent();
 			newOptionIndex = newOptionIndex == null ? null : MathUtil.mod(newOptionIndex, singleOptionPairs.size());
 			selectedOptionIndex = newOptionIndex;
 		}
 		if(requestingActions.contains(SingleOption.SelectAction.EXIT_MENU)){
+			deselectCurrent();
+			selectedOptionIndex = null;
 			exitRequestListener.onExit();
 		}
 
+	}
+	private void deselectCurrent(){
+
+		if(selectedOptionIndex != null && selectedOptionIndex >= 0 && selectedOptionIndex < singleOptionPairs.size()) {
+			singleOptionPairs.get(selectedOptionIndex).getSingleOption().deselect();
+		}
 	}
 
 	@Override

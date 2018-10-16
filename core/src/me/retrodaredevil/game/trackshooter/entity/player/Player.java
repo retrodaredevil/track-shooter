@@ -132,8 +132,8 @@ public class Player extends SimpleEntity {
 		if(!canShootBullet(world, shotType)){
 			return null;
 		}
-		System.out.println("going to shoot a bullet. level mode: " + world.getLevel().getMode()
-				+ " mode time: " + world.getLevel().getModeTime() + " levelNumber: " + world.getLevel().getNumber());
+//		System.out.println("going to shoot a bullet. level mode: " + world.getLevel().getMode()
+//				+ " mode time: " + world.getLevel().getModeTime() + " levelNumber: " + world.getLevel().getNumber());
 		final CollisionIdentity collisionIdentity = CollisionIdentity.FRIENDLY_PROJECTILE;
 
 		List<Bullet> bullets = new ArrayList<>();
@@ -180,14 +180,13 @@ public class Player extends SimpleEntity {
 		for(Bullet bullet : bullets) {
 			world.getLevel().addEntity(world, bullet);
 		}
-//		activeBullets.add(bullets.get(0));
 		List<List<Bullet>> shotsList = activeBulletsMap.get(shotType);
 		if(shotsList == null){
 			shotsList = new ArrayList<>();
 			activeBulletsMap.put(shotType, shotsList);
 		}
 		shotsList.add(bullets);
-//		Resources.BULLET_SOUND.play(1, 4, 0);
+
 		world.getMainSkin().get("bullet", Sound.class).play(1, 4, 0);
 		getScoreObject().onShot(bullets.size());
 		return bullets;

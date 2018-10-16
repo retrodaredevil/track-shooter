@@ -15,6 +15,8 @@ import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -61,35 +63,41 @@ public class GameMain extends Game {
 		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject, saveObject),
 				new Overlay(renderObject), new TouchpadRenderer(renderObject), new InputMultiplexer());
 		controllerManager = new DefaultControllerManager();
-		for(Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext();){
-			Controller controller = it.next();
+		{
+			boolean firstRun = true;
+			for (Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext(); ) {
+				Controller controller = it.next();
 
-			UsableGameInput controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
-//			inputs.add(controllerInput);
-			// TODO Make using ChangeableGameInput here useful
-			GameInput realGameInput = new ChangeableGameInput(Arrays.asList(controllerInput));
-			inputs.add(realGameInput);
-			controllerManager.addController(controllerInput);
-			controllerManager.addController(realGameInput);
+				// ====== Controller =====
+				UsableGameInput controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
+				controllerManager.addController(controllerInput);
 
-		}
-		if(inputs.isEmpty()) { // use keyboard and mouse as a last resort
-			List<UsableGameInput> gameInputs = new ArrayList<>();
-			if(Gdx.app.getType() == Application.ApplicationType.Android){
-				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
-				if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
-					gameInputs.add(GameInputs.createTouchGyroInput());
+				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
+				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs() : Collections.emptySet();
+				for(GameInput input : addBefore){
+					controllerManager.addController(input);
 				}
+
+				// ==== Inputs to go into our ChangeableGameInput
+				final List<UsableGameInput> usableInputs = new ArrayList<>(addBefore);
+				usableInputs.add(controllerInput);
+
+				// ==== Create our ChangeableGameInput and add it to our offical inputs
+				GameInput realGameInput = new ChangeableGameInput(usableInputs);
+				controllerManager.addController(realGameInput);
+				inputs.add(realGameInput);
+
+				firstRun = false;
 			}
-			gameInputs.add(GameInputs.createKeyboardInput());
+		}
+		if(inputs.isEmpty()) {
+			List<UsableGameInput> gameInputs = getPhysicalInputs();
 			for(UsableGameInput input : gameInputs){
 				controllerManager.addController(input);
 			}
-
 			GameInput realGameInput = new ChangeableGameInput(gameInputs);
-			inputs.add(realGameInput);
 			controllerManager.addController(realGameInput);
-
+			inputs.add(realGameInput);
 		}
 		for(GameInput input : inputs) {
 			saveObject.getOptionSaver().loadControllerConfiguration(input);
@@ -98,6 +106,18 @@ public class GameMain extends Game {
 //		Gdx.app.setLogLevel(Application.LOG_ERROR);
 		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
+	}
+	private List<UsableGameInput> getPhysicalInputs(){
+
+		List<UsableGameInput> gameInputs = new ArrayList<>();
+		if(Gdx.app.getType() == Application.ApplicationType.Android){
+			gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
+			if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
+				gameInputs.add(GameInputs.createTouchGyroInput());
+			}
+		}
+		gameInputs.add(GameInputs.createKeyboardInput());
+		return gameInputs;
 	}
 
 	@Override

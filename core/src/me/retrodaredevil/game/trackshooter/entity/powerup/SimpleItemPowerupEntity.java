@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.powerup;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -24,7 +25,7 @@ public abstract class SimpleItemPowerupEntity extends PowerupPackage {
 	}
 
 	public static SimpleItemPowerupEntity createTripleShotPowerupEntity(float velocity, float startingTrackDistance){
-		return new SimpleItemPowerupEntity(velocity, startingTrackDistance, "powerup") {
+		return new SimpleItemPowerupEntity(velocity * MathUtils.randomSign(), startingTrackDistance, "powerup") {
 			@Override
 			protected Item createItem(World world, Player player) {
 				return new TripleShotPowerupItem(world.getMainSkin());

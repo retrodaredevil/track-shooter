@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.powerup;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
@@ -28,7 +29,7 @@ public class Fruit extends SimplePowerup {
 		setMoveComponent(trackMove);
 	}
 	public static Fruit createFruit(Resources.Points points, float startingTrackDistance, Image image){
-		Fruit fruit = new Fruit(points, 1.5f, startingTrackDistance);
+		Fruit fruit = new Fruit(points, 1.5f * MathUtils.randomSign(), startingTrackDistance);
 		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(image,
 				fruit, .8f, .8f, 250, new Vector2(0, .03f));
 		renderComponent.setFacingDirection(0);

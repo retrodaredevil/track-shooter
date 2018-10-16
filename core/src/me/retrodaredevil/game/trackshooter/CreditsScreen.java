@@ -34,7 +34,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.add("Game made by Joshua Shannon").center().row();
 		table.add("Game made using LibGDX").center().row();
 		table.add("This game is still in beta, please report any bugs you find").center().row();
-		table.add("and requests features that are not currently in the game").center().row();
+		table.add("and request features to retrodaredevil@gmail.com").center().row();
 		table.add("").center().row();
 		table.add("Default (mobile) control scheme:").center().row();
 		table.add("Use the joystick on the left to move").center().row();

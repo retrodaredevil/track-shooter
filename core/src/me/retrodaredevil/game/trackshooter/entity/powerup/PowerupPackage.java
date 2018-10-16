@@ -11,6 +11,11 @@ public abstract class PowerupPackage extends SimplePowerup {
 
 	private boolean eaten = false;
 
+	/**
+	 *
+	 * @param velocity The velocity that this will have when on the track. If positive, will go in the positive direction on track and vice versa
+	 * @param startingTrackDistance The starging distance on the track
+	 */
 	public PowerupPackage(float velocity, float startingTrackDistance){
 		setHitboxSize(.6f);
 

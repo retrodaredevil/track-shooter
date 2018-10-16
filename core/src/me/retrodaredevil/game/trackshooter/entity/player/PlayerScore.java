@@ -59,7 +59,6 @@ public class PlayerScore implements Score {
 	@Override
 	public void onScore(int points) {
 		score += points;
-		Gdx.app.debug("score", "" + score);
 	}
 
 	@Override
