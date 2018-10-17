@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -21,46 +22,56 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 
 	private static final int DEFAULT_INDEX = 0;
 
-	private final GameInput menuController;
 	private final ContentTableProvider contentTableProvider;
 	private final Collection<? extends SingleOptionProvider> optionProviders;
 	private final ExitRequestListener exitRequestListener;
 	private final List<OptionPair> singleOptionPairs = new ArrayList<>();
 
+	/** The menu controller. May be null*/
+	private GameInput menuController;
 
-	private Integer selectedOptionIndex = null; // null represents none selected
+	/** The option index. null represents none selected*/
+	private Integer selectedOptionIndex = null;
 
 	public SelectionMenuRenderComponent(RenderObject renderObject, GameInput menuController,
 										ContentTableProvider contentTableProvider,
 										Collection<? extends SingleOptionProvider> optionProviders,
 										ExitRequestListener exitRequestListener){
-		this.menuController = menuController;
+		setMenuController(menuController);
 		this.contentTableProvider = contentTableProvider;
 		this.optionProviders = optionProviders;
 		this.exitRequestListener = exitRequestListener;
 
+	}
+	public void setMenuController(GameInput menuController){ this.menuController = menuController; }
+	public GameInput getMenuController(){ return menuController; }
+
+	public void clearTable(){
+		contentTableProvider.resetTable();
 	}
 
 	@Override
 	public void render(float delta, Stage stage) {
 		contentTableProvider.render(delta, stage);
 
-		final JoystickPart selectJoystick = menuController.getSelectorJoystick();
-		final InputPart selectButton = menuController.getEnterButton();
-		final InputPart backButton = menuController.getBackButton();
+		final JoystickPart selectJoystick = menuController == null ? null : Objects.requireNonNull(menuController.getSelectorJoystick());
+		final InputPart selectButton = menuController == null ? null : Objects.requireNonNull(menuController.getEnterButton());
+		final InputPart backButton = menuController == null ? null : Objects.requireNonNull(menuController.getBackButton());
 		final Collection<SingleOption.SelectAction> requestingActions = new ArrayList<>();
 		Integer newOptionIndex = selectedOptionIndex;
-		if(selectJoystick.getYAxis().isPressed()){ // will be true if digital position just changed to 1 or -1
-			int digitalY = selectJoystick.getYAxis().getDigitalPosition();
-			if(newOptionIndex == null){
-				newOptionIndex = DEFAULT_INDEX;
-			} else {
-				newOptionIndex -= digitalY; // minus equals because the menu is shown top to bottom
+		if(menuController != null) {
+			if (selectJoystick.getYAxis().isPressed()) { // will be true if digital position just changed to 1 or -1
+				int digitalY = selectJoystick.getYAxis().getDigitalPosition();
+				if (newOptionIndex == null) {
+					newOptionIndex = DEFAULT_INDEX;
+				} else {
+					newOptionIndex -= digitalY; // minus equals because the menu is shown top to bottom
+				}
+				requestingActions.add(SingleOption.SelectAction.CHANGE_OPTION);
 			}
-			requestingActions.add(SingleOption.SelectAction.CHANGE_OPTION);
-		}
-		if(backButton.isPressed()){
-			requestingActions.add(SingleOption.SelectAction.EXIT_MENU);
+			if (backButton.isPressed()) {
+				requestingActions.add(SingleOption.SelectAction.EXIT_MENU);
+			}
 		}
 
 		for(SingleOptionProvider provider : optionProviders){
@@ -79,7 +90,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 					it.remove();
 				} else {
 					singleOption.renderUpdate(contentTableProvider.getContentTable());
-					if(selectedOptionIndex != null && i == selectedOptionIndex){
+					if(menuController != null && selectedOptionIndex != null && i == selectedOptionIndex){
 						singleOption.selectUpdate(delta, selectJoystick, selectButton, backButton, requestingActions);
 					}
 				}

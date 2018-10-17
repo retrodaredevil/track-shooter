@@ -1,20 +1,14 @@
 package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import me.retrodaredevil.game.trackshooter.input.GameInput;
@@ -23,16 +17,12 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
-import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
-	private static final int BUTTON_WIDTH = 220;
-	private static final int BUTTON_HEIGHT = 60;
 	private final List<GameInput> gameInputs;
 	private final GameInput gameInput;
 	private final RenderParts renderParts;
@@ -61,14 +51,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 		// this is initialized after each button because it uses them
 		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(renderObject, gameInput,
-				new PlainTable(), Collections.singleton(new MultiActorOptionProvider((float) BUTTON_WIDTH, (float) BUTTON_HEIGHT, startButton, optionsButton, creditsButton)), () -> {}));
+				new PlainTable(), Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, startButton, optionsButton, creditsButton)), () -> {}));
 
 	}
 	private Renderer createRenderer(){
 		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
 		renderer.addRenderable(renderParts.getBackground());
 		renderer.addMainStage();
-		renderer.addRenderable(renderParts.getOptionsMenu().isOpen() ? renderParts.getOptionsMenu() : menuRenderable);
+		renderer.addRenderable(renderParts.getOptionsMenu().isMenuOpen() ? renderParts.getOptionsMenu() : menuRenderable);
 		renderer.addRenderable(renderParts.getOverlay());
 		return renderer;
 	}

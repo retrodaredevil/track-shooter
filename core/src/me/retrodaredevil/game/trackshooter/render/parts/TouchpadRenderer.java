@@ -33,7 +33,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 
 	public TouchpadRenderer(RenderObject renderObject){
 		this.renderObject = renderObject;
-		stage = new Stage(new ScreenViewport());
+		stage = new Stage(new ScreenViewport(), renderObject.getBatch());
 	}
 	public Touchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalDiameterGetter proportionalDiameterGetter){
 		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(visibilityChanger, proportionalPositionGetter, proportionalDiameterGetter, renderObject);

@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.parts.PauseMenu;
 import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -29,11 +30,11 @@ public class GameScreen implements UsableScreen {
 
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
+	private final PauseMenu pauseMenu;
 
 	private final Stage stage;
 
 	private boolean shouldExit = false;
-	private boolean paused = false;
 
 	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
 		this.gameInputs = gameInputs;
@@ -54,6 +55,7 @@ public class GameScreen implements UsableScreen {
 		}
 
 		renderParts.getOverlay().setGame(players, world);
+		pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
 	}
 
 	@Override
@@ -64,19 +66,9 @@ public class GameScreen implements UsableScreen {
 
 	}
 	private void doUpdate(float delta){
-		for(GameInput input : gameInputs){
-			if(input.getPauseButton().isPressed()){
-				paused = !paused;
-				break;
-			}
-		}
-		renderParts.getOverlay().setPauseVisible(true);
-		if(renderParts.getOverlay().isPausePressed()){
-			paused = !paused;
-		}
-		renderParts.getOptionsMenu().closeMenu(); // stop displaying options menu
 		renderParts.getOverlay().update(delta, world);
-		if(paused){
+		pauseMenu.update(delta, world);
+		if(isPaused()){
 			return;
 		}
 		world.update(delta, world);
@@ -134,27 +126,19 @@ public class GameScreen implements UsableScreen {
 		renderer.addMainStage(); // world should have added this anyway
 		renderer.addRenderable(renderParts.getTouchpadRenderer());
 		renderer.addRenderable(renderParts.getOptionsMenu());
+		renderer.addRenderable(pauseMenu);
 		renderer.addRenderable(renderParts.getOverlay());
 		return renderer;
 	}
 	private void doRender(float delta){
-
-
 		createRenderer().render(delta);
 
-		InputFocuser inputFocuser = new InputFocuser();
-		{
-			InputFocuser inGameFocuser = new InputFocuser(0);
-
-			inGameFocuser.addParallel(renderParts.getTouchpadRenderer());
-
-			inputFocuser.add(inGameFocuser);
-		}
-		inputFocuser.addParallel(renderParts.getOverlay());
-//		if(paused){ // TODO pause menu
-//
-//		}
-		inputFocuser.giveFocus(stage, renderParts.getInputMultiplexer());
+		new InputFocuser()
+				.addParallel(renderParts.getTouchpadRenderer())
+				.addParallel(renderParts.getOverlay())
+				.addParallel(pauseMenu)
+				.addParallel(renderParts.getOptionsMenu())
+				.giveFocus(stage, renderParts.getInputMultiplexer());
 	}
 	public void setToExit(){
 		shouldExit = true;
@@ -165,21 +149,33 @@ public class GameScreen implements UsableScreen {
 		}
 	}
 
-	@Override
-	public void pause() {
-		// called when exiting app when still open
-		paused = true;
+	public boolean isPaused(){
+		return pauseMenu.isMenuOpen();
 	}
 
+	/** @deprecated should not be used to pause the game*/
+	@Deprecated
+	@Override
+	public void pause() {
+		// called when exiting app when the app is still open
+		if(!pauseMenu.isMenuOpen()){
+			pauseMenu.setControllerAndOpen(gameInputs.get(0));
+		}
+	}
+
+	/** @deprecated should not be used to resume the game */
+	@Deprecated
 	@Override
 	public void resume() {
 		// Called when reentering opened app
 	}
 
+	@Deprecated
 	@Override
 	public void hide() { // called usually before dispose
 	}
 
+	@Deprecated
 	@Override
 	public void show() {
 	}

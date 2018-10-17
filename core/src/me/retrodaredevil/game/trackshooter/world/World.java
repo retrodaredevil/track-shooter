@@ -52,6 +52,13 @@ public class World implements Updateable, Renderable {
 		if(level == null || level.isDone()){
 			level = levelGetter.nextLevel();
 		}
+		/*
+		The ordering of how each thing is updated it on purpose:
+		* Add entities that were added before this method was called,
+		* Update the level so it can update the track, things on the track, etc before entities are updated
+		* Update and remove entities if needed
+		* Update the collision handler after everything has been placed correctly
+		 */
 
 		while(true){ // add all entities necessary
 			Entity entity = entitiesToAdd.poll();

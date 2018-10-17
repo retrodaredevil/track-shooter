@@ -33,7 +33,7 @@ public class Renderer {
 	 * @param renderable
 	 */
 	public void addRenderable(Renderable renderable){
-		if(renderable == null){
+		if(renderable == null || renderable.getRenderComponent() == null){
 			return;
 		}
 		renderables.add(renderable);

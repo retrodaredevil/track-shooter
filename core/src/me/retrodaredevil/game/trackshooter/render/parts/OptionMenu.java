@@ -6,11 +6,10 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
-import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
+import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -19,7 +18,7 @@ import me.retrodaredevil.game.trackshooter.render.selection.options.Configurable
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 
-public class OptionMenu implements Renderable, InputFocusable {
+public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
 	private final Stage preferredStage;
@@ -37,6 +36,12 @@ public class OptionMenu implements Renderable, InputFocusable {
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
 	}
+
+	/**
+	 *
+	 * @param configController The Controller to config
+	 * @param menuController The controller to control the options menu
+	 */
 	public void setToController(ConfigurableControllerPart configController, GameInput menuController){
 		if (renderComponent != null) {
 			if(currentController == configController){
@@ -54,11 +59,13 @@ public class OptionMenu implements Renderable, InputFocusable {
 				Collections.singleton(new ConfigurableObjectOptionProvider(menuController, renderObject, saveObject)), this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}
+	@Override
 	public void closeMenu(){
 		setToController(null, null);
 	}
 
-	public boolean isOpen() {
+	@Override
+	public boolean isMenuOpen() {
 		return renderComponent != null;
 	}
 
@@ -82,7 +89,7 @@ public class OptionMenu implements Renderable, InputFocusable {
 
 	@Override
 	public int getFocusPriority() {
-		return 1;
+		return 5;
 	}
 
 }

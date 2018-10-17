@@ -152,7 +152,7 @@ public abstract class SimpleLevel implements Level {
 			LevelMode previousMode = this.mode;
 			this.mode = mode;
 			modeTime = 0;
-			System.out.println("changing level mode! mode: " + mode + " previous: " + previousMode);
+//			System.out.println("changing level mode! mode: " + mode + " previous: " + previousMode);
 			onModeChange(mode, previousMode);
 			for(LevelFunction function : functions){
 				function.onModeChange(this, mode, previousMode);

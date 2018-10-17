@@ -5,9 +5,15 @@ import com.badlogic.gdx.utils.Disposable;
 
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
-// The reason for adding Disposable as a super interface was that a Renderable may have multiple
-// render components that it switches between and calling getRenderComponent().disposeRenderComponent() would only disposeRenderComponent
-// of one of them. By adding Disposable, there is more control
+/**
+ * Represents something that can be rendered if its {@link RenderComponent} isn't null.
+ * <p>
+ * When implementing, there is very little reason to override {@link #disposeRenderComponent()} unless
+ * you switch between different RenderComponents. The other methods should probably not be overridden.
+ * <p>
+ * When rendering, you should almost always use a {@link Renderer} to allow to easier refactoring in the
+ * future and because Renderer contains everything you need to render Renderables in the order you want.
+ */
 public interface Renderable {
 	/**
 	 * When this method is called, it is usually to call the return value's render (assuming null wasn't returned)

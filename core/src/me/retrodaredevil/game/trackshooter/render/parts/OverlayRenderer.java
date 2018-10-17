@@ -54,7 +54,7 @@ public class OverlayRenderer implements RenderComponent {
 		Table buttonTable = new Table();
 		group.addActor(buttonTable);
 		buttonTable.setFillParent(true);
-		buttonTable.add(pauseButton = new TextButton("pause", renderObject.getUISkin()));
+		buttonTable.add(pauseButton = new TextButton("pause", renderObject.getUISkin())).width(80).height(50);
 		buttonTable.top().right();
 		pauseButton.setVisible(false); // by default not visible
 
