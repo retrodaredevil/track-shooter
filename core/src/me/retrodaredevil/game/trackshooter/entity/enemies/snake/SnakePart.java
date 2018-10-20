@@ -371,7 +371,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 
 	@Override
 	public void goNormalMode() {
-		// let the AI control this
+		// let the DEMO_AI control this
 	}
 
 }

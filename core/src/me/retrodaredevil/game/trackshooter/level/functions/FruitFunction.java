@@ -4,6 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Fruit;
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.entity.powerup.SimplePowerup;
+import me.retrodaredevil.game.trackshooter.util.Points;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -15,7 +16,7 @@ public class FruitFunction extends PowerupFunction {
 	@Override
 	protected PowerupEntity createPowerup(World world) {
 		int level = world.getLevel().getNumber();
-		Resources.Points points = Resources.Points.P100;
+		Points points = Resources.Points.P100;
 		String name = "cherry";
 		if(level >= 15){
 			points = Resources.Points.P1000;

@@ -9,16 +9,17 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.components.ShakeImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.EntityUtil;
+import me.retrodaredevil.game.trackshooter.util.Points;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Fruit extends SimplePowerup {
 
-	private Resources.Points points;
+	private Points points;
 
 	private boolean eaten = false;
 
-	protected Fruit(Resources.Points points, float velocity, float startingTrackDistance){
+	protected Fruit(Points points, float velocity, float startingTrackDistance){
 		super();
 		this.points = points;
 		setHitboxSize(.6f);
@@ -28,7 +29,7 @@ public class Fruit extends SimplePowerup {
 		trackMove.getTravelVelocitySetter().setVelocity(velocity);
 		setMoveComponent(trackMove);
 	}
-	public static Fruit createFruit(Resources.Points points, float startingTrackDistance, Image image){
+	public static Fruit createFruit(Points points, float startingTrackDistance, Image image){
 		Fruit fruit = new Fruit(points, 1.5f * MathUtils.randomSign(), startingTrackDistance);
 		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(image,
 				fruit, .8f, .8f, 250, new Vector2(0, .03f));

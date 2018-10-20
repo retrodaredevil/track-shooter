@@ -38,6 +38,9 @@ import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 
 public final class GameInputs {
+	/** The amount of time to keep "constant" shooting after the rotate area has been released (in milliseoncds)*/
+	private static final long CONSTANT_SHOOT_TIME_AFTER_RELEASE = 500;
+
 	private GameInputs(){}
 
 	private static ControlOption createMouseMultiplier(OptionTracker options, boolean mobile){
@@ -200,18 +203,30 @@ public final class GameInputs {
 			}, () -> (float) diameterOption.getOptionValue());
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
 
-			fireButton = new HighestPositionInputPart(
-					new DigitalChildPositionInputPart(new HighestPositionInputPart(
-							Arrays.asList(
-									new GdxScreenTouchButton(fireAreaGetter),
-									new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter), InputPart::isReleased) // will fire if released
-							), true),
-							InputPart::isPressed // will only be down if it's being pressed
-					),
+			fireButton = new HighestPositionInputPart(Arrays.asList(
+					new GdxScreenTouchButton(fireAreaGetter),
+					new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
+							inputPart -> !constantShoot.getBooleanOptionValue() && inputPart.isReleased()), // will fire if released when constant shoot not enabled
 					// for 80ms, the above InputPart won't register - this is on purpose to avoid lots of shots at once
-					new DigitalChildPositionInputPart(new LowestPositionInputPart(new DigitalPatternInputPart(160, 80), new GdxScreenTouchButton(rotateAreaGetter)),
-							(childInputPart) -> childInputPart.isDown() && constantShoot.getBooleanOptionValue())
-			);
+					new LowestPositionInputPart(
+							new DigitalPatternInputPart(160, 80),
+							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
+									new DigitalChildPositionInputPart.DigitalGetter() {
+										Long lastDown = null;
+										@Override
+										public boolean isDown(InputPart childInputPart) {
+											if(!constantShoot.getBooleanOptionValue()) return false;
+
+											final boolean down = childInputPart.isDown();
+											final long currentTime = System.currentTimeMillis();
+											if(down){
+												lastDown = currentTime;
+											}
+											return down || (lastDown != null && lastDown + CONSTANT_SHOOT_TIME_AFTER_RELEASE > currentTime);
+									}
+							})
+					)
+			), true);
 		} else {
 			visibilityChanger = null;
 			mainJoystick = new GdxTiltJoystick();

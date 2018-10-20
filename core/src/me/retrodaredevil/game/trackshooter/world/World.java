@@ -3,6 +3,13 @@ package me.retrodaredevil.game.trackshooter.world;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Queue;
+
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
@@ -13,24 +20,18 @@ import me.retrodaredevil.game.trackshooter.level.LevelGetter;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.components.WorldRenderComponent;
 
-import java.util.*;
 
 public class World implements Updateable, Renderable {
-//	private static final Vector2 temp = new Vector2();
-
 
 	private final LevelGetter levelGetter;
 	private final RenderObject renderObject;
-	private Level level;
-
+	private final Rectangle bounds;
+	private final RenderComponent renderComponent;
+	private final CollisionHandler collisionHandler;
 	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
 	private final List<Entity> entities = new ArrayList<>();
 
-	private final CollisionHandler collisionHandler;
-	private final Rectangle bounds;
-
-	private final RenderComponent renderComponent;
-
+	private Level level;
 	private float timeInSeconds = 0;
 
 	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject){

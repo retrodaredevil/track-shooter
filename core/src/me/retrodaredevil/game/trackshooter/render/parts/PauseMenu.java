@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.render.parts;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -90,7 +92,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 				break;
 			}
 		}
-		renderParts.getOverlay().setPauseVisible(true);
+		renderParts.getOverlay().setPauseVisible(Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen));
 		if(renderParts.getOverlay().isPausePressed()){
 			toggle(gameInputs.get(0));
 		}

@@ -1,6 +1,9 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
+import com.badlogic.gdx.math.Vector2;
+
 import me.retrodaredevil.game.trackshooter.Updateable;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
  * This can have many implementations and is used for being able to call methods that will move an Entity.
@@ -52,4 +55,16 @@ public interface MoveComponent extends Updateable {
 	 */
 	boolean isDone();
 	boolean isActive();
+
+	/**
+	 * This may be null
+	 * @return The more correct location of whatever owns this MoveComponent, or null
+	 */
+	Vector2 getCorrectLocation(World world);
+
+	/**
+	 * This may be null
+	 * @return The more correct location of whatever owns this MoveComponent, or null
+	 */
+	Float getCorrectRotation(World world);
 }

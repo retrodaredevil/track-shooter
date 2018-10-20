@@ -7,7 +7,7 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 
 public class DisplayEntity extends TimedEntity {
 
-	public DisplayEntity(long time, Vector2 position) {
+	public DisplayEntity(float time, Vector2 position) {
 		super(time);
 //		setHitboxSize(0); doesn't matter since it can't collide
 		setLocation(position);

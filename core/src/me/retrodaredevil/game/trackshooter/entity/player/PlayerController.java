@@ -9,11 +9,11 @@ import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetterMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetterMoveComponent;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PlayerController implements EntityController{
-	private static final float VELOCITY_PER_SECOND = 5f;
-	private static final float ROTATE_PER_SECOND = -270; // target rotate velocity used for calculating accelerating but capped at max
+	private static final float ROTATE_PER_SECOND = -270; // rotate velocity when position is 1
 	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f; // how many degrees to change when the mouse is moved one pixel
 
 	private Player player;
@@ -34,7 +34,7 @@ public class PlayerController implements EntityController{
 			final float velocity;
 			if(!movementJoy.isDeadzone() || slow) {
 				float mult = slow ? .5f : 1;
-//				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY_PER_SECOND * mult));
+//				trackMove.setVelocity((float) (movementJoy.getX() * VELOCITY * mult));
 				float movePercent = world.getTrack().getMovePercent((float) movementJoy.getAngle(), trackMove.getDistanceOnTrack());
 				int moveDirection = (int) (Math.signum(movePercent) * (float) Math.ceil(Math.abs(movePercent))); // round this up/down and base speed off magnitude
 
@@ -48,7 +48,7 @@ public class PlayerController implements EntityController{
 				velocity =
 						correctMagnitude
 						* moveDirection
-						* VELOCITY_PER_SECOND
+						* Constants.PLAYER_VELOCITY
 						* mult;
 			} else {
 				velocity = 0;

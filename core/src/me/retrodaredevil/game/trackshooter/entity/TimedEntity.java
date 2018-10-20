@@ -9,10 +9,10 @@ import me.retrodaredevil.game.trackshooter.world.World;
  */
 public class TimedEntity extends SimpleEntity {
 
-	private Long startTime;
-	private final long time;
+	private Float startTime = null;
+	private final float time;
 
-	TimedEntity(long time){
+	TimedEntity(float time){
 		this.time = time;
 	}
 
@@ -20,12 +20,12 @@ public class TimedEntity extends SimpleEntity {
 	public void update(float delta, World world) {
 		super.update(delta, world);
 		if(startTime == null){
-			startTime = world.getTimeMillis();
+			startTime = world.getTime();
 		}
 	}
 
 	@Override
 	public boolean shouldRemove(World world) {
-		return startTime != null && startTime + time <= world.getTimeMillis();
+		return startTime != null && startTime + time <= world.getTime();
 	}
 }

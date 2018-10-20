@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -23,6 +24,8 @@ import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
+	private static final float DEMO_GAME_INIT_IDLE = 45;
+
 	private final List<GameInput> gameInputs;
 	private final GameInput gameInput;
 	private final RenderParts renderParts;
@@ -36,10 +39,11 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final Button optionsButton;
 	private final Button creditsButton;
 	private boolean optionsDown = false;
+	private float idleTime = 0;
 
 	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
 		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
-		this.gameInput = gameInputs.get(0); // TODO Allow other inputs to control as well
+		this.gameInput = gameInputs.get(0);
 		this.renderParts = Objects.requireNonNull(renderParts);
 		this.renderObject = Objects.requireNonNull(renderObject);
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
@@ -50,8 +54,13 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		creditsButton = new TextButton("info", style);
 
 		// this is initialized after each button because it uses them
-		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(renderObject, gameInput,
-				new PlainTable(), Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, startButton, optionsButton, creditsButton)), () -> {}));
+		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(
+				renderObject,
+				gameInput,
+				new PlainTable(),
+				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, startButton, optionsButton, creditsButton)),
+				() -> {} // do nothing on back button
+		));
 
 	}
 	private Renderer createRenderer(){
@@ -64,10 +73,19 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	}
 	@Override
 	public void render(float delta) {
+		idleTime += delta;
+		if(gameInput.getFireButton().isPressed() || gameInput.getEnterButton().isPressed()
+				|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
+				|| renderParts.getOptionsMenu().isMenuOpen()){
+			idleTime = 0;
+		}
+
 		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
-			if(nextScreen == null) {
-				nextScreen = new GameScreen(gameInputs, renderObject, renderParts);
-			}
+			normalGame();
+			return;
+		}
+		if(!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isPressed() || idleTime > DEMO_GAME_INIT_IDLE)){
+			demoGame();
 			return;
 		}
 		if(creditsButton.isPressed()){
@@ -86,6 +104,16 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 
 		createRenderer().render(delta);
+	}
+	private void normalGame(){
+		if(nextScreen == null) {
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL);
+		}
+	}
+	private void demoGame(){
+		if(nextScreen == null) {
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI);
+		}
 	}
 
 	@Override

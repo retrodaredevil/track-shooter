@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
+import com.badlogic.gdx.math.Vector2;
+
 import me.retrodaredevil.game.trackshooter.world.World;
 
 /**
@@ -30,6 +32,16 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 		this.canHaveNext = canHaveNext;
 		this.canRecycle = canRecycle;
 		assert nextComponent == null || canHaveNext;
+	}
+
+	@Override
+	public Vector2 getCorrectLocation(World world) {
+		return null;
+	}
+
+	@Override
+	public Float getCorrectRotation(World world) {
+		return null;
 	}
 
 	@Override

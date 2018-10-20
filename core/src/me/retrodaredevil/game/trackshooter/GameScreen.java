@@ -1,13 +1,13 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.entity.player.PlayerAIController;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
@@ -24,38 +24,48 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class GameScreen implements UsableScreen {
 
 //	private final GameInput gameInput;
-	private final List<Player> players = new ArrayList<>(); // elements may be removed // initialized in constructor
 	private final List<GameInput> gameInputs;
+	private final GameType gameType;
+	private final List<Player> players = new ArrayList<>(); // elements may be removed // initialized in constructor
 	private final World world;
 
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
+	/** The pause menu or null */
 	private final PauseMenu pauseMenu;
 
 	private final Stage stage;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
+	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType){
 		this.gameInputs = gameInputs;
-		this.world = new World(new GameLevelGetter(players), 18, 18, renderObject);
-		this.renderParts = renderParts;
+		this.gameType = gameType;
 		this.renderObject = renderObject;
+		this.renderParts = renderParts;
+
+		world = new World(new GameLevelGetter(players), 18, 18, renderObject);
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
-		{
+		if(gameType == GameType.NORMAL){
 			int i = 0;
 			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(gameInput.getRumble(), i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				Player player = new Player(gameInput::getRumble, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
 				players.add(player);
 				player.setEntityController(new PlayerController(player, gameInput));
 				world.addEntity(player);
 				i++;
 			}
+			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
+		} else { // assume DEMO_AI
+			Player player = new Player(() -> null, Player.Type.NORMAL);
+			players.add(player);
+			player.setEntityController(new PlayerAIController(player));
+			world.addEntity(player);
+			pauseMenu = null;
 		}
 
 		renderParts.getOverlay().setGame(players, world);
-		pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
 	}
 
 	@Override
@@ -67,7 +77,21 @@ public class GameScreen implements UsableScreen {
 	}
 	private void doUpdate(float delta){
 		renderParts.getOverlay().update(delta, world);
-		pauseMenu.update(delta, world);
+		if(pauseMenu != null) {
+			pauseMenu.update(delta, world);
+		}
+		if(gameType == GameType.DEMO_AI){
+			for(GameInput input : gameInputs){
+				if(input.getBackButton().isPressed() || input.getFireButton().isPressed() || input.getStartButton().isPressed()){
+					setToExit();
+					return;
+				}
+			}
+			if(Gdx.input.justTouched()){
+				setToExit();
+				return;
+			}
+		}
 		if(isPaused()){
 			return;
 		}
@@ -126,7 +150,9 @@ public class GameScreen implements UsableScreen {
 		renderer.addMainStage(); // world should have added this anyway
 		renderer.addRenderable(renderParts.getTouchpadRenderer());
 		renderer.addRenderable(renderParts.getOptionsMenu());
-		renderer.addRenderable(pauseMenu);
+		if(pauseMenu != null) {
+			renderer.addRenderable(pauseMenu);
+		}
 		renderer.addRenderable(renderParts.getOverlay());
 		return renderer;
 	}
@@ -150,7 +176,7 @@ public class GameScreen implements UsableScreen {
 	}
 
 	public boolean isPaused(){
-		return pauseMenu.isMenuOpen();
+		return pauseMenu != null && pauseMenu.isMenuOpen();
 	}
 
 	/** @deprecated should not be used to pause the game*/
@@ -158,8 +184,11 @@ public class GameScreen implements UsableScreen {
 	@Override
 	public void pause() {
 		// called when exiting app when the app is still open
-		if(!pauseMenu.isMenuOpen()){
+		if(pauseMenu != null && !pauseMenu.isMenuOpen()){
 			pauseMenu.setControllerAndOpen(gameInputs.get(0));
+		}
+		if(gameType == GameType.DEMO_AI){
+			setToExit();
 		}
 	}
 
@@ -168,6 +197,9 @@ public class GameScreen implements UsableScreen {
 	@Override
 	public void resume() {
 		// Called when reentering opened app
+		if(gameType == GameType.DEMO_AI){
+			setToExit();
+		}
 	}
 
 	@Deprecated
@@ -184,13 +216,19 @@ public class GameScreen implements UsableScreen {
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height,true);
 		renderParts.resize(width, height);
-//		createRenderer().resize(width, height);
+		world.resize(width, height);
+		if(pauseMenu != null) {
+			pauseMenu.resize(width, height);
+		}
 	}
 
 	@Override
 	public void dispose() {
 		world.disposeRenderComponent();
 		stage.dispose();
+		if(pauseMenu != null) {
+			pauseMenu.disposeRenderComponent();
+		}
 	}
 
 	@Override
@@ -204,5 +242,12 @@ public class GameScreen implements UsableScreen {
 			throw new IllegalStateException("Cannot create a StartScreen if we aren't done!");
 		}
 		return new StartScreen(gameInputs, renderObject, renderParts);
+	}
+
+	public enum GameType {
+		/** Represents a normal game controlled by player(s)*/
+		NORMAL,
+		/** Represents a game controlled by an ai*/
+		DEMO_AI
 	}
 }

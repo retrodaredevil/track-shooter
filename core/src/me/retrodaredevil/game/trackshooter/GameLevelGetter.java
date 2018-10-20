@@ -24,6 +24,7 @@ import me.retrodaredevil.game.trackshooter.level.functions.LevelFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.StarFishFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
+import me.retrodaredevil.game.trackshooter.util.Points;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.Tracks;
@@ -57,6 +58,7 @@ public class GameLevelGetter implements LevelGetter {
 			@Override
 			protected void onStart(World world) {
 				super.onStart(world);
+				final boolean isEasy = levelNumber >= 10 && (levelNumber - 2) % 8 == 0; // 10, 18, 26 // galaga level reference
 				final Track track = world.getTrack();
 				for(Player player : players){ // move all players to a random spot
 					float distance = MathUtils.random(track.getTotalDistance());
@@ -68,7 +70,7 @@ public class GameLevelGetter implements LevelGetter {
 				}
 
 				addFunction(new FruitFunction());
-				if(levelNumber != 1 && levelNumber != 3 && levelNumber % 4 != 0){ // on all levels except 1, 3 and any multiples of 4
+				if(levelNumber != 1 && levelNumber != 3 && levelNumber % 4 != 0 && !isEasy){ // on all levels except 1, 3 and any multiples of 4
 					for(Player player : players) {
 						addFunction(new SnakeFunction(player));
 					}
@@ -78,9 +80,17 @@ public class GameLevelGetter implements LevelGetter {
 				} else if(levelNumber >= 4) { // all even levels >= 4
 					Entity cargoEntity = new CargoShip(.8f * MathUtils.randomSign(), MathUtils.random(track.getTotalDistance()));
 					this.addEntity(world, cargoEntity);
-					addFunction(new BonusCargoFunction(cargoEntity, players, levelNumber >= 8 ? Resources.Points.P1600 : Resources.Points.P1000));
+					final Points points;
+					if(levelNumber >= 12){
+						points = Resources.Points.P5000;
+					} else if (levelNumber >= 6){
+						points = Resources.Points.P3000;
+					} else {
+						points = Resources.Points.P1000;
+					}
+					addFunction(new BonusCargoFunction(cargoEntity, players, points));
 				}
-				if(levelNumber > 3 && levelNumber % 3 == 0 && levelNumber % 9 != 0){ // 6, 12, 15, 21
+				if(levelNumber > 3 && levelNumber % 3 == 0 && levelNumber % 9 != 0 && !isEasy){ // 6, 12, 15, 21
 					float spawnAfter = 20;
 					if(levelNumber >= 20){
 						spawnAfter = 5;
@@ -118,7 +128,7 @@ public class GameLevelGetter implements LevelGetter {
 						waitTimeIndex = amount - waitTimeIndex - 1;
 					}
 					final float waitBeforeMoveTime;
-					if(levelNumber <= 3 || (levelNumber - 2) % 8 == 0) { // 10, 18, 26 & <=3
+					if(levelNumber <= 3 || isEasy) {
 						waitBeforeMoveTime = Math.min(waitTimeIndex * waitTimeIndex * .5f, 10);
 					} else if(levelNumber >= 18) {
 						waitBeforeMoveTime = 0;

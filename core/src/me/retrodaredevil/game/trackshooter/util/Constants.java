@@ -11,6 +11,8 @@ public final class Constants {
 	public static final float BUTTON_WIDTH = 220;
 	public static final float BUTTON_HEIGHT = 60;
 
+	public static final float PLAYER_VELOCITY = 5f;
+
 //	private static final float COLOR_SHADE = 16.0f / 255.0f;
 //	public static final Color BACKGROUND_COLOR = new Color(COLOR_SHADE, COLOR_SHADE, COLOR_SHADE, 1);
 }

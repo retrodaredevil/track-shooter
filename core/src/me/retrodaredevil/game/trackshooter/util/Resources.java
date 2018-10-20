@@ -41,7 +41,7 @@ public final class Resources {
 		}
 		return regions;
 	}
-	public enum Points {
+	public enum Points implements me.retrodaredevil.game.trackshooter.util.Points{
 		P100(100, 0, "odd_bonus", 5),
 		P300(300, 1, "odd_bonus", 5),
 		P500(500, 2, "odd_bonus", 5),
@@ -52,6 +52,10 @@ public final class Resources {
 		P400(400, 1, "even_bonus", 4),
 		P800(800, 2, "even_bonus", 4),
 		P1600(1600, 3, "even_bonus", 4),
+
+		P2000(2000, 0, "large_bonus", 3),
+		P3000(3000, 1, "large_bonus", 3),
+		P5000(3000, 2, "large_bonus", 3),
 		;
 		private final int worth;
 		private final int index;
@@ -70,9 +74,11 @@ public final class Resources {
 				throw new IllegalArgumentException();
 			}
 		}
+		@Override
 		public int getWorth(){
 			return worth;
 		}
+		@Override
 		public Drawable getDrawable(RenderObject renderObject){
 			final TextureRegion region = renderObject.getMainSkin().getRegion(imageName);
 			if(imagesSize == 1){

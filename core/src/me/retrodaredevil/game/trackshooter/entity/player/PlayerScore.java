@@ -10,7 +10,7 @@ public class PlayerScore implements Score {
     private final int[] extraLivesAt;
     private final int extraLifeEvery;
     private final Player player;
-    private final ControllerRumble rumble;
+    private final RumbleGetter rumbleGetter;
 
 	private int score = 0;
 	private int deaths = 0;
@@ -18,20 +18,20 @@ public class PlayerScore implements Score {
 	private int totalNumberShots = 0;
 	private int shotsHit = 0;
 
-	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, ControllerRumble rumble){
+	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, RumbleGetter rumbleGetter){
 		this.player = player;
 		this.startingLives = startingLives;
 		this.extraLivesAt = extraLivesAt;
 		this.extraLifeEvery = extraLifeEvery;
-		this.rumble = rumble;
+		this.rumbleGetter = rumbleGetter;
 	}
 
 	/**
 	 * @param player The player
-	 * @param rumble The rumble for the player or null
+	 * @param rumbleGetter The rumble getter for the player. This is allowed to return null.
 	 */
-	public PlayerScore(Player player, ControllerRumble rumble){
-	    this(player, 3, new int[]{ 10000 }, 30000, rumble);
+	public PlayerScore(Player player, RumbleGetter rumbleGetter){
+	    this(player, 3, new int[]{ 10000 }, 30000, rumbleGetter);
     }
 
 	@Override
@@ -64,6 +64,7 @@ public class PlayerScore implements Score {
 	@Override
 	public void onDeath(Entity other) {
 	    deaths++;
+	    ControllerRumble rumble = rumbleGetter.getRumble();
 	    if(rumble != null && rumble.isConnected()){
 	    	long time = 300;
 	    	if(getLives() <= 0){
@@ -116,5 +117,8 @@ public class PlayerScore implements Score {
 		} else {
 			Gdx.app.log("hit/miss ratio", "undefined");
 		}
+	}
+	public interface RumbleGetter {
+		ControllerRumble getRumble();
 	}
 }

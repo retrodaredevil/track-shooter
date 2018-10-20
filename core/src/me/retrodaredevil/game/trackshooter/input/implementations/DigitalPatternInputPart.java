@@ -32,7 +32,7 @@ public class DigitalPatternInputPart extends AutoCachingInputPart {
 		for(int i = 0; i < pattern.length; ++i){
 			final long period = pattern[i];
 			current += period;
-			if(time <= current){
+			if(time <= current && period != 0){
 				return (i % 2 == 1) ? 1 : 0; // if the index is odd, 1, otherwise 0
 			}
 		}

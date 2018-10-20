@@ -45,11 +45,11 @@ public class Player extends SimpleEntity {
 	private boolean triplePowerup = false;
 
 
-	public Player(ControllerRumble rumble, Type playerType){
+	public Player(PlayerScore.RumbleGetter rumbleGetter, Type playerType){
 		this.playerType = playerType;
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
 		setHitboxSize(.7f);
-		score = new PlayerScore(this, rumble);
+		score = new PlayerScore(this, rumbleGetter);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
 	}

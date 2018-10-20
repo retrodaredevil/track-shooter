@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.entity.movement;
 
+import com.badlogic.gdx.math.Vector2;
+
 import me.retrodaredevil.game.trackshooter.effect.EffectUtil;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.util.Constants;
@@ -30,12 +32,18 @@ public class TravelVelocityOnTrackMoveComponent extends SimpleMoveComponent
 	@Override
 	public void onUpdate(float delta, World world) {
 		lastWorld = world;
+		travelVelocityHandler.update(delta);
 		this.distance += delta * getTravelVelocity();
 
 		updateLocation(world);
 	}
 	private void updateLocation(World world){
 		entity.setLocation(world.getTrack().getDesiredLocation(distance));
+	}
+
+	@Override
+	public Vector2 getCorrectLocation(World world) {
+		return world.getTrack().getDesiredLocation(distance);
 	}
 
 	@Override

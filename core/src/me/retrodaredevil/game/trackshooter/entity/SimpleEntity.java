@@ -112,11 +112,11 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public MoveComponent getMoveComponent() {
+	public final MoveComponent getMoveComponent() {
 		return moveComponent;
 	}
 
-	protected void setMoveComponent(MoveComponent moveComponent){
+	protected final void setMoveComponent(MoveComponent moveComponent){
 		if(this.moveComponent != moveComponent && this.moveComponent != null){
 			this.moveComponent.end();
 		}
