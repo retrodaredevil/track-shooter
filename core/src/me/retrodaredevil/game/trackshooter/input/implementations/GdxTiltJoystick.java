@@ -17,31 +17,38 @@ import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableControllerPart {
-	private final OptionValue maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 20, 15);
-	private double x, y;
+
+	private final OptionValue maxDegreesOption;
+	private final Collection<ControlOption> controlOptions;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
 	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
 
-	private final Collection<ControlOption> controlOptions = Collections.singletonList(new ControlOption("Tilt Controller Angle",
-				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.", "controls.all.tilt",
-				maxDegreesOption));
+
+	private double x, y;
 
 	/**
 	 *
 	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach a magnitude of 1 in
 	 */
-	private GdxTiltJoystick(Integer maxDegrees) {
+	private GdxTiltJoystick(String maxTiltCategory, Integer maxDegrees) {
 		super(new JoystickType(true, true, true, true), false, false);
+		maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 20, 15);
+		controlOptions = Collections.singletonList(new ControlOption(
+				"Tilt Controller Angle",
+				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.",
+				maxTiltCategory,
+				maxDegreesOption
+		));
 		if(maxDegrees != null) {
 			maxDegreesOption.setOptionValue(maxDegrees);
 		}
 	}
-	public GdxTiltJoystick(int maxDegrees){
-		this((Integer) maxDegrees);
+	public GdxTiltJoystick(String maxTiltCategory, int maxDegrees){
+		this(maxTiltCategory, Integer.valueOf(maxDegrees));
 	}
-	public GdxTiltJoystick(){
-		this(null);
+	public GdxTiltJoystick(String maxTiltCategory){
+		this(maxTiltCategory, null);
 	}
 
 	@Override

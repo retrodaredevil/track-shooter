@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import me.retrodaredevil.game.trackshooter.util.RenderUtil;
@@ -32,9 +33,9 @@ public class Renderer {
 	 * Adds the renderable and adds its preferred stage or the main stage if there's no preferred stage
 	 * @param renderable
 	 */
-	public void addRenderable(Renderable renderable){
+	public Renderer addRenderable(Renderable renderable){
 		if(renderable == null || renderable.getRenderComponent() == null){
-			return;
+			return this;
 		}
 		renderables.add(renderable);
 		Stage stage = renderable.getPreferredStage();
@@ -42,21 +43,24 @@ public class Renderer {
 			stage = mainStage;
 		}
 		stages.add(stage);
+		return this;
 	}
 
 	/**
 	 * Adds the main stage if it hasn't been added yet
 	 */
-	public void addMainStage(){
+	public Renderer addMainStage(){
 		addStage(mainStage);
+		return this;
 	}
 
 	/**
 	 * Adds a stage to the stage
 	 * @param stage
 	 */
-	public void addStage(Stage stage){
-		stages.add(stage);
+	public Renderer addStage(Stage stage){
+		stages.add(Objects.requireNonNull(stage));
+		return this;
 	}
 
 	@SuppressWarnings("LibGDXFlushInsideLoop") // drawStage doesn't flush
@@ -75,7 +79,7 @@ public class Renderer {
 	}
 
 	/**
-	 * This resizes everything added to this Renderable. Sometimes, you should not use this because
+	 * This resizes everything added to this Renderer. Sometimes, you should not use this because
 	 * it would be easier to just resize whatever you're using individually.
 	 * @param width
 	 * @param height

@@ -23,8 +23,11 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	private final OptionValue simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
 	private final OptionValue enableRumbleOption = OptionValues.createBooleanOptionValue(true);
 	private final ControlOption simulateAnalogControlOption = new ControlOption("Simulate Analog Rumble",
-					"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble", "output.rumble.simulateAnalog", simulateAnalogOption);
-	private final ControlOption enableRumbleControlOption = new ControlOption("Enable Rumble", "Should the rumble/vibrator be enabled", "output.rumble.enable", enableRumbleOption);
+			"Should the rumble/vibrator vibrate on and off quickly to simulate analog rumble",
+			"controls.misc.rumble.simulate_analog", simulateAnalogOption);
+	private final ControlOption enableRumbleControlOption = new ControlOption("Enable Rumble",
+			"Should the rumble/vibrator be enabled",
+			"controls.misc.rumble.enable", enableRumbleOption);
 
 	private final Map<VibratePattern, Map<Integer, long[]>> patternRepeatCache = new EnumMap<>(VibratePattern.class);
 

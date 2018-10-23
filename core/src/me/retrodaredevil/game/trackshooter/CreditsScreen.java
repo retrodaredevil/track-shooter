@@ -26,7 +26,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		this.gameInput = gameInputs.get(0);
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
-		this.stage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
+		stage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 		Table table = new Table(renderObject.getUISkin());
 		table.setFillParent(true);
 		stage.addActor(table);
@@ -48,11 +48,10 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.add("Try out the gyro control scheme if your phone supports it!").center().row();
 	}
 	private Renderer createRenderer(){
-		Renderer r = new Renderer(renderObject.getBatch(), stage);
-		r.addRenderable(renderParts.getBackground());
-		r.addRenderable(renderParts.getOverlay());
-		r.addMainStage(); // chances are, the main stage has already been added
-		return r;
+		return new Renderer(renderObject.getBatch(), stage)
+				.addRenderable(renderParts.getBackground())
+				.addRenderable(renderParts.getOverlay())
+				.addMainStage(); // chances are, the main stage has already been added, but add it anyway
 	}
 
 	@Override

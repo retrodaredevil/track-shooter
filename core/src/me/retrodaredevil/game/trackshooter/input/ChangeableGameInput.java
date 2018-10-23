@@ -32,7 +32,7 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	public ChangeableGameInput(List<? extends UsableGameInput> gameInputs){
 		this.gameInputOptionValue = OptionValues.createRadioOptionValue(gameInputs, 0);
 		radioControlOption = new ControlOption("Game Input Options",
-				"What type of control scheme do you want?", "controls.main.options", gameInputOptionValue);
+				"What type of control scheme do you want?", "controls.main.options.control_choice", gameInputOptionValue);
 	}
 
 

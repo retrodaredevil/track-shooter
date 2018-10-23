@@ -11,6 +11,9 @@ import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+
 public class PlayerAIController implements EntityController {
 	private final Player player;
 	private Float lastShot = null;
@@ -49,7 +52,7 @@ public class PlayerAIController implements EntityController {
 				velocityMove.getTravelVelocitySetter().setDesiredVelocity(Constants.PLAYER_VELOCITY * velocity, 5, Constants.PLAYER_VELOCITY);
 			}
 
-			Float rotationalVelocity;
+			Float rotationalVelocity; // may use null as magic value to change later
 
 			if(time >= 25){
 				rotationalVelocity = null;
@@ -68,7 +71,7 @@ public class PlayerAIController implements EntityController {
 				final float targetRotation = Vector2.Zero.cpy().sub(player.getLocation()).angle();
 				final float currentRotation = player.getRotation();
 				final float minChange = MathUtil.minChange(targetRotation, currentRotation, 360);
-				rotationalVelocity = Math.min(minChange * 60, 60);
+				rotationalVelocity = max(min(minChange * 20, 60), -60);
 			}
 
 			if(moveComponent instanceof RotationalVelocitySetterMoveComponent){

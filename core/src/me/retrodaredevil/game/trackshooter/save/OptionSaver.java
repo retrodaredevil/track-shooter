@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import java.util.Collection;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 
@@ -23,12 +24,11 @@ public final class OptionSaver {
 		optionPreferences = Gdx.app.getPreferences("options");
 	}
 
-	public void loadControllerConfiguration(ConfigurableControllerPart configController){
-		Collection<? extends ControlOption> options = configController.getControlOptions();
+	public void loadControllerConfiguration(int playerIndex, ConfigurableObject configController){
+		final Collection<? extends ControlOption> options = configController.getControlOptions();
 		for(ControlOption option : options){
-			loadControlOption(option);
+			loadControlOption(playerIndex, option);
 		}
-//		System.out.println("Loaded " + options.size() + " options");
 	}
 
 	/**
@@ -36,10 +36,11 @@ public final class OptionSaver {
 	 * there was no saved value found
 	 * @param controlOption
 	 */
-	public void loadControlOption(ControlOption controlOption){
-		OptionValue value = controlOption.getOptionValue();
-		float savedValue = optionPreferences.getFloat(controlOption.getKey(), (float) value.getDefaultOptionValue());
-		if(savedValue < value.getMinOptionValue() || savedValue > value.getMaxOptionValue()){
+	public void loadControlOption(int playerIndex, ControlOption controlOption){
+		final OptionValue value = controlOption.getOptionValue();
+		final float defaultValue = (float) value.getDefaultOptionValue();
+		final float savedValue = optionPreferences.getFloat(getKey(playerIndex, controlOption), defaultValue);
+		if(savedValue < value.getMinOptionValue() || savedValue > value.getMaxOptionValue() || defaultValue == savedValue){
 			value.setToDefaultOptionValue();
 		} else {
 			value.setOptionValue(savedValue);
@@ -50,16 +51,28 @@ public final class OptionSaver {
 	 * Saves the value of the control option to a file
 	 * @param controlOption The control option
 	 */
-	public void saveControlOption(ControlOption controlOption, boolean flush){
-		optionPreferences.putFloat(controlOption.getKey(), (float) controlOption.getOptionValue().getOptionValue());
+	public void saveControlOption(int playerIndex, ControlOption controlOption, boolean flush){
+		final OptionValue optionValue = controlOption.getOptionValue();
+		final double value = optionValue.getOptionValue();
+		final String key = getKey(playerIndex, controlOption);
+		if(value == optionValue.getDefaultOptionValue()){
+			if(optionPreferences.contains(key)) {
+				optionPreferences.remove(key);
+			}
+		} else {
+			optionPreferences.putFloat(key, (float) value);
+		}
 		if(flush){
 			optionPreferences.flush();
 		}
 	}
 	/**
-	 * @see #saveControlOption(ControlOption, boolean)
+	 * @see #saveControlOption(int, ControlOption, boolean)
 	 */
-	public void saveControlOption(ControlOption controlOption){
-		this.saveControlOption(controlOption, true);
+	public void saveControlOption(int playerIndex, ControlOption controlOption){
+		this.saveControlOption(playerIndex, controlOption, true);
+	}
+	private String getKey(int playerIndex, ControlOption controlOption){
+		return "player." + playerIndex + "." + controlOption.getCategory();
 	}
 }

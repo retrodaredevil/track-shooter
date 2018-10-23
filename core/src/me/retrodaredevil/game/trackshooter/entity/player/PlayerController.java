@@ -56,9 +56,6 @@ public class PlayerController implements EntityController{
 			// now velocity is initialized
 			if(move instanceof TravelVelocitySetterMoveComponent) {
 				((TravelVelocitySetterMoveComponent) move).getTravelVelocitySetter().setVelocity(velocity);
-			} else {
-				System.err.println("move not instanceof TravelVelocityMoveComponent. Remove print error if intended.");
-				trackMove.setDistanceOnTrack(trackMove.getDistanceOnTrack() + delta * velocity);
 			}
 
 		} else {
@@ -68,11 +65,6 @@ public class PlayerController implements EntityController{
 		InputPart rotateAxis = gameInput.getRotateAxis();
 		double position = rotateAxis.getPosition();
 		if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
-//			if(rotateAxis.getAxisType().isRangeOver()){
-//				if(Math.abs(position) > 1){
-//					position = Math.signum(position);
-//				}
-//			}
 			float desired = (float) (ROTATE_PER_SECOND * position);
 			if (rotateAxis.isDeadzone()) {
 				desired = 0;
@@ -80,9 +72,6 @@ public class PlayerController implements EntityController{
 
 			if(move instanceof RotationalVelocitySetterMoveComponent){
 				((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(desired);
-			} else {
-				System.err.println("move not instanceof RotationalVelocityMoveComponent. Remove print error if intended.");
-				player.setRotation(player.getRotation() + delta * desired);
 			}
 		} else { // probably a mouse
 			if(move instanceof RotationalVelocitySetterMoveComponent){ // 0 velocity just in case

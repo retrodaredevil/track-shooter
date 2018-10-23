@@ -12,16 +12,16 @@ import java.util.Set;
 import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class MultiActorOptionProvider implements SingleOptionProvider {
 
-	private final Float width, height;
+	private final Size size;
 	private final Collection<? extends Actor> actors;
 	private final Set<Actor> alreadyAdded = new HashSet<>();
 
-	public MultiActorOptionProvider(Float width, Float height, Actor... actors){
-		this.width = width;
-		this.height = height;
+	public MultiActorOptionProvider(Size size, Actor... actors){
+		this.size = size;
 		this.actors = Arrays.asList(actors);
 	}
 
@@ -30,7 +30,7 @@ public class MultiActorOptionProvider implements SingleOptionProvider {
 		final List<SingleOption> r = new ArrayList<>();
 		for(Actor a : actors){
 			if(!alreadyAdded.contains(a)){
-				r.add(new PlainActorSingleOption(a, width, height));
+				r.add(new PlainActorSingleOption(a, size));
 				alreadyAdded.add(a);
 			}
 		}

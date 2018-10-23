@@ -144,17 +144,14 @@ public class GameScreen implements UsableScreen {
 		}
 	}
 	private Renderer createRenderer(){
-		Renderer renderer = new Renderer(renderObject.getBatch(), stage);
-		renderer.addRenderable(renderParts.getBackground());
-		renderer.addRenderable(world);
-		renderer.addMainStage(); // world should have added this anyway
-		renderer.addRenderable(renderParts.getTouchpadRenderer());
-		renderer.addRenderable(renderParts.getOptionsMenu());
-		if(pauseMenu != null) {
-			renderer.addRenderable(pauseMenu);
-		}
-		renderer.addRenderable(renderParts.getOverlay());
-		return renderer;
+		return new Renderer(renderObject.getBatch(), stage)
+				.addRenderable(renderParts.getBackground())
+				.addRenderable(world)
+				.addMainStage() // world should have added this anyway
+				.addRenderable(renderParts.getTouchpadRenderer())
+				.addRenderable(renderParts.getOptionsMenu())
+				.addRenderable(pauseMenu) // may be null
+				.addRenderable(renderParts.getOverlay());
 	}
 	private void doRender(float delta){
 		createRenderer().render(delta);
@@ -185,7 +182,7 @@ public class GameScreen implements UsableScreen {
 	public void pause() {
 		// called when exiting app when the app is still open
 		if(pauseMenu != null && !pauseMenu.isMenuOpen()){
-			pauseMenu.setControllerAndOpen(gameInputs.get(0));
+			pauseMenu.setControllerAndOpen(0, gameInputs.get(0));
 		}
 		if(gameType == GameType.DEMO_AI){
 			setToExit();

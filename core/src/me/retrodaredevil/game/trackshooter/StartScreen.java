@@ -22,12 +22,14 @@ import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderC
 import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private static final float DEMO_GAME_INIT_IDLE = 45;
 
 	private final List<GameInput> gameInputs;
 	private final GameInput gameInput;
+	private final int gameInputPlayerIndex;
 	private final RenderParts renderParts;
 	private final RenderObject renderObject;
 	private UsableScreen nextScreen = null;
@@ -43,7 +45,8 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
 		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
-		this.gameInput = gameInputs.get(0);
+		this.gameInputPlayerIndex = 0;
+		this.gameInput = gameInputs.get(gameInputPlayerIndex);
 		this.renderParts = Objects.requireNonNull(renderParts);
 		this.renderObject = Objects.requireNonNull(renderObject);
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
@@ -56,20 +59,20 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		// this is initialized after each button because it uses them
 		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(
 				renderObject,
+                gameInputPlayerIndex,
 				gameInput,
 				new PlainTable(),
-				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT, startButton, optionsButton, creditsButton)),
+				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, startButton, optionsButton, creditsButton)),
 				() -> {} // do nothing on back button
 		));
 
 	}
 	private Renderer createRenderer(){
-		Renderer renderer = new Renderer(renderObject.getBatch(), uiStage);
-		renderer.addRenderable(renderParts.getBackground());
-		renderer.addMainStage();
-		renderer.addRenderable(renderParts.getOptionsMenu().isMenuOpen() ? renderParts.getOptionsMenu() : menuRenderable);
-		renderer.addRenderable(renderParts.getOverlay());
-		return renderer;
+		return new Renderer(renderObject.getBatch(), uiStage)
+				.addRenderable(renderParts.getBackground())
+				.addMainStage()
+				.addRenderable(renderParts.getOptionsMenu().isMenuOpen() ? renderParts.getOptionsMenu() : menuRenderable)
+				.addRenderable(renderParts.getOverlay());
 	}
 	@Override
 	public void render(float delta) {
@@ -93,7 +96,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			return;
 		}
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
-			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
+			renderParts.getOptionsMenu().setToController(gameInputPlayerIndex, gameInput, gameInputPlayerIndex, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
 		renderParts.getOverlay().setPauseVisible(false);

@@ -49,7 +49,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		mainJoystick = References.create(controller::getLeftJoy);
 //		getMainJoystick = controller.getDPad();
 		ControlOption rotateAxisSensitivity = new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
-				"controls.all", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
+				"controls.rotation.controller.sensitivity", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
 		rotateAxis = new SensitiveInputPart(
 				References.create(() -> controller.getRightJoy().getXAxis()),
 				rotateAxisSensitivity.getOptionValue(),null);

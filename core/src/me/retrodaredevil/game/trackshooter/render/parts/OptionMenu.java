@@ -16,7 +16,9 @@ import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.ConfigurableObjectOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
+import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	private final RenderObject renderObject;
@@ -42,7 +44,7 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	 * @param configController The Controller to config
 	 * @param menuController The controller to control the options menu
 	 */
-	public void setToController(ConfigurableControllerPart configController, GameInput menuController){
+	public void setToController(int configControllerPlayerIndex, ConfigurableControllerPart configController, int menuControllerPlayerIndex, GameInput menuController){
 		if (renderComponent != null) {
 			if(currentController == configController){
 				System.err.println("it's the same!");
@@ -54,14 +56,15 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 			renderComponent = null;
 			return;
 		}
-		renderComponent = new SelectionMenuRenderComponent(renderObject, menuController,
+		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
 				new DialogTable("Options", renderObject),
-				Collections.singleton(new ConfigurableObjectOptionProvider(menuController, renderObject, saveObject)), this::closeMenu);
+//				new PlainTable(),
+				Collections.singleton(new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject)), this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}
 	@Override
 	public void closeMenu(){
-		setToController(null, null);
+		setToController(-1, null, -1, null);
 	}
 
 	@Override

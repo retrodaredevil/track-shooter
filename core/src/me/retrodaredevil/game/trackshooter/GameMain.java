@@ -14,7 +14,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -34,7 +33,6 @@ import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
 import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
-import me.retrodaredevil.game.trackshooter.render.parts.PauseMenu;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -100,8 +98,12 @@ public class GameMain extends Game {
 			controllerManager.addController(realGameInput);
 			inputs.add(realGameInput);
 		}
-		for(GameInput input : inputs) {
-			saveObject.getOptionSaver().loadControllerConfiguration(input);
+		{
+			int i = 0;
+			for (GameInput input : inputs) {
+				saveObject.getOptionSaver().loadControllerConfiguration(i, input);
+				i++;
+			}
 		}
 
 //		Gdx.app.setLogLevel(Application.LOG_ERROR);
@@ -117,7 +119,7 @@ public class GameMain extends Game {
 				gameInputs.add(GameInputs.createTouchGyroInput());
 			}
 		}
-		gameInputs.add(GameInputs.createKeyboardInput());
+		gameInputs.add(GameInputs.createMouseAndKeyboardInput());
 		return gameInputs;
 	}
 

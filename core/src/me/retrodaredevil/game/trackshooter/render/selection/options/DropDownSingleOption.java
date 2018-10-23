@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class DropDownSingleOption extends ControlOptionSingleOption {
 
@@ -23,8 +24,8 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	private final Array<String> itemsArray;
 	private boolean isShown = false;
 
-	public DropDownSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
-		super(controlOption, optionSaver);
+	public DropDownSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(size, playerIndex, controlOption, optionSaver);
 		OptionValue value = controlOption.getOptionValue();
 		if(!value.isOptionValueRadio()){
 			throw new IllegalArgumentException("Cannot create a " + getClass().getSimpleName() + " with an OptionValue that is not 'radio'!");

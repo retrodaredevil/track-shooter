@@ -34,17 +34,28 @@ public interface SingleOption {
 
 	/**
 	 * Called when this option is "selected"
-	 * @param delta
+	 * @param delta The delta time in seconds
 	 * @param selector The selector joystick
 	 * @param select The button to select
 	 * @param back The back button
 	 * @param requestedActions A collection of actions that the caller would like to do. The implementation should remove actions that are not desired
 	 */
 	void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions);
+
+	/**
+	 * Called when this option should be deselected
+	 */
 	void deselect();
 
 
 	enum SelectAction {
-		EXIT_MENU, CHANGE_OPTION
+		/**
+		 * Usually used when using the back button
+		 */
+		EXIT_MENU,
+		/**
+		 * Used when pressing up/down or in some cases left/right to change the option
+		 */
+		CHANGE_OPTION
 	}
 }

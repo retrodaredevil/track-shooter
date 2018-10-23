@@ -38,9 +38,9 @@ public class StandardUSBControllerInput extends SimpleControllerInput implements
 	private final ControlOption isNintendoControllerControlOption;
 
 	public StandardUSBControllerInput(Controller controller){
-		isNintendoControllerControlOption = new ControlOption("Are Buttons Nintendo Style",
-				"Should be checked if the controller has A as left face button.",
-				"controller." + controller.getName() + ".layout", OptionValues.createBooleanOptionValue(false));
+		isNintendoControllerControlOption = new ControlOption("Are physical face button locations inverted",
+				"Should be checked for some nintendo controllers where the select button is the right face button",
+				"controller.main.controller." + controller.getName() + ".layout.physical_face_buttons_inverted", OptionValues.createBooleanOptionValue(false));
 		this.controller = controller;
 
 		start = new ControllerInputPart(controller, AxisType.DIGITAL, 9);

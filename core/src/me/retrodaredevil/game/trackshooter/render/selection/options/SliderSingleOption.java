@@ -1,9 +1,12 @@
 package me.retrodaredevil.game.trackshooter.render.selection.options;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Slider;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+import com.badlogic.gdx.utils.Align;
 
 import java.util.Collection;
 
@@ -14,24 +17,46 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
+import me.retrodaredevil.game.trackshooter.util.MathUtil;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class SliderSingleOption extends ControlOptionSingleOption {
-	private static final float SLIDER_PERCENT_MULTIPLIER = .5f;
+	private static final float SLIDER_PERCENT_MULTIPLIER = .35f;
 	private static final String STYLE_NAME = "small";
+	private static final float KNOB_RADIUS = 25;
 	private final RenderObject renderObject;
 
 	private final Slider slider;
 	private Label valueLabel = null;
 	private Float sliderPercent = null;
 
-	public SliderSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
-		super(controlOption, optionSaver);
+	public SliderSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(size, playerIndex, controlOption, optionSaver);
 		this.renderObject = renderObject;
 
 		OptionValue value = controlOption.getOptionValue();
 
 		slider = new Slider((float) value.getMinOptionValue(), (float) value.getMaxOptionValue(),
 				value.isOptionAnalog() ? .05f : 1, false, renderObject.getUISkin());
+		Slider.SliderStyle style = slider.getStyle();
+		for(Drawable d : new Drawable[]{style.knob, style.knobDown, style.knobOver, style.disabledKnob}){
+			if(d != null){
+				d.setMinWidth(KNOB_RADIUS);
+				d.setMinHeight(KNOB_RADIUS);
+			}
+		}
+		// credit to https://badlogicgames.com/forum/viewtopic.php?t=12612
+		slider.addListener(new InputListener() {
+			public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+				event.stop();
+				return false;
+			}
+		});
+//		for(Drawable d : new Drawable[]{style.knobBefore, style.knobAfter, style.disabledKnobBefore, style.disabledKnobAfter}){
+//			if(d != null){
+//				d.setMinHeight(10);
+//			}
+//		}
 	}
 
 	@Override
@@ -41,11 +66,25 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 
 		slider.setValue((float) value.getOptionValue());
 		valueLabel = new Label("", renderObject.getUISkin(), STYLE_NAME);
+		Size size = getSize();
+		size.requireWidth();
 
-		container.add(valueLabel).width(60);
-		container.add(slider).width(115);
-		container.add().width(5);
-		container.add(new Label("" + controlOption.getLabel(), renderObject.getUISkin(), STYLE_NAME)).width(220);
+		Table firstRow = new Table();
+		container.add(firstRow);
+		firstRow.add(valueLabel).width(size.ofWidth(.15f));
+		firstRow.add().width(size.ofWidth(.05f));
+		final Label label = new Label("" + controlOption.getLabel(), renderObject.getUISkin(), STYLE_NAME);
+		label.setAlignment(Align.right);
+		firstRow.add(label).width(size.ofWidth(.80f));
+
+		container.row();
+
+		Table secondRow = new Table();
+		container.add(secondRow);
+		secondRow.add(slider).width(size.ofWidth(1));
+
+		container.row();
+		container.add().height(20); // put some space
 	}
 
 	@Override
@@ -78,7 +117,8 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 			if (sliderPercent == null) {
 				sliderPercent = slider.getPercent();
 			}
-			sliderPercent += (float) selector.getX() * delta * SLIDER_PERCENT_MULTIPLIER;
+			final double x = MathUtil.preservePow(selector.getX(), 3);
+			sliderPercent += (float) x * delta * SLIDER_PERCENT_MULTIPLIER;
 			if (sliderPercent < 0) {
 				sliderPercent = 0f;
 			}

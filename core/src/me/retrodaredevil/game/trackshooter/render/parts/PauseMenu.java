@@ -23,6 +23,7 @@ import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderC
 import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+import me.retrodaredevil.game.trackshooter.util.Size;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PauseMenu implements Updateable, Renderable, InputFocusable, CloseableMenu {
@@ -50,9 +51,9 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		this.exitGameAction = exitGameAction;
 		stage = new Stage(new ExtendViewport(640, 640), renderObject.getBatch());
 		renderComponent = new SelectionMenuRenderComponent(
-				renderObject, gameInputs.get(0), new PlainTable(),
+				renderObject, 0, gameInputs.get(0), new PlainTable(),
 				Collections.singleton(new MultiActorOptionProvider(
-						Constants.BUTTON_WIDTH, Constants.BUTTON_HEIGHT,
+						Constants.BUTTON_SIZE,
 						resumeButton = new TextButton("resume", renderObject.getUISkin()),
 						optionsButton = new TextButton("options", renderObject.getUISkin()),
 						exitButton = new TextButton("exit game", renderObject.getUISkin())
@@ -60,17 +61,17 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 				() -> {}
 		);
 	}
-	public void setControllerAndOpen(GameInput menuController){
+	public void setControllerAndOpen(int playerIndex, GameInput menuController){
 		if(menuController == null){
 			System.err.println("Setting to a null menuController for the pause menu!");
 		}
-		renderComponent.setMenuController(menuController);
+		renderComponent.setMenuController(playerIndex, menuController);
 		open = true;
 	}
 	@Override
 	public void closeMenu(){
 		open = false;
-		renderComponent.setMenuController(null);
+		renderComponent.setMenuController(null, null);
 		exitPressedTime = null;
 		renderParts.getOptionsMenu().closeMenu();
 	}
@@ -86,15 +87,19 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 			renderComponent.clearTable(); // clear so the hit boxes of the thing in the table don't get in the way
 			return;
 		}
-		for(GameInput input : gameInputs){
-			if(input.getPauseButton().isPressed()){
-				toggle(input);
-				break;
+		{
+			int i = 0;
+			for (GameInput input : gameInputs) {
+				if (input.getPauseButton().isPressed()) {
+					toggle(i, input);
+					break;
+				}
+				i++;
 			}
 		}
 		renderParts.getOverlay().setPauseVisible(Gdx.input.isPeripheralAvailable(Input.Peripheral.MultitouchScreen));
 		if(renderParts.getOverlay().isPausePressed()){
-			toggle(gameInputs.get(0));
+			toggle(0, gameInputs.get(0));
 		}
 		if(!isMenuOpen()){
 			return;
@@ -119,16 +124,16 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		wasResumeDown = resumeDown;
 
 		if(optionsButton.isPressed()){
-			GameInput gameInput = renderComponent.getMenuController();
-			System.out.println("gameInput: " + gameInput);
-			renderParts.getOptionsMenu().setToController(gameInput, gameInput);
+			final GameInput gameInput = renderComponent.getMenuController();
+			final int playerIndex = renderComponent.getPlayerIndex();
+			renderParts.getOptionsMenu().setToController(playerIndex, gameInput, playerIndex, gameInput);
 		}
 	}
-	private void toggle(GameInput controller){
+	private void toggle(int playerIndex, GameInput controller){
 		if(isMenuOpen()){
 			closeMenu();
 		} else {
-			setControllerAndOpen(controller);
+			setControllerAndOpen(playerIndex, controller);
 		}
 	}
 

@@ -28,26 +28,37 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 	private final List<OptionPair> singleOptionPairs = new ArrayList<>();
 
 	/** The menu controller. May be null*/
-	private GameInput menuController;
+	private GameInput menuController = null;
+	private Integer playerIndex = null;
 
 	/** The option index. null represents none selected*/
 	private Integer selectedOptionIndex = null;
 
-	public SelectionMenuRenderComponent(RenderObject renderObject, GameInput menuController,
+	public SelectionMenuRenderComponent(RenderObject renderObject, Integer playerIndex, GameInput menuController,
 										ContentTableProvider contentTableProvider,
 										Collection<? extends SingleOptionProvider> optionProviders,
 										ExitRequestListener exitRequestListener){
-		setMenuController(menuController);
+		setMenuController(playerIndex, menuController);
 		this.contentTableProvider = contentTableProvider;
 		this.optionProviders = optionProviders;
 		this.exitRequestListener = exitRequestListener;
 
 	}
-	public void setMenuController(GameInput menuController){ this.menuController = menuController; }
+	public void setMenuController(Integer playerIndex, GameInput menuController){
+		this.playerIndex = playerIndex;
+		this.menuController = menuController;
+	}
 	public GameInput getMenuController(){ return menuController; }
+	public Integer getPlayerIndex(){ return playerIndex; }
 
 	public void clearTable(){
 		contentTableProvider.resetTable();
+	}
+	public void resetOptions(){
+		for(OptionPair pair : singleOptionPairs){
+			SingleOption option = pair.getSingleOption();
+			option.reset();
+		}
 	}
 
 	@Override

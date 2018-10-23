@@ -40,22 +40,28 @@ import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 public final class GameInputs {
 	/** The amount of time to keep "constant" shooting after the rotate area has been released (in milliseoncds)*/
 	private static final long CONSTANT_SHOOT_TIME_AFTER_RELEASE = 500;
+	private static final String TOUCH = "touch";
+	private static final String MOUSE = "mouse";
 
 	private GameInputs(){}
 
-	private static ControlOption createMouseMultiplier(OptionTracker options, boolean mobile){
+	/**@param options The OptionTracker to append to
+	 * @param touchScreen true if this is for a touch screen
+	 * @param baseControlScheme Usually "mouse" or "touch"
+	 * @return The ControlOption */
+	private static ControlOption createRotationMultiplier(OptionTracker options, boolean touchScreen, String baseControlScheme){
 		final double min = .2;
 		final double max = 2;
-		final double def = Math.min(max, Math.max(min, getDefaultMouseMultiplier(mobile)));
-		final OptionValue mouseMultiplier = OptionValues.createAnalogRangedOptionValue(min, max, def);
+		final double def = Math.min(max, Math.max(min, getDefaultMouseMultiplier(touchScreen)));
+		final OptionValue multiplier = OptionValues.createAnalogRangedOptionValue(min, max, def);
 		ControlOption r = new ControlOption("Rotation Sensitivity", "How sensitive should rotation be",
-				"controls.all.mouse", mouseMultiplier);
+				"controls.rotation." + baseControlScheme + ".sensitivity", multiplier);
 		options.add(r);
 		return r;
 	}
 	private static double getDefaultMouseMultiplier(boolean mobile){
 		if(mobile) {
-			double def = 2 / (Gdx.graphics.getDensity() + .3);
+			double def = 1.5 / (Gdx.graphics.getDensity() + .3);
 			return Math.round(def * 10.0) / 10.0;
 		}
 		return 1;
@@ -66,16 +72,17 @@ public final class GameInputs {
 	 * @param options The OptionTracker
 	 * @return The created ControlOption
 	 */
-	private static ControlOption createMouseInvert(OptionTracker options){
-		final OptionValue mouseInvert = OptionValues.createBooleanOptionValue(false);
+	private static ControlOption createRotationInvert(OptionTracker options, String baseControlScheme){
+		final OptionValue invert = OptionValues.createBooleanOptionValue(false);
 		ControlOption r = new ControlOption("Invert Rotation", "Should the rotation be inverted",
-				"controls.all.mouse", mouseInvert);
+				"controls.rotation." + baseControlScheme + ".invert", invert);
 		options.add(r);
 		return r;
 	}
-	private static InputPart createAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String controlType, String label){
+	private static InputPart createRotationAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String baseControlScheme){
 		final OptionValue useY = OptionValues.createBooleanOptionValue(useYByDefault);
-		options.add(new ControlOption(label, "Should the Y Axis be used", "controls.all." + controlType + ".axis_choice", useY));
+		options.add(new ControlOption("Use Y Axis for Rotation", "Should the Y Axis be used for rotation",
+				"controls.rotation." + baseControlScheme + ".use_y_axis", useY));
 
 		InputPart r = References.create(() -> useY.getBooleanOptionValue() ? yAxis : xAxis);
 		r.addChild(xAxis);
@@ -83,28 +90,27 @@ public final class GameInputs {
 		return r;
 	}
 	private static InputPart createMouseAxis(OptionTracker options){
-		OptionValue mouseMultiplier = createMouseMultiplier(options, false).getOptionValue();
-		OptionValue mouseInverted = createMouseInvert(options).getOptionValue();
-		return createAxisChooser(
+		OptionValue mouseMultiplier = createRotationMultiplier(options, false, MOUSE).getOptionValue();
+		OptionValue mouseInverted = createRotationInvert(options, MOUSE).getOptionValue();
+		return createRotationAxisChooser(
 				new GdxMouseAxis(false, () -> 1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
 				new GdxMouseAxis(true, () -> -1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
-				options, false, "mouse", "Use Y Axis for Rotation"
+				options, false, MOUSE
 		);
 	}
-	private static InputPart createPhoneAxis(OptionTracker options, ScreenAreaGetter proportionalScreenAreaGetter, OptionValue isLeftHanded){
-
-		OptionValue mouseMultiplier = createMouseMultiplier(options, true).getOptionValue();
-		OptionValue mouseInverted = createMouseInvert(options).getOptionValue();
-		return createAxisChooser(
-				new GdxMouseAxis(false, () -> 7.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1), proportionalScreenAreaGetter),
+	private static InputPart createTouchAxis(OptionTracker options, ScreenAreaGetter proportionalScreenAreaGetter, OptionValue isLeftHanded){
+		OptionValue multiplier = createRotationMultiplier(options, true, TOUCH).getOptionValue();
+		OptionValue inverted = createRotationInvert(options, TOUCH).getOptionValue();
+		return createRotationAxisChooser(
+				new GdxMouseAxis(false, () -> 7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1), proportionalScreenAreaGetter),
 				new GdxMouseAxis(true,
-						() -> -7.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
+						() -> -7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
 						proportionalScreenAreaGetter),
-				options, true, "phone", "Use Y Axis for Rotation"
+				options, true, TOUCH
 		);
 	}
 
-	public static UsableGameInput createKeyboardInput(){
+	public static UsableGameInput createMouseAndKeyboardInput(){
 		final JoystickPart mainJoystick = FourKeyJoystick.newWASDJoystick();
 		final JoystickPart selectorJoystick = FourKeyJoystick.newArrowKeyJoystick();
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseButton, backButton, enterButton;
@@ -134,7 +140,7 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createPhoneInput(RenderParts renderParts) {
+	private static UsableGameInput createTouchInput(RenderParts renderParts) {
 		if(renderParts == null && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
 		}
@@ -148,7 +154,7 @@ public final class GameInputs {
 
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
-				"controls.all.phone.hand", isLeftHanded));
+				"controls.main." + TOUCH + ".left_handed", isLeftHanded));
 		final ScreenAreaGetter fireAreaGetter;
 		final ScreenAreaGetter rotateAreaGetter;
 		{
@@ -178,13 +184,14 @@ public final class GameInputs {
 
 			options.add(new ControlOption("Constant Shoot",
 					"Should you be constantly shooting when holding down on the rotation area",
-					"controls.all.constant_shoot", constantShoot));
+					"controls.shooting." + TOUCH + ".constant_shoot", constantShoot));
+
 			options.add(new ControlOption("Joystick X Position",
-					"The x position of the joystick.", "controls.joystick.position.x", distanceAwayX));
+					"The x position of the joystick.", "controls.movement." + TOUCH + ".joystick.position.x", distanceAwayX));
 			options.add(new ControlOption("Joystick Y Position",
-					"The y position of the joystick.", "controls.joystick.position.y", heightOption));
+					"The y position of the joystick.", "controls.movement." + TOUCH + ".joystick.position.y", heightOption));
 			options.add(new ControlOption("Joystick size",
-					"The size of the joystick relative to the height", "controls.joystick.size", diameterOption));
+					"The size of the joystick relative to the height", "controls.movement." + TOUCH + ".joystick.size", diameterOption));
 
 			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
@@ -207,7 +214,6 @@ public final class GameInputs {
 					new GdxScreenTouchButton(fireAreaGetter),
 					new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
 							inputPart -> !constantShoot.getBooleanOptionValue() && inputPart.isReleased()), // will fire if released when constant shoot not enabled
-					// for 80ms, the above InputPart won't register - this is on purpose to avoid lots of shots at once
 					new LowestPositionInputPart(
 							new DigitalPatternInputPart(160, 80),
 							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
@@ -229,21 +235,21 @@ public final class GameInputs {
 			), true);
 		} else {
 			visibilityChanger = null;
-			mainJoystick = new GdxTiltJoystick();
+			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt");
 			options.add((ConfigurableObject) mainJoystick);
 
 			fireButton = new GdxScreenTouchButton(fireAreaGetter);
 		}
-		rotateAxis = createPhoneAxis(options, rotateAreaGetter, isLeftHanded);
+		rotateAxis = createTouchAxis(options, rotateAreaGetter, isLeftHanded);
 
 		startButton = new DummyInputPart(0, false);
 		slow = new DummyInputPart(0, false);
 
-		OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 8);
+		OptionValue shakeThresholdValue = OptionValues.createDigitalRangedOptionValue(3, 16, 9);
 		GdxShakeButton button = new GdxShakeButton(shakeThresholdValue);
-		options.add(new ControlOption("Powerup Activate Shake Sensitivity",
-				"How much you have to shake the device to activate the powerup in m/s^2",
-				"controls.all.shake", shakeThresholdValue));
+		options.add(new ControlOption("Power-up Activate Shake Threshold",
+				"How much you have to shake the device to activate the power-up in m/s^2",
+				"controls.misc." + TOUCH + ".powerup.shake_threshold", shakeThresholdValue));
 		activatePowerup = button;
 		if(Gdx.app.getType() == Application.ApplicationType.Android) {
 			pauseBackButton = new KeyInputPart(Input.Keys.BACK);
@@ -276,11 +282,10 @@ public final class GameInputs {
 		return r;
 	}
 	public static UsableGameInput createTouchGyroInput(){
-		return createPhoneInput(null);
+		return createTouchInput(null);
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts){
-		Objects.requireNonNull(renderParts);
-		return createPhoneInput(renderParts);
+		return createTouchInput(Objects.requireNonNull(renderParts));
 	}
 }

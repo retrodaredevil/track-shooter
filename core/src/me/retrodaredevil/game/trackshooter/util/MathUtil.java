@@ -148,4 +148,11 @@ public final class MathUtil {
 			System.arraycopy(copiedArray, 0, copiedArray, last, Math.min(last << 1, newLength) - last);
 		}
 	}
+
+	/** @param a The number on the left of the expression
+	 * @param b The number on the right of the expression
+	 * @return a**b with the same sign as a */
+	public static double preservePow(double a, double b){
+		return Math.signum(a) * Math.abs(Math.pow(a, b));
+	}
 }

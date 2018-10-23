@@ -13,13 +13,14 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class CheckBoxSingleOption extends ControlOptionSingleOption {
 
 	private final CheckBox checkBox;
 
-	public CheckBoxSingleOption(ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
-		super(controlOption, optionSaver);
+	public CheckBoxSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+		super(size, playerIndex, controlOption, optionSaver);
 
 		checkBox = new CheckBox(controlOption.getLabel(), renderObject.getUISkin());
 	}
@@ -44,8 +45,10 @@ public class CheckBoxSingleOption extends ControlOptionSingleOption {
 	@Override
 	protected void onUpdate(Table container) {
 		super.onUpdate(container);
-		checkBox.getLabel().setAlignment(Align.center);
-		checkBox.getLabelCell().width(400 - checkBox.getImage().getWidth());
+		checkBox.getLabel().setAlignment(Align.right);
+		if(getSize().hasWidth()) {
+			checkBox.getLabelCell().width(getSize().ofWidth(1) - checkBox.getImage().getWidth());
+		}
 	}
 
 	@Override

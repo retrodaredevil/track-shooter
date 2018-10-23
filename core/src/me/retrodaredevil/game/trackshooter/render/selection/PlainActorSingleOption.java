@@ -10,28 +10,21 @@ import java.util.Collection;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
+import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class PlainActorSingleOption extends ContainerSingleOption{
 	private final Actor actor;
-	private final Float width, height;
 
-	public PlainActorSingleOption(Actor actor, Float width, Float height){
-		super();
+	public PlainActorSingleOption(Actor actor, Size size){
+		super(size);
 		this.actor = actor;
-		this.width = width;
-		this.height = height;
 	}
 
 	@Override
 	protected void onInit(Table container) {
 		super.onInit(container);
 		Cell<Actor> cell = container.add(actor);
-		if(width != null){
-			cell.width(width);
-		}
-		if(height != null){
-			cell.height(height);
-		}
+		getSize().apply(cell);
 	}
 
 	@Override
@@ -40,13 +33,10 @@ public class PlainActorSingleOption extends ContainerSingleOption{
 		if(select.isPressed()){
 			ActorUtil.fireInputEvents(actor, InputEvent.Type.touchDown, InputEvent.Type.touchUp);
 		}
-//		if(select.isReleased()){
-//		}
 	}
 
 	@Override
 	public void deselect() {
 		ActorUtil.fireInputEvents(actor, InputEvent.Type.exit);
-
 	}
 }
