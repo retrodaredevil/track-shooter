@@ -20,10 +20,9 @@ import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.util.Size;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PauseMenu implements Updateable, Renderable, InputFocusable, CloseableMenu {

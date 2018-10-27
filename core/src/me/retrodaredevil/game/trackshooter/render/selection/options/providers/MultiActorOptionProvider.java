@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.selection.options;
+package me.retrodaredevil.game.trackshooter.render.selection.options.providers;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 
@@ -20,6 +20,11 @@ public class MultiActorOptionProvider implements SingleOptionProvider {
 	private final Collection<? extends Actor> actors;
 	private final Set<Actor> alreadyAdded = new HashSet<>();
 
+	/**
+	 *
+	 * @param size The size that will be applied to each actors' cell
+	 * @param actors The actors that will be "provided" to be added
+	 */
 	public MultiActorOptionProvider(Size size, Actor... actors){
 		this.size = size;
 		this.actors = Arrays.asList(actors);

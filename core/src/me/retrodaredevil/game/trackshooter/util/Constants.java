@@ -13,6 +13,7 @@ public final class Constants {
 
 	/** The normal size for buttons on menus with buttons */
 	public static final Size BUTTON_SIZE = Size.createSize(220, 60);
+	public static final Size BACK_BUTTON_SIZE = Size.createSize(150, 45);
 
 	/** The maximum velocity the player can travel at on the track*/
 	public static final float PLAYER_VELOCITY = 5f;

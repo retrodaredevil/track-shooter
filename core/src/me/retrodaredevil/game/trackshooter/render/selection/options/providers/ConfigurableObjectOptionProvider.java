@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.render.selection.options;
+package me.retrodaredevil.game.trackshooter.render.selection.options.providers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +12,9 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.CheckBoxSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.DropDownSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.SliderSingleOption;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
@@ -27,12 +30,21 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	private final SaveObject saveObject;
 	private final Map<SingleOption, ControlOption> singleControlOptionMap = new HashMap<>();
 
+	/**
+	 *
+	 * @param size The size that must include a width. This width will be applied to each option
+	 * @param playerIndex The player index of the configurableObject
+	 * @param configurableObject The object/controller that has ControlOptions to be altered by
+	 * @param renderObject The RenderObject
+	 * @param saveObject The SaveObject
+	 */
 	public ConfigurableObjectOptionProvider(Size size, int playerIndex, ConfigurableObject configurableObject, RenderObject renderObject, SaveObject saveObject){
 		this.size = size;
 		this.playerIndex = playerIndex;
 		this.configurableObject = configurableObject;
 		this.renderObject = renderObject;
 		this.saveObject = saveObject;
+		size.requireWidth();
 	}
 
 	@Override

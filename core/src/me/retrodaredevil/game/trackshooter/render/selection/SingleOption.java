@@ -10,6 +10,10 @@ import me.retrodaredevil.controller.input.JoystickPart;
 /**
  * As of right now, this is for representing a single, selectable and updatable option. In the future,
  * this may be able to represent a button, or just anything that can fit on a menu
+ * <p>
+ * NOTE: This contents that this SingleOption adds to the table may be removed. If/when this happens,
+ * this does not mean that this SingleOption will stop being updated. It simply means that you must re-add
+ * whatever the implementation of this added.
  */
 public interface SingleOption {
 	/**
@@ -19,8 +23,9 @@ public interface SingleOption {
 	 * <p>
 	 * If you add something to the table, it is expected that you also add a new row after adding things
 	 * @param table The table to add something to
+	 * @param requestedActions The actions that are currently being requested. This is allowed to be modified or added to
 	 */
-	void renderUpdate(Table table);
+	void renderUpdate(Table table, Collection<? super SelectAction> requestedActions);
 
 	/**
 	 * Should reset the control option to its original state
@@ -28,7 +33,7 @@ public interface SingleOption {
 	void reset();
 
 	/**
-	 * Should remove whatever was added to the table in {@link #renderUpdate(Table)}
+	 * Should remove whatever was added to the table in {@link #renderUpdate(Table, Collection)}
 	 */
 	void remove();
 

@@ -12,6 +12,11 @@ public interface SingleOptionProvider {
 	Collection<? extends SingleOption> getOptionsToAdd();
 
 	/**
+	 * As of the current implementation, only calling this method and only when that call returns true,
+	 * is a SingleOption allowed to be removed.
+	 * <p>
+	 * If this method is called, then the passed singleOption MUST be removed. Depending on the implementation,
+	 * it is possible that {@link #getOptionsToAdd()} will re-add it.
 	 * @param singleOption A previously added SingleOption
 	 * @return true if the option should be kept, false to remove
 	 */

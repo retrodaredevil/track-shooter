@@ -19,10 +19,9 @@ import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.options.MultiActorOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private static final float DEMO_GAME_INIT_IDLE = 45;

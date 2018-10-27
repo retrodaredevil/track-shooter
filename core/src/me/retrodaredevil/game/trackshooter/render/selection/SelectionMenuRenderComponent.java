@@ -100,7 +100,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 					singleOption.remove();
 					it.remove();
 				} else {
-					singleOption.renderUpdate(contentTableProvider.getContentTable());
+					singleOption.renderUpdate(contentTableProvider.getContentTable(), requestingActions);
 					if(menuController != null && selectedOptionIndex != null && i == selectedOptionIndex){
 						singleOption.selectUpdate(delta, selectJoystick, selectButton, backButton, requestingActions);
 					}
@@ -133,17 +133,6 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		for(OptionPair pair : singleOptionPairs){
 			pair.getSingleOption().remove();
 		}
-	}
-	private static class OptionPair {
-		private final SingleOption singleOption;
-		private final SingleOptionProvider provider;
-
-		OptionPair(SingleOption singleOption, SingleOptionProvider provider){
-			this.singleOption = singleOption;
-			this.provider = provider;
-		}
-		SingleOption getSingleOption(){ return singleOption; }
-		SingleOptionProvider getProvider(){ return provider; }
 	}
 	public interface ExitRequestListener {
 		void onExit();

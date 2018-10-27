@@ -2,8 +2,10 @@ package me.retrodaredevil.game.trackshooter.render.parts;
 
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -13,11 +15,13 @@ import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.ButtonExitMenuSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.options.ConfigurableObjectOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.ConfigurableObjectOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
-import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
@@ -58,8 +62,11 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 		}
 		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
 				new DialogTable("Options", renderObject),
-//				new PlainTable(),
-				Collections.singleton(new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject)), this::closeMenu);
+				Arrays.asList(
+						new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject),
+						new BasicOptionProvider(new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), Constants.BACK_BUTTON_SIZE))
+				),
+				this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}
 	@Override
