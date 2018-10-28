@@ -16,11 +16,13 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.ButtonExitMenuSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.ButtonSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.HorizontalSelectionSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.ConfigurableObjectOptionProvider;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.PageControlOptionVisibility;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Constants;
@@ -62,14 +64,28 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 			renderComponent = null;
 			return;
 		}
+		final PageControlOptionVisibility pageControlOptionVisibility = new PageControlOptionVisibility();
+		final Size topSize = Constants.OPTIONS_MENU_TOP_BUTTONS_SIZE;
+		final Size size = Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE;
 		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
 				new DialogTable("Options", renderObject),
 				Arrays.asList(
-						new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject),
-						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(
-								new BasicOptionProvider(new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE)),
-								new BasicOptionProvider(new PlainActorSingleOption(new TextButton("test", renderObject.getUISkin(), "small"), Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE))
-						)))
+						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(new BasicOptionProvider(
+								new ButtonSingleOption(new TextButton("Main", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MAIN)),
+								new ButtonSingleOption(new TextButton("Move", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MOVEMENT)),
+								new ButtonSingleOption(new TextButton("Rotate", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.ROTATION)),
+								new ButtonSingleOption(new TextButton("Shoot", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.SHOOTING)),
+								new ButtonSingleOption(new TextButton("Misc", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MISC))
+						)))),
+						new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject, pageControlOptionVisibility),
+						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(new BasicOptionProvider(
+								new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), size)
+						))))
 				),
 				this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary

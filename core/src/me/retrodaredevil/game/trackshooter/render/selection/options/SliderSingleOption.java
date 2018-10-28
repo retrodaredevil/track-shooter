@@ -21,7 +21,7 @@ import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
-public class SliderSingleOption extends ControlOptionSingleOption {
+public class SliderSingleOption extends SimpleControlOptionSingleOption {
 	private static final float SLIDER_PERCENT_MULTIPLIER = .35f;
 	private static final String STYLE_NAME = "small";
 	private static final float KNOB_RADIUS = 25;

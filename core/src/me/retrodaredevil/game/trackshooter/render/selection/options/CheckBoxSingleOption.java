@@ -15,7 +15,7 @@ import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
-public class CheckBoxSingleOption extends ControlOptionSingleOption {
+public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 
 	private final CheckBox checkBox;
 

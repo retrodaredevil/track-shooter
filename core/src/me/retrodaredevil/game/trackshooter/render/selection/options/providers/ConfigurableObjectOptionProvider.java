@@ -28,6 +28,7 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	private final ConfigurableObject configurableObject;
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
+	private final ControlOptionVisibility controlOptionVisibility;
 	private final Map<SingleOption, ControlOption> singleControlOptionMap = new HashMap<>();
 
 	/**
@@ -38,12 +39,14 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	 * @param renderObject The RenderObject
 	 * @param saveObject The SaveObject
 	 */
-	public ConfigurableObjectOptionProvider(Size size, int playerIndex, ConfigurableObject configurableObject, RenderObject renderObject, SaveObject saveObject){
+	public ConfigurableObjectOptionProvider(Size size, int playerIndex, ConfigurableObject configurableObject,
+											RenderObject renderObject, SaveObject saveObject, ControlOptionVisibility controlOptionVisibility){
 		this.size = size;
 		this.playerIndex = playerIndex;
 		this.configurableObject = configurableObject;
 		this.renderObject = renderObject;
 		this.saveObject = saveObject;
+		this.controlOptionVisibility = controlOptionVisibility;
 		size.requireWidth();
 	}
 
@@ -51,7 +54,7 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	public Collection<? extends SingleOption> getOptionsToAdd() {
 		List<SingleOption> r = new ArrayList<>();
 		for(ControlOption option : configurableObject.getControlOptions()){
-			if(!singleControlOptionMap.containsValue(option)){ // if its already in our map, don't add it
+			if(!singleControlOptionMap.containsValue(option) && controlOptionVisibility.shouldShow(option)){ // if its already in our map, don't add it
 				SingleOption singleOption = getSingleOption(option);
 				r.add(singleOption);
 				singleControlOptionMap.put(singleOption, option);
@@ -66,7 +69,7 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 		if(option == null){
 			throw new IllegalStateException("Unexpected singleOption: " + singleOption);
 		}
-		if(!configurableObject.getControlOptions().contains(option)){
+		if(!configurableObject.getControlOptions().contains(option) || !controlOptionVisibility.shouldShow(option)){
 			singleControlOptionMap.remove(singleOption);
 			return false;
 		}
@@ -81,6 +84,10 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 		} else {
 			return new SliderSingleOption(size, playerIndex, controlOption, saveObject.getOptionSaver(), renderObject);
 		}
+	}
+
+	public interface ControlOptionVisibility {
+		boolean shouldShow(ControlOption controlOption);
 	}
 
 }

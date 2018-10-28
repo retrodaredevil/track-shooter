@@ -17,7 +17,7 @@ import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
-public class DropDownSingleOption extends ControlOptionSingleOption {
+public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 
 	private final SelectBox<String> selectBox;
 	private final Array<String> itemsArray;

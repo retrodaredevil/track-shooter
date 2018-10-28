@@ -41,7 +41,8 @@ public class HorizontalSelectionSingleOption extends ContainerSingleOption {
 			requestedActions.add(SelectAction.CHANGE_OPTION);
 		}
 		optionHolder.updateSelection(delta, selector, select, back, requestedActions);
-		if(requestedActions.contains(SelectAction.CHANGE_OPTION)){
+		if(requestedActions.contains(SelectAction.CHANGE_OPTION) && index != optionHolder.getSelectedOptionIndex()){
+			requestedActions.remove(SelectAction.CHANGE_OPTION); // remove it because requestedAction isn't ours
 			optionHolder.deselectCurrent();
 
 			optionHolder.setSelectedOptionIndex(index);
