@@ -2,8 +2,10 @@ package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Objects;
 
 import me.retrodaredevil.controller.input.InputPart;
@@ -60,7 +62,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		final JoystickPart selectJoystick = menuController == null ? null : Objects.requireNonNull(menuController.getSelectorJoystick());
 		final InputPart selectButton = menuController == null ? null : Objects.requireNonNull(menuController.getEnterButton());
 		final InputPart backButton = menuController == null ? null : Objects.requireNonNull(menuController.getBackButton());
-		final Collection<SingleOption.SelectAction> requestingActions = EnumSet.noneOf(SingleOption.SelectAction.class);
+		final Collection<SelectAction> requestingActions = EnumSet.noneOf(SelectAction.class);
 		boolean active = optionHolder.isActive();
 		int newOptionIndex = optionHolder.getSelectedOptionIndex();
 		if(menuController != null) {
@@ -71,10 +73,10 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 				} else {
 					active = true;
 				}
-				requestingActions.add(SingleOption.SelectAction.CHANGE_OPTION);
+				requestingActions.add(SelectAction.CHANGE_OPTION);
 			}
 			if (backButton.isPressed()) {
-				requestingActions.add(SingleOption.SelectAction.EXIT_MENU);
+				requestingActions.add(SelectAction.EXIT_MENU);
 			}
 		}
 		optionHolder.getContentTableProvider().render(delta, stage);
@@ -82,12 +84,12 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		optionHolder.updateSelection(delta, selectJoystick, selectButton, backButton, requestingActions);
 
 
-		if(requestingActions.contains(SingleOption.SelectAction.CHANGE_OPTION)){
+		if(requestingActions.contains(SelectAction.CHANGE_OPTION)){
             optionHolder.deselectCurrent();
             optionHolder.setSelectedOptionIndex(newOptionIndex);
 			optionHolder.setActive(active);
 		}
-		if(requestingActions.contains(SingleOption.SelectAction.EXIT_MENU)){
+		if(requestingActions.contains(SelectAction.EXIT_MENU)){
             optionHolder.deselectCurrent();
 			exitRequestListener.onExit();
 		}

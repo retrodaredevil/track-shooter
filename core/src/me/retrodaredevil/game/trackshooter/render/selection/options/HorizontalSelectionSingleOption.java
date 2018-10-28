@@ -11,6 +11,7 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.game.trackshooter.render.selection.ContainerSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.ContentTableProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.OptionHolder;
+import me.retrodaredevil.game.trackshooter.render.selection.SelectAction;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
@@ -24,11 +25,9 @@ public class HorizontalSelectionSingleOption extends ContainerSingleOption {
 	}
 
 	@Override
-	protected void onUpdate() {
-		super.onUpdate();
-		if(!optionHolder.isActive()) {
-			optionHolder.updateOptions(Collections.emptySet());
-		}
+	protected void onRequestActions(Collection<? super SelectAction> requestedActions) {
+		super.onRequestActions(requestedActions);
+		optionHolder.updateOptions(requestedActions);
 	}
 
 	@Override
@@ -41,7 +40,6 @@ public class HorizontalSelectionSingleOption extends ContainerSingleOption {
 			index += xAxis.getDigitalPosition();
 			requestedActions.add(SelectAction.CHANGE_OPTION);
 		}
-		optionHolder.updateOptions(requestedActions);
 		optionHolder.updateSelection(delta, selector, select, back, requestedActions);
 		if(requestedActions.contains(SelectAction.CHANGE_OPTION)){
 			optionHolder.deselectCurrent();

@@ -51,6 +51,10 @@ public class OptionHolder {
 	public Collection<? extends OptionPair> getOptionPairs(){
 		return optionPairs;
 	}
+
+	/**
+	 * Deselects the current {@link SingleOption}, if there is one, and calls {@link #setActive(boolean) setActive(false)}
+	 */
 	public void deselectCurrent(){
 		if(active && selectedOptionIndex >= 0 && selectedOptionIndex < optionPairs.size()) {
 			optionPairs.get(selectedOptionIndex).getSingleOption().deselect();
@@ -62,7 +66,7 @@ public class OptionHolder {
 	 * Updates the options. This should be called each frame
 	 * @param requestingActions The actions that are requesting to be completed. This is allowed to be mutated
 	 */
-	public void updateOptions(Collection<? super SingleOption.SelectAction> requestingActions){
+	public void updateOptions(Collection<? super SelectAction> requestingActions){
 		for(SingleOptionProvider provider : optionProviders){
 			for(SingleOption option : provider.getOptionsToAdd()){
 				optionPairs.add(new OptionPair(option, provider));
@@ -90,7 +94,7 @@ public class OptionHolder {
 	 * @param requestingActions The actions that are requesting to be completed. This is allowed to be mutated
 	 */
 	public void updateSelection(float delta, JoystickPart selectJoystick,
-								InputPart selectButton, InputPart backButton, Collection<? super SingleOption.SelectAction> requestingActions){
+								InputPart selectButton, InputPart backButton, Collection<? super SelectAction> requestingActions){
 		final boolean hasController = selectJoystick != null && selectButton != null && backButton != null;
 
 		{
