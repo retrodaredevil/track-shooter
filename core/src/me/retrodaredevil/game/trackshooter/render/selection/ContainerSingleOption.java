@@ -9,10 +9,10 @@ import me.retrodaredevil.game.trackshooter.util.Size;
 
 /**
  * A SingleOption which provides some implementation and uses a "container" to add actors to instead
- * of the table itself.
+ * of the table itself. Using this is almost always recommended because it supports horizontal tables
  */
 public abstract class ContainerSingleOption implements SingleOption {
-	private final Table container = new Table();
+	protected final Table container = new Table();
 	private final Size size;
 	private Cell containerCell = null;
 
@@ -29,24 +29,27 @@ public abstract class ContainerSingleOption implements SingleOption {
 		return size;
 	}
 
-	protected void onInit(Table container){}
-	protected void onUpdate(Table container){}
+	protected void onInit(){}
+	protected void onUpdate(){}
 	protected void onRequestActions(Collection<? super SelectAction> requestedActions){}
 
 	@Override
-	public void renderUpdate(Table table, Collection<? super SelectAction> requestedActions) {
+	public void renderUpdate(ContentTableProvider contentTableProvider, Collection<? super SelectAction> requestedActions) {
 		if(!initialized){
-			onInit(container);
+			onInit();
 			initialized = true;
 		}
+		Table table = contentTableProvider.getContentTable();
 
 		if(container.getParent() != table){
 			containerCell = table.add(container);
 			size.apply(containerCell);
-			table.row();
+			if(!contentTableProvider.isHorizontal()) {
+				table.row();
+			}
 		}
 
-		onUpdate(container);
+		onUpdate();
 		onRequestActions(requestedActions);
 	}
 

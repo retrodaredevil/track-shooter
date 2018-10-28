@@ -1,7 +1,5 @@
 package me.retrodaredevil.game.trackshooter.render.selection;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-
 import java.util.Collection;
 
 import me.retrodaredevil.controller.input.InputPart;
@@ -22,10 +20,10 @@ public interface SingleOption {
 	 * you must re-add that actor to the table.
 	 * <p>
 	 * If you add something to the table, it is expected that you also add a new row after adding things
-	 * @param table The table to add something to
+	 * @param contentTableProvider The table to add something to
 	 * @param requestedActions The actions that are currently being requested. This is allowed to be modified or added to
 	 */
-	void renderUpdate(Table table, Collection<? super SelectAction> requestedActions);
+	void renderUpdate(ContentTableProvider contentTableProvider, Collection<? super SelectAction> requestedActions);
 
 	/**
 	 * Should reset the control option to its original state
@@ -33,7 +31,7 @@ public interface SingleOption {
 	void reset();
 
 	/**
-	 * Should remove whatever was added to the table in {@link #renderUpdate(Table, Collection)}
+	 * Should remove whatever was added to the table in {@link #renderUpdate(ContentTableProvider, Collection)}
 	 */
 	void remove();
 
@@ -45,7 +43,7 @@ public interface SingleOption {
 	 * @param back The back button
 	 * @param requestedActions A collection of actions that the caller would like to do. The implementation should remove actions that are not desired
 	 */
-	void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions);
+	void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions);
 
 	/**
 	 * Called when this option should be deselected

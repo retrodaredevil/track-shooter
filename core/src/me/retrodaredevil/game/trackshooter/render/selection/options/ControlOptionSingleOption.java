@@ -1,7 +1,5 @@
 package me.retrodaredevil.game.trackshooter.render.selection.options;
 
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.game.trackshooter.render.selection.ContainerSingleOption;
@@ -27,14 +25,14 @@ public abstract class ControlOptionSingleOption extends ContainerSingleOption {
 	protected abstract double getSetValue();
 
 	@Override
-	protected void onInit(Table container) {
-		super.onInit(container);
+	protected void onInit() {
+		super.onInit();
 		optionSaver.loadControlOption(playerIndex, controlOption);
 	}
 
 	@Override
-	protected void onUpdate(Table container) {
-		super.onUpdate(container);
+	protected void onUpdate() {
+		super.onUpdate();
 
 		OptionValue value = controlOption.getOptionValue();
 		final double originalValue = value.getOptionValue();

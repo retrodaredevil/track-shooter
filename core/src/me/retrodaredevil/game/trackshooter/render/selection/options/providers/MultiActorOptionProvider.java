@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import me.retrodaredevil.game.trackshooter.render.selection.PlainActorSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
 import me.retrodaredevil.game.trackshooter.util.Size;

@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 public class Size {
+	public static final Size NONE = new Size(null, null);
 	private final Float width, height;
 	private Size(Float width, Float height){
 		this.width = width;

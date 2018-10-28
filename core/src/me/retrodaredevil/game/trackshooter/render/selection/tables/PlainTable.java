@@ -24,6 +24,11 @@ public class PlainTable implements ContentTableProvider {
 	}
 
 	@Override
+	public boolean isHorizontal() {
+		return false;
+	}
+
+	@Override
 	public void render(float delta, Stage stage) {
 		stage.addActor(contentTable);
 	}

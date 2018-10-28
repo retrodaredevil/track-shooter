@@ -2,7 +2,6 @@ package me.retrodaredevil.game.trackshooter.render.selection.options;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Collection;
@@ -13,7 +12,6 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.RadioOption;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.save.OptionSaver;
 import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 import me.retrodaredevil.game.trackshooter.util.Size;
@@ -58,16 +56,16 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	protected void onInit(Table container) {
-		super.onInit(container);
+	protected void onInit() {
+		super.onInit();
 		updateItems();
 		container.add(selectBox);
 		selectBox.setSelectedIndex((int) controlOption.getOptionValue().getOptionValue());
 	}
 
 	@Override
-	protected void onUpdate(Table container) {
-		super.onUpdate(container);
+	protected void onUpdate() {
+		super.onUpdate();
 		updateItems();
 	}
 
@@ -81,7 +79,7 @@ public class DropDownSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SingleOption.SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(selectBox, InputEvent.Type.enter);
 		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
 		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)

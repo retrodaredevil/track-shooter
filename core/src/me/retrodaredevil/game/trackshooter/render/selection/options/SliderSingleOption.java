@@ -60,8 +60,8 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	protected void onInit(Table container){
-		super.onInit(container);
+	protected void onInit(){
+		super.onInit();
 		OptionValue value = controlOption.getOptionValue();
 
 		slider.setValue((float) value.getOptionValue());
@@ -88,8 +88,8 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	public void onUpdate(Table table){
-		super.onUpdate(table);
+	public void onUpdate(){
+		super.onUpdate();
 		valueLabel.setText(getNumberText(controlOption.getOptionValue().getOptionValue()));
 	}
 
@@ -111,7 +111,7 @@ public class SliderSingleOption extends ControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(slider, InputEvent.Type.enter);
 		if(selector.getXAxis().isDown()) {
 			if (sliderPercent == null) {

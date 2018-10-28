@@ -15,8 +15,10 @@ import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.ButtonExitMenuSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.ButtonExitMenuSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.options.HorizontalSelectionSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.ConfigurableObjectOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
@@ -64,7 +66,10 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 				new DialogTable("Options", renderObject),
 				Arrays.asList(
 						new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject),
-						new BasicOptionProvider(new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), Constants.BACK_BUTTON_SIZE))
+						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(
+								new BasicOptionProvider(new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE)),
+								new BasicOptionProvider(new PlainActorSingleOption(new TextButton("test", renderObject.getUISkin(), "small"), Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE))
+						)))
 				),
 				this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary

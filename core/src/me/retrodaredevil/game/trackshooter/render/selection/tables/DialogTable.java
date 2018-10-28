@@ -14,7 +14,6 @@ import me.retrodaredevil.game.trackshooter.render.selection.ContentTableProvider
  */
 public class DialogTable implements ContentTableProvider {
 	private final Dialog dialog;
-	private final ScrollPane scrollPane;
 	private final Cell<?> scrollPaneCell;
 	private final Table contentTable;
 	public DialogTable(String title, RenderObject renderObject){
@@ -23,7 +22,7 @@ public class DialogTable implements ContentTableProvider {
 		dialog.setMovable(false);
 		dialog.setResizable(false);
 
-		scrollPane = new ScrollPane(contentTable = new Table());
+		ScrollPane scrollPane = new ScrollPane(contentTable = new Table());
 		scrollPane.setScrollingDisabled(true, false);
 
 		final Table dialogTable = dialog.getContentTable();
@@ -40,14 +39,15 @@ public class DialogTable implements ContentTableProvider {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public boolean isHorizontal() {
+		return false;
+	}
 
+	@Override
+	public void render(float delta, Stage stage) {
 		stage.addActor(dialog);
 		dialog.setSize(stage.getWidth() * .92f, stage.getHeight() * .7f);
 		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() / 2f - dialog.getHeight() / 2f);
-		System.out.println("contentTable width: " + contentTable.getWidth());
-		System.out.println("scrollPane width: " + scrollPane.getWidth());
-		System.out.println("dialog width: " + dialog.getWidth());
 		scrollPaneCell.width(dialog.getWidth());
 	}
 

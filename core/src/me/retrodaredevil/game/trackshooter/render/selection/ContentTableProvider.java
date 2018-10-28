@@ -8,4 +8,6 @@ public interface ContentTableProvider extends RenderComponent {
 	Table getContentTable();
 
 	void resetTable();
+
+	boolean isHorizontal();
 }
