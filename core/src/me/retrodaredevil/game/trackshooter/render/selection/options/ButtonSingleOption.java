@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter.render.selection.options;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
 import java.util.Collection;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -31,7 +32,7 @@ public class ButtonSingleOption extends PlainActorSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		super.selectUpdate(delta, selector, select, back, requestedActions);
 		if(select.isPressed()){
 			onButtonPress.onButtonPress(requestedActions);

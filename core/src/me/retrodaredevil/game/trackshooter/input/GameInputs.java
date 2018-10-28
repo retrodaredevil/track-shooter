@@ -61,8 +61,8 @@ public final class GameInputs {
 	}
 	private static double getDefaultMouseMultiplier(boolean mobile){
 		if(mobile) {
-			double def = 1.5 / (Gdx.graphics.getDensity() + .3);
-			return Math.round(def * 10.0) / 10.0;
+			double def = 2.75 / (Gdx.graphics.getDensity() + .3);
+			return Math.round(def * 10.0) / 10.0; // round to nearest 10%
 		}
 		return 1;
 	}

@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.game.trackshooter.util.MathUtil;
 
 public class OptionHolder {
 	private final ContentTableProvider contentTableProvider;
@@ -19,7 +19,7 @@ public class OptionHolder {
 
 	/**
 	 * @param defaultIndex The default index
-	 * @param contentTableProvider The content table provider. NOTE: This will not be updated automatically
+	 * @param contentTableProvider The content table provider. NOTE: This will not be updated/rendered automatically
 	 * @param optionProviders The collection of option providers
 	 */
 	public OptionHolder(int defaultIndex, ContentTableProvider contentTableProvider, Collection<? extends SingleOptionProvider> optionProviders){
@@ -33,11 +33,12 @@ public class OptionHolder {
 		return selectedOptionIndex;
 	}
 	public void setSelectedOptionIndex(int selectedOptionIndex){
-        if(!optionPairs.isEmpty()) {
-			this.selectedOptionIndex = MathUtil.mod(selectedOptionIndex, optionPairs.size());
-		} else {
-        	this.selectedOptionIndex = selectedOptionIndex;
-		}
+//        if(!optionPairs.isEmpty()) {
+//			this.selectedOptionIndex = MathUtil.mod(selectedOptionIndex, optionPairs.size());
+//		} else {
+//        	this.selectedOptionIndex = selectedOptionIndex;
+//		}
+		this.selectedOptionIndex = Math.max(0, Math.min(selectedOptionIndex, optionPairs.size() - 1));
 	}
 	public void setActive(boolean active){
 		this.active = active;
@@ -94,7 +95,7 @@ public class OptionHolder {
 	 * @param requestingActions The actions that are requesting to be completed. This is allowed to be mutated
 	 */
 	public void updateSelection(float delta, JoystickPart selectJoystick,
-								InputPart selectButton, InputPart backButton, Collection<? super SelectAction> requestingActions){
+								InputPart selectButton, InputPart backButton, Set<? super SelectAction> requestingActions){
 		final boolean hasController = selectJoystick != null && selectButton != null && backButton != null;
 
 		{

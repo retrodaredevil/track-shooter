@@ -35,6 +35,8 @@ abstract class SimpleControlOptionSingleOption extends ContainerSingleOption imp
 	 */
 	protected abstract double getSetValue();
 
+	protected abstract void setValueTo(double value);
+
 	@Override
 	protected void onInit() {
 		super.onInit();
@@ -61,9 +63,12 @@ abstract class SimpleControlOptionSingleOption extends ContainerSingleOption imp
 
 
 	@Override
-	public void reset() {
-		super.reset();
-		controlOption.getOptionValue().setToDefaultOptionValue();
+	public void resetOption() {
+		super.resetOption();
+		OptionValue option = controlOption.getOptionValue();
+		option.setToDefaultOptionValue();
+		setValueTo(option.getOptionValue());
+        optionSaver.saveControlOption(playerIndex, controlOption);
 	}
 
 }

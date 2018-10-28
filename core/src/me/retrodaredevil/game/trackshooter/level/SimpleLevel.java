@@ -78,8 +78,8 @@ public abstract class SimpleLevel implements Level {
 	 * @return true if this level is able to end, false otherwise
 	 */
 	private boolean shouldLevelEnd(World world){
-		Collection<CanLevelEnd> endCheckCollection = new ArrayList<>();
-		endCheckCollection.addAll(world.getEntities());
+		Collection<CanLevelEnd> endCheckCollection = new HashSet<>();
+		endCheckCollection.addAll(world.getAllEntities());
 		endCheckCollection.addAll(functions);
 
 		LevelEndState highest = LevelEndState.CAN_END;

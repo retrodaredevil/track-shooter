@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.CheckBox;
 import com.badlogic.gdx.utils.Align;
 
-import java.util.Collection;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -36,6 +36,11 @@ public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 	}
 
 	@Override
+	protected void setValueTo(double value) {
+		checkBox.setChecked( value >= .5);
+	}
+
+	@Override
 	protected void onInit() {
 		super.onInit();
 		container.add(checkBox);
@@ -52,7 +57,7 @@ public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(checkBox, InputEvent.Type.enter);
 		if(select.isPressed()){
 			checkBox.toggle();

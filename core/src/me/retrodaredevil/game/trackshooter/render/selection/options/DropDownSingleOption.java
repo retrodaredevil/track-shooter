@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.SelectBox;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Collection;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -46,6 +47,12 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 	protected double getSetValue() {
 		return selectBox.getSelectedIndex();
 	}
+
+	@Override
+	protected void setValueTo(double value) {
+		selectBox.setSelectedIndex((int) value);
+	}
+
 	private void updateItems(){
 		itemsArray.clear();
 		Collection<? extends RadioOption> options = controlOption.getOptionValue().getRadioOptions();
@@ -80,7 +87,7 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(selectBox, InputEvent.Type.enter);
 		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
 		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)

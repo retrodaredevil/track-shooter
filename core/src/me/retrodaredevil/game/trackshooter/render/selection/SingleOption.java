@@ -1,6 +1,7 @@
 package me.retrodaredevil.game.trackshooter.render.selection;
 
 import java.util.Collection;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -28,7 +29,7 @@ public interface SingleOption {
 	/**
 	 * Should reset the control option to its original state
 	 */
-	void reset();
+	void resetOption();
 
 	/**
 	 * Should remove whatever was added to the table in {@link #renderUpdate(ContentTableProvider, Collection)}
@@ -43,7 +44,7 @@ public interface SingleOption {
 	 * @param back The back button
 	 * @param requestedActions A collection of actions that the caller would like to do. The implementation should remove actions that are not desired
 	 */
-	void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions);
+	void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions);
 
 	/**
 	 * Called when this option should be deselected

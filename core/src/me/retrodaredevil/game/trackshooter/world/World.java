@@ -109,6 +109,15 @@ public class World implements Updateable, Renderable {
 	}
 
 	/**
+	 * @return All entities in {@link #getEntities()} and the entities that will be added next frame
+	 */
+	public Collection<Entity> getAllEntities(){
+		List<Entity> r = new ArrayList<>(entities);
+		r.addAll(entitiesToAdd);
+		return r;
+	}
+
+	/**
 	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
 	 * so it is initialized correctly
 	 * <p>

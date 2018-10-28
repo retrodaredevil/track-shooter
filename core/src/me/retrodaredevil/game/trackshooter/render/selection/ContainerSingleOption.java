@@ -14,7 +14,6 @@ import me.retrodaredevil.game.trackshooter.util.Size;
 public abstract class ContainerSingleOption implements SingleOption {
 	protected final Table container = new Table();
 	private final Size size;
-	private Cell containerCell = null;
 
 	private boolean initialized = false;
 
@@ -42,7 +41,7 @@ public abstract class ContainerSingleOption implements SingleOption {
 		Table table = contentTableProvider.getContentTable();
 
 		if(container.getParent() != table){
-			containerCell = table.add(container);
+			Cell containerCell = table.add(container);
 			size.apply(containerCell);
 			if(!contentTableProvider.isHorizontal()) {
 				table.row();
@@ -54,7 +53,7 @@ public abstract class ContainerSingleOption implements SingleOption {
 	}
 
 	@Override
-	public void reset() {
+	public void resetOption() {
 	}
 
 	@Override
@@ -69,10 +68,7 @@ public abstract class ContainerSingleOption implements SingleOption {
 			return;
 		}
 
-		container.remove();
-		// thanks for simple solution https://stackoverflow.com/a/49285366/5434860
-		table.getCells().removeValue(containerCell, true);
-		table.invalidate();
-	}
+		table.removeActor(container);
 
+	}
 }

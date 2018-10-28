@@ -11,6 +11,9 @@ public class PageControlOptionVisibility implements ConfigurableObjectOptionProv
 
 	@Override
 	public boolean shouldShow(ControlOption controlOption) {
+		if(currentPage == Page.ALL){
+			return true;
+		}
 		String[] split = controlOption.getCategory().split("\\.");
 		if(split.length < 2){
 			return currentPage == Page.MISC;
@@ -18,7 +21,7 @@ public class PageControlOptionVisibility implements ConfigurableObjectOptionProv
         return Page.getPage(split[1]) == currentPage;
 	}
 	public enum Page {
-		MAIN("main"), MOVEMENT("movement"), ROTATION("rotation"), SHOOTING("shooting"), MISC("misc");
+		MAIN("main"), MOVEMENT("movement"), ROTATION("rotation"), SHOOTING("shooting"), MISC("misc"), ALL("*");
 
 		private final String name;
 		Page(String name){

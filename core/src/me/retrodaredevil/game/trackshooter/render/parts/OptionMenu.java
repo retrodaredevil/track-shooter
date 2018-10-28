@@ -17,9 +17,8 @@ import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.ButtonExitMenuSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.ButtonSingleOption;
-import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
-import me.retrodaredevil.game.trackshooter.render.selection.options.HorizontalSelectionSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.GroupedSelectionSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.ConfigurableObjectOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.PageControlOptionVisibility;
@@ -64,29 +63,42 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 			renderComponent = null;
 			return;
 		}
+		/*
+        If you get an index out of bounds exception, it probably has something to do with the scroll pane
+		 */
 		final PageControlOptionVisibility pageControlOptionVisibility = new PageControlOptionVisibility();
 		final Size topSize = Constants.OPTIONS_MENU_TOP_BUTTONS_SIZE;
 		final Size size = Constants.OPTIONS_MENU_BOTTOM_BUTTONS_SIZE;
 		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
 				new DialogTable("Options", renderObject),
-				Arrays.asList(
-						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(new BasicOptionProvider(
-								new ButtonSingleOption(new TextButton("Main", renderObject.getUISkin(), "small"), topSize,
+				Collections.singletonList(new BasicOptionProvider(
+						new GroupedSelectionSingleOption(Size.widthOnly(400), true, Arrays.asList(new BasicOptionProvider(
+								new ButtonSingleOption(new TextButton("main", renderObject.getUISkin(), "small"), topSize,
 										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MAIN)),
-								new ButtonSingleOption(new TextButton("Move", renderObject.getUISkin(), "small"), topSize,
+								new ButtonSingleOption(new TextButton("move", renderObject.getUISkin(), "small"), topSize,
 										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MOVEMENT)),
-								new ButtonSingleOption(new TextButton("Rotate", renderObject.getUISkin(), "small"), topSize,
+								new ButtonSingleOption(new TextButton("rotate", renderObject.getUISkin(), "small"), topSize,
 										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.ROTATION)),
-								new ButtonSingleOption(new TextButton("Shoot", renderObject.getUISkin(), "small"), topSize,
+								new ButtonSingleOption(new TextButton("shoot", renderObject.getUISkin(), "small"), topSize,
 										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.SHOOTING)),
-								new ButtonSingleOption(new TextButton("Misc", renderObject.getUISkin(), "small"), topSize,
-										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MISC))
-						)))),
-						new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject, pageControlOptionVisibility),
-						new BasicOptionProvider(new HorizontalSelectionSingleOption(Size.widthOnly(400), Arrays.asList(new BasicOptionProvider(
-								new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), size)
-						))))
-				),
+								new ButtonSingleOption(new TextButton("misc", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.MISC)),
+								new ButtonSingleOption(new TextButton("all", renderObject.getUISkin(), "small"), topSize,
+										requestingActions -> pageControlOptionVisibility.setPage(PageControlOptionVisibility.Page.ALL))
+						))),
+						new GroupedSelectionSingleOption(Size.NONE, false, Arrays.asList(
+								new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject, pageControlOptionVisibility))
+						),
+						new GroupedSelectionSingleOption(Size.widthOnly(400), true, Arrays.asList(new BasicOptionProvider(
+								new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), size),
+								new ButtonSingleOption(new TextButton("reset", renderObject.getUISkin(), "small"), size,
+										requestingActions -> {
+											if(renderComponent != null) {
+												renderComponent.resetAll();
+											}
+										})
+						)))
+				)),
 				this::closeMenu);
 		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}

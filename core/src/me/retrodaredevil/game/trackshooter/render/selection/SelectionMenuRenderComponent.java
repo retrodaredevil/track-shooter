@@ -2,11 +2,10 @@ package me.retrodaredevil.game.trackshooter.render.selection;
 
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -29,12 +28,12 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 
 	/**
 	 *
-	 * @param renderObject
-	 * @param playerIndex
-	 * @param menuController
+	 * @param renderObject The render object
+	 * @param playerIndex The player index
+	 * @param menuController The controller that will control this menu
 	 * @param contentTableProvider The content table provider. This will automatically be disposed of
-	 * @param optionProviders
-	 * @param exitRequestListener
+	 * @param optionProviders The option providers
+	 * @param exitRequestListener Will be called when the back button is pressed
 	 */
 	public SelectionMenuRenderComponent(RenderObject renderObject, Integer playerIndex, GameInput menuController,
 										ContentTableProvider contentTableProvider,
@@ -56,13 +55,19 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		optionHolder.getContentTableProvider().resetTable();
 	}
 
+	public void resetAll(){
+		for(OptionPair optionPair : optionHolder.getOptionPairs()){
+			optionPair.getSingleOption().resetOption();
+		}
+	}
+
 	@Override
 	public void render(float delta, Stage stage) {
 
 		final JoystickPart selectJoystick = menuController == null ? null : Objects.requireNonNull(menuController.getSelectorJoystick());
 		final InputPart selectButton = menuController == null ? null : Objects.requireNonNull(menuController.getEnterButton());
 		final InputPart backButton = menuController == null ? null : Objects.requireNonNull(menuController.getBackButton());
-		final Collection<SelectAction> requestingActions = EnumSet.noneOf(SelectAction.class);
+		final Set<SelectAction> requestingActions = EnumSet.noneOf(SelectAction.class);
 		boolean active = optionHolder.isActive();
 		int newOptionIndex = optionHolder.getSelectedOptionIndex();
 		if(menuController != null) {

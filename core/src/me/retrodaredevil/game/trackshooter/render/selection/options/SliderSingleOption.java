@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.utils.Align;
 
-import java.util.Collection;
+import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
@@ -99,6 +99,11 @@ public class SliderSingleOption extends SimpleControlOptionSingleOption {
 		return slider.getValue();
 	}
 
+	@Override
+	protected void setValueTo(double value) {
+		slider.setValue((float) value);
+	}
+
 	private String getNumberText(double number){
 		OptionValue value = controlOption.getOptionValue();
 		if(value.isOptionAnalog()){
@@ -112,7 +117,7 @@ public class SliderSingleOption extends SimpleControlOptionSingleOption {
 	}
 
 	@Override
-	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Collection<? super SelectAction> requestedActions) {
+	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(slider, InputEvent.Type.enter);
 		if(selector.getXAxis().isDown()) {
 			if (sliderPercent == null) {

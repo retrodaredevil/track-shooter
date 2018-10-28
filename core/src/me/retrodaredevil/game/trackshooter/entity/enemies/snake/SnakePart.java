@@ -18,6 +18,7 @@ import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveCompone
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothOppositePositionTarget;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
+import me.retrodaredevil.game.trackshooter.level.CanLevelEnd;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
