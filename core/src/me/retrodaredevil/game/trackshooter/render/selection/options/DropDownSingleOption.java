@@ -67,7 +67,7 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 	protected void onInit() {
 		super.onInit();
 		updateItems();
-		container.add(selectBox);
+		container.add(selectBox).height(35);
 		selectBox.setSelectedIndex((int) controlOption.getOptionValue().getOptionValue());
 	}
 

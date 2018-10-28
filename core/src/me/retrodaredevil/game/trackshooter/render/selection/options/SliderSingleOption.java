@@ -70,6 +70,9 @@ public class SliderSingleOption extends SimpleControlOptionSingleOption {
 		Size size = getSize();
 		size.requireWidth();
 
+		container.add().height(7); // put a little bit of space above
+		container.row();
+
 		Table firstRow = new Table();
 		container.add(firstRow);
 		firstRow.add(valueLabel).width(size.ofWidth(.15f));
@@ -85,7 +88,7 @@ public class SliderSingleOption extends SimpleControlOptionSingleOption {
 		secondRow.add(slider).width(size.ofWidth(1));
 
 		container.row();
-		container.add().height(20); // put some space
+		container.add().height(15); // put some space
 	}
 
 	@Override

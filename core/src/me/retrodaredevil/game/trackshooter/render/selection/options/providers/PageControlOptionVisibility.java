@@ -9,6 +9,10 @@ public class PageControlOptionVisibility implements ConfigurableObjectOptionProv
 		this.currentPage = page;
 	}
 
+	public Page getPage() {
+		return currentPage;
+	}
+
 	@Override
 	public boolean shouldShow(ControlOption controlOption) {
 		if(currentPage == Page.ALL){
@@ -20,6 +24,7 @@ public class PageControlOptionVisibility implements ConfigurableObjectOptionProv
 		}
         return Page.getPage(split[1]) == currentPage;
 	}
+
 	public enum Page {
 		MAIN("main"), MOVEMENT("movement"), ROTATION("rotation"), SHOOTING("shooting"), MISC("misc"), ALL("*");
 

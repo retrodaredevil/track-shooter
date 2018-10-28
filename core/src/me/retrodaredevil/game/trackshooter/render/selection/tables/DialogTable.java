@@ -24,6 +24,7 @@ public class DialogTable implements ContentTableProvider {
 
 		ScrollPane scrollPane = new ScrollPane(contentTable = new Table());
 		scrollPane.setScrollingDisabled(true, false);
+		scrollPane.setFillParent(true);
 
 		final Table dialogTable = dialog.getContentTable();
 		scrollPaneCell = dialogTable.add(scrollPane);
@@ -46,8 +47,8 @@ public class DialogTable implements ContentTableProvider {
 	@Override
 	public void render(float delta, Stage stage) {
 		stage.addActor(dialog);
-		dialog.setSize(stage.getWidth() * .92f, stage.getHeight() * .7f);
-		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() / 2f - dialog.getHeight() / 2f);
+		dialog.setSize(stage.getWidth() * .92f, stage.getHeight() * .85f);
+		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() * .04f);
 		scrollPaneCell.width(dialog.getWidth());
 	}
 

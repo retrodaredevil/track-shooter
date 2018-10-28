@@ -37,13 +37,13 @@ public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 
 	@Override
 	protected void setValueTo(double value) {
-		checkBox.setChecked( value >= .5);
+		checkBox.setChecked(value >= .5);
 	}
 
 	@Override
 	protected void onInit() {
 		super.onInit();
-		container.add(checkBox);
+		container.add(checkBox).center().height(35);
 		checkBox.setChecked(controlOption.getOptionValue().getBooleanOptionValue());
 	}
 
