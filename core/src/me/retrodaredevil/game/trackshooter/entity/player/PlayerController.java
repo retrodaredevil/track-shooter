@@ -1,8 +1,11 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
+import java.util.Vector;
+
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.game.trackshooter.entity.movement.VectorVelocitySetterMoveComponent;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
@@ -58,8 +61,19 @@ public class PlayerController implements EntityController{
 				((TravelVelocitySetterMoveComponent) move).getTravelVelocitySetter().setVelocity(velocity);
 			}
 
-		} else {
-			System.err.println("MoveComponent is not on track. Remove print statement if intended.");
+		} else if(move instanceof VectorVelocitySetterMoveComponent){
+			VectorVelocitySetterMoveComponent vectorMove = (VectorVelocitySetterMoveComponent) move;
+			JoystickPart movementJoy = gameInput.getMainJoystick();
+			boolean slow = gameInput.getSlowButton().isDown();
+			final float velocity;
+			if(!movementJoy.isDeadzone() || slow){
+				float mult = slow ? .5f : 1;
+				velocity = (float) Math.min(movementJoy.getCorrectMagnitude(), 1) * mult * Constants.PLAYER_FREE_VELOCITY;
+			} else {
+				velocity = 0;
+			}
+			vectorMove.getVectorVelocitySetter().setDesiredVelocityAngleMagnitude((float) movementJoy.getAngle(), velocity, 16, Constants.PLAYER_FREE_VELOCITY);
+
 		}
 		// ==== Rotation ====
 		InputPart rotateAxis = gameInput.getRotateAxis();

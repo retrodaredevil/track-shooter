@@ -14,6 +14,7 @@ import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.EntityDifficulty;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
+import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothOppositePositionTarget;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
@@ -112,14 +113,18 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		}
 		setMoveComponent(smartSightCache);
 	}
-	public void switchToOppositeTrackPositionTarget(Entity target){
+	public boolean switchToOppositeTrackPositionTarget(Entity target){
 		if (!isHead()) {
 			throw new UnsupportedOperationException("Only the head can use this method.");
+		}
+		if (!(target.getMoveComponent() instanceof OnTrackMoveComponent)) {
+			return false;
 		}
 		if(smoothOppositeCache == null || smoothOppositeCache.getEntityTarget() != target){
 			smoothOppositeCache = new SmoothOppositePositionTarget(this, target, smoothTravel);
 		}
 		setMoveComponent(smoothOppositeCache);
+		return true;
 	}
 	public void switchToManualTarget(float x, float y){
 		if(!isHead()){

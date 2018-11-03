@@ -1,8 +1,11 @@
 package me.retrodaredevil.game.trackshooter;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.List;
@@ -11,6 +14,7 @@ import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.util.Constants;
 
 public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 
@@ -19,6 +23,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
 	private final Stage stage;
+	private final Button backButton;
 	private boolean done = false;
 
 	public CreditsScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
@@ -46,6 +51,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.add("").center().row();
 		table.add("The control scheme can be changed in options").center().row();
 		table.add("Try out the gyro control scheme if your phone supports it!").center().row();
+		Constants.BUTTON_SIZE.apply(table.add(backButton = new TextButton("back", renderObject.getUISkin(), "small")));
 	}
 	private Renderer createRenderer(){
 		return new Renderer(renderObject.getBatch(), stage)
@@ -58,7 +64,8 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 	public void render(float delta) {
 		createRenderer().render(delta);
 
-		if(gameInput.getBackButton().isPressed()){
+		Gdx.input.setInputProcessor(stage);
+		if(gameInput.getBackButton().isPressed() || backButton.isPressed()){
 			done = true;
 		}
 	}

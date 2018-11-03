@@ -49,18 +49,18 @@ public final class Tracks {
 	}
 	public static Track newPlusTrack(){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-3, -3))
-				.connect(-2, -7)
-				.connect(2, -7)
-				.connect(3, -3)
-				.connect(7, -2)
-				.connect(7, 2)
-				.connect(3, 3)
-				.connect(2, 7)
-				.connect(-2, 7)
-				.connect(-3, 3)
-				.connect(-7, 2)
-				.connect(-7, -2)
+				new Vector2(-4, -4))
+				.connect(-3, -7)
+				.connect(3, -7)
+				.connect(4, -4)
+				.connect(7, -3)
+				.connect(7, 3)
+				.connect(4, 4)
+				.connect(3, 7)
+				.connect(-3, 7)
+				.connect(-4, 4)
+				.connect(-7, 3)
+				.connect(-7, -3)
 				.build(true);
 		return new Track(parts);
 	}
@@ -78,6 +78,27 @@ public final class Tracks {
 				.connect(7, 5)
 				.connect(7, 7)
 				.connect(-8, 7)
+				.build(true);
+		return new Track(parts);
+	}
+	public static Track newPointyTrack(){
+		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
+			new Vector2(0, 6))
+				.connect(5.5f, 7)
+				.connect(4.5f, 4.5f)
+				.connect(7, 5.5f)
+				.connect(6, 0)
+				.connect(7, -5.5f)
+				.connect(4.5f, -4.5f)
+				.connect(5.5f, -7)
+				.connect(0, -6)
+				.connect(-5.5f, -7)
+				.connect(-4.5f, -4.5f)
+				.connect(-7, -5.5f)
+				.connect(-6, 0)
+				.connect(-7, 5.5f)
+				.connect(-4.5f, 4.5f)
+				.connect(-5.5f, 7)
 				.build(true);
 		return new Track(parts);
 	}

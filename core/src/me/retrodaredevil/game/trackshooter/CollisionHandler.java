@@ -16,9 +16,9 @@ public class CollisionHandler implements Updateable {
 	public void update(float delta, World world) {
 		final Collection<Entity> entities = world.getEntities();
 
-		List<Entity> possiblyCollides = new ArrayList<>();
+		Collection<Entity> possiblyCollides = new ArrayList<>();
 		// This map represents all the entities that should be checked for each entity of a certain CollisionIdentity
-		Map<CollisionIdentity, List<Entity>> collisionMap = new HashMap<>();
+		Map<CollisionIdentity, Collection<Entity>> collisionMap = new EnumMap<>(CollisionIdentity.class);
 		for(Entity e : entities){
 			CollisionIdentity collisionIdentity = e.getCollisionIdentity();
 			if(!collisionIdentity.canCollide()){
@@ -27,7 +27,7 @@ public class CollisionHandler implements Updateable {
 			possiblyCollides.add(e);
 
 			for(CollisionIdentity element : collisionIdentity.getTriggers()){
-				List<Entity> collisionList = collisionMap.get(element);
+				Collection<Entity> collisionList = collisionMap.get(element);
 				if(collisionList == null){
 					collisionList = new ArrayList<>();
 					collisionMap.put(element, collisionList); // only call put() once
@@ -36,7 +36,7 @@ public class CollisionHandler implements Updateable {
 			}
 		}
 		outerLoop : for(Entity e : possiblyCollides){
-			List<Entity> collidesWith = collisionMap.get(e.getCollisionIdentity());
+			Collection<Entity> collidesWith = collisionMap.get(e.getCollisionIdentity());
 			if(collidesWith != null){
 				for(Entity test : collidesWith){
 					if(e.shouldRemove(world)){

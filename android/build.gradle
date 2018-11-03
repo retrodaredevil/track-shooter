@@ -4,7 +4,7 @@ apply plugin: "com.android.application"
 configurations { natives }
 
 dependencies {
-    implementation project(":core")
+    implementation project(':core')
     implementation "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
@@ -19,7 +19,6 @@ dependencies {
     natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
-
 }
 
 android {
@@ -44,8 +43,9 @@ android {
         applicationId "me.retrodaredevil.game.trackshooter"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 65 // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
-        versionName "1.6"
+        versionCode 65
+        // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
+        versionName '1.7'
     }
     buildTypes {
         release {
@@ -53,10 +53,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-	compileOptions {
-		sourceCompatibility JavaVersion.VERSION_1_8
-		targetCompatibility JavaVersion.VERSION_1_8
-	}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    productFlavors {
+    }
 }
 
 

@@ -43,7 +43,7 @@ public class PlayerScore implements Score {
 	public int getLives() {
 	    int lives = startingLives - deaths;
 	    for(int extraLifeAt : extraLivesAt){
-	        if(score > extraLifeAt){
+	        if(score >= extraLifeAt){
 	            lives++;
             }
         }
@@ -119,6 +119,7 @@ public class PlayerScore implements Score {
 		}
 	}
 	public interface RumbleGetter {
+		/** @return null or the ControllerRumble */
 		ControllerRumble getRumble();
 	}
 }

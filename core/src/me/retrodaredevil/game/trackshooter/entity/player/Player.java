@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
+import me.retrodaredevil.game.trackshooter.entity.movement.FreeVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
@@ -36,10 +37,9 @@ public class Player extends SimpleEntity {
 	private static final float SHOT_GUN_RANDOM_EXTEND_RANGE = 5; // can now go a max of this + SHOT_GUN_DISTANCE
 
 
-	private Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new HashMap<>();
-//	private List<Bullet> activeBullets = new ArrayList<>(); // you must update using World.updateEntityList(activeBullets);
+	private final Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new EnumMap<>(Bullet.ShotType.class);
 	private final Score score;
-	private Type playerType;
+	private final Type playerType;
 
 	private boolean hit = false;
 	private boolean triplePowerup = false;
@@ -48,6 +48,7 @@ public class Player extends SimpleEntity {
 	public Player(PlayerScore.RumbleGetter rumbleGetter, Type playerType){
 		this.playerType = playerType;
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
+//		setMoveComponent(new FreeVelocityMoveComponent(this));
 		setHitboxSize(.7f);
 		score = new PlayerScore(this, rumbleGetter);
 		canRespawn = true;
@@ -103,9 +104,9 @@ public class Player extends SimpleEntity {
 		return super.shouldRemove(world) || hit || score.getLives() <= 0;
 	}
 
-	private Bullet.ShotType checkNullShotType(Bullet.ShotType shotType){
+	private Bullet.ShotType checkNullShotType(final Bullet.ShotType shotType){
 		if(shotType == null){
-			shotType = triplePowerup ? Bullet.ShotType.TRIPLE : Bullet.ShotType.STRAIGHT;
+			return triplePowerup ? Bullet.ShotType.TRIPLE : Bullet.ShotType.STRAIGHT;
 		}
 		return shotType;
 	}
@@ -202,7 +203,7 @@ public class Player extends SimpleEntity {
 		int amount = 0;
 		switch(shotType){
 			case SHOT_GUN: case FULL:
-				max = 1;
+				max = 2;
 				List<List<Bullet>> shotGunShots = activeBulletsMap.get(Bullet.ShotType.SHOT_GUN);
 				List<List<Bullet>> fullShots = activeBulletsMap.get(Bullet.ShotType.FULL);
 				if(shotGunShots != null)

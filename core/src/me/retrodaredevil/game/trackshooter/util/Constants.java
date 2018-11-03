@@ -11,10 +11,14 @@ public final class Constants {
 	/** In world units*/
 	public static final float TRAVEL_VELOCITY_SET_GOTO_DEADBAND = .5f;
 
+	public static final float VECTOR_VELOCITY_SET_GOTO_DEADBAND = .1f;
+
 	/** The normal size for buttons on menus with buttons */
 	public static final Size BUTTON_SIZE = Size.createSize(220, 60);
 
 	/** The maximum velocity the player can travel at on the track*/
 	public static final float PLAYER_VELOCITY = 5f;
+
+	public static final float PLAYER_FREE_VELOCITY = 5f;
 
 }

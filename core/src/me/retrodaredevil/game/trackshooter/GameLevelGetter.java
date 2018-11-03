@@ -11,6 +11,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
 import me.retrodaredevil.game.trackshooter.entity.friendly.CargoShip;
+import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
@@ -47,7 +48,7 @@ public class GameLevelGetter implements LevelGetter {
 	 */
 	public GameLevelGetter(Collection<? extends Player> players){
 		this.players = players;
-		this.tracks = new Track[] { Tracks.newMazeTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newCircleTrack() };
+		this.tracks = new Track[] { Tracks.newMazeTrack(), Tracks.newPointyTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newCircleTrack() };
 	}
 
 	@Override
@@ -62,7 +63,12 @@ public class GameLevelGetter implements LevelGetter {
 				final Track track = world.getTrack();
 				for(Player player : players){ // move all players to a random spot
 					float distance = MathUtils.random(track.getTotalDistance());
-					((OnTrackMoveComponent) player.getMoveComponent()).setDistanceOnTrack(distance);
+					MoveComponent move = player.getMoveComponent();
+					if(move instanceof OnTrackMoveComponent){
+						((OnTrackMoveComponent) move).setDistanceOnTrack(distance);
+					} else if(levelNumber == 1){
+						player.setLocation(0, 0);
+					}
 					if(levelNumber == 1) { // point to the center
 						Vector2 position = track.getDesiredLocation(distance);
 						player.setRotation(Vector2.Zero.cpy().sub(position).angle());

@@ -28,18 +28,22 @@ public class SnakeAIController implements EntityController {
 		if(level.getMode() == LevelMode.NORMAL){
 			float time = level.getModeTime();
 			time %= 60;
+			boolean success = true;
 			if(time < 12){
 				part.switchToSmartSight(target);
 			} else if(time < 15){
-				part.switchToOppositeTrackPositionTarget(target);
+				success = part.switchToOppositeTrackPositionTarget(target);
 			} else if(time < 27){
 				part.switchToSmartSight(target);
 			} else if(time < 33){
-				part.switchToOppositeTrackPositionTarget(target);
+				success = part.switchToOppositeTrackPositionTarget(target);
 			} else if(time < 40){
 				part.switchToSmartSight(target);
 			} else {
 				part.switchToManualTarget(target.getX(), target.getY());
+			}
+			if(!success){
+				part.switchToSmartSight(target);
 			}
 		}
 	}

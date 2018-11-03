@@ -49,6 +49,8 @@ public class SharkAIController implements EntityController {
 			Float averageDistance = getAverageDistance(world.getTrack());
 			if(averageDistance != null) {
 				pointMove.setTargetPosition(world.getTrack().getDesiredLocation(averageDistance + trackDistanceAway + (float) offset));
+			} else {
+				pointMove.setTargetPosition(world.getTrack().getDesiredLocation(trackDistanceAway + (float) offset));
 			}
 //			pointMove.setTarget(world.getTrack(), target, trackDistanceAway + (float) offset);
 		}
