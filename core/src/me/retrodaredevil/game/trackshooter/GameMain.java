@@ -26,6 +26,7 @@ import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
 import me.retrodaredevil.game.trackshooter.input.GameInputs;
 import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
+import me.retrodaredevil.game.trackshooter.input.StandardAttackJoystickControllerInput;
 import me.retrodaredevil.game.trackshooter.input.StandardUSBControllerInput;
 import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -66,9 +67,15 @@ public class GameMain extends Game {
 			boolean firstRun = true;
 			for (Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext(); ) {
 				Controller controller = it.next();
+				String controllerName = controller.getName().toLowerCase();
 
 				// ====== Controller =====
-				UsableGameInput controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
+				final UsableGameInput controllerInput;
+				if(controllerName.contains("attack") && controllerName.contains("logitech")){
+					controllerInput = new ControllerGameInput(new StandardAttackJoystickControllerInput(controller));
+				} else {
+					controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
+				}
 				controllerManager.addController(controllerInput);
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)

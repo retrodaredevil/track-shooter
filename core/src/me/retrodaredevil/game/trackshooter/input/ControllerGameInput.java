@@ -4,11 +4,13 @@ import java.util.Collection;
 
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.SimpleControllerPart;
+import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.SensitiveInputPart;
+import me.retrodaredevil.controller.input.TwoWayInput;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.controller.options.ControlOption;
@@ -16,6 +18,7 @@ import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
+import me.retrodaredevil.controller.types.LogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
 
@@ -48,8 +51,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 		mainJoystick = References.create(controller::getLeftJoy);
 //		getMainJoystick = controller.getDPad();
-		ControlOption rotateAxisSensitivity = new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
-				"controls.rotation.controller.sensitivity", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
+		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = new SensitiveInputPart(
 				References.create(() -> controller.getRightJoy().getXAxis()),
 				rotateAxisSensitivity.getOptionValue(),null);
@@ -69,16 +71,58 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
 			rumble = new DisconnectedRumble();
+			addChildren(false, false, rumble);
 		}
 
 		addChildren(false, false,
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-				startButton, backButton);
+				startButton, backButton, enterButton);
 
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
+	}
+	public ControllerGameInput(final LogitechAttack3JoystickControllerInput controller){
+		addChildren(false, false, controller);
+		reliesOn = controller;
+
+		mainJoystick = References.create(controller::getMainJoystick);
+		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
+		rotateAxis = new TwoWayInput(
+				new HighestPositionInputPart(
+						References.create(controller::getLeftUpper),
+						References.create(controller::getRightLower),
+						References.create(controller::getCenterRight)
+				),
+				new HighestPositionInputPart(
+						References.create(controller::getLeftLower),
+						References.create(controller::getRightUpper),
+						References.create(controller::getCenterLeft)
+				)
+		);
+		fireButton = References.create(controller::getTrigger);
+		slow = new DummyInputPart(0, false);
+		activatePowerup = References.create(controller::getThumbUpper);
+		startButton = References.create(controller::getThumbRight);
+		pauseButton = startButton;
+		backButton = References.create(controller::getThumbLeft);
+		enterButton = References.create(controller::getThumbLower);
+		if(controller instanceof RumbleCapableController){
+			rumble = ((RumbleCapableController) controller).getRumble();
+		} else {
+			rumble = new DisconnectedRumble();
+			addChildren(false, false, rumble);
+		}
+		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton);
+		controlOptions.add(rotateAxisSensitivity);
+		if(controller instanceof ConfigurableObject){
+			controlOptions.add((ConfigurableObject) controller);
+		}
+	}
+	private static ControlOption createRotationalAxisSensitivity(){
+		return new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
+				"controls.rotation.controller.sensitivity", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
 	}
 
 	@Override
