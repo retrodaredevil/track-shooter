@@ -10,6 +10,7 @@ import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.SensitiveInputPart;
+import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.input.TwoWayInput;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ConfigurableObject;
@@ -87,27 +88,28 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		addChildren(false, false, controller);
 		reliesOn = controller;
 
-		mainJoystick = References.create(controller::getMainJoystick);
-		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
-		rotateAxis = new TwoWayInput(
-				new HighestPositionInputPart(
-						References.create(controller::getLeftUpper),
-						References.create(controller::getRightLower),
-						References.create(controller::getCenterRight)
+		mainJoystick = new TwoAxisJoystickPart(
+				new TwoWayInput( // x
+						References.create(controller::getThumbRight), // +
+						References.create(controller::getThumbLeft)   // -
 				),
-				new HighestPositionInputPart(
-						References.create(controller::getLeftLower),
-						References.create(controller::getRightUpper),
-						References.create(controller::getCenterLeft)
-				)
+				new TwoWayInput( // y
+						References.create(controller::getThumbUpper), // +
+						References.create(controller::getThumbLower)  // -
+				), true, false
 		);
+		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
+		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
 		fireButton = References.create(controller::getTrigger);
-		slow = new DummyInputPart(0, false);
-		activatePowerup = References.create(controller::getThumbUpper);
-		startButton = References.create(controller::getThumbRight);
+		slow = References.create(controller::getCenterLeft);
+		activatePowerup = new HighestPositionInputPart(
+				References.create(controller::getLeftUpper),
+				References.create(controller::getLeftLower)
+		);
+		startButton = References.create(controller::getRightUpper);
 		pauseButton = startButton;
-		backButton = References.create(controller::getThumbLeft);
-		enterButton = References.create(controller::getThumbLower);
+		backButton = References.create(controller::getRightLower);
+		enterButton = References.create(controller::getCenterRight);
 		if(controller instanceof RumbleCapableController){
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
