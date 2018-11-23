@@ -8,7 +8,7 @@ import me.retrodaredevil.controller.output.DisconnectedRumble;
 
 /**
  * Currently, rumble is not supported by libgdx but in the future they may be so
- * even though this class doesn't work right now, you can use it as a place holder for a gyro
+ * even though this class doesn't work right now, you can use it as a place holder for a rumble
  * for controllers.
  */
 public class GdxControllerRumble extends DisconnectedRumble {

@@ -19,6 +19,7 @@ import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
+import me.retrodaredevil.controller.types.ExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.types.LogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
@@ -122,6 +123,33 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 			controlOptions.add((ConfigurableObject) controller);
 		}
 	}
+	public ControllerGameInput(final ExtremeFlightJoystickControllerInput controller){
+		addChildren(false, false, controller);
+		reliesOn = controller;
+
+		mainJoystick = References.create(controller::getDPad);
+		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
+		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
+		fireButton = References.create(controller::getTrigger);
+		slow = References.create(controller::getGridLowerLeft);
+		activatePowerup = References.create(controller::getThumbButton);
+		startButton = References.create(controller::getGridUpperLeft);
+		pauseButton = startButton;
+		backButton = References.create(controller::getGridUpperRight);
+		enterButton = References.create(controller::getThumbLeftLower);
+		if(controller instanceof RumbleCapableController){
+			rumble = ((RumbleCapableController) controller).getRumble();
+		} else {
+			rumble = new DisconnectedRumble();
+			addChildren(false, false, rumble);
+		}
+		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton);
+		controlOptions.add(rotateAxisSensitivity);
+		if(controller instanceof ConfigurableObject){
+			controlOptions.add((ConfigurableObject) controller);
+		}
+
+	}
 	private static ControlOption createRotationalAxisSensitivity(){
 		return new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
 				"controls.rotation.controller.sensitivity", OptionValues.createAnalogRangedOptionValue(.4, 2.5, 1));
@@ -134,7 +162,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		return controlOptions.getOptions();
+		return controlOptions.getControlOptions();
 	}
 
 	@Override

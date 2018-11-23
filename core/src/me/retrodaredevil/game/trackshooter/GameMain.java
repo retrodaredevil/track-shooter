@@ -22,18 +22,25 @@ import java.util.List;
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.controller.SimpleControllerPart;
+import me.retrodaredevil.controller.implementations.BaseExtremeFlightJoystickControllerInput;
+import me.retrodaredevil.controller.implementations.BaseLogitechAttack3JoystickControllerInput;
+import me.retrodaredevil.controller.implementations.BaseStandardControllerInput;
+import me.retrodaredevil.controller.implementations.ControllerPartCreator;
+import me.retrodaredevil.controller.implementations.DefaultExtremeFlightJoystickInputCreator;
+import me.retrodaredevil.controller.implementations.DefaultLogitechAttack3JoystickInputCreator;
+import me.retrodaredevil.controller.implementations.DefaultStandardControllerInputCreator;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
-import me.retrodaredevil.game.trackshooter.input.GameInputs;
 import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
-import me.retrodaredevil.game.trackshooter.input.StandardAttackJoystickControllerInput;
-import me.retrodaredevil.game.trackshooter.input.StandardUSBControllerInput;
+import me.retrodaredevil.game.trackshooter.input.GameInputs;
 import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
-import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -70,11 +77,27 @@ public class GameMain extends Game {
 				String controllerName = controller.getName().toLowerCase();
 
 				// ====== Controller =====
+				final ControllerPartCreator controllerPartCreator = new GdxControllerPartCreator(controller);
 				final UsableGameInput controllerInput;
-				if(controllerName.contains("attack") && controllerName.contains("logitech")){
-					controllerInput = new ControllerGameInput(new StandardAttackJoystickControllerInput(controller));
+				if(controllerName.contains("extreme") && controllerName.contains("logitech")){
+					controllerInput = new ControllerGameInput(new BaseExtremeFlightJoystickControllerInput(
+							new DefaultExtremeFlightJoystickInputCreator(),
+							controllerPartCreator
+					));
+				} else if(controllerName.contains("attack") && controllerName.contains("logitech")){
+//					controllerInput = new ControllerGameInput(new StandardAttackJoystickControllerInput(controller));
+					controllerInput = new ControllerGameInput(new BaseLogitechAttack3JoystickControllerInput(
+							new DefaultLogitechAttack3JoystickInputCreator(),
+                            controllerPartCreator
+					));
 				} else {
-					controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
+//					controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
+					controllerInput = new ControllerGameInput(new BaseStandardControllerInput(
+							new DefaultStandardControllerInputCreator(),
+							controllerPartCreator,
+							OptionValues.createImmutableBooleanOptionValue(false), // TODO make actual option
+							OptionValues.createImmutableBooleanOptionValue(false)
+					));
 				}
 				controllerManager.addController(controllerInput);
 

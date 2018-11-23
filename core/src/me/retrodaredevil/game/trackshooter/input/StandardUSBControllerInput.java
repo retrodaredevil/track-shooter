@@ -22,6 +22,7 @@ import me.retrodaredevil.game.trackshooter.input.implementations.ControllerPovJo
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerRumble;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class StandardUSBControllerInput extends SimpleControllerInput implements StandardControllerInput, RumbleCapableController, ConfigurableControllerPart {
 
 	private final Controller controller;

@@ -19,20 +19,24 @@ buildscript {
 
     }
 }
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' //
+}
 
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
 
     version = '1.0'
-	project.ext.set("controllerLibVersion", "v1.3.0")
     ext {
         appName = "Track Shooter"
-        gdxVersion = '1.9.8'
+        gdxVersion = '1.9.9'
         roboVMVersion = '2.3.3'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
+        controllerLibVersion = "v1.3.2"
+//        controllerLibVersion = "master-SNAPSHOT"
     }
 
     repositories {
@@ -89,7 +93,9 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        implementation "com.github.retrodaredevil:abstract-controller-lib:$controllerLibVersion"
+        implementation("com.github.retrodaredevil:abstract-controller-lib:$controllerLibVersion"){
+            changing=true
+        }
 
     }
 }

@@ -14,6 +14,7 @@ import me.retrodaredevil.game.trackshooter.input.implementations.ControllerInput
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerRumble;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class StandardAttackJoystickControllerInput extends SimpleControllerInput implements LogitechAttack3JoystickControllerInput, RumbleCapableController {
 
 	private final Controller controller;

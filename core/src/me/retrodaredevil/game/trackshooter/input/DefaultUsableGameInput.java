@@ -3,7 +3,6 @@ package me.retrodaredevil.game.trackshooter.input;
 import java.util.Collection;
 
 import me.retrodaredevil.controller.ControllerPart;
-import me.retrodaredevil.controller.SimpleControllerInput;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.options.ControlOption;
@@ -72,7 +71,7 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		return controlOptions.getOptions();
+		return controlOptions.getControlOptions();
 	}
 
 	@Override
