@@ -13,9 +13,12 @@ import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponen
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class StarFish extends SimpleEntity implements Enemy {
+	/** Cannot flip direction twice within this time. (In seconds)*/
+	private static final float NO_FLIP_TIME = .5f;
 
 	private final TravelVelocityOnTrackMoveComponent moveComponent;
 	private final float speed;
+	private Float lastFlip = null;
 	private boolean remove;
 
 	/**
@@ -48,11 +51,15 @@ public class StarFish extends SimpleEntity implements Enemy {
 
 	@Override
 	public void onHit(World world, Entity other) {
-		flipDirection();
+		flipDirection(world);
 	}
 
-	private void flipDirection(){
-		moveComponent.getTravelVelocitySetter().setVelocity(-1 * moveComponent.getTravelVelocity());
+	private void flipDirection(World world){
+		final float time = world.getTime();
+		if(lastFlip == null || time - lastFlip > NO_FLIP_TIME) {
+			moveComponent.getTravelVelocitySetter().setVelocity(-1 * moveComponent.getTravelVelocity());
+			lastFlip = time;
+		}
 	}
 
 	@Override

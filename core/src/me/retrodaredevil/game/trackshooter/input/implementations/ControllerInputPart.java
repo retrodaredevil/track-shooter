@@ -16,7 +16,8 @@ public class ControllerInputPart extends AutoCachingInputPart {
 	 *
 	 * @param controller The controller
 	 * @param type The AxisType
-	 * @param code The code for the button or axis
+	 * @param code The code for the button or axis. If this is < 0, then {@link #isConnected()} will return false.
+	 *             However, this should not be used for a disconnected input part. Use {@link me.retrodaredevil.controller.input.DummyInputPart} for that.
 	 * @param inverted true if this is inverted. Should be true for most y axises to when up, it is positive
 	 * @param isAxis If true, the passed code is a code to be used with controller.getAxis(), otherwise, controller.getButton() will be used
 	 */
@@ -41,9 +42,7 @@ public class ControllerInputPart extends AutoCachingInputPart {
 	protected double calculatePosition() {
 		AxisType type = getAxisType();
 		if(isAxis){
-			double value = controller.getAxis(this.code);
-			double mult = inverted ? -1 : 1;
-			value *= mult;
+			final double value = controller.getAxis(this.code) * (inverted ? -1 : 1);
 			return type.isFull() ? value : ((value + 1.0) / 2.0);
 		}
 		return (controller.getButton(this.code) == !inverted) ? 1 : 0;
@@ -51,6 +50,6 @@ public class ControllerInputPart extends AutoCachingInputPart {
 
 	@Override
 	public boolean isConnected() {
-		return Util.isControllerConnected(controller);
+		return Util.isControllerConnected(controller) && code >= 0;
 	}
 }

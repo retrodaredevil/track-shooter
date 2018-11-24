@@ -20,7 +20,7 @@ buildscript {
     }
 }
 configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds' //
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
 }
 
 allprojects {
@@ -35,8 +35,8 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
-        controllerLibVersion = "v1.3.2"
-//        controllerLibVersion = "master-SNAPSHOT"
+        controllerLibVersion = "v1.3.5"
+//        controllerLibVersion = "e3e8642e3497b4e7bed9387a2ad9c247eb2f3755"
     }
 
     repositories {

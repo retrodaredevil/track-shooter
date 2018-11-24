@@ -26,9 +26,9 @@ import me.retrodaredevil.controller.implementations.BaseExtremeFlightJoystickCon
 import me.retrodaredevil.controller.implementations.BaseLogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.implementations.BaseStandardControllerInput;
 import me.retrodaredevil.controller.implementations.ControllerPartCreator;
-import me.retrodaredevil.controller.implementations.DefaultExtremeFlightJoystickInputCreator;
-import me.retrodaredevil.controller.implementations.DefaultLogitechAttack3JoystickInputCreator;
-import me.retrodaredevil.controller.implementations.DefaultStandardControllerInputCreator;
+import me.retrodaredevil.controller.implementations.mappings.DefaultExtremeFlightJoystickInputCreator;
+import me.retrodaredevil.controller.implementations.mappings.DefaultLogitechAttack3JoystickInputCreator;
+import me.retrodaredevil.controller.implementations.mappings.DefaultStandardControllerInputCreator;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
 import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
@@ -85,13 +85,11 @@ public class GameMain extends Game {
 							controllerPartCreator
 					));
 				} else if(controllerName.contains("attack") && controllerName.contains("logitech")){
-//					controllerInput = new ControllerGameInput(new StandardAttackJoystickControllerInput(controller));
 					controllerInput = new ControllerGameInput(new BaseLogitechAttack3JoystickControllerInput(
 							new DefaultLogitechAttack3JoystickInputCreator(),
                             controllerPartCreator
 					));
 				} else {
-//					controllerInput = new ControllerGameInput(new StandardUSBControllerInput(controller));
 					controllerInput = new ControllerGameInput(new BaseStandardControllerInput(
 							new DefaultStandardControllerInputCreator(),
 							controllerPartCreator,
@@ -119,7 +117,7 @@ public class GameMain extends Game {
 				firstRun = false;
 			}
 		}
-		if(inputs.isEmpty()) {
+		if(inputs.isEmpty()) { // if there were no controllers, add inputs from getPhysicalInputs()
 			List<UsableGameInput> gameInputs = getPhysicalInputs();
 			for(UsableGameInput input : gameInputs){
 				controllerManager.addController(input);

@@ -8,6 +8,7 @@ import me.retrodaredevil.controller.input.DummyInputPart;
 import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.MultiplexerJoystickPart;
 import me.retrodaredevil.controller.input.References;
 import me.retrodaredevil.controller.input.SensitiveInputPart;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
@@ -28,7 +29,8 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	private final ControllerPart reliesOn;
 
 	private final JoystickPart mainJoystick;
-//	private final JoystickPart rotateJoystick;
+	private final JoystickPart selectorJoystick;
+
 	private final InputPart rotateAxis;
 	private final InputPart fireButton;
 	private final InputPart slow;
@@ -52,7 +54,21 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		reliesOn = controller;
 
 		mainJoystick = References.create(controller::getLeftJoy);
-//		getMainJoystick = controller.getDPad();
+//		selectorJoystick = new TwoAxisJoystickPart(
+//				new HighestPositionInputPart(
+//						References.create(() -> controller.getLeftJoy().getXAxis()),
+//						References.create(() -> controller.getDPad().getXAxis())
+//				),
+//				new HighestPositionInputPart(
+//						References.create(() -> controller.getLeftJoy().getYAxis()),
+//						References.create(() -> controller.getDPad().getYAxis())
+//				), true, false
+//		);
+		selectorJoystick = new MultiplexerJoystickPart(
+				References.create(controller::getLeftJoy),
+				References.create(controller::getRightJoy),
+				References.create(controller::getDPad)
+		);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = new SensitiveInputPart(
 				References.create(() -> controller.getRightJoy().getXAxis()),
@@ -78,7 +94,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 		addChildren(false, false,
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-				startButton, backButton, enterButton);
+				startButton, backButton, enterButton, selectorJoystick);
 
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
@@ -99,6 +115,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 						References.create(controller::getThumbLower)  // -
 				), true, false
 		);
+		selectorJoystick = References.create(controller::getMainJoystick);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
 		fireButton = References.create(controller::getTrigger);
@@ -117,7 +134,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 			rumble = new DisconnectedRumble();
 			addChildren(false, false, rumble);
 		}
-		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton);
+		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
@@ -128,6 +145,10 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		reliesOn = controller;
 
 		mainJoystick = References.create(controller::getDPad);
+		selectorJoystick = new MultiplexerJoystickPart(
+				References.create(controller::getMainJoystick),
+				References.create(controller::getDPad)
+		);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
 		fireButton = References.create(controller::getTrigger);
@@ -143,7 +164,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 			rumble = new DisconnectedRumble();
 			addChildren(false, false, rumble);
 		}
-		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton);
+		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
@@ -207,7 +228,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 	@Override
 	public JoystickPart getSelectorJoystick() {
-		return mainJoystick;
+        return selectorJoystick;
 	}
 
 	@Override

@@ -4,7 +4,7 @@ import com.badlogic.gdx.controllers.Controller;
 
 import me.retrodaredevil.controller.implementations.ControllerPartCreator;
 import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.controller.input.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.DigitalAnalogInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
@@ -73,7 +73,10 @@ public class GdxControllerPartCreator implements ControllerPartCreator {
 
 	@Override
 	public InputPart createTrigger(int digitalCode, int analogCode) {
-        return new HighestPositionInputPart(
+		if(analogCode < 0){
+			return createDigital(digitalCode);
+		}
+        return new DigitalAnalogInputPart(
         		new ControllerInputPart(controller, AxisType.DIGITAL, digitalCode),
 				new ControllerInputPart(controller, AxisType.ANALOG, analogCode)
 		);
