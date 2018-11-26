@@ -29,6 +29,9 @@ import me.retrodaredevil.controller.implementations.ControllerPartCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultExtremeFlightJoystickInputCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultLogitechAttack3JoystickInputCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultStandardControllerInputCreator;
+import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
+import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
 import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
@@ -90,12 +93,20 @@ public class GameMain extends Game {
                             controllerPartCreator
 					));
 				} else {
+					OptionValue physicalLocationsSwapped = OptionValues.createBooleanOptionValue(false);
+					OptionTracker tracker = new OptionTracker();
+					tracker.add(new ControlOption(
+							"Are physical face button locations inverted",
+							"Should be checked for some nintendo controllers where the select button is the right face button",
+							"controller.main.controller." + controller.getName() + ".layout.physical_face_buttons_inverted",
+							physicalLocationsSwapped
+					));
 					controllerInput = new ControllerGameInput(new BaseStandardControllerInput(
 							new DefaultStandardControllerInputCreator(),
 							controllerPartCreator,
-							OptionValues.createImmutableBooleanOptionValue(false), // TODO make actual option
+							physicalLocationsSwapped,
 							OptionValues.createImmutableBooleanOptionValue(false)
-					));
+					), tracker);
 				}
 				controllerManager.addController(controllerInput);
 

@@ -49,21 +49,16 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	 * will be added and used
 	 * @param controller The controller to use. This will also be added as a child to this object. When passed, it CANNOT have a parent
 	 */
-	public ControllerGameInput(final StandardControllerInput controller){
+	public ControllerGameInput(final StandardControllerInput controller, ConfigurableObject extraOptions){
 		addChildren(false, false, controller);
 		reliesOn = controller;
 
-		mainJoystick = References.create(controller::getLeftJoy);
-//		selectorJoystick = new TwoAxisJoystickPart(
-//				new HighestPositionInputPart(
-//						References.create(() -> controller.getLeftJoy().getXAxis()),
-//						References.create(() -> controller.getDPad().getXAxis())
-//				),
-//				new HighestPositionInputPart(
-//						References.create(() -> controller.getLeftJoy().getYAxis()),
-//						References.create(() -> controller.getDPad().getYAxis())
-//				), true, false
-//		);
+		controlOptions.add(extraOptions);
+
+		mainJoystick = new MultiplexerJoystickPart(
+				References.create(controller::getLeftJoy),
+				References.create(controller::getDPad)
+		);
 		selectorJoystick = new MultiplexerJoystickPart(
 				References.create(controller::getLeftJoy),
 				References.create(controller::getRightJoy),
@@ -105,19 +100,13 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		addChildren(false, false, controller);
 		reliesOn = controller;
 
-		mainJoystick = new TwoAxisJoystickPart(
-				new TwoWayInput( // x
-						References.create(controller::getThumbRight), // +
-						References.create(controller::getThumbLeft)   // -
-				),
-				new TwoWayInput( // y
-						References.create(controller::getThumbUpper), // +
-						References.create(controller::getThumbLower)  // -
-				), true, false
-		);
+		mainJoystick = References.create(controller::getMainJoystick);
 		selectorJoystick = References.create(controller::getMainJoystick);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
-		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
+		rotateAxis = new TwoWayInput( // x
+				References.create(controller::getThumbUpper), // +
+				References.create(controller::getThumbLeft)   // -
+		);
 		fireButton = References.create(controller::getTrigger);
 		slow = References.create(controller::getCenterLeft);
 		activatePowerup = new HighestPositionInputPart(
@@ -144,13 +133,13 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		addChildren(false, false, controller);
 		reliesOn = controller;
 
-		mainJoystick = References.create(controller::getDPad);
+		mainJoystick = References.create(controller::getMainJoystick);
 		selectorJoystick = new MultiplexerJoystickPart(
 				References.create(controller::getMainJoystick),
 				References.create(controller::getDPad)
 		);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
-		rotateAxis = References.create(() -> controller.getMainJoystick().getXAxis());
+		rotateAxis = References.create(() -> controller.getDPad().getXAxis());
 		fireButton = References.create(controller::getTrigger);
 		slow = References.create(controller::getGridLowerLeft);
 		activatePowerup = References.create(controller::getThumbButton);
