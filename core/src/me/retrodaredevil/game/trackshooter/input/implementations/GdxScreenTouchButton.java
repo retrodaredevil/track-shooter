@@ -4,8 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Rectangle;
 
-import java.util.function.Supplier;
-
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.game.trackshooter.util.Util;
@@ -13,24 +11,27 @@ import me.retrodaredevil.game.trackshooter.util.Util;
 public class GdxScreenTouchButton extends AutoCachingInputPart {
 	private static final int NUM_TOUCHES = 20;
 	private final boolean needsTouchScreenForConnection;
-	private final ScreenAreaGetter proportionalScreenAreaGetter;
-	public GdxScreenTouchButton(boolean needsTouchScreenForConnection, ScreenAreaGetter proportionalScreenAreaGetter) {
+	private final ScreenArea screenArea;
+	public GdxScreenTouchButton(boolean needsTouchScreenForConnection, ScreenArea screenArea) {
 		super(new AxisType(false, false, false, true), false);
 		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
-		this.proportionalScreenAreaGetter = proportionalScreenAreaGetter;
+		this.screenArea = screenArea;
 	}
-	public GdxScreenTouchButton(ScreenAreaGetter proportionalScreenAreaGetter){
-		this(true, proportionalScreenAreaGetter);
+	public GdxScreenTouchButton(ScreenArea screenArea){
+		this(true, screenArea);
 	}
 
 	@Override
 	protected double calculatePosition() {
-		Rectangle area = Util.proportionalRectangleToScreenArea(proportionalScreenAreaGetter.getProportionalScreenArea());
 		if(Gdx.input.isTouched()){
+			float width = Gdx.graphics.getWidth();
+			float height = Gdx.graphics.getHeight();
 			for(int i = 0; i < NUM_TOUCHES; i++){
 				try {
 					if (Gdx.input.isTouched(i)) {
-						if (area.contains(Gdx.input.getX(i), Gdx.input.getY(i))) {
+						float x = Gdx.input.getX(i) / width;
+						float y = 1 - (Gdx.input.getY(i) / height);
+						if (screenArea.containsPoint(x, y)) {
 							return 1;
 						}
 					}

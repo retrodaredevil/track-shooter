@@ -3,7 +3,6 @@ package me.retrodaredevil.game.trackshooter.input;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.Arrays;
@@ -33,7 +32,8 @@ import me.retrodaredevil.game.trackshooter.input.implementations.GdxShakeButton;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTiltJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxTouchpadJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreaGetter;
+import me.retrodaredevil.game.trackshooter.input.implementations.ScreenArea;
+import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreas;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 
@@ -98,14 +98,14 @@ public final class GameInputs {
 				options, false, MOUSE
 		);
 	}
-	private static InputPart createTouchAxis(OptionTracker options, ScreenAreaGetter proportionalScreenAreaGetter, OptionValue isLeftHanded){
+	private static InputPart createTouchAxis(OptionTracker options, ScreenArea screenArea, OptionValue isLeftHanded){
 		OptionValue multiplier = createRotationMultiplier(options, true, TOUCH).getOptionValue();
 		OptionValue inverted = createRotationInvert(options, TOUCH).getOptionValue();
 		return createRotationAxisChooser(
-				new GdxMouseAxis(false, () -> 7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1), proportionalScreenAreaGetter),
+				new GdxMouseAxis(false, () -> 7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1), screenArea),
 				new GdxMouseAxis(true,
 						() -> -7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
-						proportionalScreenAreaGetter),
+						screenArea),
 				options, true, TOUCH
 		);
 	}
@@ -155,24 +155,28 @@ public final class GameInputs {
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
 				"controls.main." + TOUCH + ".left_handed", isLeftHanded));
-		final ScreenAreaGetter fireAreaGetter;
-		final ScreenAreaGetter rotateAreaGetter;
+		final ScreenArea fireAreaGetter;
+		final ScreenArea rotateAreaGetter;
 		{
-			final Rectangle rightHandedFireArea;
-			final Rectangle leftHandedFireArea;
-			final Rectangle rightHandedRotateArea;
-			final Rectangle leftHandedRotateArea;
+			final ScreenArea rightHandedFireArea;
+			final ScreenArea leftHandedFireArea;
+			final ScreenArea rightHandedRotateArea;
+			final ScreenArea leftHandedRotateArea;
 
-			final Rectangle leftSide = new Rectangle(0, 0, .5f, 1);
-			final Rectangle rightSide = new Rectangle(.5f, 0, .5f, 1);
+			final ScreenArea leftSide = ScreenAreas.leftOfX(.5f);
+			final ScreenArea rightSide = ScreenAreas.rightOfX(.5f);
 			rightHandedFireArea = leftSide;
 			rightHandedRotateArea = rightSide;
 
 			leftHandedRotateArea = leftSide;
 			leftHandedFireArea = rightSide;
 
-			fireAreaGetter = () -> isLeftHanded.getBooleanOptionValue() ? leftHandedFireArea : rightHandedFireArea;
-			rotateAreaGetter = () -> isLeftHanded.getBooleanOptionValue() ? leftHandedRotateArea : rightHandedRotateArea;
+			fireAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
+					? leftHandedFireArea.containsPoint(x, y)
+					: rightHandedFireArea.containsPoint(x, y);
+			rotateAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
+					? leftHandedRotateArea.containsPoint(x, y) :
+					rightHandedRotateArea.containsPoint(x, y);
 		}
 
 		if(renderParts != null){

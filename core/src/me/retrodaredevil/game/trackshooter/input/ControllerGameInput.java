@@ -139,7 +139,8 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 				References.create(controller::getDPad)
 		);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
-		rotateAxis = References.create(() -> controller.getDPad().getXAxis());
+//		rotateAxis = References.create(() -> controller.getDPad().getXAxis());
+        rotateAxis = References.create(controller::getTwist);
 		fireButton = References.create(controller::getTrigger);
 		slow = References.create(controller::getGridLowerLeft);
 		activatePowerup = References.create(controller::getThumbButton);
