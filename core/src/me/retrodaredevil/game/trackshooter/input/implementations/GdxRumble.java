@@ -17,7 +17,10 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
+
+import static java.lang.Math.abs;
 
 public class GdxRumble extends SimpleControllerPart implements ControllerRumble, ConfigurableControllerPart {
 	private final OptionValue simulateAnalogOption = OptionValues.createBooleanOptionValue(true);
@@ -31,18 +34,31 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 
 	private final Map<VibratePattern, Map<Integer, long[]>> patternRepeatCache = new EnumMap<>(VibratePattern.class);
 
+	private final RumbleAnalogControl analogControl;
+
 
 	private long vibrateUntil = 0;
+	/** A non-null value representing the current VibratePattern*/
 	private VibratePattern vibratePattern;
+	private Double analogControlLastIntensity = null;
+	/** The date, in millis, that {@link #analogControlLastIntensity} is valid until*/
+	private long analogControlValidUntil = 0;
 
-	public GdxRumble(){
-	}
-	public GdxRumble(boolean simulateAnalog){
+	public GdxRumble(RumbleAnalogControl analogControl, boolean simulateAnalog){
+		this.analogControl = analogControl;
 		simulateAnalogOption.setBooleanOptionValue(simulateAnalog);
+	}
+	public GdxRumble(RumbleAnalogControl analogControl){
+		this(analogControl, true);
+	}
+	public GdxRumble(){
+		this(RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG);
 	}
 
 	private void cancel(){
 		vibrateUntil = 0;
+		analogControlLastIntensity = null;
+		analogControlValidUntil = 0;
 		if(vibratePattern != VibratePattern.OFF) {
 			vibratePattern = VibratePattern.OFF;
 			Gdx.input.cancelVibrate();
@@ -82,7 +98,14 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 		if(intensity == 0){
 			cancel();
 		} else {
-			requestPattern(VibratePattern.getPattern(intensity));
+			if(analogControl.isSupported()){
+				vibratePattern = VibratePattern.MANUAL;
+				analogControl.setControl(intensity, Long.MAX_VALUE);
+				analogControlLastIntensity = intensity;
+				analogControlValidUntil = Long.MAX_VALUE;
+			} else {
+				requestPattern(VibratePattern.getPattern(intensity));
+			}
 			vibrateUntil = Long.MAX_VALUE;
 		}
 	}
@@ -101,8 +124,20 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 		if(intensity == 0) {
 			cancel();
 		} else {
-			requestPattern(VibratePattern.getPattern(intensity));
-			vibrateUntil = System.currentTimeMillis() + millis;
+			final long now = System.currentTimeMillis();
+			vibrateUntil = now + millis;
+			if(analogControl.isSupported()){
+				vibratePattern = VibratePattern.MANUAL;
+				final Double analogControlLastIntensity = this.analogControlLastIntensity;
+				if(analogControlLastIntensity == null || abs(analogControlLastIntensity - intensity) > .1 || analogControlValidUntil < now){
+//					System.out.println("setting now last: " + analogControlLastIntensity + " intensity: " + intensity + " difference: " + (now - analogControlValidUntil));
+					analogControl.setControl(intensity, Long.MAX_VALUE);
+					this.analogControlLastIntensity = intensity;
+				}
+				analogControlValidUntil = vibrateUntil;
+			} else {
+				requestPattern(VibratePattern.getPattern(intensity));
+			}
 		}
 	}
 	@Override
@@ -118,12 +153,18 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 			return;
 		}
 		vibrateUntil = Long.MAX_VALUE; // we don't want to to cancel it
+		if(analogControl.isSupported()){
+			analogControlLastIntensity = null;
+			analogControlValidUntil = 0;
+			analogControl.setControl(intensity, millis);
+			return;
+		}
 		vibratePattern = VibratePattern.MANUAL;
 		if(pattern == VibratePattern.FULL || !simulateAnalogOption.getBooleanOptionValue()){
 			Gdx.input.vibrate((int) millis);
 			return;
 		}
-		// Basically, instead of turning the rumble off in an open loop, we use the exact
+		// Basically, instead of turning the rumble off in an open loop (based on time), we use the exact
 		// pattern that we want and create a new array that repeats it a certain number of times.
 		// This can actually be a very resource intensive on some devices (so we use a cache) but it can vibrate
 		// for the exact amount of time that we want it to.
@@ -172,7 +213,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 	}
 	@Override
 	public boolean isAnalogRumbleNativelySupported() {
-		return false;
+		return analogControl.isSupported();
 	}
 
 	@Override
@@ -187,7 +228,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		if(enableRumbleOption.getBooleanOptionValue()){
+		if(enableRumbleOption.getBooleanOptionValue() && !analogControl.isSupported()){
 			return Arrays.asList(enableRumbleControlOption, simulateAnalogControlOption);
 		}
 		return Collections.singletonList(enableRumbleControlOption);

@@ -14,8 +14,8 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 	private final String controlName;
 
 	private final JoystickPart mainJoystick;
-	//	private final JoystickPart rotateJoystick;
 	private final InputPart rotateAxis;
+	private final JoystickPart rotationPointInput;
 	private final InputPart fireButton;
 	private final InputPart slow;
 	private final InputPart activatePowerup;
@@ -28,19 +28,24 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 
 	private final ControllerRumble rumble;
 
-//	private final Collection<? extends ControlOption> controlOptions;
 	private final OptionTracker controlOptions;
 
 	private final Collection<ControllerPart> reliesOnCollection;
 
-	public DefaultUsableGameInput(String controlName, JoystickPart mainJoystick, InputPart rotateAxis,
-								  InputPart fireButton, InputPart slow, InputPart activatePowerup, InputPart startButton,
-								  InputPart pauseButton, InputPart backButton, JoystickPart selectorJoystick, InputPart enterButton,
-								  ControllerRumble rumble, OptionTracker controlOptions,
-								  Collection<ControllerPart> reliesOnCollection){
+	/**
+	 * Note that none of the passed parameters are added as children. The caller must add the necessary {@link ControllerPart}s
+	 * as children in order for this to function properly
+	 */
+	public DefaultUsableGameInput(String controlName, JoystickPart mainJoystick,
+								  InputPart rotateAxis, JoystickPart rotationPointInput,
+								  InputPart fireButton, InputPart slow, InputPart activatePowerup,
+								  InputPart startButton, InputPart pauseButton, InputPart backButton,
+								  JoystickPart selectorJoystick, InputPart enterButton, ControllerRumble rumble,
+								  OptionTracker controlOptions, Collection<ControllerPart> reliesOnCollection){
 		this.controlName = controlName;
 		this.mainJoystick = mainJoystick;
 		this.rotateAxis = rotateAxis;
+		this.rotationPointInput = rotationPointInput;
 		this.fireButton = fireButton;
 		this.slow = slow;
 		this.activatePowerup = activatePowerup;
@@ -55,11 +60,6 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 		this.controlOptions = controlOptions;
 		this.reliesOnCollection = reliesOnCollection;
 
-//		List<ControllerPart> partsList = Arrays.asList(
-//				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-//				startButton, pauseButton, backButton, rumble
-//		);
-//		addChildren(partsList, true, true);
 	}
 
 
@@ -68,6 +68,10 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 		return controlName;
 	}
 
+	@Override
+	public String toString() {
+		return this.getClass().getSimpleName() + "{" + controlName + "," + hashCode() + "}";
+	}
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
@@ -82,6 +86,11 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 	@Override
 	public InputPart getRotateAxis() {
 		return rotateAxis;
+	}
+
+	@Override
+	public JoystickPart getRotationPointInput() {
+		return rotationPointInput;
 	}
 
 	@Override

@@ -187,6 +187,11 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	}
 
 	@Override
+	public JoystickPart getRotationPointInput() {
+		return null;
+	}
+
+	@Override
 	public InputPart getFireButton() {
 		return fireButton;
 	}

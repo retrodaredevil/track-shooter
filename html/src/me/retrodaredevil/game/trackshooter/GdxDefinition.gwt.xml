@@ -5,6 +5,7 @@
 	<inherits name='com.badlogic.gdx.physics.box2d.box2d-gwt' />
 	<inherits name='com.badlogic.gdx.controllers.controllers-gwt' />
 
+    <inherits name='com.google.gwt.user.User'/>
 	<inherits name='GameMain' />
 	<entry-point class='me.retrodaredevil.game.trackshooter.client.HtmlLauncher' />
 	<set-configuration-property name='xsiframe.failIfScriptTag' value='FALSE'/>

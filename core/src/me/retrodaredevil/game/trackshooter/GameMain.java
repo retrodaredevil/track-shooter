@@ -33,12 +33,9 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
-import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
-import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
-import me.retrodaredevil.game.trackshooter.input.GameInput;
-import me.retrodaredevil.game.trackshooter.input.GameInputs;
-import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
+import me.retrodaredevil.game.trackshooter.input.*;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
+import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.Background;
@@ -50,12 +47,22 @@ import me.retrodaredevil.game.trackshooter.util.Resources;
 
 public class GameMain extends Game {
 
+	private final RumbleAnalogControl rumbleAnalogControl;
+
 	private RenderObject renderObject;
 	private SaveObject saveObject;
 	private RenderParts renderParts;
 
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
+
+	public GameMain(RumbleAnalogControl rumbleAnalogControl){
+		this.rumbleAnalogControl = rumbleAnalogControl;
+	}
+
+	public GameMain(){
+		this(RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG);
+	}
 
 
 	@Override
@@ -111,7 +118,7 @@ public class GameMain extends Game {
 				controllerManager.addController(controllerInput);
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
-				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs() : Collections.emptySet();
+				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl) : Collections.emptySet();
 				for(GameInput input : addBefore){
 					controllerManager.addController(input);
 				}
@@ -129,7 +136,7 @@ public class GameMain extends Game {
 			}
 		}
 		if(inputs.isEmpty()) { // if there were no controllers, add inputs from getPhysicalInputs()
-			List<UsableGameInput> gameInputs = getPhysicalInputs();
+			List<UsableGameInput> gameInputs = getPhysicalInputs(rumbleAnalogControl);
 			for(UsableGameInput input : gameInputs){
 				controllerManager.addController(input);
 			}
@@ -149,13 +156,13 @@ public class GameMain extends Game {
 		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
 	}
-	private List<UsableGameInput> getPhysicalInputs(){
+	private List<UsableGameInput> getPhysicalInputs(RumbleAnalogControl rumbleAnalogControl){
 
 		List<UsableGameInput> gameInputs = new ArrayList<>();
 		if(Gdx.app.getType() == Application.ApplicationType.Android){
-			gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts));
+			gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts, rumbleAnalogControl));
 			if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
-				gameInputs.add(GameInputs.createTouchGyroInput());
+				gameInputs.add(GameInputs.createTouchGyroInput(rumbleAnalogControl));
 			}
 		}
 		gameInputs.add(GameInputs.createMouseAndKeyboardInput());

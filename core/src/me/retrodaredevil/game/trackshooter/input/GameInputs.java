@@ -127,8 +127,8 @@ public final class GameInputs {
 		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
 
 		DefaultUsableGameInput r = new DefaultUsableGameInput("Keyboard Controls",
-				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseButton, backButton, selectorJoystick, enterButton, new DisconnectedRumble(), options, Collections.emptyList());
+				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseButton, backButton, selectorJoystick, enterButton, new DisconnectedRumble(), options, Collections.emptyList()
+		);
 
 		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, pauseButton, backButton, selectorJoystick, enterButton);
@@ -140,9 +140,12 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createTouchInput(RenderParts renderParts) {
+	private static UsableGameInput createTouchInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl) {
 		if(renderParts == null && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
+		}
+		if(rumbleAnalogControl == null){
+			throw new NullPointerException("rumbleAnalogControl is null! At least use GdxRumble.UNSUPPORTED_ANALOG!");
 		}
 
 		final JoystickPart mainJoystick;
@@ -267,7 +270,7 @@ public final class GameInputs {
 		dummyEnter = new DummyInputPart(0, false);
 
 		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)){
-			final GdxRumble gdxRumble = new GdxRumble();
+			final GdxRumble gdxRumble = new GdxRumble(rumbleAnalogControl);
 			rumble = gdxRumble;
 			options.add(gdxRumble);
 		} else {
@@ -275,8 +278,8 @@ public final class GameInputs {
 		}
 
 		DefaultUsableGameInput r = new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
-				mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton,
-				pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList());
+				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList()
+		);
 
 		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
@@ -285,11 +288,11 @@ public final class GameInputs {
 		}
 		return r;
 	}
-	public static UsableGameInput createTouchGyroInput(){
-		return createTouchInput(null);
+	public static UsableGameInput createTouchGyroInput(RumbleAnalogControl rumbleAnalogControl){
+		return createTouchInput(null, rumbleAnalogControl);
 	}
 
-	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts){
-		return createTouchInput(Objects.requireNonNull(renderParts));
+	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
+		return createTouchInput(Objects.requireNonNull(renderParts), rumbleAnalogControl);
 	}
 }

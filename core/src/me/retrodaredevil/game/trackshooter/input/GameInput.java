@@ -16,6 +16,7 @@ public interface GameInput extends ControllerInput, RumbleCapableController, Con
 //	SimpleJoystickPart rotateJoystick();
 	/** @return The rotate InputPart where a positive position turns clockwise and negative turns counter clockwise*/
 	InputPart getRotateAxis();
+	JoystickPart getRotationPointInput();
 	InputPart getFireButton();
 	InputPart getSlowButton(); // maybe remove this entirely and refactor it into main joystick
 	InputPart getActivatePowerup();
