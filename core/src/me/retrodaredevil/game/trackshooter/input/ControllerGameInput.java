@@ -24,6 +24,7 @@ import me.retrodaredevil.controller.types.ExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.types.LogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
+import me.retrodaredevil.game.trackshooter.input.implementations.BooleanConfigInputPart;
 
 public class ControllerGameInput extends SimpleUsableGameInput {
 	private final ControllerPart reliesOn;
@@ -40,9 +41,13 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	private final InputPart backButton;
 	private final InputPart enterButton;
 
+
 	private final ControllerRumble rumble;
 
 	private final OptionTracker controlOptions = new OptionTracker();
+
+	private final InputPart rumbleOnSingleShot;
+
 
 	/**
 	 * If the passed controller is an instanceof {@link ConfigurableControllerPart}, its ControlOptions
@@ -95,6 +100,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
 	}
 	public ControllerGameInput(final LogitechAttack3JoystickControllerInput controller){
 		addChildren(false, false, controller);
@@ -128,6 +134,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
 	}
 	public ControllerGameInput(final ExtremeFlightJoystickControllerInput controller){
 		addChildren(false, false, controller);
@@ -160,6 +167,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 			controlOptions.add((ConfigurableObject) controller);
 		}
 
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
 	}
 	private static ControlOption createRotationalAxisSensitivity(){
 		return new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
@@ -229,6 +237,11 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	@Override
 	public InputPart getEnterButton() {
 		return enterButton;
+	}
+
+	@Override
+	public InputPart getRumbleOnSingleShot() {
+		return rumbleOnSingleShot;
 	}
 
 	@Override

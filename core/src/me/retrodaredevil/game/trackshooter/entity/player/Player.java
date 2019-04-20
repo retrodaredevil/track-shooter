@@ -126,12 +126,12 @@ public class Player extends SimpleEntity {
 	/**
 	 * @param world The world to shoot the bullets in
 	 * @param shotType The specified shot type or null
-	 * @return A list of all the bullets shot or null if we didn't shoot any
+	 * @return A list of all the bullets shot. May be an empty list
 	 */
 	public List<Bullet> shootBullet(World world, Bullet.ShotType shotType) {
 		shotType = checkNullShotType(shotType);
 		if(!canShootBullet(world, shotType)){
-			return null;
+			return Collections.emptyList();
 		}
 //		System.out.println("going to shoot a bullet. level mode: " + world.getLevel().getMode()
 //				+ " mode time: " + world.getLevel().getModeTime() + " levelNumber: " + world.getLevel().getNumber());

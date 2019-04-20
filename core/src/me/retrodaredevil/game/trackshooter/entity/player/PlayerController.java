@@ -1,17 +1,11 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
-import java.util.Vector;
-
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
-import me.retrodaredevil.game.trackshooter.entity.movement.VectorVelocitySetterMoveComponent;
-import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.EntityController;
-import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.RotationalVelocitySetterMoveComponent;
-import me.retrodaredevil.game.trackshooter.entity.movement.TravelVelocitySetterMoveComponent;
+import me.retrodaredevil.game.trackshooter.entity.movement.*;
+import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -44,7 +38,7 @@ public class PlayerController implements EntityController{
 				float correctMagnitude = (float) movementJoy.getCorrectMagnitude();
 				if(correctMagnitude > 1){
 					if(!movementJoy.getJoystickType().isRangeOver()){
-						throw new IllegalArgumentException("movementJoy's correct magnitude is: " + correctMagnitude);
+						throw new IllegalStateException("movementJoy's correct magnitude is: " + correctMagnitude);
 					}
 					correctMagnitude = 1;
 				}
@@ -97,9 +91,9 @@ public class PlayerController implements EntityController{
 
 		// ==== Rumble and Shoot ====
 		if (gameInput.getFireButton().isPressed()) {
-			boolean didShoot = player.shootBullet(world, null) != null;
+			int numberShot = player.shootBullet(world, null).size();
 			ControllerRumble rumble = gameInput.getRumble();
-			if(didShoot && rumble.isConnected()){
+			if(numberShot > 0 && (numberShot > 1 || gameInput.getRumbleOnSingleShot().isDown()) && rumble.isConnected()){
 				rumble.rumbleTime(70, .1);
 			}
 		}

@@ -26,6 +26,9 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 	private final JoystickPart selectorJoystick;
 	private final InputPart enterButton;
 
+
+	private final InputPart rumbleOnSingleShot;
+
 	private final ControllerRumble rumble;
 
 	private final OptionTracker controlOptions;
@@ -60,6 +63,7 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 		this.controlOptions = controlOptions;
 		this.reliesOnCollection = reliesOnCollection;
 
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
 	}
 
 
@@ -131,6 +135,11 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 	@Override
 	public InputPart getEnterButton() {
 		return enterButton;
+	}
+
+	@Override
+	public InputPart getRumbleOnSingleShot() {
+		return rumbleOnSingleShot;
 	}
 
 	@Override

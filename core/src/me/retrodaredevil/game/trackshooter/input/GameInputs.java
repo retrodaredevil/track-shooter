@@ -6,34 +6,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import me.retrodaredevil.controller.input.DigitalChildPositionInputPart;
-import me.retrodaredevil.controller.input.DummyInputPart;
-import me.retrodaredevil.controller.input.HighestPositionInputPart;
-import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.input.LowestPositionInputPart;
-import me.retrodaredevil.controller.input.References;
-import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
-import me.retrodaredevil.controller.options.ConfigurableObject;
-import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionTracker;
-import me.retrodaredevil.controller.options.OptionValue;
-import me.retrodaredevil.controller.options.OptionValues;
+import me.retrodaredevil.controller.ControllerPart;
+import me.retrodaredevil.controller.input.*;
+import me.retrodaredevil.controller.options.*;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
-import me.retrodaredevil.game.trackshooter.input.implementations.DigitalPatternInputPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxMouseAxis;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxScreenTouchButton;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxShakeButton;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxTiltJoystick;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxTouchpadJoystick;
-import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.ScreenArea;
-import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreas;
+import me.retrodaredevil.game.trackshooter.input.implementations.*;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 
@@ -294,5 +276,26 @@ public final class GameInputs {
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
 		return createTouchInput(Objects.requireNonNull(renderParts), rumbleAnalogControl);
+	}
+
+	private static ControlOption createRumbleOnSingleShotControlOption(){
+		OptionValue optionValue = OptionValues.createBooleanOptionValue(false);
+		return new ControlOption("Rumble on Single Shot",
+				"Should there be rumble on a single shot",
+				"config.rumble.on_single_shot",
+				optionValue);
+	}
+
+	/**
+	 * Creates the "rumble on single shot" input part and mutates the passed controlOptions
+	 * @param controlOptions The {@link OptionTracker} to add the {@link ControlOption} to
+	 * @return The {@link InputPart} representing whether or not the created {@link ControlOption} boolean is checked
+	 */
+	static InputPart createRumbleOnSingleShotInputPart(ControllerPart parent, OptionTracker controlOptions, ControllerRumble rumble){
+		final ControlOption option = GameInputs.createRumbleOnSingleShotControlOption();
+		BooleanConfigInputPart inputPart = new BooleanConfigInputPart(option, rumble);
+		inputPart.setParent(parent);
+		controlOptions.add(inputPart);
+		return inputPart;
 	}
 }

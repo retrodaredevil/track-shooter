@@ -69,6 +69,11 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	public InputPart getEnterButton() { return getCurrentGameInput().getEnterButton(); }
 
 	@Override
+	public InputPart getRumbleOnSingleShot() {
+		return getCurrentGameInput().getRumbleOnSingleShot();
+	}
+
+	@Override
 	protected void onUpdate() {
 		super.onUpdate();
 		UsableGameInput activeInput = getCurrentGameInput();
