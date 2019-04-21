@@ -22,7 +22,7 @@ public class FreeVelocityMoveComponent extends SimpleMoveComponent implements Ve
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
@@ -30,7 +30,7 @@ public class FreeVelocityMoveComponent extends SimpleMoveComponent implements Ve
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		vectorVelocityHandler.update(delta);
 		rotationalVelocityHandler.update(delta);
 

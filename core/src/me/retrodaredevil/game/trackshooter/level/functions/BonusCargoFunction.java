@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
  * give extra points to the player and remove the cargo entity
  */
 public class BonusCargoFunction implements LevelFunction {
+	private final World world;
 	private final Entity cargoEntity;
 	private final Collection<? extends Player> players; // may be mutated
 	private final Points points;
@@ -29,12 +30,13 @@ public class BonusCargoFunction implements LevelFunction {
 	 *                    This entity must be able to be removed. This entity should also already be added
 	 *                    to the world as this function will not add it to the level or world.<p>
 	 *                    It is also expected that the MoveComponent on this cargo entity is not null and that calling
-	 *                    {@link MoveComponent#getCorrectLocation(World)} does not return null
+	 *                    {@link MoveComponent#getCorrectLocation()} does not return null
 	 * @param players A list of players that may be mutated outside this class (NOT A COPY).
 	 *                These players will receive points at the end of the level.
 	 * @param points The points object with contains the drawable and how much it's worth
 	 */
-	public BonusCargoFunction(Entity cargoEntity, Collection<? extends Player> players, Points points){
+	public BonusCargoFunction(World world, Entity cargoEntity, Collection<? extends Player> players, Points points){
+		this.world = world;
 		this.cargoEntity = cargoEntity;
 		this.players = players;
 		this.points = points;
@@ -43,12 +45,12 @@ public class BonusCargoFunction implements LevelFunction {
 		}
 	}
 	@Override
-	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
+	public boolean update(float delta, Collection<? super LevelFunction> functionsToAdd) {
 		if(cargoEntity.isRemoved()){
 			return true; // we failed, end this function
 		}
 		if(!showedHelp){
-			EntityUtil.displayScore(world, cargoEntity.getMoveComponent().getCorrectLocation(world),
+			EntityUtil.displayScore(world, cargoEntity.getMoveComponent().getCorrectLocation(),
 					world.getRenderObject().getMainSkin().getDrawable("help"), 1.2f, 3.0f);
 			showedHelp = true;
 		}

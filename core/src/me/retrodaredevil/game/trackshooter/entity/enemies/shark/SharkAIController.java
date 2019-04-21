@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SharkAIController implements EntityController {
 
+	private final World world;
 	private final Shark shark;
 //	private final Entity target;
 	private final Collection<? extends Entity> targets;
@@ -30,7 +31,8 @@ public class SharkAIController implements EntityController {
 	 * @param trackDistanceAway The amount of distance away on the track the shark should target from. Internally, this number changes based on the time
 	 * @param timeMultiplier The how much distance should the target distance change each second
 	 */
-	public SharkAIController(Shark shark, Collection<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
+	public SharkAIController(World world, Shark shark, Collection<? extends Entity> targets, float trackDistanceAway, float timeMultiplier){
+		this.world = world;
 		this.shark = shark;
 		this.targets = targets;
 		this.trackDistanceAway = trackDistanceAway;
@@ -38,7 +40,7 @@ public class SharkAIController implements EntityController {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		MoveComponent moveComponent = shark.getMoveComponent();
 		if(moveComponent instanceof TargetPositionMoveComponent){
 			TargetPositionMoveComponent pointMove = (TargetPositionMoveComponent) moveComponent;

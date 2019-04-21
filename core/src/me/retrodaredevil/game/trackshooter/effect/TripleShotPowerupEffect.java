@@ -7,21 +7,21 @@ public class TripleShotPowerupEffect extends TimedEffect {
 
 	private Player player;
 
-	public TripleShotPowerupEffect(Player player) {
-		super(10000);
+	public TripleShotPowerupEffect(World world, Player player) {
+		super(world, 10000);
 		this.player = player;
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 		player.setTriplePowerup(true);
 	}
 	@Override
-	protected void onEnd(World world) {
+	protected void onEnd() {
 		player.setTriplePowerup(false);
 	}
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 	}
 
 }

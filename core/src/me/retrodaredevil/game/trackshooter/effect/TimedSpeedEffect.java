@@ -5,21 +5,21 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class TimedSpeedEffect extends TimedEffect implements SpeedEffect{
 	private final float multiplier;
 
-	public TimedSpeedEffect(long last, float multiplier){
-		super(last);
+	public TimedSpeedEffect(World world, long last, float multiplier){
+		super(world, last);
 		this.multiplier = multiplier;
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 	}
 
 	@Override
-	protected void onEnd(World world) {
+	protected void onEnd() {
 	}
 
 	@Override

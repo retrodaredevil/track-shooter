@@ -18,6 +18,7 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class StarFishFunction implements LevelFunction {
 	private static final float GRACE_DISTANCE = 10;
 
+	private final World world;
 	private final Collection<? extends Entity> entities;
 	private final float spawnAfter;
 
@@ -26,13 +27,14 @@ public class StarFishFunction implements LevelFunction {
 	 * @param entities Some collection of entities (usually Players) that are on the track,
 	 *                    that will be used so the starfish doesn't spawn on top of them
 	 */
-	public StarFishFunction(float spawnAfter, Collection<? extends Entity> entities){
+	public StarFishFunction(World world, float spawnAfter, Collection<? extends Entity> entities){
+		this.world = world;
 		this.entities = entities;
 		this.spawnAfter = spawnAfter;
 	}
 
 	@Override
-	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
+	public boolean update(float delta, Collection<? super LevelFunction> functionsToAdd) {
 		Level level = world.getLevel();
 
 		if(level.getMode() == LevelMode.NORMAL && level.getModeTime() > spawnAfter){
@@ -53,8 +55,8 @@ public class StarFishFunction implements LevelFunction {
 				// TODO If there are many, many players, this *could* result in an infinite loop.
 				distance = world.getTrack().getTotalDistance() * MathUtils.random();
 			} while (!canSpawn(distance, world.getTrack()));
-			Entity entity = new StarFish(speed, distance);
-			world.getLevel().addEntity(world, entity);
+			Entity entity = new StarFish(world, speed, distance);
+			world.getLevel().addEntity(entity);
 			return true;
 		}
 		return false;

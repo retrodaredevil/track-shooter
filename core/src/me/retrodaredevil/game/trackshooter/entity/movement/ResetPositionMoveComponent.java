@@ -25,8 +25,8 @@ public abstract class ResetPositionMoveComponent extends NestedComponentMoveComp
 	}
 
 	@Override
-	protected void onStart(World world) {
-		super.onStart(world);
+	protected void onStart() {
+		super.onStart();
 
 	}
 
@@ -40,8 +40,8 @@ public abstract class ResetPositionMoveComponent extends NestedComponentMoveComp
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
-		super.onUpdate(delta, world);
+	protected void onUpdate(float delta) {
+		super.onUpdate(delta);
 	}
 
 	@Override

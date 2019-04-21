@@ -35,12 +35,12 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 	}
 
 	@Override
-	public Vector2 getCorrectLocation(World world) {
+	public Vector2 getCorrectLocation() {
 		return null;
 	}
 
 	@Override
-	public Float getCorrectRotation(World world) {
+	public Float getCorrectRotation() {
 		return null;
 	}
 
@@ -103,23 +103,22 @@ public abstract class SimpleMoveComponent implements MoveComponent {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		if(!active){
 			if(!canRecycle && oneWayDone){
 				throw new IllegalStateException(getClass().getSimpleName() + " does not support recycling");
 			}
 			active = true;
 			done = false;
-			onStart(world);
+			onStart();
 		}
-		onUpdate(delta, world);
+		onUpdate(delta);
 	}
 
 	/**
 	 * Called when the first #update() is called (assuming super is called)
-	 * @param world
 	 */
-	protected abstract void onStart(World world);
+	protected abstract void onStart();
 	protected abstract void onEnd();
-	protected abstract void onUpdate(float delta, World world);
+	protected abstract void onUpdate(float delta);
 }

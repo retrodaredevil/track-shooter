@@ -1,5 +1,7 @@
 package me.retrodaredevil.game.trackshooter.level;
 
+import me.retrodaredevil.game.trackshooter.world.World;
+
 public interface LevelGetter {
 	/**
 	 * Returns a new Level each time it is called
@@ -9,5 +11,5 @@ public interface LevelGetter {
 	 * again, it will be 2.
 	 * @return The next level
 	 */
-	Level nextLevel();
+	Level nextLevel(World world);
 }

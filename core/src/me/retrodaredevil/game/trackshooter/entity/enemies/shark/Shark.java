@@ -3,8 +3,6 @@ package me.retrodaredevil.game.trackshooter.entity.enemies.shark;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.Optional;
-
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
 import me.retrodaredevil.game.trackshooter.entity.*;
 import me.retrodaredevil.game.trackshooter.entity.movement.*;
@@ -31,10 +29,11 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	private RenderComponent hitRender = null;
 	private RenderComponent wornRender = null;
 
-	public Shark(Vector2 startingPosition, float startingRotation, float waitBeforeMoveTime){
+	public Shark(World world, Vector2 startingPosition, float startingRotation, float waitBeforeMoveTime){
+		super(world);
+		this.waitBeforeMoveTime = waitBeforeMoveTime;
 		smoothTravel = new SmoothTravelMoveComponent(this, new Vector2(0, 0), VELOCITY_SPEED, ROTATIONAL_SPEED);
 		resetPosition = new SmoothResetPositionMoveComponent(this, startingPosition, startingRotation, VELOCITY_SPEED, ROTATIONAL_SPEED);
-		this.waitBeforeMoveTime = waitBeforeMoveTime;
 
 		setHitboxSize(.7f);
 		canRespawn = false;
@@ -43,8 +42,8 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		// TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
 		// possibly only rely on one RenderComponent if that is more elegant
 		fullRender = new SharkRenderComponent(Resources.Shark.FULL_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
@@ -53,8 +52,8 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	public void update(float delta) {
+		super.update(delta);
 		if(lives <= 1){
 			setRenderComponent(wornRender);
 		} else if(lives == 2){
@@ -90,7 +89,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		} else if(lives == 2){
 			multiplier = .25f;
 		}
-		setMoveComponent(new TimedMoveComponent(waitBeforeMoveTime * multiplier, smoothTravel));
+		setMoveComponent(new TimedMoveComponent(world, waitBeforeMoveTime * multiplier, smoothTravel));
 
 	}
 
@@ -118,7 +117,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other)  {
+	public void onHit(Entity other)  {
 		MoveComponent wantedComponent = getMoveComponent();
 		SpinMoveComponent lastSpin = null;
 		if(wantedComponent instanceof SpinMoveComponent){ // current component is spinning
@@ -132,9 +131,9 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		SpinMoveComponent spin;
 		float spinTime =  1.75f + .5f * MathUtils.random();
 		if(lastSpin != null){
-			spin = new SpinMoveComponent(this, spinTime, lastSpin.getRotationalVelocity() * -1);
+			spin = new SpinMoveComponent(world, spinTime, this, lastSpin.getRotationalVelocity() * -1);
 		} else {
-			spin = new SpinMoveComponent(this, spinTime, 360 * 2 * MathUtils.randomSign());
+			spin = new SpinMoveComponent(world, spinTime, this, 360 * 2 * MathUtils.randomSign());
 		}
 		spin.setNextComponent(wantedComponent);
 		this.setMoveComponent(spin);
@@ -170,7 +169,7 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 
 
 	@Override
-	public boolean shouldRemove(World world) {
+	public boolean shouldRemove() {
 		return lives <= 0 || spinLives <= 0;
 	}
 }

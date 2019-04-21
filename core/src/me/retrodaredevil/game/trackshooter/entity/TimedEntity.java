@@ -12,20 +12,21 @@ public class TimedEntity extends SimpleEntity {
 	private Float startTime = null;
 	private final float time;
 
-	TimedEntity(float time){
+	TimedEntity(World world, float time){
+		super(world);
 		this.time = time;
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	public void update(float delta) {
+		super.update(delta);
 		if(startTime == null){
 			startTime = world.getTime();
 		}
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
+	public boolean shouldRemove() {
 		return startTime != null && startTime + time <= world.getTime();
 	}
 }

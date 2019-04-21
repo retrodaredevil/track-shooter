@@ -22,11 +22,11 @@ public class FixedVelocityMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
-	public void onUpdate(float delta, World world) {
+	public void onUpdate(float delta) {
 		Vector2 current = entity.getLocation();
 		current.add(velocity.x * delta, velocity.y * delta);
 		entity.setLocation(current);

@@ -60,11 +60,11 @@ public interface MoveComponent extends Updateable {
 	 * This may be null
 	 * @return The more correct location of whatever owns this MoveComponent, or null
 	 */
-	Vector2 getCorrectLocation(World world);
+	Vector2 getCorrectLocation();
 
 	/**
 	 * This may be null
 	 * @return The more correct location of whatever owns this MoveComponent, or null
 	 */
-	Float getCorrectRotation(World world);
+	Float getCorrectRotation();
 }

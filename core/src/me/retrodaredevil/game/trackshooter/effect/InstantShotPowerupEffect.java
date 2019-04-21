@@ -26,10 +26,10 @@ public class InstantShotPowerupEffect implements Effect {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		if(done){
 			throw new IllegalStateException("This effect wasn't removed even though we were done!");
 		}
-		done = player.shootBullet(world, shotType) != null;
+		done = player.shootBullet(shotType) != null;
 	}
 }

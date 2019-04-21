@@ -11,17 +11,19 @@ import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public abstract class PowerupFunction implements LevelFunction {
+	protected final World world;
 	private final long addAt; // 15 seconds
 	private final long removeAt; // stay for 10 seconds (remove at 25 seconds)
 	private PowerupEntity powerup = null;
 
-	protected PowerupFunction(long addAt, long stayTime){
+	protected PowerupFunction(World world, long addAt, long stayTime){
+		this.world = world;
 		this.addAt = addAt;
 		this.removeAt = addAt + stayTime;
 	}
 
 	@Override
-	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
+	public boolean update(float delta, Collection<? super LevelFunction> functionsToAdd) {
 		Level level = world.getLevel();
 		long modeTime = level.getModeTimeMillis();
 		if(powerup != null){
@@ -37,8 +39,8 @@ public abstract class PowerupFunction implements LevelFunction {
 
 		// powerup == null
 		if(level.getMode() == LevelMode.NORMAL && modeTime > addAt){
-			this.powerup = createPowerup(world);
-			level.addEntity(world, powerup);
+			this.powerup = createPowerup();
+			level.addEntity(powerup);
 			if(!powerup.canSetToRemove()){
 				Gdx.app.error("created powerup", "We will be unable to remove powerup. Expect crash in future!");
 			}
@@ -53,10 +55,9 @@ public abstract class PowerupFunction implements LevelFunction {
 
 	/**
 	 * Should create the powerup object but SHOULD NOT add it to world's entities
-	 * @param world The world the Fruit WILL be added too (the implementation won't add it but the caller should)
 	 * @return The Powerup to be added to world
 	 */
-	protected abstract PowerupEntity createPowerup(World world);
+	protected abstract PowerupEntity createPowerup();
 
 
 	@Override

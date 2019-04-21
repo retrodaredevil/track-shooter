@@ -29,7 +29,7 @@ public class SnakeFollowMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SnakeFollowMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		final float currentRotation = entity.getRotation();
 
 //		float velocity = 0; // units per second

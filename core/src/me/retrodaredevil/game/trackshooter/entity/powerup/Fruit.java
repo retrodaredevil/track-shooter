@@ -10,7 +10,6 @@ import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponen
 import me.retrodaredevil.game.trackshooter.render.components.ShakeImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.util.EntityUtil;
 import me.retrodaredevil.game.trackshooter.util.Points;
-import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Fruit extends SimplePowerup {
@@ -19,18 +18,18 @@ public class Fruit extends SimplePowerup {
 
 	private boolean eaten = false;
 
-	protected Fruit(Points points, float velocity, float startingTrackDistance){
-		super();
+	protected Fruit(World world, Points points, float velocity, float startingTrackDistance){
+		super(world);
 		this.points = points;
 		setHitboxSize(.6f);
 
-		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
+		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(world, this);
 		trackMove.setDistanceOnTrack(startingTrackDistance);
 		trackMove.getTravelVelocitySetter().setVelocity(velocity);
 		setMoveComponent(trackMove);
 	}
-	public static Fruit createFruit(Points points, float startingTrackDistance, Image image){
-		Fruit fruit = new Fruit(points, 1.5f * MathUtils.randomSign(), startingTrackDistance);
+	public static Fruit createFruit(World world, Points points, float startingTrackDistance, Image image){
+		Fruit fruit = new Fruit(world, points, 1.5f * MathUtils.randomSign(), startingTrackDistance);
 		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(image,
 				fruit, .8f, .8f, 250, new Vector2(0, .03f));
 		renderComponent.setFacingDirection(0);
@@ -39,7 +38,7 @@ public class Fruit extends SimplePowerup {
 	}
 
 	@Override
-	public void onHit(World world, Entity other)  {
+	public void onHit(Entity other)  {
 		if(!(other instanceof Player)){
 			eaten = true;
 			return;
@@ -55,7 +54,7 @@ public class Fruit extends SimplePowerup {
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || eaten;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || eaten;
 	}
 }

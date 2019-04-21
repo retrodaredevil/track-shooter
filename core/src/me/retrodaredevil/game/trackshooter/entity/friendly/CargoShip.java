@@ -20,10 +20,11 @@ public class CargoShip extends SimpleEntity {
 
 	private boolean hit = false;
 
-	public CargoShip(float velocity, float distance){
+	public CargoShip(World world, float velocity, float distance){
+		super(world);
 
 		setHitboxSize(.50f);
-		setMoveComponent(new TravelVelocityOnTrackMoveComponent(this){
+		setMoveComponent(new TravelVelocityOnTrackMoveComponent(world, this){
 			{
 				getTravelVelocitySetter().setVelocity(velocity);
 				setDistanceOnTrack(distance);
@@ -35,14 +36,14 @@ public class CargoShip extends SimpleEntity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	public void update(float delta) {
+		super.update(delta);
 		MoveComponent moveComponent = getMoveComponent();
 		if(moveComponent instanceof OnTrackMoveComponent){
 			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) moveComponent;
@@ -56,12 +57,12 @@ public class CargoShip extends SimpleEntity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) {
+	public void onHit(Entity other) {
 		hit = true;
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hit;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || hit;
 	}
 }

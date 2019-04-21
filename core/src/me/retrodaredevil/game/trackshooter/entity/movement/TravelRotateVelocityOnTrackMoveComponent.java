@@ -18,13 +18,13 @@ public class TravelRotateVelocityOnTrackMoveComponent extends TravelVelocityOnTr
 
 	private final VelocityHandler rotationalVelocityHandler = new VelocityHandler(Constants.ROTATIONAL_VELOCITY_SET_GOTO_DEADBAND);
 
-	public TravelRotateVelocityOnTrackMoveComponent(Entity entity) {
-		super(entity);
+	public TravelRotateVelocityOnTrackMoveComponent(World world, Entity entity) {
+		super(world, entity);
 	}
 
 	@Override
-	public void onUpdate(float delta, World world) {
-		super.onUpdate(delta, world);
+	public void onUpdate(float delta) {
+		super.onUpdate(delta);
 
 		rotationalVelocityHandler.update(delta);
 		entity.setRotation(entity.getRotation() + rotationalVelocityHandler.getVelocity() * delta);

@@ -13,8 +13,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Sniper extends SimpleEntity implements Enemy {
 
-	public Sniper(){
-
+	public Sniper(World world){
+		super(world);
 		setHitboxSize(.5f, .5f);
 
 		collisionIdentity = CollisionIdentity.ENEMY;
@@ -24,11 +24,11 @@ public class Sniper extends SimpleEntity implements Enemy {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("sniper")), this, .6f, .6f));
 
-		OnTrackMoveComponent moveComponent = new TravelRotateVelocityOnTrackMoveComponent(this);
+		OnTrackMoveComponent moveComponent = new TravelRotateVelocityOnTrackMoveComponent(world, this);
 		moveComponent.setDistanceOnTrack(world.getTrack().getTotalDistance() / 2.0f);
 		setMoveComponent(moveComponent);
 	}

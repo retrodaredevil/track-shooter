@@ -4,11 +4,12 @@ import com.badlogic.gdx.math.Vector2;
 
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public class DisplayEntity extends TimedEntity {
 
-	public DisplayEntity(float time, Vector2 position) {
-		super(time);
+	public DisplayEntity(World world, float time, Vector2 position) {
+		super(world, time);
 //		setHitboxSize(0); doesn't matter since it can't collide
 		setLocation(position);
 		canRespawn = false;

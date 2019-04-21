@@ -6,8 +6,8 @@ import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SimplePowerup extends SimpleEntity implements PowerupEntity {
-	protected SimplePowerup(){
-		super();
+	protected SimplePowerup(World world){
+		super(world);
 		canRespawn = false;
 		canSetToRemove = true;
 		collisionIdentity = CollisionIdentity.POWERUP;

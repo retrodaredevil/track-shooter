@@ -80,7 +80,7 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 		Player player = players[playerIndex];
 		int lives = player.getScoreObject().getLives();
 		// we have the player.shouldRemove() call so the lives doesn't flicker in a single frame when the life is lost.
-		if(player.isRemoved() || player.shouldRemove(world)){ // if the player is removed or is about to be
+		if(player.isRemoved() || player.shouldRemove()){ // if the player is removed or is about to be
 			return lives;
 		}
 		return lives - 1;
@@ -121,7 +121,7 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 	 * @param world The world of the game
 	 */
 	public void setGame(List<Player> players, World world){
-		this.players = players.toArray(new Player[players.size()]); // copy this list so it won't change on us
+		this.players = players.toArray(new Player[0]); // copy this list so it won't change on us as players die
 		this.world = world;
 	}
 	@Override
@@ -134,7 +134,7 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		for(Player player : players){
 			int score = player.getScoreObject().getScore();
 			if(score > getHighScore()){

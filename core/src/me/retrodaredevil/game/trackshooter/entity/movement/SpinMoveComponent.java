@@ -11,11 +11,12 @@ public class SpinMoveComponent extends TimedMoveComponent implements RotationalV
 
 	/**
 	 *
+	 * @param world
 	 * @param time The amount of time to spin before returning the next component
 	 * @param spinPerSecond The amount to rotate in one second in degrees/second
 	 */
-	public SpinMoveComponent(Entity entity, float time, float spinPerSecond) {
-		super(time);
+	public SpinMoveComponent(World world, float time, Entity entity, float spinPerSecond) {
+		super(world, time);
 		this.entity = entity;
 		this.spinPerSecond = spinPerSecond;
 	}
@@ -27,8 +28,8 @@ public class SpinMoveComponent extends TimedMoveComponent implements RotationalV
 
 
 	@Override
-	protected void onUpdate(float delta, World world) {
-		super.onUpdate(delta, world);
+	protected void onUpdate(float delta) {
+		super.onUpdate(delta);
 		entity.setRotation(entity.getRotation() + delta * spinPerSecond);
 	}
 }

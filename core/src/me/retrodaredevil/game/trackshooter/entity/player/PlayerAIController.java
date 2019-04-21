@@ -15,18 +15,20 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class PlayerAIController implements EntityController {
+	private final World world;
 	private final Player player;
 	private Float lastShot = null;
 
-	public PlayerAIController(Player player) {
+	public PlayerAIController(World world, Player player) {
+		this.world = world;
 		this.player = player;
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		MoveComponent moveComponent = player.getMoveComponent();
 		if(moveComponent instanceof OnTrackMoveComponent){
-			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) moveComponent;
+//			OnTrackMoveComponent trackMove = (OnTrackMoveComponent) moveComponent;
 //			float forwardDirectionAngle = world.getTrack().getForwardDirection(trackMove.getDistanceOnTrack());
 
 			final float velocity; // 1, -1 or 0
@@ -79,11 +81,11 @@ public class PlayerAIController implements EntityController {
 				rotationalMove.getRotationalVelocitySetter().setVelocity(rotationalVelocity);
 			}
 			if(lastShot == null || lastShot + .5f <= world.getTime()){
-				if(player.shootBullet(world, null) != null){
+				if(player.shootBullet(null) != null){
 					lastShot = world.getTime();
 				}
 			}
-			player.activatePowerup(world);
+			player.activatePowerup();
 		}
 	}
 }

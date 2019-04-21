@@ -23,7 +23,7 @@ public interface LevelFunction extends CanLevelEnd {
 	 *                       and each of those elements will probably be called the same frame as this function.
 	 * @return true if this LevelFunction done and should not be called again, false for this to keep getting called
 	 */
-	boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd);
+	boolean update(float delta, Collection<? super LevelFunction> functionsToAdd);
 
 	/**
 	 * Called when the level ends while this function is still active

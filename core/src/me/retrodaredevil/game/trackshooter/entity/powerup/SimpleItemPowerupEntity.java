@@ -11,33 +11,33 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public abstract class SimpleItemPowerupEntity extends PowerupPackage {
 	private final String drawableName;
-	protected SimpleItemPowerupEntity(float velocity, float startingTrackDistance, String drawableName) {
-		super(velocity, startingTrackDistance);
+	protected SimpleItemPowerupEntity(World world, float velocity, float startingTrackDistance, String drawableName) {
+		super(world, velocity, startingTrackDistance);
 		this.drawableName = drawableName;
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable(drawableName)), this, .8f, .8f);
 		renderComponent.setFacingDirection(0);
 		this.setRenderComponent(renderComponent);
 	}
 
-	public static SimpleItemPowerupEntity createTripleShotPowerupEntity(float velocity, float startingTrackDistance){
-		return new SimpleItemPowerupEntity(velocity * MathUtils.randomSign(), startingTrackDistance, "powerup") {
+	public static SimpleItemPowerupEntity createTripleShotPowerupEntity(World world, float velocity, float startingTrackDistance){
+		return new SimpleItemPowerupEntity(world, velocity * MathUtils.randomSign(), startingTrackDistance, "powerup") {
 			@Override
-			protected Item createItem(World world, Player player) {
-				return new TripleShotPowerupItem(world.getMainSkin());
+			protected Item createItem(Player player) {
+				return new TripleShotPowerupItem(world);
 			}
 		};
 	}
 
 
-	protected abstract Item createItem(World world, Player player);
+	protected abstract Item createItem(Player player);
 
 	@Override
-	protected void onHit(World world, Player player) {
-		player.addItem(createItem(world, player));
+	protected void onHit(Player player) {
+		player.addItem(createItem(player));
 	}
 }

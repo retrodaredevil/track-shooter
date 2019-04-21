@@ -9,12 +9,12 @@ import me.retrodaredevil.game.trackshooter.util.Resources;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class FruitFunction extends PowerupFunction {
-	public FruitFunction() {
-		super(15000, 10000);
+	public FruitFunction(World world) {
+		super(world, 15000, 10000);
 	}
 
 	@Override
-	protected PowerupEntity createPowerup(World world) {
+	protected PowerupEntity createPowerup() {
 		int level = world.getLevel().getNumber();
 		Points points = Resources.Points.P100;
 		String name = "cherry";
@@ -31,6 +31,6 @@ public class FruitFunction extends PowerupFunction {
 			points = Resources.Points.P300;
 			name = "apple";
 		}
-		return Fruit.createFruit(points, SimplePowerup.getRandomTrackStarting(world), new Image(world.getMainSkin().getDrawable(name)));
+		return Fruit.createFruit(world, points, SimplePowerup.getRandomTrackStarting(world), new Image(world.getMainSkin().getDrawable(name)));
 	}
 }

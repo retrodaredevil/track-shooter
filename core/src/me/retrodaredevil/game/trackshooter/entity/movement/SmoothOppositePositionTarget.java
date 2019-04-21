@@ -7,12 +7,19 @@ import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class SmoothOppositePositionTarget extends NestedComponentMoveComponent implements EntityTargetingMoveComponent {
-	private final Entity entity;
+	private final World world;
 	private final Entity target;
 	private final SmoothTravelMoveComponent smoothTravel;
-	public SmoothOppositePositionTarget(Entity entity, Entity target, SmoothTravelMoveComponent smoothTravel) {
+
+	/**
+	 *
+	 * @param world The World object
+	 * @param target The entity (that's on the track) to target opposite from
+	 * @param smoothTravel The MoveComponent of the entity that's going to target the passed {@code target}
+	 */
+	public SmoothOppositePositionTarget(World world, Entity target, SmoothTravelMoveComponent smoothTravel) {
 		super(null, false, true);
-		this.entity = entity;
+		this.world = world;
 		this.target = target;
 		this.smoothTravel = smoothTravel;
 	}
@@ -23,7 +30,7 @@ public class SmoothOppositePositionTarget extends NestedComponentMoveComponent i
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		setNestedMoveComponent(smoothTravel);
 		MoveComponent targetMove = target.getMoveComponent();
 		if(targetMove instanceof OnTrackMoveComponent){
@@ -35,6 +42,6 @@ public class SmoothOppositePositionTarget extends NestedComponentMoveComponent i
 		} else {
 			throw new IllegalStateException("target's MoveComponent must be an OnTrackMoveComponent");
 		}
-		super.onUpdate(delta, world);
+		super.onUpdate(delta);
 	}
 }

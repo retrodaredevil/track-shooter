@@ -20,8 +20,8 @@ public class SmoothResetPositionMoveComponent extends ResetPositionMoveComponent
 	}
 
 	@Override
-	protected void onStart(World world) {
-		super.onStart(world);
+	protected void onStart() {
+		super.onStart();
 		checkMoveComponent();
 	}
 	private void checkMoveComponent(){
@@ -52,8 +52,8 @@ public class SmoothResetPositionMoveComponent extends ResetPositionMoveComponent
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
-		super.onUpdate(delta, world);
+	protected void onUpdate(float delta) {
+		super.onUpdate(delta);
 		checkMoveComponent();
 	}
 }

@@ -119,13 +119,13 @@ public class SmoothTravelMoveComponent extends SimpleMoveComponent implements Ve
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 	@Override
 	protected void onEnd(){
 	}
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		float desiredAngle = temp.set(target).sub(entity.getLocation()).angle();
 		float currentAngle = entity.getRotation();
 

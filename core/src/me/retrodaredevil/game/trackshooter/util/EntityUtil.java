@@ -16,7 +16,7 @@ public final class EntityUtil {
 	}
 
 	public static void displayScore(World world, Vector2 location, Drawable drawable, float width, float time){
-		DisplayEntity entity = new DisplayEntity(time, location);
+		DisplayEntity entity = new DisplayEntity(world, time, location);
 		Image image = new Image(drawable);
 		RenderComponent renderComponent = new ImageRenderComponent(image, entity, width, width * image.getHeight() / image.getWidth()).setFacingDirection(0);
 		entity.setRenderComponent(renderComponent);

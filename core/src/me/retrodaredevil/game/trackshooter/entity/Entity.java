@@ -69,28 +69,25 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	 * <p>
 	 * Depending on the implementation, if this is removed this may return either true or false.
 	 *
-	 * @param world The World the entity is being removed from
 	 * @return true if the entity should be removed
 	 */
-	boolean shouldRemove(World world);
+	boolean shouldRemove();
 	/**
 	 * Called when the Entity is going to be removed
 	 * <p>
 	 * Should only be called by the World instance. This should be called after the entity has been removed
 	 * <p>
 	 * This should also call disposeRenderComponent()
-	 * @param world The world this entity will be removed from
 	 */
-	void afterRemove(World world);
+	void afterRemove();
 	/**
 	 * Called when the Entity is going to be added
 	 * <p>
 	 * Should only be called by the World instance. This will be called before the Entity is added to the entities list
 	 * <p>
 	 * Should be overridden to reset RenderComponent and to possibly reset health/lives or one-way-flags if necessary
-	 * @param world The world to be added to
 	 */
-	void beforeSpawn(World world);
+	void beforeSpawn();
 	boolean isRemoved();
 	/**
 	 * Throughout this Entity's life, this should only return one value (this shouldn't change). Even
@@ -119,12 +116,11 @@ public interface Entity extends Renderable, Updateable, CanLevelEnd {
 	 * Calls to this method are handled by some sort of collision handler which will use the CollisionIdentity
 	 * to determine if two things should collide. see {@link CollisionIdentity} docs for more info
 	 *
-	 * @param world The World object
 	 * @param other The other entity this has collided with
 	 * @throws CannotHitException This is thrown when the caller has passed an entity that this cannot handle or
 	 *                            doesn't know how to handle.
 	 */
-	void onHit(World world, Entity other);
+	void onHit(Entity other);
 	/**
 	 *
 	 * @return The CollisionIdentity for this instance

@@ -9,9 +9,8 @@ import me.retrodaredevil.game.trackshooter.world.World;
  */
 public interface PowerupActivateListenerItem extends Item {
 	/**
-	 * @param world The World instance
 	 * @param player The Player that has this item and is trying to activate it
 	 * @return true if this did something such as activate a powerup, false otherwise
 	 */
-	boolean activatePowerup(World world, Player player);
+	boolean activatePowerup(Player player);
 }

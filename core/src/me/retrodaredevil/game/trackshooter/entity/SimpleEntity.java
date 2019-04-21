@@ -18,6 +18,8 @@ import java.util.*;
 public class SimpleEntity implements Entity {
 //	private static final Vector2 temp = new Vector2();
 
+	protected final World world;
+
 	/** If you do not want this entity to support respawning, set this to false so the program will crash when that happens. */
 	protected boolean canRespawn = true;
 	/** If you want to be able to remove this entity at will, set this to true */
@@ -43,7 +45,8 @@ public class SimpleEntity implements Entity {
 	private final List<Effect> effects = new ArrayList<>();
 	private final List<Item> items = new ArrayList<>();
 
-	protected SimpleEntity(){
+	protected SimpleEntity(World world){
+		this.world = world;
 		hitbox = HitboxUtil.createHitbox(0, 0, 1, 1);
 	}
 
@@ -159,26 +162,26 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		for(Iterator<Effect> it = effects.iterator(); it.hasNext(); ){
 			Effect effect = it.next();
-			effect.update(delta, world);
+			effect.update(delta);
 			if(effect.isDone()){
 				it.remove();
 			}
 		}
 		for(Iterator<Item> it = items.iterator(); it.hasNext(); ){
 			Item item = it.next();
-			item.update(delta, world);
+			item.update(delta);
 			if(item.isUsed()){
 				it.remove();
 			}
 		}
 		if (entityController != null) {
-			entityController.update(delta, world);
+			entityController.update(delta);
 		}
 		if (moveComponent != null) {
-			moveComponent.update(delta, world);
+			moveComponent.update(delta);
 			if(moveComponent.isDone()){
 				moveComponent.end();
 				moveComponent = moveComponent.getNextComponent();
@@ -192,7 +195,7 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
+	public void beforeSpawn() {
 		this.removed = false;
 		spawnTimes++;
 		if(!canRespawn && spawnTimes > 1){
@@ -203,12 +206,12 @@ public class SimpleEntity implements Entity {
 	 * By default returns false. It is recommended to call this and isInBounds()
 	 */
 	@Override
-	public boolean shouldRemove(World world) {
+	public boolean shouldRemove() {
 		return forceRemove;
 	}
 
 	@Override
-	public void afterRemove(World world) {
+	public void afterRemove() {
 		if(this.removed){
 			throw new IllegalStateException(this.toString() + " is already removed!");
 		}
@@ -238,7 +241,7 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other)  {
+	public void onHit(Entity other)  {
 		if(this.collisionIdentity == CollisionIdentity.UNKNOWN){
 			throw new CannotHitException(other, this, "The collisionIdentity of this entity is UNKNOWN so it never should have collided in the first place!");
 		}

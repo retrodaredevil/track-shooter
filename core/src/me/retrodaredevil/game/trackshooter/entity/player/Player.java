@@ -7,9 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
-import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
-import me.retrodaredevil.game.trackshooter.entity.movement.FreeVelocityMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
@@ -45,9 +43,10 @@ public class Player extends SimpleEntity {
 	private boolean triplePowerup = false;
 
 
-	public Player(PlayerScore.RumbleGetter rumbleGetter, Type playerType){
+	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, Type playerType){
+		super(world);
 		this.playerType = playerType;
-		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(this));
+		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(world, this));
 //		setMoveComponent(new FreeVelocityMoveComponent(this));
 		setHitboxSize(.7f);
 		score = new PlayerScore(this, rumbleGetter);
@@ -63,8 +62,8 @@ public class Player extends SimpleEntity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 //		hit = false; // set in afterRemove()
 		assert !hit : "afterRemove() didn't set hit to false!";
 		setRenderComponent(new ImageRenderComponent(new Image(playerType.getDrawable(world.getMainSkin())), this, .8f, .8f));
@@ -75,13 +74,13 @@ public class Player extends SimpleEntity {
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	public void update(float delta) {
+		super.update(delta);
 	}
 
 
 	@Override
-	public void onHit(World world, Entity other) {
+	public void onHit(Entity other) {
 		CollisionIdentity identity = other.getCollisionIdentity();
 		if(other.getShooter() == this || identity == CollisionIdentity.FRIENDLY_PROJECTILE || identity == CollisionIdentity.FRIENDLY){
 			throw new CannotHitException(other, this);
@@ -94,14 +93,14 @@ public class Player extends SimpleEntity {
 	}
 
 	@Override
-	public void afterRemove(World world) {
-		super.afterRemove(world);
+	public void afterRemove() {
+		super.afterRemove();
 		hit = false; // makes sure shouldRemove() only returns true once
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hit || score.getLives() <= 0;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || hit || score.getLives() <= 0;
 	}
 
 	private Bullet.ShotType checkNullShotType(final Bullet.ShotType shotType){
@@ -110,13 +109,13 @@ public class Player extends SimpleEntity {
 		}
 		return shotType;
 	}
-	public void activatePowerup(World world){
+	public void activatePowerup(){
 		Collection<PowerupActivateListenerItem> items = getItems(PowerupActivateListenerItem.class);
 		if(items == null){
 			return;
 		}
 		for(PowerupActivateListenerItem item : items){
-			boolean didSomething = item.activatePowerup(world, this);
+			boolean didSomething = item.activatePowerup(this);
 			if(didSomething){
 				break;
 			}
@@ -124,11 +123,10 @@ public class Player extends SimpleEntity {
 	}
 
 	/**
-	 * @param world The world to shoot the bullets in
 	 * @param shotType The specified shot type or null
 	 * @return A list of all the bullets shot. May be an empty list
 	 */
-	public List<Bullet> shootBullet(World world, Bullet.ShotType shotType) {
+	public List<Bullet> shootBullet(Bullet.ShotType shotType) {
 		shotType = checkNullShotType(shotType);
 		if(!canShootBullet(world, shotType)){
 			return Collections.emptyList();
@@ -140,19 +138,19 @@ public class Player extends SimpleEntity {
 		List<Bullet> bullets = new ArrayList<>();
 		switch(shotType){
 			case TRIPLE:
-				Bullet bullet = Bullet.createFromEntity(this, Constants.BULLET_SPEED, 0, BULLET_DISTANCE, collisionIdentity);
+				Bullet bullet = Bullet.createFromEntity(world, this, Constants.BULLET_SPEED, 0, BULLET_DISTANCE, collisionIdentity);
 				bullets.add(bullet);
 
-				Bullet bullet2 = Bullet.createFromEntity(this, Constants.BULLET_SPEED, TRIPLE_OFFSET, BULLET_DISTANCE, collisionIdentity);
+				Bullet bullet2 = Bullet.createFromEntity(world, this, Constants.BULLET_SPEED, TRIPLE_OFFSET, BULLET_DISTANCE, collisionIdentity);
 				bullets.add(bullet2);
 
-				Bullet bullet3 = Bullet.createFromEntity(this, Constants.BULLET_SPEED, -TRIPLE_OFFSET, BULLET_DISTANCE, collisionIdentity);
+				Bullet bullet3 = Bullet.createFromEntity(world, this, Constants.BULLET_SPEED, -TRIPLE_OFFSET, BULLET_DISTANCE, collisionIdentity);
 				bullets.add(bullet3);
 				break;
 			case SHOT_GUN:
 				for(int i = 0; i < SHOT_GUN_BULLETS; i++){
 					float rotation = (MathUtils.random() * 2.0f * SHOT_GUN_RANGE_DEGREES) - SHOT_GUN_RANGE_DEGREES;
-					Bullet shotBullet = Bullet.createFromEntity(this, Constants.SHOT_GUN_BULLET_SPEED, rotation,
+					Bullet shotBullet = Bullet.createFromEntity(world, this, Constants.SHOT_GUN_BULLET_SPEED, rotation,
 							SHOT_GUN_DISTANCE + MathUtils.random(SHOT_GUN_RANDOM_EXTEND_RANGE), collisionIdentity);
 					bullets.add(shotBullet);
 				}
@@ -166,7 +164,7 @@ public class Player extends SimpleEntity {
 					float rotation = i * SPACE_BETWEEN;
 					rotation += offset;
 					rotation = MathUtil.mod(rotation, 360);
-					Bullet fullBullet = new Bullet(this, this.getLocation(),
+					Bullet fullBullet = new Bullet(world, this, this.getLocation(),
 							new Vector2(speed * MathUtils.cosDeg(rotation), speed * MathUtils.sinDeg(rotation)),
 							rotation, BULLET_DISTANCE, collisionIdentity);
 					bullets.add(fullBullet);
@@ -174,12 +172,12 @@ public class Player extends SimpleEntity {
 
 				break;
 			default:
-				Bullet straightBullet = Bullet.createFromEntity(this, Constants.BULLET_SPEED, 0, BULLET_DISTANCE, collisionIdentity);
+				Bullet straightBullet = Bullet.createFromEntity(world, this, Constants.BULLET_SPEED, 0, BULLET_DISTANCE, collisionIdentity);
 				bullets.add(straightBullet);
 				break;
 		}
 		for(Bullet bullet : bullets) {
-			world.getLevel().addEntity(world, bullet);
+			world.getLevel().addEntity(bullet);
 		}
 		List<List<Bullet>> shotsList = activeBulletsMap.get(shotType);
 		if(shotsList == null){

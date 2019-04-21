@@ -13,15 +13,17 @@ public class PlayerController implements EntityController{
 	private static final float ROTATE_PER_SECOND = -270; // rotate velocity when position is 1
 	private static final float ROTATION_PER_MOUSE_PIXEL = -.07f; // how many degrees to change when the mouse is moved one pixel
 
-	private Player player;
-	private GameInput gameInput;
-	public PlayerController(Player player, GameInput gameInput){
+	private final World world;
+	private final Player player;
+	private final GameInput gameInput;
+	public PlayerController(World world, Player player, GameInput gameInput){
+		this.world = world;
 		this.player = player;
 		this.gameInput = gameInput;
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		MoveComponent move = player.getMoveComponent();
 		if(move instanceof OnTrackMoveComponent){
 			// ==== Track Movement ====
@@ -91,7 +93,7 @@ public class PlayerController implements EntityController{
 
 		// ==== Rumble and Shoot ====
 		if (gameInput.getFireButton().isPressed()) {
-			int numberShot = player.shootBullet(world, null).size();
+			int numberShot = player.shootBullet(null).size();
 			ControllerRumble rumble = gameInput.getRumble();
 			if(numberShot > 0 && (numberShot > 1 || gameInput.getRumbleOnSingleShot().isDown()) && rumble.isConnected()){
 				rumble.rumbleTime(70, .1);
@@ -100,7 +102,7 @@ public class PlayerController implements EntityController{
 
 		// ==== Powerup ====
 		if(gameInput.getActivatePowerup().isPressed()){
-			player.activatePowerup(world);
+			player.activatePowerup();
 		}
 	}
 }

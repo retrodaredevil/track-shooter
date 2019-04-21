@@ -12,12 +12,15 @@ import me.retrodaredevil.game.trackshooter.world.World;
 
 public class TripleShotPowerupItem extends EffectItem implements PowerupActivateListenerItem {
 
-	public TripleShotPowerupItem(Skin skin){
-		super(new Image(skin.getDrawable("powerup")));
+	private final World world;
+
+	public TripleShotPowerupItem(World world){
+		super(new Image(world.getMainSkin().getDrawable("powerup")));
+		this.world = world;
 	}
 
 	@Override
-	public boolean activatePowerup(World world, Player player) {
+	public boolean activatePowerup(Player player) {
 		return activateEffect(player);
 	}
 
@@ -27,11 +30,11 @@ public class TripleShotPowerupItem extends EffectItem implements PowerupActivate
 		if(player.getEffects(TripleShotPowerupEffect.class) != null){
 			return null; // there's already this powerup active
 		}
-		return new TripleShotPowerupEffect(player);
+		return new TripleShotPowerupEffect(world, player);
 	}
 
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 	}
 }

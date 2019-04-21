@@ -6,12 +6,12 @@ import me.retrodaredevil.game.trackshooter.entity.powerup.SimpleItemPowerupEntit
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class TripleShotPowerupFunction extends PowerupFunction {
-	public TripleShotPowerupFunction() {
-		super(20000, 8000);
+	public TripleShotPowerupFunction(World world) {
+		super(world, 20000, 8000);
 	}
 
 	@Override
-	protected PowerupEntity createPowerup(World world) {
-		return SimpleItemPowerupEntity.createTripleShotPowerupEntity(2.0f, SimplePowerup.getRandomTrackStarting(world));
+	protected PowerupEntity createPowerup() {
+		return SimpleItemPowerupEntity.createTripleShotPowerupEntity(world, 2.0f, SimplePowerup.getRandomTrackStarting(world));
 	}
 }

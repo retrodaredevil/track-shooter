@@ -1,14 +1,10 @@
 package me.retrodaredevil.game.trackshooter.world;
 
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -28,7 +24,7 @@ public class World implements Updateable, Renderable {
 	private final Rectangle bounds;
 	private final RenderComponent renderComponent;
 	private final CollisionHandler collisionHandler;
-	private final Queue<Entity> entitiesToAdd = new ArrayDeque<>();
+	private final Queue<Entity> entitiesToAdd = new LinkedList<>();
 	private final List<Entity> entities = new ArrayList<>();
 
 	private Level level;
@@ -39,19 +35,22 @@ public class World implements Updateable, Renderable {
 		this.renderObject = renderObject;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
-		this.collisionHandler = new CollisionHandler();
+		this.collisionHandler = new CollisionHandler(this);
 
-		this.level = levelGetter.nextLevel();
+		this.level = levelGetter.nextLevel(this);
+
+	}
+
+	public void getWorldCoordinates(int screenX, int screenY, Vector2 result){
 
 	}
 
 
 	@Override
-	public void update(float delta, World theWorld) {
+	public void update(float delta) {
 		timeInSeconds += delta;
-		assert theWorld == this || theWorld == null;
 		if(level == null || level.isDone()){
-			level = levelGetter.nextLevel();
+			level = levelGetter.nextLevel(this);
 		}
 		/*
 		The ordering of how each thing is updated it on purpose:
@@ -66,21 +65,21 @@ public class World implements Updateable, Renderable {
 			if(entity == null){
 				break;
 			}
-			entity.beforeSpawn(this);
+			entity.beforeSpawn();
 			entities.add(entity);
 		}
-		this.level.update(delta, this); // update level
+		this.level.update(delta); // update level
 
 		for(Iterator<Entity> it = entities.listIterator(); it.hasNext(); ){ // update entities
 			Entity entity = it.next();
 			assert !entity.isRemoved();
-			entity.update(delta, this);
-			if(entity.shouldRemove(this)){
+			entity.update(delta);
+			if(entity.shouldRemove()){
 				it.remove();
-				entity.afterRemove(this);
+				entity.afterRemove();
 			}
 		}
-		this.collisionHandler.update(delta, this); // do collisions
+		this.collisionHandler.update(delta); // do collisions
 	}
 
 	public Skin getMainSkin(){

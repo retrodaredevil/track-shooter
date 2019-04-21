@@ -3,11 +3,13 @@ package me.retrodaredevil.game.trackshooter.effect;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public abstract class TimedEffect implements Effect {
+	protected final World world;
 	private final long timeLast; // the amount of time for the effect to last in ms
 	private Long startTime = null;
 	private boolean done = false;
 
-	protected TimedEffect(long last){
+	protected TimedEffect(World world, long last){
+		this.world = world;
 		this.timeLast = last;
 	}
 
@@ -26,21 +28,21 @@ public abstract class TimedEffect implements Effect {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		long now = world.getTimeMillis();
 		if(startTime == null){
 			startTime = now;
-			onStart(world);
+			onStart();
 //			System.out.println("Effect started. startTime: " + startTime + " timeLast: " + timeLast);
 		}
 		if(resetCount()){
 			startTime = now;
 		}
-		onUpdate(delta, world);
+		onUpdate(delta);
 //		System.out.println("Effect updated. " + now + " percentDone: " + percentDone());
 		if(startTime + timeLast < now){
 			done = true;
-			onEnd(world);
+			onEnd();
 //			System.out.println("Effect ended");
 		}
 	}
@@ -52,7 +54,7 @@ public abstract class TimedEffect implements Effect {
 	protected boolean resetCount(){
 		return false;
 	}
-	protected abstract void onStart(World world);
-	protected abstract void onUpdate(float delta, World world);
-	protected abstract void onEnd(World world);
+	protected abstract void onStart();
+	protected abstract void onUpdate(float delta);
+	protected abstract void onEnd();
 }

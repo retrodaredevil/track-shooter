@@ -1,10 +1,8 @@
 package me.retrodaredevil.game.trackshooter.entity.powerup;
 
 import me.retrodaredevil.game.trackshooter.entity.Entity;
-import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public abstract class PowerupPackage extends SimplePowerup {
@@ -16,30 +14,31 @@ public abstract class PowerupPackage extends SimplePowerup {
 	 * @param velocity The velocity that this will have when on the track. If positive, will go in the positive direction on track and vice versa
 	 * @param startingTrackDistance The starging distance on the track
 	 */
-	public PowerupPackage(float velocity, float startingTrackDistance){
+	public PowerupPackage(World world, float velocity, float startingTrackDistance){
+		super(world);
 		setHitboxSize(.6f);
 
-		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(this);
+		TravelRotateVelocityOnTrackMoveComponent trackMove = new TravelRotateVelocityOnTrackMoveComponent(world, this);
 		trackMove.setDistanceOnTrack(startingTrackDistance);
 		trackMove.getTravelVelocitySetter().setVelocity(velocity);
 		setMoveComponent(trackMove);
 	}
 
 	@Override
-	public void onHit(World world, Entity other)  {
+	public void onHit(Entity other)  {
 		if(!(other instanceof Player)){
 			eaten = true;
 			return;
 		}
 		Player player = (Player) other;
-		onHit(world, player);
+		onHit(player);
 		eaten = true;
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || eaten;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || eaten;
 	}
 
-	protected abstract void onHit(World world, Player player);
+	protected abstract void onHit(Player player);
 }

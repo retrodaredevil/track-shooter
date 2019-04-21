@@ -80,7 +80,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		if(renderParts.getOptionsMenu().isMenuOpen()){ // wait for options menu to be closed
 			renderParts.getOverlay().setPauseVisible(false);
 			renderComponent.clearTable(); // clear so the hit boxes of the thing in the table don't get in the way

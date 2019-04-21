@@ -36,7 +36,7 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class DirectTravelMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		if(desiredRotation != null){
 			float change = MathUtil.minChange(desiredRotation, entity.getRotation(), 360);
 			if(turnVelocity == 0 || Math.abs(change) <= turnVelocity * delta){

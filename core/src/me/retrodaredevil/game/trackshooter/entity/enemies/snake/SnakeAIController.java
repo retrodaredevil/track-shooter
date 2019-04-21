@@ -11,16 +11,18 @@ import me.retrodaredevil.game.trackshooter.world.World;
  */
 public class SnakeAIController implements EntityController {
 
+	private final World world;
 	private final SnakePart part;
 	private final Entity target;
 
 
-	public SnakeAIController(SnakePart part, Entity target){
+	public SnakeAIController(World world, SnakePart part, Entity target){
+		this.world = world;
 		this.part = part;
 		this.target = target;
 	}
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		if(!part.isHead()){
 			return;
 		}

@@ -36,7 +36,7 @@ public abstract class NestedComponentMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 		if(getNestedMoveComponent() != null){
 			Gdx.app.error("warning", getClass().getSimpleName() + " is starting when it already has a Nested Move Component. Just a warning.\n" +
 					"It is recommended that the desired nested move component is added after super.onStart() is called or even after that in onUpdate().");
@@ -49,9 +49,9 @@ public abstract class NestedComponentMoveComponent extends SimpleMoveComponent {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		if(nestedMoveComponent != null){
-			nestedMoveComponent.update(delta, world);
+			nestedMoveComponent.update(delta);
 		}
 	}
 }

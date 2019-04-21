@@ -18,20 +18,20 @@ public abstract class EnemyLevel extends SimpleLevel {
 
 	private boolean reset = false;
 
-	public EnemyLevel(int number, Track track) {
-		super(number, track);
+	public EnemyLevel(World world, int number, Track track) {
+		super(world, number, track);
 	}
 
 	@Override
-	protected void onStart(World world) {
+	protected void onStart() {
 	}
 
 	@Override
-	protected void onEnd(World world) {
+	protected void onEnd() {
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		if(getMode() == LevelMode.RESET){
 			if(reset){
 				for(Entity entity : this.getEntities()){

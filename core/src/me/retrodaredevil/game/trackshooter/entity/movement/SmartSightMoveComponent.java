@@ -41,10 +41,10 @@ public class SmartSightMoveComponent extends NestedComponentMoveComponent implem
 	}
 
 	@Override
-	protected void onUpdate(float delta, World world) {
+	protected void onUpdate(float delta) {
 		setNestedMoveComponent(smoothTravel);
 		doTarget();
-		super.onUpdate(delta, world);
+		super.onUpdate(delta);
 	}
 
 

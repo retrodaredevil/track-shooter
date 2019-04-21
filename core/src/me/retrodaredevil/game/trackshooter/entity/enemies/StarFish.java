@@ -25,9 +25,10 @@ public class StarFish extends SimpleEntity implements Enemy {
 	 * @param speed The speed of the starfish where the sign doesn't matter
 	 * @param startingDistance The starting distance of this starfish
 	 */
-	public StarFish(float speed, float startingDistance){
+	public StarFish(World world, float speed, float startingDistance){
+		super(world);
 		this.speed = speed;
-		moveComponent = new TravelVelocityOnTrackMoveComponent(this);
+		moveComponent = new TravelVelocityOnTrackMoveComponent(world, this);
 		moveComponent.setDistanceOnTrack(startingDistance);
 		setMoveComponent(moveComponent);
 		setHitboxSize(.5f);
@@ -39,8 +40,8 @@ public class StarFish extends SimpleEntity implements Enemy {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		moveComponent.getTravelVelocitySetter().setVelocity(MathUtils.randomSign() * speed);
 		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("starfish")), this, .6f, .6f);
 		renderComponent.setFacingDirection(0);
@@ -50,7 +51,7 @@ public class StarFish extends SimpleEntity implements Enemy {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) {
+	public void onHit(Entity other) {
 		flipDirection(world);
 	}
 
@@ -63,8 +64,8 @@ public class StarFish extends SimpleEntity implements Enemy {
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || remove;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || remove;
 	}
 
 	@Override

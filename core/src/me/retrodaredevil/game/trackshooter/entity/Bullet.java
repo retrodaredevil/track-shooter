@@ -27,7 +27,8 @@ public class Bullet extends SimpleEntity implements Entity {
 	 * @param start The starting location of this bullet. It can be mutated after constructor is called
 	 * @param velocity The velocity of the bullet. It cannot be mutated after the constructor is called
 	 */
-	public Bullet(Entity shooter, Vector2 start, Vector2 velocity, float rotation, float shotDistance, CollisionIdentity collisionIdentity){
+	public Bullet(World world, Entity shooter, Vector2 start, Vector2 velocity, float rotation, float shotDistance, CollisionIdentity collisionIdentity){
+		super(world);
 		this.shooter = shooter;
 		this.shotDistance2 = shotDistance * shotDistance;
 		setHitboxSize(.25f);
@@ -40,24 +41,24 @@ public class Bullet extends SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("bullet")), this, .5f, .5f));
 	}
 
 	@Override
-	public void update(float delta, World world) {
-		super.update(delta, world);
+	public void update(float delta) {
+		super.update(delta);
 		if(startingLocation == null){
 			startingLocation = this.getLocation();
 		}
 	}
 
-	public static Bullet createFromEntity(Entity entity, float speed, float directionOffsetDegrees, float shotDistance, CollisionIdentity collisionIdentity){
+	public static Bullet createFromEntity(World world, Entity entity, float speed, float directionOffsetDegrees, float shotDistance, CollisionIdentity collisionIdentity){
 		float rotation = entity.getRotation() + directionOffsetDegrees;
 		Vector2 velocity = new Vector2(MathUtils.cosDeg(rotation), MathUtils.sinDeg(rotation));
 		velocity.scl(speed);
-		return new Bullet(entity, entity.getLocation(), velocity, rotation, shotDistance, collisionIdentity);
+		return new Bullet(world, entity, entity.getLocation(), velocity, rotation, shotDistance, collisionIdentity);
 	}
 
 	@Override
@@ -66,7 +67,7 @@ public class Bullet extends SimpleEntity implements Entity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other) {
+	public void onHit(Entity other) {
 		if(hitEntity != null){
 			throw new IllegalStateException("I hit something twice!!");
 		}
@@ -85,8 +86,8 @@ public class Bullet extends SimpleEntity implements Entity {
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hitEntity != null
+	public boolean shouldRemove() {
+		return super.shouldRemove() || hitEntity != null
 				|| (this.startingLocation != null && startingLocation.dst2(getX(), getY()) > shotDistance2);
 	}
 

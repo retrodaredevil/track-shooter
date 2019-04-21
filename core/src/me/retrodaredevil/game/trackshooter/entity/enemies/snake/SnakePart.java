@@ -57,7 +57,8 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 
 
 
-	public SnakePart(EntityDifficulty difficulty){
+	public SnakePart(World world, EntityDifficulty difficulty){
+		super(world);
 		this.difficulty = difficulty;
 
 		this.smoothTravel = new SmoothTravelMoveComponent(this, Vector2.Zero, 0, 0); // values that are 0 will be reset
@@ -70,8 +71,8 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 	@Override
-	public void beforeSpawn(World world) {
-		super.beforeSpawn(world);
+	public void beforeSpawn() {
+		super.beforeSpawn();
 		this.renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
 		setRenderComponent(renderComponent);
 
@@ -83,12 +84,12 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	 * @param amount The amount of SnakeParts there should be
 	 * @return A list of SnakeParts with a length of amount
 	 */
-	public static List<SnakePart> createSnake(int amount, EntityDifficulty difficulty){
+	public static List<SnakePart> createSnake(int amount, World world, EntityDifficulty difficulty){
 		List<SnakePart> r = new ArrayList<>();
 
 		SnakePart last = null;
 		for(int i = 0; i < amount; i++){
-			SnakePart part = new SnakePart(difficulty);
+			SnakePart part = new SnakePart(world, difficulty);
 			part.follow(last);
 			r.add(part);
 
@@ -121,7 +122,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 			return false;
 		}
 		if(smoothOppositeCache == null || smoothOppositeCache.getEntityTarget() != target){
-			smoothOppositeCache = new SmoothOppositePositionTarget(this, target, smoothTravel);
+			smoothOppositeCache = new SmoothOppositePositionTarget(world, target, smoothTravel);
 		}
 		setMoveComponent(smoothOppositeCache);
 		return true;
@@ -248,7 +249,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		/*
 		We have to do this before we call super, because smoothTravel may be used by another
 		MoveComponent that wants to add to or change speed based on the previous set value.
@@ -263,7 +264,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 				System.err.println("We aren't a head but we should be!");
 			}
 		}
-		super.update(delta, world);
+		super.update(delta);
 	}
 	private void updateSize(Integer numberParts){
 		if(!this.isHead()){
@@ -309,13 +310,13 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 	@Override
-	public void onHit(World world, Entity other)  {
+	public void onHit(Entity other)  {
 		if(other.getCollisionIdentity() == CollisionIdentity.POWERUP){ // eat it!!
-			SnakePart newTail = new SnakePart(difficulty);
-			world.getLevel().addEntity(world, newTail);
+			SnakePart newTail = new SnakePart(world, difficulty);
+			world.getLevel().addEntity(newTail);
 			newTail.follow(getTail());
 
-			getHead().addEffect(new TimedSpeedEffect(1000, 2));
+			getHead().addEffect(new TimedSpeedEffect(world, 1000, 2));
 			return;
 		}
 		Player player = null;
@@ -328,7 +329,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 			}
 		}
 		SnakePart head = getHead();
-		head.addEffect(new TimedSpeedEffect(1000, 1.5f));
+		head.addEffect(new TimedSpeedEffect(world, 1000, 1.5f));
 		killAll(this, false, player, other);
 		/* code for centipede like behaviour
 		this.hit = true;
@@ -351,13 +352,13 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	}
 
 	@Override
-	public boolean shouldRemove(World world) {
-		return super.shouldRemove(world) || hit;
+	public boolean shouldRemove() {
+		return super.shouldRemove() || hit;
 	}
 
 	@Override
-	public void afterRemove(World world) {
-		super.afterRemove(world);
+	public void afterRemove() {
+		super.afterRemove();
 		leadPart(null);
 		follow(null);
 	}

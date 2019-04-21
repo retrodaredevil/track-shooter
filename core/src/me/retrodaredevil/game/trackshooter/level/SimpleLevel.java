@@ -12,6 +12,7 @@ import java.util.*;
  */
 public abstract class SimpleLevel implements Level {
 
+	protected final World world;
 	private final int number;
 	private final Track track;
 //	private Long startTime = null;
@@ -30,7 +31,8 @@ public abstract class SimpleLevel implements Level {
 
 	private boolean done = false; // set in update
 
-	protected SimpleLevel(int number, Track track){
+	protected SimpleLevel(World world, int number, Track track){
+		this.world = world;
 		this.number = number;
 		this.track = track;
 	}
@@ -41,7 +43,7 @@ public abstract class SimpleLevel implements Level {
 	}
 
 	@Override
-	public void update(float delta, World world) {
+	public void update(float delta) {
 		assert !done : "Level wasn't terminated correctly!";
 		final boolean firstRun = time == 0;
 		time += delta;
@@ -49,15 +51,15 @@ public abstract class SimpleLevel implements Level {
 		if(firstRun){
 			assert mode == null;
 			setMode(LevelMode.RESET);
-			onStart(world);
+			onStart();
 		}
 		assert mode != null;
 		World.updateEntityList(entityList);
-		onUpdate(delta, world);
+		onUpdate(delta);
 
 		for(Iterator<LevelFunction> it = functions.listIterator(); it.hasNext(); ){
 			LevelFunction function = it.next();
-			boolean functionDone = function.update(delta, world, addFunctionsQueue);
+			boolean functionDone = function.update(delta, addFunctionsQueue);
 			if (functionDone) {
 				it.remove();
 			}
@@ -67,9 +69,9 @@ public abstract class SimpleLevel implements Level {
 			functions.add(element);
 		}
 		if(!firstRun) { // we don't want to check if it's done on the first run because not everything may have been initialized
-			this.done = shouldLevelEnd(world);
+			this.done = shouldLevelEnd();
 			if (this.done) {
-				end(world);
+				end();
 			}
 		}
 	}
@@ -77,7 +79,7 @@ public abstract class SimpleLevel implements Level {
 	 * Should be called once every update() call
 	 * @return true if this level is able to end, false otherwise
 	 */
-	private boolean shouldLevelEnd(World world){
+	private boolean shouldLevelEnd(){
 		Collection<CanLevelEnd> endCheckCollection = new HashSet<>();
 		endCheckCollection.addAll(world.getAllEntities());
 		endCheckCollection.addAll(functions);
@@ -93,7 +95,7 @@ public abstract class SimpleLevel implements Level {
 //		System.out.println("level: " + getNumber() + " is ending. checks: " + endCheckCollection);
 		return highest.value <= LevelEndState.CAN_END.value;
 	}
-	private void end(World world){
+	private void end(){
 		for(Entity entity : entityList){
 			if(entity.canSetToRemove()){
 				entity.setToRemove();
@@ -102,7 +104,7 @@ public abstract class SimpleLevel implements Level {
 		for(LevelFunction function : functions){
 			function.levelEnd(world);
 		}
-		onEnd(world);
+		onEnd();
 	}
 
 	@Override
@@ -110,10 +112,10 @@ public abstract class SimpleLevel implements Level {
 		return lastLevelEndState == LevelEndState.CAN_END_SOON || lastLevelEndState == LevelEndState.CAN_END;
 	}
 
-	protected abstract void onStart(World world);
+	protected abstract void onStart();
 
-	protected abstract void onUpdate(float delta, World world);
-	protected abstract void onEnd(World world);
+	protected abstract void onUpdate(float delta);
+	protected abstract void onEnd();
 
 
 	protected boolean isStarted(){
@@ -135,7 +137,7 @@ public abstract class SimpleLevel implements Level {
 	}
 
 	@Override
-	public void addEntity(World world, Entity entity){
+	public void addEntity(Entity entity){
 		world.addEntity(entity);
 		entityList.add(entity);
 	}

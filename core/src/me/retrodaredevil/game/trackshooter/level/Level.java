@@ -22,10 +22,9 @@ public interface Level extends Updateable {
 	 * Adds an entity to the World for the World to handle. If entity.canSetRemove() == true, it will
 	 * be removed when this level is finished.
 	 *
-	 * @param world The world to add the entity to
 	 * @param entity The entity to add to the world and to the level
 	 */
-	void addEntity(World world, Entity entity);
+	void addEntity(Entity entity);
 
 	Collection<Entity> getEntities();
 

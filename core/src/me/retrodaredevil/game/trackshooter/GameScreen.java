@@ -50,17 +50,17 @@ public class GameScreen implements UsableScreen {
 		if(gameType == GameType.NORMAL){
 			int i = 0;
 			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(gameInput::getRumble, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				Player player = new Player(world, gameInput::getRumble, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
 				players.add(player);
-				player.setEntityController(new PlayerController(player, gameInput));
+				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
 				i++;
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
 		} else { // assume DEMO_AI
-			Player player = new Player(() -> null, Player.Type.NORMAL);
+			Player player = new Player(world, () -> null, Player.Type.NORMAL);
 			players.add(player);
-			player.setEntityController(new PlayerAIController(player));
+			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);
 			pauseMenu = null;
 		}
@@ -76,9 +76,9 @@ public class GameScreen implements UsableScreen {
 
 	}
 	private void doUpdate(float delta){
-		renderParts.getOverlay().update(delta, world);
+		renderParts.getOverlay().update(delta);
 		if(pauseMenu != null) {
-			pauseMenu.update(delta, world);
+			pauseMenu.update(delta);
 		}
 		if(gameType == GameType.DEMO_AI){
 			for(GameInput input : gameInputs){
@@ -95,7 +95,7 @@ public class GameScreen implements UsableScreen {
 		if(isPaused()){
 			return;
 		}
-		world.update(delta, world);
+		world.update(delta);
 
 
 		Level level = world.getLevel();

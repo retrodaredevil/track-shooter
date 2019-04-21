@@ -17,14 +17,16 @@ import java.util.List;
 
 public class SnakeFunction implements LevelFunction {
 	private static final float WAIT_TO_SPAWN = 10; // seconds
+	private final World world;
 	private final Player target;
 
-	public SnakeFunction(Player target){
+	public SnakeFunction(World world, Player target){
+		this.world = world;
 		this.target = target;
 	}
 
 	@Override
-	public boolean update(float delta, World world, Collection<? super LevelFunction> functionsToAdd) {
+	public boolean update(float delta, Collection<? super LevelFunction> functionsToAdd) {
 		Level level = world.getLevel();
 		if(level.getMode() != LevelMode.NORMAL){
 			return false;
@@ -77,11 +79,11 @@ public class SnakeFunction implements LevelFunction {
 			amount = 10;
 		}
 
-		final List<SnakePart> parts = SnakePart.createSnake(amount, difficulty);
+		final List<SnakePart> parts = SnakePart.createSnake(amount, world, difficulty);
 		for(SnakePart part : parts){
 			part.setLocation(x, y, rotation);
-			level.addEntity(world, part);
-			part.setEntityController(new SnakeAIController(part, target));
+			level.addEntity(part);
+			part.setEntityController(new SnakeAIController(world, part, target));
 		}
 	}
 
