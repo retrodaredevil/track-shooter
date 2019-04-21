@@ -128,7 +128,7 @@ public class Player extends SimpleEntity {
 	 */
 	public List<Bullet> shootBullet(Bullet.ShotType shotType) {
 		shotType = checkNullShotType(shotType);
-		if(!canShootBullet(world, shotType)){
+		if(!canShootBullet(shotType)){
 			return Collections.emptyList();
 		}
 //		System.out.println("going to shoot a bullet. level mode: " + world.getLevel().getMode()
@@ -191,12 +191,12 @@ public class Player extends SimpleEntity {
 		return bullets;
 	}
 
-	private boolean canShootBullet(World world, Bullet.ShotType shotType) {
+	private boolean canShootBullet(Bullet.ShotType shotType) {
 		Level level = world.getLevel();
 		if(level.getMode() != LevelMode.NORMAL || level.isEndingSoon()){
 			return false;
 		}
-		updateActive(world);
+		updateActive();
 		int max;
 		int amount = 0;
 		switch(shotType){
@@ -221,7 +221,7 @@ public class Player extends SimpleEntity {
 		}
 		return amount < max;
 	}
-	private void updateActive(World world){
+	private void updateActive(){
 		for(Map.Entry<Bullet.ShotType, List<List<Bullet>>> entry : activeBulletsMap.entrySet()){
 			List<List<Bullet>> shotsList = entry.getValue();
 			for(ListIterator<List<Bullet>> it = shotsList.listIterator(); it.hasNext(); ){

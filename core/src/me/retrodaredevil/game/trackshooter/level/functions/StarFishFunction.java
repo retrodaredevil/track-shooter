@@ -75,7 +75,7 @@ public class StarFishFunction implements LevelFunction {
 	}
 
 	@Override
-	public void levelEnd(World world) {
+	public void levelEnd() {
 
 	}
 
@@ -84,7 +84,7 @@ public class StarFishFunction implements LevelFunction {
 	}
 
 	@Override
-	public LevelEndState canLevelEnd(World world) {
+	public LevelEndState canLevelEnd() {
 		return LevelEndState.CAN_END; // starfish aren't that important. Sorry Starry
 	}
 }

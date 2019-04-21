@@ -49,7 +49,7 @@ public abstract class PowerupFunction implements LevelFunction {
 	}
 
 	@Override
-	public void levelEnd(World world) {
+	public void levelEnd() {
 		// do nothing because the level will automatically remove the powerup
 	}
 
@@ -68,7 +68,7 @@ public abstract class PowerupFunction implements LevelFunction {
 	}
 
 	@Override
-	public LevelEndState canLevelEnd(World world) {
+	public LevelEndState canLevelEnd() {
 		return LevelEndState.CAN_END;
 	}
 }

@@ -1,7 +1,5 @@
 package me.retrodaredevil.game.trackshooter.level;
 
-import me.retrodaredevil.game.trackshooter.world.World;
-
 public interface CanLevelEnd {
 
 	/**
@@ -9,8 +7,7 @@ public interface CanLevelEnd {
 	 * if the list this object is in is acted upon correctly.
 	 * <p><p>
 	 * Called only when the level may possibly end
-	 * @param world The World object
 	 * @return true if the level is allowed to end
 	 */
-	LevelEndState canLevelEnd(World world);
+	LevelEndState canLevelEnd();
 }

@@ -44,10 +44,10 @@ public class SnakeFunction implements LevelFunction {
 		} else {
 			difficulty = EntityDifficulty.EASY;
 		}
-		createSnake(world, difficulty);
+		createSnake(difficulty);
 		return true;
 	}
-	protected void createSnake(World world, EntityDifficulty difficulty){
+	protected void createSnake(EntityDifficulty difficulty){
 		final Level level = world.getLevel();
 		final Rectangle bounds = world.getBounds();
 
@@ -88,7 +88,7 @@ public class SnakeFunction implements LevelFunction {
 	}
 
 	@Override
-	public void levelEnd(World world) {
+	public void levelEnd() {
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class SnakeFunction implements LevelFunction {
 	}
 
 	@Override
-	public LevelEndState canLevelEnd(World world) {
+	public LevelEndState canLevelEnd() {
 		return LevelEndState.CANNOT_END; // while the snake hasn't been added, the player cannot go to the next level
 	}
 }

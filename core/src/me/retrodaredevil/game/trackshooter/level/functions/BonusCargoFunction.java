@@ -68,7 +68,7 @@ public class BonusCargoFunction implements LevelFunction {
 	}
 
 	@Override
-	public void levelEnd(World world) {
+	public void levelEnd() {
 		throw new AssertionError("This function should not be active when the level is ending!");
 	}
 
@@ -77,7 +77,7 @@ public class BonusCargoFunction implements LevelFunction {
 	}
 
 	@Override
-	public LevelEndState canLevelEnd(World world) {
+	public LevelEndState canLevelEnd() {
 		return LevelEndState.CAN_END_SOON;
 	}
 }

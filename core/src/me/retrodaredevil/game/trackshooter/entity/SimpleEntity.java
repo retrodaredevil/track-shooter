@@ -280,7 +280,7 @@ public class SimpleEntity implements Entity {
 	}
 
 	@Override
-	public LevelEndState canLevelEnd(World world) {
+	public LevelEndState canLevelEnd() {
 		return levelEndStateWhenActive;
 	}
 }

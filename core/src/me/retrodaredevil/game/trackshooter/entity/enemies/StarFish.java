@@ -52,10 +52,10 @@ public class StarFish extends SimpleEntity implements Enemy {
 
 	@Override
 	public void onHit(Entity other) {
-		flipDirection(world);
+		flipDirection();
 	}
 
-	private void flipDirection(World world){
+	private void flipDirection(){
 		final float time = world.getTime();
 		if(lastFlip == null || time - lastFlip > NO_FLIP_TIME) {
 			moveComponent.getTravelVelocitySetter().setVelocity(-1 * moveComponent.getTravelVelocity());

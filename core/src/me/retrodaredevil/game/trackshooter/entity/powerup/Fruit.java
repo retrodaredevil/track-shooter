@@ -46,10 +46,6 @@ public class Fruit extends SimplePowerup {
 		Player player = (Player) other;
 		player.getScoreObject().onKill(this, player, points.getWorth());
 		eaten = true;
-		displayScore(world);
-	}
-
-	protected void displayScore(World world){
 		EntityUtil.displayScore(world, this.getLocation(), points.getDrawable(world.getRenderObject()));
 	}
 

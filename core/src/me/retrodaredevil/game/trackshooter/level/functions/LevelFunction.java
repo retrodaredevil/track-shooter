@@ -28,9 +28,8 @@ public interface LevelFunction extends CanLevelEnd {
 	/**
 	 * Called when the level ends while this function is still active
 	 *
-	 * @param world The world where getLevel() is still the level you expect
 	 */
-	void levelEnd(World world);
+	void levelEnd();
 
 	void onModeChange(Level level, LevelMode mode, LevelMode previous);
 

@@ -86,7 +86,7 @@ public abstract class SimpleLevel implements Level {
 
 		LevelEndState highest = LevelEndState.CAN_END;
 		for(CanLevelEnd endCheck : endCheckCollection){
-			LevelEndState state = endCheck.canLevelEnd(world);
+			LevelEndState state = endCheck.canLevelEnd();
 			if(state.value > highest.value){
 				highest = state;
 			}
@@ -102,7 +102,7 @@ public abstract class SimpleLevel implements Level {
 			}
 		}
 		for(LevelFunction function : functions){
-			function.levelEnd(world);
+			function.levelEnd();
 		}
 		onEnd();
 	}
