@@ -1,12 +1,15 @@
 package me.retrodaredevil.game.trackshooter.world;
 
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.*;
 
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
+import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
@@ -15,9 +18,10 @@ import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.components.WorldRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
 
 
-public class World implements Updateable, Renderable {
+public class World implements Updateable, Renderable, InputFocusable {
 
 	private final LevelGetter levelGetter;
 	private final RenderObject renderObject;
@@ -26,6 +30,7 @@ public class World implements Updateable, Renderable {
 	private final CollisionHandler collisionHandler;
 	private final Queue<Entity> entitiesToAdd = new LinkedList<>();
 	private final List<Entity> entities = new ArrayList<>();
+	private final Stage stage;
 
 	private Level level;
 	private float timeInSeconds = 0;
@@ -37,12 +42,14 @@ public class World implements Updateable, Renderable {
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler(this);
 
+		stage = new Stage(new WorldViewport(this), renderObject.getBatch());
+
 		this.level = levelGetter.nextLevel(this);
 
 	}
 
 	public void getWorldCoordinates(int screenX, int screenY, Vector2 result){
-
+		// TODO
 	}
 
 
@@ -82,6 +89,11 @@ public class World implements Updateable, Renderable {
 		this.collisionHandler.update(delta); // do collisions
 	}
 
+	// region getters
+
+	/** @return The stage managed by the world. */
+	public Stage getMainStage(){ return stage; }
+
 	public Skin getMainSkin(){
 		return renderObject.getMainSkin();
 	}
@@ -115,21 +127,9 @@ public class World implements Updateable, Renderable {
 		r.addAll(entitiesToAdd);
 		return r;
 	}
-
-	/**
-	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
-	 * so it is initialized correctly
-	 * <p>
-	 * NOTE: Most of the time, you should use {@link Level#addEntity(World, Entity)}
-	 * @param entity The entity to add to the list of entities next frame
-	 */
-	public void addEntity(Entity entity){
-		entitiesToAdd.add(entity);
-	}
 	public Rectangle getBounds(){
 		return bounds;
 	}
-
 	@Override
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
@@ -146,6 +146,35 @@ public class World implements Updateable, Renderable {
 	public long getTimeMillis(){
 		return (long) (timeInSeconds * 1000L);
 	}
+	// endregion
+
+	/**
+	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
+	 * so it is initialized correctly
+	 * <p>
+	 * NOTE: Most of the time, you should use {@link Level#addEntity(Entity)}
+	 * @param entity The entity to add to the list of entities next frame
+	 */
+	public void addEntity(Entity entity){
+		entitiesToAdd.add(entity);
+	}
+
+	// region InputFocusable implementation
+	@Override
+	public boolean isWantsToFocus() {
+		return true;
+	}
+
+	@Override
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
+		return Collections.singleton(stage); // TODO wait, is there a reason we need to have this? Is there something that relies on stage receiving input?
+	}
+
+	@Override
+	public int getFocusPriority() {
+		return 0;
+	}
+	// endregion
 
 	/**
 	 * A simple util method that takes a list and removes elements from the passed instance if they are removed

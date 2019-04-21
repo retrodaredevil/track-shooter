@@ -34,8 +34,6 @@ public class GameScreen implements UsableScreen {
 	/** The pause menu or null */
 	private final PauseMenu pauseMenu;
 
-	private final Stage stage;
-
 	private boolean shouldExit = false;
 
 	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType){
@@ -45,7 +43,6 @@ public class GameScreen implements UsableScreen {
 		this.renderParts = renderParts;
 
 		world = new World(new GameLevelGetter(players), 18, 18, renderObject);
-		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		if(gameType == GameType.NORMAL){
 			int i = 0;
@@ -144,10 +141,9 @@ public class GameScreen implements UsableScreen {
 		}
 	}
 	private Renderer createRenderer(){
-		return new Renderer(renderObject.getBatch(), stage)
+		return new Renderer()
 				.addRenderable(renderParts.getBackground())
 				.addRenderable(world)
-				.addMainStage() // world should have added this anyway
 				.addRenderable(renderParts.getTouchpadRenderer())
 				.addRenderable(renderParts.getOptionsMenu())
 				.addRenderable(pauseMenu) // may be null
@@ -157,11 +153,12 @@ public class GameScreen implements UsableScreen {
 		createRenderer().render(delta);
 
 		new InputFocuser()
+				.add(world)
 				.addParallel(renderParts.getTouchpadRenderer())
 				.addParallel(renderParts.getOverlay())
 				.addParallel(pauseMenu)
 				.addParallel(renderParts.getOptionsMenu())
-				.giveFocus(stage, renderParts.getInputMultiplexer());
+				.giveFocus(renderParts.getInputMultiplexer());
 	}
 	public void setToExit(){
 		shouldExit = true;
@@ -211,7 +208,7 @@ public class GameScreen implements UsableScreen {
 
 	@Override
 	public void resize(int width, int height) {
-		stage.getViewport().update(width, height,true);
+//		stage.getViewport().update(width, height,true); now handled in World
 		renderParts.resize(width, height);
 		world.resize(width, height);
 		if(pauseMenu != null) {
@@ -222,7 +219,6 @@ public class GameScreen implements UsableScreen {
 	@Override
 	public void dispose() {
 		world.disposeRenderComponent();
-		stage.dispose();
 		if(pauseMenu != null) {
 			pauseMenu.disposeRenderComponent();
 		}

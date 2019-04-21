@@ -1,6 +1,5 @@
 package me.retrodaredevil.game.trackshooter.render.components;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.trackshooter.world.Track;
 import me.retrodaredevil.game.trackshooter.world.TrackPart;
 
@@ -13,13 +12,14 @@ public class TrackRenderComponent implements RenderComponent {
 		this.track = track;
 	}
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		for(TrackPart part : track.getParts()){
 //			RenderComponent render = part.getRenderComponent();
 //			if(render != null){
 //				render.render(delta, stage);
 //			}
-			part.autoRender(delta, stage, false);
+//			part.autoRender(delta, stage, false);
+			part.render(delta);
 		}
 	}
 

@@ -6,9 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -69,10 +67,9 @@ public class InputFocuser implements InputFocusable{
 
 	/**
 	 * Determines what should be focused on
-	 * @param mainStage The main stage
 	 */
-	public void giveFocus(Stage mainStage, InputMultiplexer inputMultiplexer){
-		Collection<? extends InputProcessor> processorsToFocus = getInputProcessorsToFocus(mainStage);
+	public void giveFocus(InputMultiplexer inputMultiplexer){
+		Collection<? extends InputProcessor> processorsToFocus = getInputProcessorsToFocus();
 
 		Array<InputProcessor> processorArray = new Array<>(processorsToFocus.size());
 		for(InputProcessor processor : processorsToFocus){
@@ -97,27 +94,20 @@ public class InputFocuser implements InputFocusable{
 
 
 	@Override
-	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
-//		giveFocus(mainStage, false);
-//		return Collections.singleton(inputMultiplexer);
-
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
 		final Collection<InputProcessor> processorsToFocus = new LinkedHashSet<>();
 
-		// mainStage or primaryFocus
-		if(primaryFocus == null || !primaryFocus.isWantsToFocus()){
-			if(mainStage != null) {
-				processorsToFocus.add(mainStage);
-			}
-		} else {
-			processorsToFocus.addAll(primaryFocus.getInputProcessorsToFocus(mainStage));
+		if(primaryFocus != null) {
+			processorsToFocus.addAll(primaryFocus.getInputProcessorsToFocus());
 		}
 
 		// parallel processors
 		processorsToFocus.addAll(parallelProcessors);
+
 		// parallel focusables
 		for(InputFocusable focusable : parallelFocusables){
 			if(focusable.isWantsToFocus()) {
-				processorsToFocus.addAll(focusable.getInputProcessorsToFocus(mainStage));
+				processorsToFocus.addAll(focusable.getInputProcessorsToFocus());
 			}
 		}
 		return processorsToFocus;

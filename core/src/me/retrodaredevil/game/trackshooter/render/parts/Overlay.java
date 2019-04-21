@@ -3,7 +3,6 @@ package me.retrodaredevil.game.trackshooter.render.parts;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
@@ -23,7 +22,6 @@ import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.item.DisplayedItem;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.viewports.UIViewport;
-import me.retrodaredevil.game.trackshooter.util.ActorUtil;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class Overlay implements Renderable, Updateable, Disposable, InputFocusable {
@@ -176,7 +174,7 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 	}
 
 	@Override
-	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
 		return Collections.singleton(this.stage);
 	}
 }

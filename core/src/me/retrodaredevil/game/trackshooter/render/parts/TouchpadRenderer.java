@@ -36,7 +36,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		stage = new Stage(new ScreenViewport(), renderObject.getBatch());
 	}
 	public Touchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalDiameterGetter proportionalDiameterGetter){
-		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(visibilityChanger, proportionalPositionGetter, proportionalDiameterGetter, renderObject);
+		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(stage, visibilityChanger, proportionalPositionGetter, proportionalDiameterGetter, renderObject);
 		renderComponent.addComponent(touchpadRenderComponent);
 		return touchpadRenderComponent.touchpad;
 	}
@@ -44,11 +44,6 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 	@Override
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
-	}
-
-	@Override
-	public Stage getPreferredStage() {
-		return stage;
 	}
 
 	@Override
@@ -63,12 +58,17 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 
 
 	@Override
-	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
 		return Collections.singleton(stage);
 	}
 
 	static class TouchpadRenderComponent implements RenderComponent{
+		/*
+		This could have just been an inner class instead of a static one, but I made it a static class to avoid the small
+		chance of accidentally leaking the TouchpadRenderer instance before it's initialized
+		 */
 
+		private final Stage stage;
 		private final TouchpadVisibilityChanger visibilityChanger;
 		private final Touchpad touchpad;
 //		private final Vector2 proportionalPosition;
@@ -79,8 +79,9 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 
 		private final Touchpad.TouchpadStyle style = new Touchpad.TouchpadStyle();
 
-		TouchpadRenderComponent(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter,
+		TouchpadRenderComponent(Stage stage, TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter,
 								ProportionalDiameterGetter proportionalDiameterGetter, RenderObject renderObject){
+			this.stage = stage;
 			this.visibilityChanger = Objects.requireNonNull(visibilityChanger);
 			final Skin skin = renderObject.getArcadeSkin();
 			touchpad = new Touchpad(0, skin);
@@ -98,7 +99,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		}
 
 		@Override
-		public void render(float delta, Stage stage) {
+		public void render(float delta) {
 			if(visibilityChanger.shouldShowTouchpad()) {
 				stage.addActor(touchpad);
 			} else {

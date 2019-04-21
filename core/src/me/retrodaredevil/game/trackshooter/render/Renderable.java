@@ -22,18 +22,27 @@ public interface Renderable {
 	 */
 	RenderComponent getRenderComponent();
 
+
 	/**
-	 * Renders the RenderComponent and uses the preferred stage if that isn't null
-	 * NOTE: If this is overridden, it should be for a good reason and using {@link #getRenderComponent()}
-	 * should have little difference if any.
-	 * @param delta The delta time
-	 * @param mainStage The main stage
+	 * SHOULD NEVER BE OVERRIDDEN
+	 * @see RenderComponent#render(float)
 	 */
-	default void autoRender(float delta, Stage mainStage, boolean canUsePreferred){
+	default void render(float delta){
 		RenderComponent renderComponent = getRenderComponent();
 		if(renderComponent != null){
-			Stage preferredStage = getPreferredStage();
-			renderComponent.render(delta, preferredStage != null && canUsePreferred ? preferredStage : mainStage);
+			renderComponent.render(delta);
+		}
+	}
+
+
+	/**
+	 * SHOULD NEVER BE OVERRIDDEN.
+	 * @see RenderComponent#resize(int, int)
+	 */
+	default void resize(int width, int height){
+		RenderComponent renderComponent = getRenderComponent();
+		if(renderComponent != null){
+			renderComponent.resize(width, height);
 		}
 	}
 
@@ -52,17 +61,4 @@ public interface Renderable {
 		}
 	}
 
-	/**
-	 * NOTE: If this doesn't return null, it is likely that this should implement {@link Disposable}
-	 * @return The preferred stage to be rendered on or null to use the default stage
-	 */
-	default Stage getPreferredStage(){ // preferred
-		return null;
-	}
-	default void resize(int width, int height){
-		Stage stage = getPreferredStage();
-		if(stage != null){
-			stage.getViewport().update(width, height, true);
-		}
-	}
 }

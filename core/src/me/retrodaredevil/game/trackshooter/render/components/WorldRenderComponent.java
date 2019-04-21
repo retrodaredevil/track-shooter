@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -20,8 +19,10 @@ public class WorldRenderComponent implements RenderComponent {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
-		world.getTrack().autoRender(delta, stage, false);
+	public void render(float delta) {
+//		world.getMainStage().getViewport().update(width, height,true);
+
+		world.getTrack().render(delta);
 		if(Gdx.input.isKeyJustPressed(Input.Keys.H) && Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)){ // hell yeah hard coding
 			renderHitboxes = !renderHitboxes;
 		}
@@ -29,13 +30,13 @@ public class WorldRenderComponent implements RenderComponent {
 			if(renderer == null){
 				renderer = new ShapeRenderer();
 			}
-			Camera camera = stage.getCamera();
+			Camera camera = world.getMainStage().getCamera();
 			camera.update();
 			renderer.setProjectionMatrix(camera.combined);
 			renderer.begin(ShapeRenderer.ShapeType.Line);
 		}
 		for(Entity entity : world.getEntities()){
-			entity.autoRender(delta, stage, false);
+			entity.render(delta);
 			if(renderHitboxes){
 				Rectangle hitbox = entity.getHitbox();
 				renderer.rect(hitbox.x, hitbox.y, hitbox.width, hitbox.height);
@@ -44,6 +45,11 @@ public class WorldRenderComponent implements RenderComponent {
 		if(renderHitboxes){
 			renderer.end();
 		}
+	}
+
+	@Override
+	public void resize(int width, int height) {
+		world.getMainStage().getViewport().update(width, height, true);
 	}
 
 	@Override

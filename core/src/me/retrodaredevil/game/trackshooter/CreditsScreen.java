@@ -54,10 +54,9 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		Constants.BUTTON_SIZE.apply(table.add(backButton = new TextButton("back", renderObject.getUISkin(), "small")));
 	}
 	private Renderer createRenderer(){
-		return new Renderer(renderObject.getBatch(), stage)
+		return new Renderer()
 				.addRenderable(renderParts.getBackground())
-				.addRenderable(renderParts.getOverlay())
-				.addMainStage(); // chances are, the main stage has already been added, but add it anyway
+				.addRenderable(renderParts.getOverlay());
 	}
 
 	@Override

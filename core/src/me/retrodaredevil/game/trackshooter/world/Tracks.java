@@ -24,7 +24,7 @@ public final class Tracks {
 
 	public static Track newKingdomTrack(){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-7, -7))
+				new Vector2(-7, -7), stage) // TODO How the Track code is designed is one downside to using dependency injection for the Stage
 				.connect(-5, -7)
 				.connect(-5, -6)
 				.connect( 5, -6)
@@ -49,7 +49,7 @@ public final class Tracks {
 	}
 	public static Track newPlusTrack(){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-4, -4))
+				new Vector2(-4, -4), stage)
 				.connect(-3, -7)
 				.connect(3, -7)
 				.connect(4, -4)
@@ -66,7 +66,7 @@ public final class Tracks {
 	}
 	public static Track newMazeTrack(){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-8, -7))
+				new Vector2(-8, -7), stage)
 				.connect(7, -7)
 				.connect(7, -5)
 				.connect(-7, -5)
@@ -83,7 +83,7 @@ public final class Tracks {
 	}
 	public static Track newPointyTrack(){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-			new Vector2(0, 6))
+			new Vector2(0, 6), stage)
 				.connect(5.5f, 7)
 				.connect(4.5f, 4.5f)
 				.connect(7, 5.5f)

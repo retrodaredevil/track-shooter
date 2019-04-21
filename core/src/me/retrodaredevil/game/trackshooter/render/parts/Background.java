@@ -1,7 +1,5 @@
 package me.retrodaredevil.game.trackshooter.render.parts;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -18,22 +16,16 @@ public class Background implements Renderable {
 	public RenderComponent getRenderComponent() {
 		return renderComponent;
 	}
+
 	class BackgroundRenderComponent implements RenderComponent {
-//		private ClearActor clear = new ClearActor();
 		@Override
-		public void render(float delta, Stage stage) {
+		public void render(float delta) {
 			RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
 		}
+
 
 		@Override
 		public void dispose() {
 		}
 	}
-//	class ClearActor extends Actor {
-//		@Override
-//		public void draw(Batch batch, float parentAlpha) {
-//			super.draw(batch, parentAlpha);
-//			RenderUtil.clearScreen(renderObject.getMainSkin().getColor("background"));
-//		}
-//	}
 }

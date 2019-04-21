@@ -1,7 +1,6 @@
 package me.retrodaredevil.game.trackshooter.render.components;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -10,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 public class LineRenderComponent implements RenderComponent {
+	private final Stage stage;
 	private final Vector2 start = new Vector2();
 	private final Vector2 end = new Vector2();
 
@@ -21,7 +21,8 @@ public class LineRenderComponent implements RenderComponent {
 	/**
 	 * Note when disposeRenderComponent() is called, it will NOT call renderer.disposeRenderComponent().
 	 */
-	public LineRenderComponent(Vector2 start, Vector2 end, Color color, float width, ShapeRenderer renderer){
+	public LineRenderComponent(Stage stage, Vector2 start, Vector2 end, Color color, float width, ShapeRenderer renderer){
+		this.stage = stage;
 		this.start.set(start);
 		this.end.set(end);
 		this.width = width;
@@ -30,7 +31,7 @@ public class LineRenderComponent implements RenderComponent {
 		renderer.setColor(color);
 	}
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		if(line.getStage() != stage){
 			stage.addActor(line);
 		}

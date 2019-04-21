@@ -23,7 +23,6 @@ import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderC
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PauseMenu implements Updateable, Renderable, InputFocusable, CloseableMenu {
 
@@ -175,7 +174,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 	}
 
 	@Override
-	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
 		return Collections.singleton(stage);
 	}
 	public interface ExitGameAction {

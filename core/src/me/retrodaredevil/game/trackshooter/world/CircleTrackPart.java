@@ -25,7 +25,7 @@ public class CircleTrackPart extends TrackPart {
 		this.radius = radius;
 		this.center.set(center);
 		this.zeroAngle = zeroAngle;
-		this.renderComponent = new CircleRenderComponent(radius, 3, center, color, 100);
+		this.renderComponent = new CircleRenderComponent(stage, radius, 3, center, color, 100);
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -25,7 +24,6 @@ import me.retrodaredevil.game.trackshooter.render.selection.options.providers.Co
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.PageControlOptionVisibility;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
-import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
@@ -124,7 +122,7 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 
 
 	@Override
-	public Collection<? extends InputProcessor> getInputProcessorsToFocus(Stage mainStage) {
+	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
 		return Collections.singleton(preferredStage);
 	}
 
