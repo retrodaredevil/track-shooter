@@ -5,12 +5,20 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 
 import me.retrodaredevil.game.trackshooter.render.selection.ContentTableProvider;
 
+/**
+ * A {@link ContentTableProvider} that is a simple table that also draws the stage
+ */
 public class PlainTable implements ContentTableProvider {
 
+	private final Stage stage;
 	private final Table contentTable = new Table();
 	{
 		contentTable.setFillParent(true);
 		contentTable.center();
+	}
+
+	public PlainTable(Stage stage) {
+		this.stage = stage;
 	}
 
 	@Override
@@ -29,8 +37,10 @@ public class PlainTable implements ContentTableProvider {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		stage.addActor(contentTable);
+		stage.act(delta);
+		stage.draw();
 	}
 
 	@Override

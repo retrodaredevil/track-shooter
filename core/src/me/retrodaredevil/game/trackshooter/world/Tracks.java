@@ -18,13 +18,13 @@ public final class Tracks {
 //
 //		return new Track(parts);
 //	}
-	public static Track newCircleTrack(){
-		return new Track(Collections.singletonList(new CircleTrackPart(7, Vector2.Zero, -90, DEFAULT_COLOR)));
+	public static Track newCircleTrack(World world){
+		return new Track(Collections.singletonList(new CircleTrackPart(7, Vector2.Zero, world, -90, DEFAULT_COLOR)));
 	}
 
-	public static Track newKingdomTrack(){
+	public static Track newKingdomTrack(World world){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-7, -7), stage) // TODO How the Track code is designed is one downside to using dependency injection for the Stage
+				new Vector2(-7, -7), world)
 				.connect(-5, -7)
 				.connect(-5, -6)
 				.connect( 5, -6)
@@ -47,9 +47,9 @@ public final class Tracks {
 				.build(true);
 		return new Track(parts);
 	}
-	public static Track newPlusTrack(){
+	public static Track newPlusTrack(World world){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-4, -4), stage)
+				new Vector2(-4, -4), world)
 				.connect(-3, -7)
 				.connect(3, -7)
 				.connect(4, -4)
@@ -64,9 +64,9 @@ public final class Tracks {
 				.build(true);
 		return new Track(parts);
 	}
-	public static Track newMazeTrack(){
+	public static Track newMazeTrack(World world){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-				new Vector2(-8, -7), stage)
+				new Vector2(-8, -7), world)
 				.connect(7, -7)
 				.connect(7, -5)
 				.connect(-7, -5)
@@ -81,9 +81,9 @@ public final class Tracks {
 				.build(true);
 		return new Track(parts);
 	}
-	public static Track newPointyTrack(){
+	public static Track newPointyTrack(World world){
 		List<? extends TrackPart> parts = new LineTrackPart.LineTrackPartBuilder(DEFAULT_COLOR,
-			new Vector2(0, 6), stage)
+			new Vector2(0, 6), world)
 				.connect(5.5f, 7)
 				.connect(4.5f, 4.5f)
 				.connect(7, 5.5f)

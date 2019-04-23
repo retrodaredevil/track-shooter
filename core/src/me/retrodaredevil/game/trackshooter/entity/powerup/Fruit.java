@@ -30,7 +30,7 @@ public class Fruit extends SimplePowerup {
 	}
 	public static Fruit createFruit(World world, Points points, float startingTrackDistance, Image image){
 		Fruit fruit = new Fruit(world, points, 1.5f * MathUtils.randomSign(), startingTrackDistance);
-		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(image,
+		ImageRenderComponent renderComponent = new ShakeImageRenderComponent(world.getMainStage(), image,
 				fruit, .8f, .8f, 250, new Vector2(0, .03f));
 		renderComponent.setFacingDirection(0);
 		fruit.setRenderComponent(renderComponent);

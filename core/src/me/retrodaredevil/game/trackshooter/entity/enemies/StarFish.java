@@ -43,7 +43,7 @@ public class StarFish extends SimpleEntity implements Enemy {
 	public void beforeSpawn() {
 		super.beforeSpawn();
 		moveComponent.getTravelVelocitySetter().setVelocity(MathUtils.randomSign() * speed);
-		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("starfish")), this, .6f, .6f);
+		ImageRenderComponent renderComponent = new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable("starfish")), this, .6f, .6f);
 		renderComponent.setFacingDirection(0);
 		setRenderComponent(renderComponent);
 //		moveComponent.setDistanceOnTrack(world.getTrack().getTotalDistance() * MathUtils.random());

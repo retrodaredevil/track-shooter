@@ -18,6 +18,7 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.components.StageRenderable;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
@@ -35,6 +36,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	private final Stage uiStage;
 	private final Renderable menuRenderable;
+	private final Renderable uiRenderable;
 
 	private final Button startButton;
 	private final Button optionsButton;
@@ -49,6 +51,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		this.renderParts = Objects.requireNonNull(renderParts);
 		this.renderObject = Objects.requireNonNull(renderObject);
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
+		this.uiRenderable = new StageRenderable(uiStage);
 
 		final TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
@@ -60,16 +63,16 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 				renderObject,
                 gameInputPlayerIndex,
 				gameInput,
-				new PlainTable(),
+				new PlainTable(uiStage),
 				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, startButton, optionsButton, creditsButton)),
 				() -> {} // do nothing on back button
 		));
 
 	}
 	private Renderer createRenderer(){
-		return new Renderer(renderObject.getBatch(), uiStage)
+		return new Renderer()
 				.addRenderable(renderParts.getBackground())
-				.addMainStage()
+				.addRenderable(uiRenderable)
 				.addRenderable(renderParts.getOptionsMenu().isMenuOpen() ? renderParts.getOptionsMenu() : menuRenderable)
 				.addRenderable(renderParts.getOverlay());
 	}
@@ -102,7 +105,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		new InputFocuser()
 				.add(new InputFocuser(0).addParallel(renderParts.getTouchpadRenderer()).addParallel(uiStage))
 				.add(renderParts.getOptionsMenu()) // may or may not get focus
-				.giveFocus(uiStage, renderParts.getInputMultiplexer());
+				.giveFocus(renderParts.getInputMultiplexer());
 
 
 		createRenderer().render(delta);
@@ -121,6 +124,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	@Override
 	public void resize(int width, int height) {
 		uiStage.getViewport().update(width, height, true);
+		menuRenderable.resize(width, height);
 		renderParts.resize(width, height);
 	}
 

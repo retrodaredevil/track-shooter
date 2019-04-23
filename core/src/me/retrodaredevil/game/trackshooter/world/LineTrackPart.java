@@ -13,17 +13,17 @@ import java.util.List;
 
 public class LineTrackPart extends TrackPart {
 	private static final ShapeRenderer renderer = new ShapeRenderer();
-	private final Stage stage;
+	private final World world;
 	private final float distance;
 	private final float angle;
 	protected RenderComponent renderComponent;
 
-	public LineTrackPart(Vector2 start, Vector2 end, Stage stage, Color color){
+	public LineTrackPart(Vector2 start, Vector2 end, World world, Color color){
 		super(start, end);
-		this.stage = stage;
+		this.world = world;
 		distance = start.dst(end);
 		angle = MathUtil.angle(start, end);
-		renderComponent = new LineRenderComponent(stage, start, end, color, 3, renderer);
+		renderComponent = new LineRenderComponent(world.getTrackStage(), start, end, color, 3, renderer);
 	}
 
 	@Override
@@ -54,19 +54,19 @@ public class LineTrackPart extends TrackPart {
 
 	public static class LineTrackPartBuilder{
 		private final Vector2 first;
-		private final Stage stage;
+		private final World world;
 		private Vector2 previous;
 		private List<LineTrackPart> parts = new ArrayList<>();
 		private Color color;
-		public LineTrackPartBuilder(Color color, Vector2 start, Stage stage){
+		public LineTrackPartBuilder(Color color, Vector2 start, World world){
 			this.color = color;
 			this.first = start;
-			this.stage = stage;
+			this.world = world;
 
 			this.previous = start;
 		}
 		public LineTrackPartBuilder connect(Vector2 point){
-			parts.add(new LineTrackPart(previous, point, stage, color));
+			parts.add(new LineTrackPart(previous, point, world, color));
 			previous = point;
 			return this;
 		}
@@ -75,7 +75,7 @@ public class LineTrackPart extends TrackPart {
 		}
 		public List<LineTrackPart> build(boolean connectToFirst){
 			if(connectToFirst && !first.equals(previous)){
-				parts.add(new LineTrackPart(previous, first, stage, color));
+				parts.add(new LineTrackPart(previous, first, world, color));
 			}
 			return parts;
 		}

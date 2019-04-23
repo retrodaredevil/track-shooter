@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.world.World;
 
@@ -44,6 +45,10 @@ public class WorldRenderComponent implements RenderComponent {
 		}
 		if(renderHitboxes){
 			renderer.end();
+		}
+		for(Stage stage : new Stage[] {world.getTrackStage(), world.getMainStage()}){
+			stage.act(delta);
+			stage.draw();
 		}
 	}
 

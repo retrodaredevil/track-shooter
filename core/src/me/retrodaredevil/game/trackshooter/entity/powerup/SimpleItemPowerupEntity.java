@@ -19,7 +19,7 @@ public abstract class SimpleItemPowerupEntity extends PowerupPackage {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-		ImageRenderComponent renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable(drawableName)), this, .8f, .8f);
+		ImageRenderComponent renderComponent = new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable(drawableName)), this, .8f, .8f);
 		renderComponent.setFacingDirection(0);
 		this.setRenderComponent(renderComponent);
 	}

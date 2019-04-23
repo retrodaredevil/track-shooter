@@ -1,17 +1,15 @@
 package me.retrodaredevil.game.trackshooter.render.selection;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.Objects;
-import java.util.Set;
-
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.Objects;
+import java.util.Set;
 
 /**
  * A class that deals with rendering and logic for a selection menu
@@ -62,7 +60,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 
 		final JoystickPart selectJoystick = menuController == null ? null : Objects.requireNonNull(menuController.getSelectorJoystick());
 		final InputPart selectButton = menuController == null ? null : Objects.requireNonNull(menuController.getEnterButton());
@@ -84,7 +82,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 				requestingActions.add(SelectAction.EXIT_MENU);
 			}
 		}
-		optionHolder.getContentTableProvider().render(delta, stage);
+		optionHolder.getContentTableProvider().render(delta);
 		optionHolder.updateOptions(requestingActions);
 		optionHolder.updateSelection(delta, selectJoystick, selectButton, backButton, requestingActions);
 

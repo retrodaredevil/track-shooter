@@ -13,10 +13,12 @@ import me.retrodaredevil.game.trackshooter.render.selection.ContentTableProvider
  * Makes a dialog table width a scroll pane
  */
 public class DialogTable implements ContentTableProvider {
+	private final Stage stage;
 	private final Dialog dialog;
 	private final Cell<?> scrollPaneCell;
 	private final Table contentTable;
-	public DialogTable(String title, RenderObject renderObject){
+	public DialogTable(Stage stage, String title, RenderObject renderObject){
+		this.stage = stage;
 
 		dialog = new Dialog(title, renderObject.getUISkin());
 		dialog.setMovable(false);
@@ -45,11 +47,13 @@ public class DialogTable implements ContentTableProvider {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		stage.addActor(dialog);
 		dialog.setSize(stage.getWidth() * .92f, stage.getHeight() * .85f);
 		dialog.setPosition(stage.getWidth() / 2f - dialog.getWidth() / 2f, stage.getHeight() * .04f);
 		scrollPaneCell.width(dialog.getWidth());
+		stage.act(delta);
+		stage.draw();
 	}
 
 	@Override

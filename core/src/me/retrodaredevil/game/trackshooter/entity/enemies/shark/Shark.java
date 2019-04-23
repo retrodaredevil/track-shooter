@@ -46,9 +46,9 @@ public class Shark extends SimpleEntity implements Enemy, Entity {
 		super.beforeSpawn();
 		// TODO maybe make SharkRenderComponent more generic for other entities to use if needed and...\n
 		// possibly only rely on one RenderComponent if that is more elegant
-		fullRender = new SharkRenderComponent(Resources.Shark.FULL_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
-		hitRender = new SharkRenderComponent(Resources.Shark.MIDDLE_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
-		wornRender = new SharkRenderComponent(Resources.Shark.LOW_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
+		fullRender = new SharkRenderComponent(world.getMainStage(), Resources.Shark.FULL_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
+		hitRender = new SharkRenderComponent(world.getMainStage(), Resources.Shark.MIDDLE_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
+		wornRender = new SharkRenderComponent(world.getMainStage(), Resources.Shark.LOW_HEALTH.getSprites(world.getRenderObject()), this, 1.0f, 1.0f);
 	}
 
 	@Override

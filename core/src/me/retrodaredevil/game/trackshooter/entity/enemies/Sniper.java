@@ -26,7 +26,7 @@ public class Sniper extends SimpleEntity implements Enemy {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("sniper")), this, .6f, .6f));
+		setRenderComponent(new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable("sniper")), this, .6f, .6f));
 
 		OnTrackMoveComponent moveComponent = new TravelRotateVelocityOnTrackMoveComponent(world, this);
 		moveComponent.setDistanceOnTrack(world.getTrack().getTotalDistance() / 2.0f);

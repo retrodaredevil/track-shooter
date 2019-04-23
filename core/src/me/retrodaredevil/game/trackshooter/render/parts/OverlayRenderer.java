@@ -40,12 +40,14 @@ public class OverlayRenderer implements RenderComponent {
 
 	private final Overlay overlay;
 	private final RenderObject renderObject;
+	private final Stage stage;
 
 	private final Button pauseButton;
 
-	OverlayRenderer(Overlay overlay, RenderObject renderObject){
+	OverlayRenderer(Overlay overlay, RenderObject renderObject, Stage stage){
 		this.overlay = Objects.requireNonNull(overlay);
 		this.renderObject = Objects.requireNonNull(renderObject);
+		this.stage = stage;
 
 		final Skin skin = renderObject.getMainSkin();
 		final BitmapFont font = skin.getFont("game_label");
@@ -117,7 +119,7 @@ public class OverlayRenderer implements RenderComponent {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 //		group.setSize(stage.getWidth(), stage.getHeight());
 		stage.addActor(group);
 
@@ -179,8 +181,15 @@ public class OverlayRenderer implements RenderComponent {
 		}
 		highScoreLabel.setText(getScoreText(overlay.getHighScore()));
 		levelCounterLabel.setText("" + overlay.getLevelNumber());
-
+		stage.act(delta);
+		stage.draw();
 	}
+
+	@Override
+	public void resize(int width, int height) {
+		stage.getViewport().update(width, height, true);
+	}
+
 	private static String getScoreText(int scoreValue){
 		String scoreString = "" + scoreValue;
 		if(scoreString.length() == 1){

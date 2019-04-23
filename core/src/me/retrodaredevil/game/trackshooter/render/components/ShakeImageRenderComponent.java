@@ -14,15 +14,15 @@ public class ShakeImageRenderComponent extends ImageRenderComponent{
 	 * @param shakeTime The amount of time for the image to go up and down
 	 * @param add The amount to add when the image is up, will use opposite when image is down
 	 */
-	public ShakeImageRenderComponent(Image image, Entity entity, float width, float height, long shakeTime, Vector2 add) {
-		super(image, entity, width, height);
+	public ShakeImageRenderComponent(Stage stage, Image image, Entity entity, float width, float height, long shakeTime, Vector2 add) {
+		super(stage, image, entity, width, height);
 		this.shakeTime = shakeTime;
 		this.add = add;
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
-		super.render(delta, stage);
+	public void render(float delta) {
+		super.render(delta);
 		float x = image.getX();
 		float y = image.getY();
 

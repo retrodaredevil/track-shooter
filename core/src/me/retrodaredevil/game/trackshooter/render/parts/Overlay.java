@@ -27,7 +27,6 @@ import me.retrodaredevil.game.trackshooter.world.World;
 public class Overlay implements Renderable, Updateable, Disposable, InputFocusable {
 
 	private final Stage stage;
-	private final RenderObject renderObject;
 	private final OverlayRenderer component;
 	private final Preferences scorePreferences;
 	private Player[] players = null;
@@ -36,9 +35,8 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 	private boolean wasPauseDown = false;
 
 	public Overlay(RenderObject renderObject){
-		this.renderObject = renderObject;
 		stage = new Stage(new UIViewport(640), renderObject.getBatch());
-		component = new OverlayRenderer(this, renderObject);
+		component = new OverlayRenderer(this, renderObject, stage);
 		scorePreferences = Gdx.app.getPreferences("score");
 	}
 	private Button getPauseButton(){
@@ -121,10 +119,6 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 	public void setGame(List<Player> players, World world){
 		this.players = players.toArray(new Player[0]); // copy this list so it won't change on us as players die
 		this.world = world;
-	}
-	@Override
-	public Stage getPreferredStage(){
-		return stage;
 	}
 	@Override
 	public RenderComponent getRenderComponent() {

@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.*;
 
+import com.badlogic.gdx.utils.viewport.Viewport;
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -30,7 +31,8 @@ public class World implements Updateable, Renderable, InputFocusable {
 	private final CollisionHandler collisionHandler;
 	private final Queue<Entity> entitiesToAdd = new LinkedList<>();
 	private final List<Entity> entities = new ArrayList<>();
-	private final Stage stage;
+	private final Stage mainStage;
+	private final Stage trackStage;
 
 	private Level level;
 	private float timeInSeconds = 0;
@@ -42,7 +44,9 @@ public class World implements Updateable, Renderable, InputFocusable {
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler(this);
 
-		stage = new Stage(new WorldViewport(this), renderObject.getBatch());
+		Viewport viewport = new WorldViewport(this);
+		mainStage = new Stage(viewport, renderObject.getBatch());
+		trackStage = new Stage(viewport, renderObject.getBatch());
 
 		this.level = levelGetter.nextLevel(this);
 
@@ -92,7 +96,8 @@ public class World implements Updateable, Renderable, InputFocusable {
 	// region getters
 
 	/** @return The stage managed by the world. */
-	public Stage getMainStage(){ return stage; }
+	public Stage getMainStage(){ return mainStage; }
+	public Stage getTrackStage(){ return trackStage; }
 
 	public Skin getMainSkin(){
 		return renderObject.getMainSkin();
@@ -167,7 +172,7 @@ public class World implements Updateable, Renderable, InputFocusable {
 
 	@Override
 	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
-		return Collections.singleton(stage); // TODO wait, is there a reason we need to have this? Is there something that relies on stage receiving input?
+		return Collections.singleton(mainStage); // TODO wait, is there a reason we need to have this? Is there something that relies on stage receiving input?
 	}
 
 	@Override

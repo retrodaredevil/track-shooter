@@ -3,7 +3,6 @@ package me.retrodaredevil.game.trackshooter.render.components;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.movement.VelocityTargetPositionMoveComponent;
@@ -22,8 +21,8 @@ public class SharkRenderComponent extends ImageRenderComponent {
 	 * @param width The width of the image
 	 * @param height The height of the image
 	 */
-	public SharkRenderComponent(Drawable[] frames, Entity entity, float width, float height){
-		super(new Image(), entity, width, height);
+	public SharkRenderComponent(Stage stage, Drawable[] frames, Entity entity, float width, float height){
+		super(stage, new Image(), entity, width, height);
 //		this.frames = new TextureRegionDrawable[frames.length];
 //		for(int i = 0; i < frames.length; i++){
 //			this.frames[i] = new TextureRegionDrawable(frames[i]);
@@ -32,7 +31,7 @@ public class SharkRenderComponent extends ImageRenderComponent {
 
 	}
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		MoveComponent moveComponent = entity.getMoveComponent();
 		boolean animate = false;
 		if(moveComponent instanceof VelocityTargetPositionMoveComponent){
@@ -58,7 +57,7 @@ public class SharkRenderComponent extends ImageRenderComponent {
 			}
 			image.setDrawable(frames[frame]);
 		}
-		super.render(delta, stage);
+		super.render(delta);
 
 	}
 

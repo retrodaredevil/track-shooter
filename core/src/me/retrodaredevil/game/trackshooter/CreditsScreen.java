@@ -13,7 +13,9 @@ import java.util.List;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
+import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.components.StageRenderable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 
 public class CreditsScreen extends ScreenAdapter implements UsableScreen {
@@ -23,6 +25,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
 	private final Stage stage;
+	private final Renderable stageRenderer;
 	private final Button backButton;
 	private boolean done = false;
 
@@ -32,6 +35,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
 		stage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
+		stageRenderer = new StageRenderable(stage);
 		Table table = new Table(renderObject.getUISkin());
 		table.setFillParent(true);
 		stage.addActor(table);
@@ -56,6 +60,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 	private Renderer createRenderer(){
 		return new Renderer()
 				.addRenderable(renderParts.getBackground())
+				.addRenderable(stageRenderer)
 				.addRenderable(renderParts.getOverlay());
 	}
 

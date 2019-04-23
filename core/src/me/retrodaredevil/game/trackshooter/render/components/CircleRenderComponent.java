@@ -10,9 +10,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import me.retrodaredevil.game.trackshooter.world.World;
 
 public class CircleRenderComponent implements RenderComponent {
 
+	private final Stage stage;
 	private final float radius;
 	private final float width;
 	private final Vector2 center = new Vector2();
@@ -21,7 +23,8 @@ public class CircleRenderComponent implements RenderComponent {
 
 	private final CircleActor circle = new CircleActor();
 
-	public CircleRenderComponent(float radius, float width, Vector2 center, Color color, int segments){
+	public CircleRenderComponent(Stage stage, float radius, float width, Vector2 center, Color color, int segments){
+		this.stage = stage;
 		this.radius = radius;
 		this.width = width;
 		this.center.set(center);
@@ -32,10 +35,8 @@ public class CircleRenderComponent implements RenderComponent {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
-		if(circle.getStage() != stage) {
-			stage.addActor(circle);
-		}
+	public void render(float delta) {
+		stage.addActor(circle);
 
 //		Camera camera = stage.getCamera();
 //		camera.update();

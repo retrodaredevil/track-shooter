@@ -39,7 +39,7 @@ public class GameLevelGetter implements LevelGetter {
 	private final int END_GRACE_PERIOD = 19;
 
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
-	private final Track[] tracks;
+	private final TrackCreator[] trackCreators;
 	private final Collection<? extends Player> players; // may be mutated
 
 	/**
@@ -48,14 +48,23 @@ public class GameLevelGetter implements LevelGetter {
 	 */
 	public GameLevelGetter(Collection<? extends Player> players){
 		this.players = players;
-		this.tracks = new Track[] { Tracks.newMazeTrack(), Tracks.newPointyTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newCircleTrack() };
+		this.trackCreators = new TrackCreator[] {
+				Tracks::newMazeTrack,
+				Tracks::newPointyTrack,
+				Tracks::newPlusTrack,
+				Tracks::newKingdomTrack,
+				Tracks::newCircleTrack
+		};
 	}
 
 	@Override
 	public Level nextLevel(World theWorldToPass) {
 		levelNumber++; // future programmers you're welcome that I put this on a separate line.
-		final Track track = tracks[(levelNumber - 1) % tracks.length];
-		return new EnemyLevel(theWorldToPass, levelNumber, track) {
+		return new EnemyLevel(
+				theWorldToPass,
+				levelNumber,
+				trackCreators[(levelNumber - 1) % trackCreators.length].createTrack(theWorldToPass)
+		) {
 			@Override
 			protected void onStart() {
 				super.onStart();
@@ -157,5 +166,8 @@ public class GameLevelGetter implements LevelGetter {
 				}
 			}
 		};
+	}
+	private interface TrackCreator {
+		Track createTrack(World world);
 	}
 }

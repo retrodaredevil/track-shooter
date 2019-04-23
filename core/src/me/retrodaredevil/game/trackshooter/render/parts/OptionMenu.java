@@ -29,7 +29,7 @@ import me.retrodaredevil.game.trackshooter.util.Size;
 public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
-	private final Stage preferredStage;
+	private final Stage stage;
 	private SelectionMenuRenderComponent renderComponent = null;
 	private ConfigurableControllerPart currentController = null;
 
@@ -37,7 +37,7 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 		this.renderObject = renderObject;
 		this.saveObject = saveObject;
 
-		this.preferredStage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
+		this.stage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 		final Size bottomSize = Size.createSize(100, 40);
 
 		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
-				new DialogTable("Options", renderObject),
+				new DialogTable(stage, "Options", renderObject),
 				Collections.singletonList(new BasicOptionProvider(
 						new GroupedSelectionSingleOption(Size.createSize(400, 65), true, Collections.singletonList(new BasicOptionProvider(
 								new PageButtonSingleOption(new TextButton("main", renderObject.getUISkin(), "small"), topSize,
@@ -115,15 +115,8 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 
 
 	@Override
-	public Stage getPreferredStage() {
-		return preferredStage;
-	}
-
-
-
-	@Override
 	public Collection<? extends InputProcessor> getInputProcessorsToFocus() {
-		return Collections.singleton(preferredStage);
+		return Collections.singleton(stage);
 	}
 
 	@Override

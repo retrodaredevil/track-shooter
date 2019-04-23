@@ -38,7 +38,7 @@ public class CargoShip extends SimpleEntity {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
+		setRenderComponent(new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable("cargo_ship")), this, 1.0f, 1.0f));
 	}
 
 	@Override

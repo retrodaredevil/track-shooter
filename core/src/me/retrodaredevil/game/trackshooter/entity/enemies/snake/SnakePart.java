@@ -19,7 +19,6 @@ import me.retrodaredevil.game.trackshooter.entity.movement.SmartSightMoveCompone
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothOppositePositionTarget;
 import me.retrodaredevil.game.trackshooter.entity.movement.SmoothTravelMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
-import me.retrodaredevil.game.trackshooter.level.CanLevelEnd;
 import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.world.World;
@@ -73,7 +72,7 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-		this.renderComponent = new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
+		this.renderComponent = new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable("snake_part")), this, 0, 0); // width and height will be changed later
 		setRenderComponent(renderComponent);
 
 	}

@@ -43,7 +43,7 @@ public class Bullet extends SimpleEntity implements Entity {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-		setRenderComponent(new ImageRenderComponent(new Image(world.getMainSkin().getDrawable("bullet")), this, .5f, .5f));
+		setRenderComponent(new ImageRenderComponent(world.getMainStage(), new Image(world.getMainSkin().getDrawable("bullet")), this, .5f, .5f));
 	}
 
 	@Override

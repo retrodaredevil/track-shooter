@@ -32,9 +32,7 @@ public class LineRenderComponent implements RenderComponent {
 	}
 	@Override
 	public void render(float delta) {
-		if(line.getStage() != stage){
-			stage.addActor(line);
-		}
+		stage.addActor(line);
 
 //		Camera camera = stage.getCamera();
 //		camera.update();

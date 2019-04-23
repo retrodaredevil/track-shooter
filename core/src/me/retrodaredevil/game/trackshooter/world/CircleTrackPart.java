@@ -20,12 +20,12 @@ public class CircleTrackPart extends TrackPart {
 	 * @param zeroAngle The angle where the distance on the track is 0 (in degrees)
 	 * @param color The color of the circle
 	 */
-	public CircleTrackPart(float radius, Vector2 center, float zeroAngle, Color color) {
+	public CircleTrackPart(float radius, Vector2 center, World world, float zeroAngle, Color color) {
 		super(new Vector2(radius, 0), new Vector2(radius, 0));
 		this.radius = radius;
 		this.center.set(center);
 		this.zeroAngle = zeroAngle;
-		this.renderComponent = new CircleRenderComponent(stage, radius, 3, center, color, 100);
+		this.renderComponent = new CircleRenderComponent(world.getTrackStage(), radius, 3, center, color, 100);
 	}
 
 	@Override

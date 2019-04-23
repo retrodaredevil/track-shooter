@@ -49,7 +49,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		this.exitGameAction = exitGameAction;
 		stage = new Stage(new ExtendViewport(640, 640), renderObject.getBatch());
 		renderComponent = new SelectionMenuRenderComponent(
-				renderObject, 0, gameInputs.get(0), new PlainTable(),
+				renderObject, 0, gameInputs.get(0), new PlainTable(stage),
 				Collections.singleton(new MultiActorOptionProvider(
 						Constants.BUTTON_SIZE,
 						resumeButton = new TextButton("resume", renderObject.getUISkin()),
@@ -156,11 +156,6 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 			return null;
 		}
 		return renderComponent;
-	}
-
-	@Override
-	public Stage getPreferredStage() {
-		return stage;
 	}
 
 	@Override

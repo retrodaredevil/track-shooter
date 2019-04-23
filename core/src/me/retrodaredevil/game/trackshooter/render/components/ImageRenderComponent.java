@@ -8,6 +8,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 
 public class ImageRenderComponent implements RenderComponent{
 
+	protected final Stage stage;
 	protected final Image image;
 	protected final Entity entity;
 
@@ -19,12 +20,14 @@ public class ImageRenderComponent implements RenderComponent{
 	/**
 	 * Note this assumes that the image is facing up and it rotates it accordingly.
 	 *
+	 * @param stage
 	 * @param image The image to use
 	 * @param entity The entity to follow
 	 * @param width The width of the image
 	 * @param height The height of the image
 	 */
-	public ImageRenderComponent(Image image, Entity entity, float width, float height){
+	public ImageRenderComponent(Stage stage, Image image, Entity entity, float width, float height){
+		this.stage = stage;
 		this.image = image;
 		this.entity = entity;
 		setSize(width, height);
@@ -42,10 +45,9 @@ public class ImageRenderComponent implements RenderComponent{
 		return this;
 	}
 	@Override
-	public void render(float delta, Stage stage) {
-		if(image.getStage() != stage){
-			stage.addActor(image);
-		}
+	public void render(float delta) {
+		stage.addActor(image);
+
 		Vector2 location = entity.getLocation();
 		image.setPosition(location.x - image.getOriginX(), location.y - image.getOriginY());
 		int rotation = (int) entity.getRotation() - facingDirection;

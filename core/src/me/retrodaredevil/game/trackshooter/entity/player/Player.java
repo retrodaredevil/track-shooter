@@ -66,7 +66,7 @@ public class Player extends SimpleEntity {
 		super.beforeSpawn();
 //		hit = false; // set in afterRemove()
 		assert !hit : "afterRemove() didn't set hit to false!";
-		setRenderComponent(new ImageRenderComponent(new Image(playerType.getDrawable(world.getMainSkin())), this, .8f, .8f));
+		setRenderComponent(new ImageRenderComponent(world.getMainStage(), new Image(playerType.getDrawable(world.getMainSkin())), this, .8f, .8f));
 	}
 
 	public Score getScoreObject(){

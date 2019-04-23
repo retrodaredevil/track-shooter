@@ -88,7 +88,7 @@ public class GroupedSelectionSingleOption extends ContainerSingleOption {
 		}
 
 		@Override
-		public void render(float delta, Stage stage) {
+		public void render(float delta) {
 			throw new UnsupportedOperationException("This ContentTableProvider cannot render!");
 		}
 

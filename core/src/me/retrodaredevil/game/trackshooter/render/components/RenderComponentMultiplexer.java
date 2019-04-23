@@ -1,7 +1,5 @@
 package me.retrodaredevil.game.trackshooter.render.components;
 
-import com.badlogic.gdx.scenes.scene2d.Stage;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 
@@ -21,9 +19,9 @@ public class RenderComponentMultiplexer implements RenderComponent {
 	}
 
 	@Override
-	public void render(float delta, Stage stage) {
+	public void render(float delta) {
 		for(RenderComponent renderComponent : components){
-			renderComponent.render(delta, stage);
+			renderComponent.render(delta);
 		}
 	}
 
