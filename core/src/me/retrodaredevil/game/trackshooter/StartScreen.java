@@ -2,8 +2,12 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -18,6 +22,7 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
@@ -35,6 +40,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	private final Stage uiStage;
 	private final Renderable menuRenderable;
+	private final Renderable tipsRenderable;
 
 	private final Button startButton;
 	private final Button optionsButton;
@@ -64,12 +70,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, startButton, optionsButton, creditsButton)),
 				() -> {} // do nothing on back button
 		));
+		this.tipsRenderable = new ComponentRenderable(new TipsRenderComponent());
 
 	}
 	private Renderer createRenderer(){
 		return new Renderer(renderObject.getBatch(), uiStage)
 				.addRenderable(renderParts.getBackground())
 				.addMainStage()
+				.addRenderable(tipsRenderable)
 				.addRenderable(renderParts.getOptionsMenu().isMenuOpen() ? renderParts.getOptionsMenu() : menuRenderable)
 				.addRenderable(renderParts.getOverlay());
 	}
@@ -140,56 +148,40 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		return nextScreen;
 	}
 
-	/*class StartScreenMenuRenderComponent extends SelectionMenuRenderComponent{
-		private final Table table = new Table(){{
-			setFillParent(true);
-			center();
-		}};
-		private final Map<Actor, SingleOption> actorSingleOptionMap = new HashMap<>();
 
-		StartScreenMenuRenderComponent() {
-			super(StartScreen.this.renderObject, gameInput);
+	private static final String[] TIPS = new String[] {
+			"Change your controls in options!",
+			"There will only be 4 shots at a time!",
+			"If you save Mr. Spaceship from fire, you'll get bonus points!",
+			"If you wait long enough, the AI will start playing the game!",
+			"Don't turn your back on the snake!",
+			"Keep shooting at the Sharks to make them spin longer!",
+			"Shoot the starfish once to change its direction!",
+			"Open Source!"
+	};
+	private class TipsRenderComponent implements RenderComponent {
+		private final Group group = new Table(){{setFillParent(true);}};
+
+		private TipsRenderComponent() {
+			Table table = new Table(renderObject.getMainSkin());
+			table.setFillParent(true);
+			final String tip = TIPS[(int) (Math.random() * TIPS.length)];
+			final Label label = new Label(tip, renderObject.getMainSkin(), "game_label", "tips");
+			label.setFontScale(Math.min(34.0f / tip.length(), 1));
+			table.add(label);
+			table.center().bottom().padBottom(120);
+
+			group.addActor(table);
 		}
 
 		@Override
 		public void render(float delta, Stage stage) {
-
-			stage.addActor(table);
-
-			Collection<? extends SingleOption> options = getOptions();
-			for(Iterator<SingleOption> it = actorSingleOptionMap.values().iterator(); it.hasNext(); ){
-				SingleOption singleOption = it.next();
-				if(!options.contains(singleOption)){
-					it.remove();
-				}
-			}
-			super.render(delta, stage);
+			stage.addActor(group);
 		}
 
 		@Override
-		protected Table getContentTable() {
-			return table;
+		public void dispose() {
+			group.remove();
 		}
-
-		@Override
-		protected Collection<? extends SingleOption> getOptionsToAdd() {
-			List<SingleOption> r = new ArrayList<>();
-			tryAddActorAsSingleOption(startButton, r);
-			tryAddActorAsSingleOption(optionsButton, r);
-			tryAddActorAsSingleOption(creditsButton, r);
-			return r;
-		}
-		private void tryAddActorAsSingleOption(Actor actor, Collection<? super SingleOption> optionCollection){
-			if(actorSingleOptionMap.get(actor) == null){
-				SingleOption option = new PlainActorSingleOption(actor, BUTTON_WIDTH, BUTTON_HEIGHT);
-				optionCollection.add(option);
-				actorSingleOptionMap.put(actor, option);
-			}
-		}
-
-		@Override
-		protected boolean shouldKeep(SingleOption singleOption) {
-			return true;
-		}
-	}*/
+	}
 }
