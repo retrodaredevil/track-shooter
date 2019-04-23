@@ -17,6 +17,7 @@ public class LineRenderComponent implements RenderComponent {
 	private final ShapeRenderer renderer;
 
 	private final LineActor line = new LineActor();
+	private boolean disposed = false;
 
 	/**
 	 * Note when disposeRenderComponent() is called, it will NOT call renderer.disposeRenderComponent().
@@ -31,7 +32,7 @@ public class LineRenderComponent implements RenderComponent {
 	}
 	@Override
 	public void render(float delta, Stage stage) {
-		if(line.getStage() != stage){
+		if(line.getStage() != stage && !disposed){
 			stage.addActor(line);
 		}
 
@@ -48,7 +49,10 @@ public class LineRenderComponent implements RenderComponent {
 
 	@Override
 	public void dispose() {
-		renderer.dispose();
+		this.disposed = true;
+		if(line.getStage() != null){
+			line.remove();
+		}
 	}
 
 	class LineActor extends Actor {

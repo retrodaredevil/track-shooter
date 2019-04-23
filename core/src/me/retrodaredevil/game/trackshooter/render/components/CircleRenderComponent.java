@@ -50,7 +50,9 @@ public class CircleRenderComponent implements RenderComponent {
 
 	@Override
 	public void dispose() {
-		renderer.dispose();
+		if(circle.getStage() != null){
+			circle.remove();
+		}
 	}
 
 	class CircleActor extends Actor {

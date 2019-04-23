@@ -25,5 +25,8 @@ public class TrackRenderComponent implements RenderComponent {
 
 	@Override
 	public void dispose() {
+		for(TrackPart part : track.getParts()){
+			part.disposeRenderComponent();
+		}
 	}
 }

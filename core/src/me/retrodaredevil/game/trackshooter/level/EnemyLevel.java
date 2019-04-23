@@ -28,6 +28,7 @@ public abstract class EnemyLevel extends SimpleLevel {
 
 	@Override
 	protected void onEnd() {
+		getTrack().disposeRenderComponent();
 	}
 
 	@Override
