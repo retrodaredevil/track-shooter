@@ -3,7 +3,13 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 import com.badlogic.gdx.Gdx;
 
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.game.trackshooter.achievement.Achievement;
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
+import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
+import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
+import me.retrodaredevil.game.trackshooter.entity.powerup.Fruit;
 
 public class PlayerScore implements Score {
     private final int startingLives;
@@ -11,6 +17,7 @@ public class PlayerScore implements Score {
     private final int extraLifeEvery;
     private final Player player;
     private final RumbleGetter rumbleGetter;
+    private final AchievementHandler achievementHandler;
 
 	private int score = 0;
 	private int deaths = 0;
@@ -18,20 +25,21 @@ public class PlayerScore implements Score {
 	private int totalNumberShots = 0;
 	private int shotsHit = 0;
 
-	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, RumbleGetter rumbleGetter){
+	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, RumbleGetter rumbleGetter, AchievementHandler achievementHandler){
 		this.player = player;
 		this.startingLives = startingLives;
 		this.extraLivesAt = extraLivesAt;
 		this.extraLifeEvery = extraLifeEvery;
 		this.rumbleGetter = rumbleGetter;
+		this.achievementHandler = achievementHandler;
 	}
 
 	/**
 	 * @param player The player
 	 * @param rumbleGetter The rumble getter for the player. This is allowed to return null.
 	 */
-	public PlayerScore(Player player, RumbleGetter rumbleGetter){
-	    this(player, 3, new int[]{ 10000 }, 30000, rumbleGetter);
+	public PlayerScore(Player player, RumbleGetter rumbleGetter, AchievementHandler achievementHandler){
+	    this(player, 3, new int[]{ 10000 }, 30000, rumbleGetter, achievementHandler);
     }
 
 	@Override
@@ -54,6 +62,15 @@ public class PlayerScore implements Score {
 	@Override
 	public void onKill(Entity killed, Entity killerSource, int points) {
 		onScore(points);
+		if(killerSource instanceof Shark){
+			achievementHandler.incrementIfSupported(DefaultGameEvent.SHARKS_KILLED, 1);
+		} else if (killerSource instanceof SnakePart){
+			if(((SnakePart) killerSource).isHead()){
+				achievementHandler.incrementIfSupported(DefaultGameEvent.SNAKES_KILLED, 1);
+			}
+		} else if(killerSource instanceof Fruit){
+			achievementHandler.incrementIfSupported(DefaultGameEvent.FRUIT_CONSUMED, 1);
+		}
 	}
 
 	@Override

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Google Play game services IDs.
+Save this file as res/values/games-ids.xml in your project.
+-->
+<resources>
+    <!-- app_id -->
+    <string name="app_id" translatable="false">894166175037</string>
+    <!-- package_name -->
+    <string name="package_name" translatable="false">me.retrodaredevil.game.trackshooter</string>
+    <!-- achievement Played 20 games -->
+    <string name="achievement_played_20_games" translatable="false">CgkIvZrUg4MaEAIQAQ</string>
+    <!-- achievement Played 100 Games -->
+    <string name="achievement_played_100_games" translatable="false">CgkIvZrUg4MaEAIQAg</string>
+    <!-- achievement 50 Sharks Killed -->
+    <string name="achievement_50_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQAw</string>
+    <!-- achievement First game completed -->
+    <string name="achievement_first_game_completed" translatable="false">CgkIvZrUg4MaEAIQCw</string>
+    <!-- event Sharks Killed -->
+    <string name="event_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQBA</string>
+    <!-- event Snakes killed -->
+    <string name="event_snakes_killed" translatable="false">CgkIvZrUg4MaEAIQBQ</string>
+    <!-- event Mr. Spaceship protected -->
+    <string name="event_mr_spaceship_protected" translatable="false">CgkIvZrUg4MaEAIQBg</string>
+    <!-- event Power-Ups collected -->
+    <string name="event_powerups_collected" translatable="false">CgkIvZrUg4MaEAIQBw</string>
+    <!-- event Fruit consumed -->
+    <string name="event_fruit_consumed" translatable="false">CgkIvZrUg4MaEAIQCA</string>
+    <!-- event Games completed -->
+    <string name="event_games_completed" translatable="false">CgkIvZrUg4MaEAIQCQ</string>
+    <!-- event Shots fired -->
+    <string name="event_shots_fired" translatable="false">CgkIvZrUg4MaEAIQCg</string>
+</resources>
+

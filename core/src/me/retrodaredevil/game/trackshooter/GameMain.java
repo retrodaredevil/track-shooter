@@ -33,6 +33,7 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.*;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
@@ -45,9 +46,12 @@ import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
+import static java.util.Objects.requireNonNull;
+
 public class GameMain extends Game {
 
 	private final RumbleAnalogControl rumbleAnalogControl;
+	private final AchievementHandler achievementHandler;
 
 	private RenderObject renderObject;
 	private SaveObject saveObject;
@@ -56,12 +60,13 @@ public class GameMain extends Game {
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
 
-	public GameMain(RumbleAnalogControl rumbleAnalogControl){
-		this.rumbleAnalogControl = rumbleAnalogControl;
+	public GameMain(RumbleAnalogControl rumbleAnalogControl, AchievementHandler achievementHandler){
+		this.rumbleAnalogControl = requireNonNull(rumbleAnalogControl);
+		this.achievementHandler = requireNonNull(achievementHandler);
 	}
 
 	public GameMain(){
-		this(RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG);
+		this(RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG, AchievementHandler.Defaults.UNSUPPORTED_HANDLER);
 	}
 
 
@@ -72,7 +77,6 @@ public class GameMain extends Game {
 		Batch batch = new SpriteBatch();
 		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
 		Resources.loadToSkin(skin);
-//		Skin uiSkin = new Skin(Gdx.files.internal("skins/ui/uiskin.json"));
 		Skin uiSkin = new Skin(Gdx.files.internal("skins/sgx/sgx-ui.json"));
 		Skin arcadeSkin = new Skin(Gdx.files.internal("skins/arcade/arcade-ui.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin, arcadeSkin);
@@ -206,7 +210,7 @@ public class GameMain extends Game {
 		}
 	}
 	private void startScreen(){
-		setScreen(new StartScreen(inputs, renderObject, renderParts));
+		setScreen(new StartScreen(inputs, renderObject, renderParts, achievementHandler));
 	}
 
 	@Override

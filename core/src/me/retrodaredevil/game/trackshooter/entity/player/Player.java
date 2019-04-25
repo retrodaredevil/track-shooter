@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;
@@ -43,13 +44,13 @@ public class Player extends SimpleEntity {
 	private boolean triplePowerup = false;
 
 
-	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, Type playerType){
+	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, AchievementHandler achievementHandler, Type playerType){
 		super(world);
 		this.playerType = playerType;
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(world, this));
 //		setMoveComponent(new FreeVelocityMoveComponent(this));
 		setHitboxSize(.7f);
-		score = new PlayerScore(this, rumbleGetter);
+		score = new PlayerScore(this, rumbleGetter, achievementHandler);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
 	}

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerAIController;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -33,16 +34,18 @@ public class GameScreen implements UsableScreen {
 	private final RenderParts renderParts;
 	/** The pause menu or null */
 	private final PauseMenu pauseMenu;
+	private final AchievementHandler achievementHandler;
 
 	private final Stage stage;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType){
+	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType, AchievementHandler achievementHandler){
 		this.gameInputs = gameInputs;
 		this.gameType = gameType;
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
+		this.achievementHandler = achievementHandler;
 
 		world = new World(new GameLevelGetter(players), 18, 18, renderObject);
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
@@ -50,7 +53,7 @@ public class GameScreen implements UsableScreen {
 		if(gameType == GameType.NORMAL){
 			int i = 0;
 			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(world, gameInput::getRumble, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				Player player = new Player(world, gameInput::getRumble, achievementHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
 				players.add(player);
 				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
@@ -58,7 +61,7 @@ public class GameScreen implements UsableScreen {
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
 		} else { // assume DEMO_AI
-			Player player = new Player(world, () -> null, Player.Type.NORMAL);
+			Player player = new Player(world, () -> null, achievementHandler, Player.Type.NORMAL); // achievementHandler should be AchievementHandler.Defaults.UNSUPPORTED_HANDLER already so we won't change it
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);
@@ -238,7 +241,7 @@ public class GameScreen implements UsableScreen {
 		if(!shouldExit){
 			throw new IllegalStateException("Cannot create a StartScreen if we aren't done!");
 		}
-		return new StartScreen(gameInputs, renderObject, renderParts);
+		return new StartScreen(gameInputs, renderObject, renderParts, achievementHandler);
 	}
 
 	public enum GameType {

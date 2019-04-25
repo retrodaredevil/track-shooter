@@ -2,7 +2,6 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
@@ -10,23 +9,19 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
-import me.retrodaredevil.game.trackshooter.render.ComponentRenderable;
-import me.retrodaredevil.game.trackshooter.render.RenderObject;
-import me.retrodaredevil.game.trackshooter.render.RenderParts;
-import me.retrodaredevil.game.trackshooter.render.Renderable;
-import me.retrodaredevil.game.trackshooter.render.Renderer;
+import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private static final float DEMO_GAME_INIT_IDLE = 45;
@@ -34,8 +29,9 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final List<GameInput> gameInputs;
 	private final GameInput gameInput;
 	private final int gameInputPlayerIndex;
-	private final RenderParts renderParts;
 	private final RenderObject renderObject;
+	private final RenderParts renderParts;
+	private final AchievementHandler achievementHandler;
 	private UsableScreen nextScreen = null;
 
 	private final Stage uiStage;
@@ -45,21 +41,34 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final Button startButton;
 	private final Button optionsButton;
 	private final Button creditsButton;
+	/** The sign in button or null*/
+	private final TextButton signInButton;
 	private boolean optionsDown = false;
+	private boolean signInDown = false;
 	private float idleTime = 0;
 
-	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
+	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler){
 		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
 		this.gameInputPlayerIndex = 0;
 		this.gameInput = gameInputs.get(gameInputPlayerIndex);
-		this.renderParts = Objects.requireNonNull(renderParts);
 		this.renderObject = Objects.requireNonNull(renderObject);
+		this.renderParts = Objects.requireNonNull(renderParts);
+		this.achievementHandler = achievementHandler;
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
 		final TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
 		optionsButton = new TextButton("options", style);
 		creditsButton = new TextButton("info", style);
+		final Button[] buttons;
+		if(achievementHandler.isNeedsSignIn()){
+			signInButton = new TextButton("sign in", style);
+			buttons = new Button[] {startButton, optionsButton, creditsButton, signInButton};
+		} else {
+			signInButton = null;
+			buttons = new Button[] {startButton, optionsButton, creditsButton};
+		}
+
 
 		// this is initialized after each button because it uses them
 		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(
@@ -67,7 +76,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
                 gameInputPlayerIndex,
 				gameInput,
 				new PlainTable(),
-				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, startButton, optionsButton, creditsButton)),
+				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, buttons)),
 				() -> {} // do nothing on back button
 		));
 		this.tipsRenderable = new ComponentRenderable(new TipsRenderComponent());
@@ -99,13 +108,31 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			return;
 		}
 		if(creditsButton.isPressed()){
-			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts);
+			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, achievementHandler);
 			return;
 		}
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
 			renderParts.getOptionsMenu().setToController(gameInputPlayerIndex, gameInput, gameInputPlayerIndex, gameInput);
 		}
 		optionsDown = optionsButton.isPressed();
+
+		if(signInButton != null && achievementHandler.isNeedsSignIn()){
+			final boolean signedIn = achievementHandler.isSignedIn();
+			if(signedIn){
+				signInButton.setText("sign out");
+			} else {
+				signInButton.setText("sign in");
+			}
+			if(signInDown && !signInButton.isPressed()){ // just released sign in
+				if(signedIn){
+					achievementHandler.logout();
+				} else {
+					achievementHandler.signIn();
+				}
+			}
+			signInDown = signInButton.isPressed();
+		}
+
 		renderParts.getOverlay().setPauseVisible(false);
 		new InputFocuser()
 				.add(new InputFocuser(0).addParallel(renderParts.getTouchpadRenderer()).addParallel(uiStage))
@@ -117,12 +144,12 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	}
 	private void normalGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, achievementHandler);
 		}
 	}
 	private void demoGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, AchievementHandler.Defaults.UNSUPPORTED_HANDLER);
 		}
 	}
 
@@ -167,7 +194,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			table.setFillParent(true);
 			final String tip = TIPS[(int) (Math.random() * TIPS.length)];
 			final Label label = new Label(tip, renderObject.getMainSkin(), "game_label", "tips");
-			label.setFontScale(Math.min(34.0f / tip.length(), 1));
+			label.setFontScale(Math.min(34.0f / tip.length(), 1)); // scale can only be <= 1
 			table.add(label);
 			table.center().bottom().padBottom(120);
 

@@ -8,10 +8,10 @@ import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
-public class AndroidAnalogControl implements RumbleAnalogControl {
+public class AndroidAnalogRumble implements RumbleAnalogControl {
 	private final Vibrator vibrator;
 
-	public AndroidAnalogControl(Vibrator vibrator){
+	AndroidAnalogRumble(Vibrator vibrator){
 		this.vibrator = requireNonNull(vibrator);
 	}
 	@Override

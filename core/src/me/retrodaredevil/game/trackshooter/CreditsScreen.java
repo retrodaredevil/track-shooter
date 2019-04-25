@@ -10,6 +10,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
@@ -22,15 +23,17 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 	private final GameInput gameInput;
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
+	private final AchievementHandler achievementHandler;
 	private final Stage stage;
 	private final Button backButton;
 	private boolean done = false;
 
-	public CreditsScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts){
+	public CreditsScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler){
 		this.gameInputs = gameInputs;
 		this.gameInput = gameInputs.get(0);
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
+		this.achievementHandler = achievementHandler;
 		stage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 		Table table = new Table(renderObject.getUISkin());
 		table.setFillParent(true);
@@ -83,6 +86,6 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 
 	@Override
 	public UsableScreen createNextScreen() {
-		return new StartScreen(gameInputs, renderObject, renderParts);
+		return new StartScreen(gameInputs, renderObject, renderParts, achievementHandler);
 	}
 }

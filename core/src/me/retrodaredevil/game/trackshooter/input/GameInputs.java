@@ -293,8 +293,9 @@ public final class GameInputs {
 	 */
 	static InputPart createRumbleOnSingleShotInputPart(ControllerPart parent, OptionTracker controlOptions, ControllerRumble rumble){
 		final ControlOption option = GameInputs.createRumbleOnSingleShotControlOption();
-		BooleanConfigInputPart inputPart = new BooleanConfigInputPart(option, rumble);
-		inputPart.setParent(parent);
+		BooleanConfigInputPart inputPart = new BooleanConfigInputPart(option, rumble::isConnected);
+//		inputPart.setParent(parent);
+		parent.addChild(inputPart);
 		controlOptions.add(inputPart);
 		return inputPart;
 	}

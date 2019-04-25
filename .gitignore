@@ -1,4 +1,6 @@
 *.aab
+*.apk
+/android/my_apks
 
 ## Java
 

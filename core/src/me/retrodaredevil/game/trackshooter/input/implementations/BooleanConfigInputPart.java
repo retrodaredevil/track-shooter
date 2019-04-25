@@ -12,12 +12,15 @@ import java.util.Collections;
 
 public class BooleanConfigInputPart extends AutoCachingInputPart implements ConfigurableControllerPart {
 	private final ControlOption controlOption;
-	private final ControllerRumble rumble;
+	private final ShouldShowOption shouldShowOption;
 
-	public BooleanConfigInputPart(ControlOption controlOption, ControllerRumble controllerRumble) {
+	public BooleanConfigInputPart(ControlOption controlOption, ShouldShowOption shouldShowOption) {
 		super(AxisType.DIGITAL);
+		if(!controlOption.getOptionValue().isOptionValueBoolean()){
+			throw new IllegalArgumentException("Must be a boolean option value!");
+		}
 		this.controlOption = controlOption;
-		this.rumble = controllerRumble;
+		this.shouldShowOption = shouldShowOption;
 	}
 
 	@Override
@@ -32,10 +35,13 @@ public class BooleanConfigInputPart extends AutoCachingInputPart implements Conf
 
 	@Override
 	public Collection<? extends ControlOption> getControlOptions() {
-		if(!rumble.isConnected()){
+		if(!shouldShowOption.shouldShowOption()){
 			return Collections.emptyList();
 		}
 		return Collections.singleton(controlOption);
+	}
+	public interface ShouldShowOption {
+		boolean shouldShowOption();
 	}
 }
 
