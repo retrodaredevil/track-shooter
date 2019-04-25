@@ -29,10 +29,13 @@ public interface AchievementHandler {
 	boolean isSignedIn();
 
 	void increment(GameEvent event, int amount);
-	void achieve(Achievement achievement);
+	void achieve(ManualAchievement achievement);
 
 	boolean isSupported(GameEvent event);
-	boolean isSupported(Achievement achievement);
+	boolean isSupported(ManualAchievement achievement);
+
+	void showAchievements();
+	boolean canShowAchievements();
 
 	default boolean incrementIfSupported(GameEvent event, int amount){
 		if(!isSupported(event)){
@@ -70,7 +73,7 @@ public interface AchievementHandler {
 				throw new UnsupportedOperationException();
 			}
 			@Override
-			public void achieve(Achievement achievement) {
+			public void achieve(ManualAchievement achievement) {
 				throw new UnsupportedOperationException();
 			}
 			@Override
@@ -79,7 +82,17 @@ public interface AchievementHandler {
 			}
 
 			@Override
-			public boolean isSupported(Achievement achievement) {
+			public boolean isSupported(ManualAchievement achievement) {
+				return false;
+			}
+
+			@Override
+			public void showAchievements() {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public boolean canShowAchievements() {
 				return false;
 			}
 		};

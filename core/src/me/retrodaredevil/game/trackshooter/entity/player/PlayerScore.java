@@ -3,9 +3,8 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 import com.badlogic.gdx.Gdx;
 
 import me.retrodaredevil.controller.output.ControllerRumble;
-import me.retrodaredevil.game.trackshooter.achievement.Achievement;
 import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
@@ -62,13 +61,13 @@ public class PlayerScore implements Score {
 	@Override
 	public void onKill(Entity killed, Entity killerSource, int points) {
 		onScore(points);
-		if(killerSource instanceof Shark){
+		if(killed instanceof Shark){
 			achievementHandler.incrementIfSupported(DefaultGameEvent.SHARKS_KILLED, 1);
-		} else if (killerSource instanceof SnakePart){
-			if(((SnakePart) killerSource).isHead()){
+		} else if (killed instanceof SnakePart){
+			if(((SnakePart) killed).isHead()){
 				achievementHandler.incrementIfSupported(DefaultGameEvent.SNAKES_KILLED, 1);
 			}
-		} else if(killerSource instanceof Fruit){
+		} else if(killed instanceof Fruit){
 			achievementHandler.incrementIfSupported(DefaultGameEvent.FRUIT_CONSUMED, 1);
 		}
 	}
@@ -103,6 +102,7 @@ public class PlayerScore implements Score {
         }
         this.numberShots++;
         this.totalNumberShots += numberOfShots;
+//        achievementHandler.incrementIfSupported(DefaultGameEvent.SHOTS_FIRED, numberOfShots); // TODO I commented this out because the debug messages were annoying
     }
 
     @Override
@@ -129,7 +129,7 @@ public class PlayerScore implements Score {
 		int hits = this.getNumberShotsHit();
 		int misses = (this.getTotalNumberShots() - this.getNumberShotsHit());
 		if (misses > 0) {
-			float hitMiss = Math.round(hits * 1000.0f / misses) / 10;
+			float hitMiss = Math.round(hits * 1000.0f / misses) / 10.0f;
 			Gdx.app.log("hit/miss ratio", hitMiss + "%");
 		} else {
 			Gdx.app.log("hit/miss ratio", "undefined");

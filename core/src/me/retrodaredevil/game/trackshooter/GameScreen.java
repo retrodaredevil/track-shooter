@@ -61,7 +61,7 @@ public class GameScreen implements UsableScreen {
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
 		} else { // assume DEMO_AI
-			Player player = new Player(world, () -> null, achievementHandler, Player.Type.NORMAL); // achievementHandler should be AchievementHandler.Defaults.UNSUPPORTED_HANDLER already so we won't change it
+			Player player = new Player(world, () -> null, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, Player.Type.NORMAL);
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);

@@ -17,6 +17,8 @@ Windows: ```gradlew.bat desktop:run```
 
 *nix: ```./gradlew desktop:run```
 
+If you are using logcat, this may be useful if the console is being spammed: `(?=^((?!Skip ramp).)*$)(?=^((?!This process).)*$)`
+
 ## Why I made this
 I've always loved "retro" arcade games. Some of my favorites are Galaga, Pacman, and Xevious. I wanted to create a game
 with the "feel" of these games: 3 lives each game and you try to get the high score each time you play it. December 2016 I had
