@@ -24,6 +24,8 @@ public class PlayerScore implements Score {
 	private int totalNumberShots = 0;
 	private int shotsHit = 0;
 
+	private boolean isEnded = false;
+
 	public PlayerScore(Player player, int startingLives, int[] extraLivesAt, int extraLifeEvery, RumbleGetter rumbleGetter, AchievementHandler achievementHandler){
 		this.player = player;
 		this.startingLives = startingLives;
@@ -60,6 +62,9 @@ public class PlayerScore implements Score {
 
 	@Override
 	public void onKill(Entity killed, Entity killerSource, int points) {
+		if(isEnded){
+			return;
+		}
 		onScore(points);
 		if(killed instanceof Shark){
 			achievementHandler.incrementIfSupported(DefaultGameEvent.SHARKS_KILLED, 1);
@@ -74,6 +79,9 @@ public class PlayerScore implements Score {
 
 	@Override
 	public void onScore(int points) {
+		if(isEnded){
+			return;
+		}
 		score += points;
 	}
 
@@ -92,6 +100,9 @@ public class PlayerScore implements Score {
 
     @Override
     public void onBulletHit(Entity hitEntity, Entity playerProjectile) {
+		if(isEnded){
+			return;
+		}
 	    shotsHit++;
     }
 
@@ -100,6 +111,9 @@ public class PlayerScore implements Score {
 	    if(numberOfShots < 1){
 	        throw new IllegalArgumentException("onShot() called with numberOfShots < 1");
         }
+		if(isEnded){
+			throw new IllegalStateException("The player cannot shoot when the game has ended!");
+		}
         this.numberShots++;
         this.totalNumberShots += numberOfShots;
 //        achievementHandler.incrementIfSupported(DefaultGameEvent.SHOTS_FIRED, numberOfShots); // TODO I commented this out because the debug messages were annoying
@@ -122,7 +136,11 @@ public class PlayerScore implements Score {
 
 	@Override
 	public void onGameEnd() {
+		if(isEnded){
+			throw new IllegalStateException("The game cannot end twice!");
+		}
 		achievementHandler.submitScore(score);
+		isEnded = true;
 	}
 
 	@Override

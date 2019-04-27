@@ -4,27 +4,25 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.Games;
+import me.retrodaredevil.game.trackshooter.achievement.Achievement;
 import me.retrodaredevil.game.trackshooter.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class AndroidLauncher extends AndroidApplication {
 
-	private AndroidAchievementHandler achievementHandler;
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -55,6 +53,13 @@ public class AndroidLauncher extends AndroidApplication {
 		achievementMap.put(DefaultEventAchievement.COMPLETE_20_GAMES, getString(R.string.achievement_played_20_games));
 		achievementMap.put(DefaultEventAchievement.COMPLETE_100_GAMES, getString(R.string.achievement_played_100_games));
 		achievementMap.put(DefaultEventAchievement.SHARKS_KILLED_5, getString(R.string.achievement_5_sharks_killed));
+		achievementMap.put(DefaultEventAchievement.SHARKS_KILLED_20, getString(R.string.achievement_20_sharks_killed));
+		achievementMap.put(DefaultEventAchievement.SHARKS_KILLED_100, getString(R.string.achievement_100_sharks_killed));
+
+		final Set<Set<? extends Achievement>> linkedAchievements = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+				EnumSet.of(DefaultEventAchievement.FIRST_GAME, DefaultEventAchievement.COMPLETE_20_GAMES, DefaultEventAchievement.COMPLETE_100_GAMES),
+				EnumSet.of(DefaultEventAchievement.SHARKS_KILLED_5, DefaultEventAchievement.SHARKS_KILLED_20, DefaultEventAchievement.SHARKS_KILLED_100)
+		)));
 
 
 		GoogleSignInClient client = GoogleSignIn.getClient(this,
@@ -65,8 +70,9 @@ public class AndroidLauncher extends AndroidApplication {
 		);
 		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
 
-		achievementHandler = new AndroidAchievementHandler(
+		AndroidAchievementHandler achievementHandler = new AndroidAchievementHandler(
 				Collections.unmodifiableMap(eventMap), Collections.unmodifiableMap(achievementMap), Collections.emptyMap(),
+				linkedAchievements,
 				getString(R.string.leaderboard_high_score),
 				this,
 				client);
@@ -77,6 +83,5 @@ public class AndroidLauncher extends AndroidApplication {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		achievementHandler.onResume();
 	}
 }

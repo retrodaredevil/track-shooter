@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerAIController;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -59,7 +60,7 @@ public class GameScreen implements UsableScreen {
 				world.addEntity(player);
 				i++;
 			}
-			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, this::setToExit);
+			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
 		} else { // assume DEMO_AI
 			Player player = new Player(world, () -> null, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, Player.Type.NORMAL);
 			players.add(player);
@@ -86,12 +87,12 @@ public class GameScreen implements UsableScreen {
 		if(gameType == GameType.DEMO_AI){
 			for(GameInput input : gameInputs){
 				if(input.getBackButton().isPressed() || input.getFireButton().isPressed() || input.getStartButton().isPressed()){
-					setToExit();
+					setToExit(false);
 					return;
 				}
 			}
 			if(Gdx.input.justTouched()){
-				setToExit();
+				setToExit(false);
 				return;
 			}
 		}
@@ -141,7 +142,7 @@ public class GameScreen implements UsableScreen {
 				level.setMode(LevelMode.RESET);
 			} else if (mode == LevelMode.STANDBY) { // all enemies have returned to start
 				if (level.getModeTimeMillis() > 4000) {
-					setToExit();
+					setToExit(true);
 				}
 			}
 		}
@@ -166,13 +167,16 @@ public class GameScreen implements UsableScreen {
 				.addParallel(renderParts.getOptionsMenu())
 				.giveFocus(stage, renderParts.getInputMultiplexer());
 	}
-	public void setToExit(){
+	public void setToExit(boolean wasFullGame){
 		shouldExit = true;
 		System.out.println("Exiting game.");
 		for(Player player : players){
 			Score score = player.getScoreObject();
 			score.printOut();
 			score.onGameEnd();
+		}
+		if(wasFullGame && gameType != GameType.DEMO_AI){
+			achievementHandler.incrementIfSupported(DefaultGameEvent.GAMES_COMPLETED, 1);
 		}
 	}
 
@@ -189,7 +193,7 @@ public class GameScreen implements UsableScreen {
 			pauseMenu.setControllerAndOpen(0, gameInputs.get(0));
 		}
 		if(gameType == GameType.DEMO_AI){
-			setToExit();
+			setToExit(false);
 		}
 	}
 
@@ -199,7 +203,7 @@ public class GameScreen implements UsableScreen {
 	public void resume() {
 		// Called when reentering opened app
 		if(gameType == GameType.DEMO_AI){
-			setToExit();
+			setToExit(false);
 		}
 	}
 

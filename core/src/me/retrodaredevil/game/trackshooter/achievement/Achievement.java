@@ -11,12 +11,6 @@ public interface Achievement extends GamePart {
 	 */
 	Integer getIncrementsForReveal();
 
-	default Boolean isRevealedByDefault(){
-		return null;
-	}
+	boolean isIncremental();
 
-	/**
-	 * @return The amount of increments that are needed to achieve this. May be in range [1..10000]
-	 */
-	int getIncrementsForAchieve();
 }

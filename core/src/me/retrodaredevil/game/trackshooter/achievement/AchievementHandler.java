@@ -33,7 +33,7 @@ public interface AchievementHandler {
 	/**
 	 * Works only on non-incremental achievements
 	 * @param achievement The achievement
-	 * @throw IllegalArgumentException if {@link Achievement#getIncrementsForAchieve()} > 1
+	 * @throw IllegalArgumentException if {@link Achievement#isIncremental()} ()}
 	 */
 	void manualAchieve(ManualAchievement achievement);
 
@@ -41,8 +41,9 @@ public interface AchievementHandler {
 	 * Works on both incremental and non-incremental achievements. For a non-incremental achievement, this would be
 	 * equivalent to calling {@link #manualAchieve(ManualAchievement)}
 	 * @param achievement The achievement
+	 * @param amount
 	 */
-	void manualIncrement(ManualAchievement achievement);
+	void manualIncrement(ManualAchievement achievement, int amount);
 
 	boolean isSupported(GameEvent event);
 	boolean isSupported(ManualAchievement achievement);
@@ -66,6 +67,20 @@ public interface AchievementHandler {
 			return false;
 		}
 		increment(event, amount);
+		return true;
+	}
+	default boolean manualIncrementIfSupported(ManualAchievement achievement, int amount){
+		if(!isSupported(achievement)){
+			return false;
+		}
+		manualIncrement(achievement, amount);
+		return true;
+	}
+	default boolean manualAchieveIfSupported(ManualAchievement achievement){
+		if(!isSupported(achievement)){
+			return false;
+		}
+		manualAchieve(achievement);
 		return true;
 	}
 
@@ -102,7 +117,7 @@ public interface AchievementHandler {
 			}
 
 			@Override
-			public void manualIncrement(ManualAchievement achievement) {
+			public void manualIncrement(ManualAchievement achievement, int amount) {
 				throw new UnsupportedOperationException();
 			}
 

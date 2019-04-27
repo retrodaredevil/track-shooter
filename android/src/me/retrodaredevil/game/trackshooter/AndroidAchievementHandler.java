@@ -3,7 +3,7 @@ package me.retrodaredevil.game.trackshooter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -16,14 +16,12 @@ import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.tasks.Task;
 import me.retrodaredevil.game.trackshooter.achievement.*;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultEventAchievementHandler;
-import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
 
@@ -32,9 +30,14 @@ class AndroidAchievementHandler implements AchievementHandler {
 	private static final int REQUEST_IGNORE = 5001;
 
 	private final Map<? extends GameEvent, String> eventIdMap;
+
 	private final Map<? extends EventAchievement, String> eventAchievementIdMap;
 	private final Map<String, ? extends EventAchievement> idEventAchievementMap;
 	private final Map<? extends ManualAchievement, String> manualAchievementIdMap;
+	private final Map<String, ? extends ManualAchievement> idManualAchievementMap;
+
+	private final Set<Set<? extends Achievement>> linkedAchievementsSet;
+
 	private final String highScoreKey;
 	private final Context context;
 	private final AndroidApplication activity;
@@ -47,12 +50,16 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	AndroidAchievementHandler(
 			Map<? extends GameEvent, String> eventIdMap, Map<? extends EventAchievement, String> eventAchievementIdMap,
-			Map<? extends ManualAchievement, String> manualAchievementIdMap, String highScoreKey,
+			Map<? extends ManualAchievement, String> manualAchievementIdMap,
+			Set<Set<? extends Achievement>> linkedAchievementsSet,
+			String highScoreKey,
 			AndroidApplication activity, GoogleSignInClient signInClient){
 		this.eventIdMap = eventIdMap;
 		this.eventAchievementIdMap = eventAchievementIdMap;
 		this.idEventAchievementMap = Util.reverseMap(eventAchievementIdMap, new HashMap<String, EventAchievement>());
 		this.manualAchievementIdMap = manualAchievementIdMap;
+		this.idManualAchievementMap = Util.reverseMap(manualAchievementIdMap, new HashMap<String, ManualAchievement>());
+		this.linkedAchievementsSet = linkedAchievementsSet;
 		this.highScoreKey = highScoreKey;
 		this.activity = activity;
 		this.signInClient = signInClient;
@@ -60,6 +67,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 		this.context = activity.getContext();
 
 		activity.addAndroidEventListener(this::onActivityResult);
+		activity.addLifecycleListener(new BasicListener());
 	}
 	// region Private Getters
 	private GoogleSignInAccount getLastAccount(){
@@ -150,7 +158,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 		}
 	}
 
-	void onResume(){
+	private void onResume(){
 		System.out.println("Going to silently sign in again");
 
 		if(isSignedIn()){
@@ -182,17 +190,18 @@ class AndroidAchievementHandler implements AchievementHandler {
 		return true;
 	}
 
-	void doAccountSignIn(GoogleSignInAccount account){
+	private void doAccountSignIn(GoogleSignInAccount account){
 		requireNonNull(account);
 		System.out.println("Successfully signed in");
-		getEventsClient(account);
+//		getEventsClient(account);
+		checkReveals(getAchievementsClient(account));
 	}
-	void onAccountLogout(){
+	private void onAccountLogout(){
 		System.out.println("Logging out");
 		synchronized (this) {
 			achievementsClient = null;
 			eventsClient = null;
-//			leaderboardsClient = null;
+			leaderboardsClient = null;
 		}
 	}
 	// endregion
@@ -213,48 +222,130 @@ class AndroidAchievementHandler implements AchievementHandler {
 			System.out.println("Incrementing " + event + " by " + amount);
 			final AchievementsClient achievementsClient = requireNonNull(getAchievementsClient(account));
 
-			/*
-			Go through each possible achievement. If that achievement is an EventAchievement and its GameEvent is event,
-			increment it
-			 */
-//			requireNonNull(getAchievementsClient(account)).load(true).addOnSuccessListener(result -> {
-//				AchievementBuffer buffer = requireNonNull(result.get());
-//				for (Iterator<com.google.android.gms.games.achievement.Achievement> it = buffer.singleRefIterator(); it.hasNext(); ) {
-//					com.google.android.gms.games.achievement.Achievement a = it.next();
-//					String key = a.getAchievementId();
-//					EventAchievement achievement = idEventAchievementMap.get(key);
-//					if(achievement != null && achievement.getGameEvent() == event) {
-//						final int steps = a.getCurrentSteps();
-//						achievementsClient.incrementImmediate(key, amount).addOnSuccessListener(didConnect -> {
-//							if(didConnect) {
-//								final int newSteps = a.getCurrentSteps();
-//								if(newSteps != steps + amount){
-//									throw new IllegalStateException("newSteps should be: " + (steps + amount) + " but it's " + newSteps);
-//								} else {
-//									System.out.println("Good! newSteps is " + newSteps + " which is " + amount + " more than last time!");
-//								}
-//							} else {
-//								System.out.println("Couldn't connect");
-//							}
-//						});
-//						Integer stepsToReveal = achievement.getIncrementsForReveal();
-//						if(stepsToReveal != null && steps >= stepsToReveal){
-//							achievementsClient.reveal(key);
-//						}
-//					}
-//				}
-//			});
+			boolean needsCheck = false;
+			for(Map.Entry<? extends EventAchievement, String> entry : eventAchievementIdMap.entrySet()){
+				if(entry.getKey().getGameEvent() == event){
+					achievementsClient.increment(entry.getValue(), amount);
+					needsCheck = true;
+				}
+			}
+			if(needsCheck) {
+				checkReveals(achievementsClient);
+			}
 		}
+	}
+	private void checkReveals(AchievementsClient achievementsClient){
+		/*
+		Go through each possible achievement. If that achievement is an EventAchievement and its GameEvent is event,
+		check to see if we need to reveal it
+		 */
+		requireNonNull(achievementsClient).load(true).addOnSuccessListener(result -> {
+			AchievementBuffer buffer = requireNonNull(result.get());
+			Map<Achievement, com.google.android.gms.games.achievement.Achievement> achievementMap = new HashMap<>();
+			for (com.google.android.gms.games.achievement.Achievement a : buffer) {
+				String key = a.getAchievementId();
+				EventAchievement eventAchievement = idEventAchievementMap.get(key);
+				if (eventAchievement != null) {
+					achievementMap.put(eventAchievement, a);
+					final int steps = getCurrentSteps(a);
+					Integer stepsToReveal = eventAchievement.getIncrementsForReveal();
+					if (stepsToReveal != null && (steps >= stepsToReveal)) {
+						achievementsClient.reveal(key);
+					}
+				} else {
+					ManualAchievement manualAchievement = idManualAchievementMap.get(key);
+					if(manualAchievement != null){
+						achievementMap.put(manualAchievement, a);
+					}
+				}
+			}
+			for(Set<? extends Achievement> set : linkedAchievementsSet){
+				int highest = 0;
+				for(Achievement achievement : set){
+					com.google.android.gms.games.achievement.Achievement gamesAchievement = achievementMap.get(achievement);
+					if(gamesAchievement == null){
+						throw new NoSuchElementException("Couldn't find gms Achievement for " + achievement);
+					}
+					int steps = getCurrentSteps(gamesAchievement);
+					if(steps > highest){
+						highest = steps;
+					}
+				}
+				if(highest > 0){
+					for(Achievement achievement : set){
+						com.google.android.gms.games.achievement.Achievement gamesAchievement = achievementMap.get(achievement);
+						if(gamesAchievement == null){
+							throw new AssertionError("Couldn't find gms Achievement for " + achievement + ". Should have already thrown! Map mutated?");
+						}
+						int steps = getCurrentSteps(gamesAchievement);
+						int neededSteps = highest - steps;
+						if(neededSteps > 0 && !isUnlocked(gamesAchievement)){ // we need more steps and the achievement isn't unlocked
+							System.out.println("Was a new achievement added? incrementing " + achievement + " by " + neededSteps);
+							boolean incremental = isIncremental(gamesAchievement);
+							if(incremental != achievement.isIncremental()){
+								throw new AssertionError("Achievement: " + achievement + " is incremental: " + achievement.isIncremental() + " should be opposite!");
+							}
+							if(incremental) {
+								achievementsClient.increment(gamesAchievement.getAchievementId(), neededSteps);
+							} else {
+								achievementsClient.unlock(gamesAchievement.getAchievementId());
+							}
+						}
+					}
+				}
+			}
+			buffer.release();
+		});
+
+	}
+	private static boolean isIncremental(com.google.android.gms.games.achievement.Achievement gamesAchievement){
+		return gamesAchievement.getType() == com.google.android.gms.games.achievement.Achievement.TYPE_INCREMENTAL;
+	}
+	private static boolean isUnlocked(com.google.android.gms.games.achievement.Achievement gamesAchievement){
+		return gamesAchievement.getState() == com.google.android.gms.games.achievement.Achievement.STATE_UNLOCKED;
+	}
+	private static int getCurrentSteps(com.google.android.gms.games.achievement.Achievement gamesAchievement){
+		if(isIncremental(gamesAchievement)){
+			return gamesAchievement.getCurrentSteps();
+		}
+		return gamesAchievement.getState() == com.google.android.gms.games.achievement.Achievement.STATE_UNLOCKED ? 1 : 0;
+	}
+	private static int getTotalSteps(com.google.android.gms.games.achievement.Achievement gamesAchievement){
+		if(isIncremental(gamesAchievement)){
+			return gamesAchievement.getTotalSteps();
+		}
+		return 1;
 	}
 
 	@Override
 	public void manualAchieve(ManualAchievement achievement) {
-		throw new UnsupportedOperationException();
+		if(achievement.isIncremental()){
+			throw new IllegalArgumentException();
+		}
+		String key = manualAchievementIdMap.get(achievement);
+		if(key == null){
+			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
+		}
+		AchievementsClient achievementsClient = getAchievementsClient(getLastAccount());
+		if(achievementsClient != null){
+			achievementsClient.unlock(key);
+		}
 	}
 
 	@Override
-	public void manualIncrement(ManualAchievement achievement) {
-
+	public void manualIncrement(ManualAchievement achievement, int amount) {
+		if(!achievement.isIncremental()){
+			manualAchieve(achievement);
+			return;
+		}
+		String key = manualAchievementIdMap.get(achievement);
+		if(key == null){
+			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
+		}
+		AchievementsClient achievementsClient = getAchievementsClient(getLastAccount());
+		if(achievementsClient != null){
+			achievementsClient.increment(key, amount);
+		}
 	}
 
 	@Override
@@ -264,9 +355,10 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	@Override
 	public boolean isSupported(ManualAchievement achievement) {
-		return false;
+		return manualAchievementIdMap.containsKey(achievement);
 	}
 
+	// region Show Region
 	@Override
 	public void showAchievements() {
 		GoogleSignInAccount account = getLastAccount();
@@ -276,9 +368,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 		AchievementsClient client = requireNonNull(getAchievementsClient(account));
 
 		Task<Intent> task = requireNonNull(client.getAchievementsIntent());
-		task.addOnSuccessListener(result -> {
-			activity.startActivityForResult(result, REQUEST_IGNORE);
-		});
+		task.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE));
 	}
 	@Override public boolean isEverAbleToShowAchievements() { return true; }
 	@Override public boolean isCurrentlyAbleToShowAchievements() { return isSignedIn(); }
@@ -297,6 +387,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 	}
 	@Override public boolean isEverAbleToShowLeaderboards() { return true; }
 	@Override public boolean isCurrentlyAbleToShowLeaderboards() { return isSignedIn(); }
+	// endregion
 
 	@Override
 	public void submitScore(int score) {
@@ -309,4 +400,18 @@ class AndroidAchievementHandler implements AchievementHandler {
 		}
 	}
 
+	private class BasicListener implements LifecycleListener {
+
+		@Override
+		public void pause() {
+		}
+		@Override
+		public void resume() {
+			onResume();
+		}
+
+		@Override
+		public void dispose() {
+		}
+	}
 }

@@ -1,6 +1,10 @@
 package me.retrodaredevil.game.trackshooter.achievement.implementations;
 
+import me.retrodaredevil.game.trackshooter.achievement.Achievement;
 import me.retrodaredevil.game.trackshooter.achievement.ManualAchievement;
+
+import java.util.Collection;
+import java.util.Collections;
 
 public enum DefaultAchievement implements ManualAchievement {
 	;
@@ -16,7 +20,8 @@ public enum DefaultAchievement implements ManualAchievement {
 	}
 
 	@Override
-	public int getIncrementsForAchieve() {
-		return 0;
+	public boolean isIncremental() {
+		return false;
 	}
+
 }
