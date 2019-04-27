@@ -44,12 +44,16 @@ import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
 import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
+import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
 import static java.util.Objects.requireNonNull;
 
 public class GameMain extends Game {
+	/** Should only be used during initialization. Not for static access*/
+	public static final PreferencesGetter SCORE_PREFERENCSE_GETTER = () -> Gdx.app.getPreferences("score");
 
+	private final PreferencesGetter scorePreferencesGetter;
 	private final RumbleAnalogControl rumbleAnalogControl;
 	private final AchievementHandler achievementHandler;
 
@@ -60,13 +64,14 @@ public class GameMain extends Game {
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
 
-	public GameMain(RumbleAnalogControl rumbleAnalogControl, AchievementHandler achievementHandler){
+	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AchievementHandler achievementHandler){
+		this.scorePreferencesGetter = scorePreferencesGetter;
 		this.rumbleAnalogControl = requireNonNull(rumbleAnalogControl);
 		this.achievementHandler = requireNonNull(achievementHandler);
 	}
 
-	public GameMain(){
-		this(RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG, AchievementHandler.Defaults.UNSUPPORTED_HANDLER);
+	public GameMain(PreferencesGetter scorePreferencesGetter){
+		this(scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG, AchievementHandler.Defaults.UNSUPPORTED_HANDLER);
 	}
 
 

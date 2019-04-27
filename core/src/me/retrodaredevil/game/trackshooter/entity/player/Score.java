@@ -53,5 +53,6 @@ public interface Score {
 	 */
 	void onDeath(Entity other);
 
+	void onGameEnd();
 	void printOut();
 }

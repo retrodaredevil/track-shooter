@@ -172,6 +172,7 @@ public class GameScreen implements UsableScreen {
 		for(Player player : players){
 			Score score = player.getScoreObject();
 			score.printOut();
+			score.onGameEnd();
 		}
 	}
 

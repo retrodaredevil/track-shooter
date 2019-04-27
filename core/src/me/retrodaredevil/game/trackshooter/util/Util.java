@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Rectangle;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
 
 public final class Util {
 	private Util(){}
@@ -36,12 +37,19 @@ public final class Util {
 	public static boolean isControllerConnected(Controller controller){
 		return Controllers.getControllers().contains(controller, true);
 	}
-	public static Rectangle proportionalRectangleToScreenArea(Rectangle proportionalRectangle){
-		return new Rectangle(
-				Gdx.graphics.getWidth() * proportionalRectangle.x,
-				Gdx.graphics.getHeight() * (1 - proportionalRectangle.height - proportionalRectangle.y),
-				Gdx.graphics.getWidth() * proportionalRectangle.width,
-				Gdx.graphics.getHeight() * proportionalRectangle.height
-		);
+
+	/**
+	 *
+	 * @param oldMap
+	 * @param newMap
+	 * @param <T>
+	 * @param <V>
+	 * @return newMap
+	 */
+	public static <T, V> Map<V, T> reverseMap(Map<? extends T, ? extends V> oldMap, Map<V, T> newMap){
+		for(Map.Entry<? extends T, ? extends V> entry : oldMap.entrySet()){
+			newMap.put(entry.getValue(), entry.getKey());
+		}
+		return newMap;
 	}
 }

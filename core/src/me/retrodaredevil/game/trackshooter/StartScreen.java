@@ -41,9 +41,11 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	/** The sign in button or null*/
 	private final TextButton signInButton;
 	private final Button showAchievements;
+	private final Button showLeaderboards;
 	private boolean optionsDown = false;
 	private boolean signInDown = false;
 	private boolean showAchievementsDown = false;
+	private boolean showLeaderboardsDown = false;
 	private float idleTime = 0;
 
 	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler){
@@ -66,13 +68,18 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		} else {
 			signInButton = null;
 		}
-		if(achievementHandler.canShowAchievements()){
+		if(achievementHandler.isEverAbleToShowAchievements()){
 			showAchievements = new TextButton("achievements", style);
 			buttons.add(showAchievements);
 		} else {
 			showAchievements = null;
 		}
-
+		if(achievementHandler.isEverAbleToShowLeaderboards()){
+			showLeaderboards = new TextButton("leaderboards", style);
+			buttons.add(showLeaderboards);
+		} else {
+			showLeaderboards = null;
+		}
 
 		// this is initialized after each button because it uses them
 		this.menuRenderable = new ComponentRenderable(new SelectionMenuRenderComponent(
@@ -137,12 +144,23 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			signInDown = signInButton.isPressed();
 		}
 		if(showAchievements != null){
-			showAchievements.setVisible(achievementHandler.isSignedIn());
-			if(achievementHandler.canShowAchievements()){
+			boolean canShow = achievementHandler.isCurrentlyAbleToShowAchievements();
+			showAchievements.setVisible(canShow);
+			if(canShow){
 				if (showAchievementsDown && !showAchievements.isPressed()) { // just released show achievements
 					achievementHandler.showAchievements();
 				}
 				showAchievementsDown = showAchievements.isPressed();
+			}
+		}
+		if(showLeaderboards != null){
+			boolean canShow = achievementHandler.isCurrentlyAbleToShowLeaderboards();
+			showLeaderboards.setVisible(canShow);
+			if(canShow){
+				if(showLeaderboardsDown && !showLeaderboards.isPressed()){ // just released show leaderboards
+					achievementHandler.showLeaderboards();
+				}
+				showLeaderboardsDown = showLeaderboards.isPressed();
 			}
 		}
 

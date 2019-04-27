@@ -43,9 +43,8 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 		component = new OverlayRenderer(this, renderObject);
 		scorePreferences = Gdx.app.getPreferences("score");
 	}
-	private Button getPauseButton(){
-		return component.getPauseButton();
-	}
+	public Preferences getScorePreferences(){ return scorePreferences; }
+	private Button getPauseButton(){ return component.getPauseButton(); }
 
 	/**
 	 * @return returns true the first frame the on screen pause button was pressed

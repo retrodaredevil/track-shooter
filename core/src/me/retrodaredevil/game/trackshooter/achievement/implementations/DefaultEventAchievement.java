@@ -23,11 +23,6 @@ public enum DefaultEventAchievement implements EventAchievement {
 	}
 
 	@Override
-	public boolean isProgressShown() {
-		return true;
-	}
-
-	@Override
 	public String getLocalSaveKey() {
 		return toString();
 	}

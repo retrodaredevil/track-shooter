@@ -12,11 +12,16 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.EventsClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.LeaderboardsClient;
+import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.tasks.Task;
 import me.retrodaredevil.game.trackshooter.achievement.*;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultEventAchievementHandler;
+import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
+import me.retrodaredevil.game.trackshooter.util.Util;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -28,35 +33,32 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	private final Map<? extends GameEvent, String> eventIdMap;
 	private final Map<? extends EventAchievement, String> eventAchievementIdMap;
+	private final Map<String, ? extends EventAchievement> idEventAchievementMap;
 	private final Map<? extends ManualAchievement, String> manualAchievementIdMap;
+	private final String highScoreKey;
 	private final Context context;
 	private final AndroidApplication activity;
 	private final GoogleSignInClient signInClient;
 
-	private final AchievementHandler eventAchievementHandler;
 
 	private AchievementsClient achievementsClient = null;
 	private EventsClient eventsClient = null;
-//	private LeaderboardsClient leaderboardsClient = null;
-
-	private final Map<GameEvent, Integer> toIncrementMap = new HashMap<>();
+	private LeaderboardsClient leaderboardsClient = null;
 
 	AndroidAchievementHandler(
 			Map<? extends GameEvent, String> eventIdMap, Map<? extends EventAchievement, String> eventAchievementIdMap,
-			Map<? extends ManualAchievement, String> manualAchievementIdMap,
-			Context context, AndroidApplication activity, GoogleSignInClient signInClient){
+			Map<? extends ManualAchievement, String> manualAchievementIdMap, String highScoreKey,
+			AndroidApplication activity, GoogleSignInClient signInClient){
 		this.eventIdMap = eventIdMap;
 		this.eventAchievementIdMap = eventAchievementIdMap;
+		this.idEventAchievementMap = Util.reverseMap(eventAchievementIdMap, new HashMap<String, EventAchievement>());
 		this.manualAchievementIdMap = manualAchievementIdMap;
-		this.context = context;
+		this.highScoreKey = highScoreKey;
 		this.activity = activity;
 		this.signInClient = signInClient;
 
-		eventAchievementHandler = new DefaultEventAchievementHandler(
-				eventAchievementIdMap.keySet(),
-				() -> Gdx.app.getPreferences("track_shooter.event_tracker.xml"),
-				new OnAchievement()
-		);
+		this.context = activity.getContext();
+
 		activity.addAndroidEventListener(this::onActivityResult);
 	}
 	// region Private Getters
@@ -65,7 +67,6 @@ class AndroidAchievementHandler implements AchievementHandler {
 	}
 
 	/**
-	 * If the account isn't null and we don't have a cached {@link EventsClient}, this will increment and clear the cache from {@link #toIncrementMap}
 	 * @param account The account
 	 * @return The EventClient or null if we aren't signed in
 	 */
@@ -78,15 +79,6 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(currentEventsClient == null){
 			EventsClient client = Games.getEventsClient(context, account);
 			eventsClient = client;
-			synchronized (toIncrementMap) {
-				if (!toIncrementMap.isEmpty()) {
-					for (Map.Entry<GameEvent, Integer> entry : toIncrementMap.entrySet()) {
-						client.increment(requireNonNull(eventIdMap.get(entry.getKey())), entry.getValue());
-						System.out.println("Successfully incremented " + entry.getKey() + " by " + entry.getValue());
-					}
-					toIncrementMap.clear();
-				}
-			}
 			return client;
 		}
 		return currentEventsClient;
@@ -100,6 +92,20 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(currentClient == null){
 			AchievementsClient client = Games.getAchievementsClient(context, account);
 			achievementsClient = client;
+
+			return client;
+		}
+		return currentClient;
+	}
+	private synchronized LeaderboardsClient getLeaderboardsClient(GoogleSignInAccount account){
+		if(account == null){
+			leaderboardsClient = null;
+			return null;
+		}
+		LeaderboardsClient currentClient = leaderboardsClient;
+		if(currentClient == null){
+			LeaderboardsClient client = Games.getLeaderboardsClient(context, account);
+			leaderboardsClient = client;
 
 			return client;
 		}
@@ -200,27 +206,55 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(amount <= 0){
 			throw new IllegalArgumentException("Amount must be > 0. amount: " + amount);
 		}
-		eventAchievementHandler.increment(event, amount);
-		final EventsClient eventsClient = getEventsClient(getLastAccount());
-		if(eventsClient == null){
-			synchronized (toIncrementMap) {
-				Integer current = toIncrementMap.get(event);
-				if (current == null) {
-					current = 0;
-				}
-				current += amount;
-				toIncrementMap.put(event, current);
-			}
-			System.out.println("[cache] Incrementing " + event + " by " + amount);
-		} else {
+		GoogleSignInAccount account = getLastAccount();
+		if(account != null){
+			final EventsClient eventsClient = requireNonNull(getEventsClient(account));
 			eventsClient.increment(value, amount);
 			System.out.println("Incrementing " + event + " by " + amount);
+			final AchievementsClient achievementsClient = requireNonNull(getAchievementsClient(account));
+
+			/*
+			Go through each possible achievement. If that achievement is an EventAchievement and its GameEvent is event,
+			increment it
+			 */
+//			requireNonNull(getAchievementsClient(account)).load(true).addOnSuccessListener(result -> {
+//				AchievementBuffer buffer = requireNonNull(result.get());
+//				for (Iterator<com.google.android.gms.games.achievement.Achievement> it = buffer.singleRefIterator(); it.hasNext(); ) {
+//					com.google.android.gms.games.achievement.Achievement a = it.next();
+//					String key = a.getAchievementId();
+//					EventAchievement achievement = idEventAchievementMap.get(key);
+//					if(achievement != null && achievement.getGameEvent() == event) {
+//						final int steps = a.getCurrentSteps();
+//						achievementsClient.incrementImmediate(key, amount).addOnSuccessListener(didConnect -> {
+//							if(didConnect) {
+//								final int newSteps = a.getCurrentSteps();
+//								if(newSteps != steps + amount){
+//									throw new IllegalStateException("newSteps should be: " + (steps + amount) + " but it's " + newSteps);
+//								} else {
+//									System.out.println("Good! newSteps is " + newSteps + " which is " + amount + " more than last time!");
+//								}
+//							} else {
+//								System.out.println("Couldn't connect");
+//							}
+//						});
+//						Integer stepsToReveal = achievement.getIncrementsForReveal();
+//						if(stepsToReveal != null && steps >= stepsToReveal){
+//							achievementsClient.reveal(key);
+//						}
+//					}
+//				}
+//			});
 		}
 	}
 
 	@Override
-	public void achieve(ManualAchievement achievement) {
+	public void manualAchieve(ManualAchievement achievement) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void manualIncrement(ManualAchievement achievement) {
+
 	}
 
 	@Override
@@ -235,69 +269,44 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	@Override
 	public void showAchievements() {
-		AchievementsClient client = getAchievementsClient(getLastAccount());
-		if(client != null) {
-			Task<Intent> task = requireNonNull(client.getAchievementsIntent());
-			task.addOnSuccessListener(result -> {
-				activity.startActivityForResult(result, REQUEST_IGNORE);
-			});
+		GoogleSignInAccount account = getLastAccount();
+		if(account == null){
+			throw new IllegalStateException("account is null! We cannot show achievements now! You should check isCurrentlyAbleToShowAchievements()!");
 		}
+		AchievementsClient client = requireNonNull(getAchievementsClient(account));
+
+		Task<Intent> task = requireNonNull(client.getAchievementsIntent());
+		task.addOnSuccessListener(result -> {
+			activity.startActivityForResult(result, REQUEST_IGNORE);
+		});
 	}
+	@Override public boolean isEverAbleToShowAchievements() { return true; }
+	@Override public boolean isCurrentlyAbleToShowAchievements() { return isSignedIn(); }
 
 	@Override
-	public boolean canShowAchievements() {
-		return true;
-	}
-
-	interface StartSignIn {
-		void startSignIn();
-	}
-	private class OnAchievement implements DefaultEventAchievementHandler.OnEventBasedAchievement {
-
-		@Override
-		public void onEventBasedAchievement(EventAchievement achievement) {
-			requireNonNull(achievement);
-			String key = requireNonNull(eventAchievementIdMap.get(achievement));
-			System.out.println("Should have unlocked: " + achievement);
-			if(!achievement.isProgressShown()) {
-				AchievementsClient client = getAchievementsClient(getLastAccount());
-				if (client != null) {
-					System.out.println("This achievement's process was not shown. Incrementing now");
-					client.increment(key, 1);
-				} else {
-					System.out.println("This achievement's process was not shown. NOT Incrementing now");
-				}
-			} else {
-				System.out.println("This achievement's process was shown. Doing nothing");
-			}
+	public void showLeaderboards() {
+		GoogleSignInAccount account = getLastAccount();
+		if(account == null){
+			throw new IllegalStateException("account is null! We cannot show leaderboard now! You should check isCurrentlyAbleToShowLeaderboards()!");
 		}
+		LeaderboardsClient client = requireNonNull(getLeaderboardsClient(account));
 
-		@Override
-		public void onEventBasedUnlock(EventAchievement achievement) {
-			requireNonNull(achievement);
-			String key = requireNonNull(eventAchievementIdMap.get(achievement));
-			AchievementsClient client = getAchievementsClient(getLastAccount());
-			if(client != null){
-				System.out.println("Unlocking " + achievement);
-				client.unlock(key);
-			} else {
-				System.out.println("NOT Unlocking " + achievement);
-			}
+		Task<Intent> task = requireNonNull(client.getAllLeaderboardsIntent()); // TODO Do we want to just show the high score leaderboard?
 
-		}
+		task.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE));
+	}
+	@Override public boolean isEverAbleToShowLeaderboards() { return true; }
+	@Override public boolean isCurrentlyAbleToShowLeaderboards() { return isSignedIn(); }
 
-		@Override
-		public void onEventIncrement(EventAchievement achievement, int amount) {
-			requireNonNull(achievement);
-			String key = requireNonNull(eventAchievementIdMap.get(achievement));
-			AchievementsClient client = getAchievementsClient(getLastAccount());
-			if(client != null){
-				System.out.println("[EventAchievement] Incrementing " + achievement + " by " + amount);
-				client.increment(key, amount);
-			} else {
-				System.out.println("NOT Incrementing " + achievement);
-
-			}
+	@Override
+	public void submitScore(int score) {
+		LeaderboardsClient client = getLeaderboardsClient(getLastAccount());
+		if(client != null) {
+			client.submitScore(highScoreKey, score);
+			System.out.println("Submit score: " + score);
+		} else {
+			System.out.println("Not submitting score: " + score + "!");
 		}
 	}
+
 }

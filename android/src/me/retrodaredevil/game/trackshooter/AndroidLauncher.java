@@ -14,6 +14,7 @@ import me.retrodaredevil.game.trackshooter.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
+import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 
 import java.util.Collections;
 import java.util.EnumMap;
@@ -55,18 +56,21 @@ public class AndroidLauncher extends AndroidApplication {
 		achievementMap.put(DefaultEventAchievement.COMPLETE_100_GAMES, getString(R.string.achievement_played_100_games));
 		achievementMap.put(DefaultEventAchievement.SHARKS_KILLED_5, getString(R.string.achievement_5_sharks_killed));
 
+
 		GoogleSignInClient client = GoogleSignIn.getClient(this,
 				new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
 						.requestScopes(Games.SCOPE_GAMES_LITE)
 						.requestEmail()
 						.build()
 		);
+		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
+
 		achievementHandler = new AndroidAchievementHandler(
 				Collections.unmodifiableMap(eventMap), Collections.unmodifiableMap(achievementMap), Collections.emptyMap(),
-				getContext(),
+				getString(R.string.leaderboard_high_score),
 				this,
 				client);
-		initialize(new GameMain(rumbleAnalogControl, achievementHandler), config);
+		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, achievementHandler), config);
 	}
 
 

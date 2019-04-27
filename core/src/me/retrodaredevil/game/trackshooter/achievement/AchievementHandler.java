@@ -29,13 +29,37 @@ public interface AchievementHandler {
 	boolean isSignedIn();
 
 	void increment(GameEvent event, int amount);
-	void achieve(ManualAchievement achievement);
+
+	/**
+	 * Works only on non-incremental achievements
+	 * @param achievement The achievement
+	 * @throw IllegalArgumentException if {@link Achievement#getIncrementsForAchieve()} > 1
+	 */
+	void manualAchieve(ManualAchievement achievement);
+
+	/**
+	 * Works on both incremental and non-incremental achievements. For a non-incremental achievement, this would be
+	 * equivalent to calling {@link #manualAchieve(ManualAchievement)}
+	 * @param achievement The achievement
+	 */
+	void manualIncrement(ManualAchievement achievement);
 
 	boolean isSupported(GameEvent event);
 	boolean isSupported(ManualAchievement achievement);
 
 	void showAchievements();
-	boolean canShowAchievements();
+	boolean isEverAbleToShowAchievements();
+	boolean isCurrentlyAbleToShowAchievements();
+
+	void showLeaderboards();
+	boolean isEverAbleToShowLeaderboards();
+	boolean isCurrentlyAbleToShowLeaderboards();
+
+	/**
+	 * If able, submits the score. Implementation may do nothing. You don't have to worry about that.
+	 * @param score The score
+	 */
+	void submitScore(int score);
 
 	default boolean incrementIfSupported(GameEvent event, int amount){
 		if(!isSupported(event)){
@@ -73,9 +97,15 @@ public interface AchievementHandler {
 				throw new UnsupportedOperationException();
 			}
 			@Override
-			public void achieve(ManualAchievement achievement) {
+			public void manualAchieve(ManualAchievement achievement) {
 				throw new UnsupportedOperationException();
 			}
+
+			@Override
+			public void manualIncrement(ManualAchievement achievement) {
+				throw new UnsupportedOperationException();
+			}
+
 			@Override
 			public boolean isSupported(GameEvent event) {
 				return false;
@@ -90,11 +120,21 @@ public interface AchievementHandler {
 			public void showAchievements() {
 				throw new UnsupportedOperationException();
 			}
+			@Override public boolean isEverAbleToShowAchievements() { return false; }
+
+			@Override public boolean isCurrentlyAbleToShowAchievements() { return false; }
 
 			@Override
-			public boolean canShowAchievements() {
-				return false;
+			public void showLeaderboards() {
+				throw new UnsupportedOperationException();
 			}
+			@Override public boolean isEverAbleToShowLeaderboards() { return false; }
+			@Override public boolean isCurrentlyAbleToShowLeaderboards() { return false; }
+
+			@Override
+			public void submitScore(int score) {
+			}
+
 		};
 	}
 }

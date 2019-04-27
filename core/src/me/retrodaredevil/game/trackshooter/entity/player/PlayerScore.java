@@ -121,6 +121,11 @@ public class PlayerScore implements Score {
     }
 
 	@Override
+	public void onGameEnd() {
+		achievementHandler.submitScore(score);
+	}
+
+	@Override
 	public void printOut() {
 		Gdx.app.log("final score", "" + this.getScore());
 		Gdx.app.log("Shots", "" + this.getNumberShots());

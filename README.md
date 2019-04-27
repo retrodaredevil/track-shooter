@@ -2,8 +2,10 @@
 A retro shooter style game made with libgdx
 ## About this game
 In this game, you go around a track and rotate to shoot enemies. Each level you go up, the more enemies there are.
-After 10 seconds in each level, a Snake enemy comes in that has crazy and unique movement. The only point of this game is to
+After 10 seconds in each level (except level 1 and levels divisible by 4), a Snake enemy comes in that has crazy and unique movement. The only point of this game is to
 get the highest score.
+
+Level 10, and every 8 levels after that are "easy" levels.
 
 ## Example:
 [Low Quality Video](https://www.youtube.com/watch?v=qpaIXSVZYBI "Track Shooter Demo Video")
@@ -18,6 +20,16 @@ Windows: ```gradlew.bat desktop:run```
 *nix: ```./gradlew desktop:run```
 
 If you are using logcat, this may be useful if the console is being spammed: `(?=^((?!Skip ramp).)*$)(?=^((?!This process).)*$)`
+
+
+## Conventions
+* Use conventions found in `.editorconfig`
+* If you come across a file that has mixed spaces and tabs, change the spaces to tabs IF you make other changes in the file
+* If you come across a file with `Objects.requireNonNull()` IF you make other changes, change it to use a static import
+
+## Contributing
+If you want to get involved, feel free to create an issue about an idea that you have. Pull requests are welcome, but
+if you create an issue I can get back to you if I think the pull request will be accepted.
 
 ## Why I made this
 I've always loved "retro" arcade games. Some of my favorites are Galaga, Pacman, and Xevious. I wanted to create a game

@@ -9,6 +9,6 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.useVsync(false);
-		new Lwjgl3Application(new GameMain(), config);
+		new Lwjgl3Application(new GameMain(GameMain.SCORE_PREFERENCSE_GETTER), config);
 	}
 }
