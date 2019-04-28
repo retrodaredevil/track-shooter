@@ -3,6 +3,9 @@ package me.retrodaredevil.game.trackshooter.input;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.scenes.scene2d.Event;
+import com.badlogic.gdx.scenes.scene2d.EventListener;
+import com.badlogic.gdx.scenes.scene2d.ui.PointerTouchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 
 import java.util.Arrays;
@@ -10,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.input.*;
 import me.retrodaredevil.controller.options.*;
@@ -18,6 +22,8 @@ import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.trackshooter.input.implementations.*;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
+
+import static java.util.Objects.requireNonNull;
 
 public final class GameInputs {
 	/** The amount of time to keep "constant" shooting after the rotate area has been released (in milliseoncds)*/
@@ -132,6 +138,7 @@ public final class GameInputs {
 
 		final JoystickPart mainJoystick;
 		final JoystickPart dummySelector;
+		final JoystickPart rotationPointInput;
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
@@ -140,6 +147,9 @@ public final class GameInputs {
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
 				"controls.main." + TOUCH + ".left_handed", isLeftHanded));
+		final OptionValue isPointRotation = OptionValues.createBooleanOptionValue(false);
+		options.add(new ControlOption("Point to Rotate", "Should point to rotate be enabled",
+				"controls.rotation." + TOUCH + ".point_rotation", isPointRotation));
 		final ScreenArea fireAreaGetter;
 		final ScreenArea rotateAreaGetter;
 		{
@@ -156,13 +166,16 @@ public final class GameInputs {
 			leftHandedRotateArea = leftSide;
 			leftHandedFireArea = rightSide;
 
+			System.out.println("Creating fireAreaGetter. isPointRotation.hashCode(): " + isPointRotation.hashCode());
 			fireAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
-					? leftHandedFireArea.containsPoint(x, y)
-					: rightHandedFireArea.containsPoint(x, y);
+				? leftHandedFireArea.containsPoint(x, y)
+				: rightHandedFireArea.containsPoint(x, y);
 			rotateAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
 					? leftHandedRotateArea.containsPoint(x, y) :
 					rightHandedRotateArea.containsPoint(x, y);
 		}
+
+		final ShouldIgnorePointer shouldIgnorePointer;
 
 		if(renderParts != null){
 			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
@@ -182,7 +195,7 @@ public final class GameInputs {
 			options.add(new ControlOption("Joystick size",
 					"The size of the joystick relative to the height", "controls.movement." + TOUCH + ".joystick.size", diameterOption));
 
-			Touchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
+			PointerTouchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
 				public float getX() {
 					double x = distanceAwayX.getOptionValue();
@@ -197,15 +210,29 @@ public final class GameInputs {
 					return (float) heightOption.getOptionValue();
 				}
 			}, () -> (float) diameterOption.getOptionValue());
+			shouldIgnorePointer = (pointer) -> pointer == touchpad.getPointer();
+
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
 
+			final ScreenArea rotateFireArea = (x, y) -> {
+				if(isPointRotation.getBooleanOptionValue()){
+					return true;
+				}
+				return rotateAreaGetter.containsPoint(x, y);
+			};
+
 			fireButton = new HighestPositionInputPart(Arrays.asList(
-					new GdxScreenTouchButton(fireAreaGetter),
-					new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
+					new GdxScreenTouchButton((x, y) -> {
+						if(isPointRotation.getBooleanOptionValue()){
+							return false;
+						}
+						return fireAreaGetter.containsPoint(x, y);
+					}, shouldIgnorePointer, true),
+					new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
 							inputPart -> !constantShoot.getBooleanOptionValue() && inputPart.isReleased()), // will fire if released when constant shoot not enabled
-					new LowestPositionInputPart(
+					new LowestPositionInputPart( // this is for the constant shoot
 							new DigitalPatternInputPart(160, 80),
-							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateAreaGetter),
+							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
 									new DigitalChildPositionInputPart.DigitalGetter() {
 										Long lastDown = null;
 										@Override
@@ -224,10 +251,16 @@ public final class GameInputs {
 			), true);
 		} else {
 			visibilityChanger = null;
+			shouldIgnorePointer = (pointer) -> false;
 			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt");
 			options.add((ConfigurableObject) mainJoystick);
 
-			fireButton = new GdxScreenTouchButton(fireAreaGetter);
+			fireButton = new GdxScreenTouchButton((x, y) -> {
+				if(isPointRotation.getBooleanOptionValue()){
+					return true;
+				}
+				return fireAreaGetter.containsPoint(x, y);
+			});
 		}
 		rotateAxis = createTouchAxis(options, rotateAreaGetter, isLeftHanded);
 
@@ -258,12 +291,18 @@ public final class GameInputs {
 		} else {
 			rumble = new DisconnectedRumble();
 		}
+		rotationPointInput = new ScreenPositionJoystick(shouldIgnorePointer){
+			@Override
+			public boolean isConnected() {
+				return isPointRotation.getBooleanOptionValue();
+			}
+		};
 
 		DefaultUsableGameInput r = new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
-				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList()
+				mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup, startButton, pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList()
 		);
 
-		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+		r.addChildren(false, false, mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup,
 				startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
 		if(visibilityChanger != null){
 			visibilityChanger.setGameInput(r);
@@ -275,7 +314,7 @@ public final class GameInputs {
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(Objects.requireNonNull(renderParts), rumbleAnalogControl);
+		return createTouchInput(requireNonNull(renderParts), rumbleAnalogControl);
 	}
 
 	private static ControlOption createRumbleOnSingleShotControlOption(){

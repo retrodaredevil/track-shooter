@@ -53,6 +53,9 @@ public interface Score {
 	 */
 	void onDeath(Entity other);
 
+	/**
+	 * Should be called when the player loses all their lives or if the game is ended early
+	 */
 	void onGameEnd();
 	void printOut();
 }

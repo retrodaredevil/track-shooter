@@ -54,10 +54,21 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	public Collection<? extends SingleOption> getOptionsToAdd() {
 		List<SingleOption> r = new ArrayList<>();
 		for(ControlOption option : configurableObject.getControlOptions()){
-			if(!singleControlOptionMap.containsValue(option) && controlOptionVisibility.shouldShow(option)){ // if its already in our map, don't add it
-				SingleOption singleOption = getSingleOption(option);
-				r.add(singleOption);
-				singleControlOptionMap.put(singleOption, option);
+			if (!singleControlOptionMap.containsValue(option)) {
+				if (controlOptionVisibility.shouldShow(option)) { // if its already in our map, don't add it
+					SingleOption singleOption = getSingleOption(option);
+					r.add(singleOption);
+					singleControlOptionMap.put(singleOption, option);
+				} else {
+					/*
+					This fixes a bug where the controls are changed. When the controls are changed, there may be a configuration
+					in the previous controls that needs to be loaded into the new controls. The only reason we have to do this
+					is because when its not visible, it doesn't get loaded. We could do this even if we are showing it, but
+					there's no reason to because the getSingleOption(option) should load it.
+					 */
+					// This isn't called while the game is running, only while the options menu is open so it's fine that this may be a little inefficient
+					saveObject.getOptionSaver().loadControlOption(playerIndex, option);
+				}
 			}
 		}
 		return r;

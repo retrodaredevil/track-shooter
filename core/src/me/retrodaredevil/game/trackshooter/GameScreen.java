@@ -1,12 +1,15 @@
 package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.badlogic.gdx.utils.viewport.Viewport;
 import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerAIController;
@@ -48,7 +51,7 @@ public class GameScreen implements UsableScreen {
 		this.renderParts = renderParts;
 		this.achievementHandler = achievementHandler;
 
-		world = new World(new GameLevelGetter(players), 18, 18, renderObject);
+		world = new World(new GameLevelGetter(players), 18, 18, renderObject, new StageCoordinatesConverter());
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		if(gameType == GameType.NORMAL){
@@ -109,16 +112,21 @@ public class GameScreen implements UsableScreen {
 			Player player = it.next();
 			Score score = player.getScoreObject();
 
-			// TODO There's a rare bug where the player dies, lives goes to 0, then gets an extra...
-			// life from a previously shot bullet. Because of this, the player is removed before
-			// we have a chance to see if the player gets that extra life. We may fix this in the
-			// future or we may leave it the way it is because it might create more bugs with multiplayer.
+			/* NOTTODO There's a rare bug where the player dies, lives goes to 0, then gets an extra...
+			life from a previously shot bullet. Because of this, the player is removed before
+			we have a chance to see if the player gets that extra life. We may fix this in the
+			future or we may leave it the way it is because it might create more bugs with multiplayer. */
+			// Actually, as of 2019.4.27, this should be fixed. I fixed this by ignoring new score changes in PlayerScore
+			// after onGameEnd() is called. This was not my initial plan to fix it this way, but I think it's the simplest and most elegant
+
 			if(score.getLives() > 0){
 				if(player.isRemoved() && mode == LevelMode.NORMAL){
 					level.setMode(LevelMode.RESET);
 				}
 			} else {
 				it.remove();
+				score.onGameEnd();
+				score.printOut();
 			}
 		}
 		// now players only has players that will appear on screen in the future
@@ -254,5 +262,12 @@ public class GameScreen implements UsableScreen {
 		NORMAL,
 		/** Represents a game controlled by an ai*/
 		DEMO_AI
+	}
+	private class StageCoordinatesConverter implements World.WorldCoordinatesGetter {
+		@Override
+		public void getWorldCoordinates(int screenX, int screenY, Vector2 result) {
+			Viewport viewport = stage.getViewport();
+			viewport.unproject(result.set(screenX, screenY));
+		}
 	}
 }

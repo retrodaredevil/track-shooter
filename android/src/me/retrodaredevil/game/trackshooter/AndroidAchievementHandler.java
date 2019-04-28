@@ -394,9 +394,6 @@ class AndroidAchievementHandler implements AchievementHandler {
 		LeaderboardsClient client = getLeaderboardsClient(getLastAccount());
 		if(client != null) {
 			client.submitScore(highScoreKey, score);
-			System.out.println("Submit score: " + score);
-		} else {
-			System.out.println("Not submitting score: " + score + "!");
 		}
 	}
 

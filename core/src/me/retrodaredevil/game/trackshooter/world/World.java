@@ -21,6 +21,7 @@ public class World implements Updateable, Renderable {
 
 	private final LevelGetter levelGetter;
 	private final RenderObject renderObject;
+	private final WorldCoordinatesGetter worldCoordinatesGetter;
 	private final Rectangle bounds;
 	private final RenderComponent renderComponent;
 	private final CollisionHandler collisionHandler;
@@ -30,9 +31,10 @@ public class World implements Updateable, Renderable {
 	private Level level;
 	private float timeInSeconds = 0;
 
-	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject){
+	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject, WorldCoordinatesGetter worldCoordinatesGetter){
 		this.levelGetter = levelGetter;
 		this.renderObject = renderObject;
+		this.worldCoordinatesGetter = worldCoordinatesGetter;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
 		this.collisionHandler = new CollisionHandler(this);
@@ -42,7 +44,7 @@ public class World implements Updateable, Renderable {
 	}
 
 	public void getWorldCoordinates(int screenX, int screenY, Vector2 result){
-
+		worldCoordinatesGetter.getWorldCoordinates(screenX, screenY, result);
 	}
 
 
@@ -120,7 +122,7 @@ public class World implements Updateable, Renderable {
 	 * NOTE: This does not add it to the Collection returned in getEntities() immediately because it needs to add it next frame
 	 * so it is initialized correctly
 	 * <p>
-	 * NOTE: Most of the time, you should use {@link Level#addEntity(World, Entity)}
+	 * NOTE: Most of the time, you should use {@link Level#addEntity(Entity)}
 	 * @param entity The entity to add to the list of entities next frame
 	 */
 	public void addEntity(Entity entity){
@@ -162,5 +164,8 @@ public class World implements Updateable, Renderable {
 				}
 			}
 		}
+	}
+	public interface WorldCoordinatesGetter {
+		void getWorldCoordinates(int screenX, int screenY, Vector2 result);
 	}
 }

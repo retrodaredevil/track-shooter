@@ -2,23 +2,23 @@ package me.retrodaredevil.game.trackshooter.input.implementations;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.math.Rectangle;
 
 import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class GdxScreenTouchButton extends AutoCachingInputPart {
-	private static final int NUM_TOUCHES = 20;
-	private final boolean needsTouchScreenForConnection;
+	public static final int NUM_TOUCHES = 20;
 	private final ScreenArea screenArea;
-	public GdxScreenTouchButton(boolean needsTouchScreenForConnection, ScreenArea screenArea) {
+	private final ShouldIgnorePointer shouldIgnorePointer;
+	private final boolean needsTouchScreenForConnection;
+	public GdxScreenTouchButton(ScreenArea screenArea, ShouldIgnorePointer shouldIgnorePointer, boolean needsTouchScreenForConnection) {
 		super(new AxisType(false, false, false, true), false);
-		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
 		this.screenArea = screenArea;
+		this.shouldIgnorePointer = shouldIgnorePointer;
+		this.needsTouchScreenForConnection = needsTouchScreenForConnection;
 	}
 	public GdxScreenTouchButton(ScreenArea screenArea){
-		this(true, screenArea);
+		this(screenArea, pointer -> false, true);
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class GdxScreenTouchButton extends AutoCachingInputPart {
 					if (Gdx.input.isTouched(i)) {
 						float x = Gdx.input.getX(i) / width;
 						float y = 1 - (Gdx.input.getY(i) / height);
-						if (screenArea.containsPoint(x, y)) {
+						if (screenArea.containsPoint(x, y) && !shouldIgnorePointer.shouldIgnorePointer(i)) {
 							return 1;
 						}
 					}

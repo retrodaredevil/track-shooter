@@ -83,6 +83,7 @@ public class PlayerScore implements Score {
 			return;
 		}
 		score += points;
+		achievementHandler.submitScore(score);
 	}
 
 	@Override

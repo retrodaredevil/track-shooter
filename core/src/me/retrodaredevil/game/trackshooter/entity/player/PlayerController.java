@@ -1,5 +1,6 @@
 package me.retrodaredevil.game.trackshooter.entity.player;
 
+import com.badlogic.gdx.math.Vector2;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
@@ -72,23 +73,36 @@ public class PlayerController implements EntityController{
 
 		}
 		// ==== Rotation ====
-		InputPart rotateAxis = gameInput.getRotateAxis();
-		double position = rotateAxis.getPosition();
-		if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
-			float desired = (float) (ROTATE_PER_SECOND * position);
-			if (rotateAxis.isDeadzone()) {
-				desired = 0;
+		JoystickPart rotationPointJoystick = gameInput.getRotationPointInput();
+		if(rotationPointJoystick != null && rotationPointJoystick.isConnected()){ // TODO make rotationPointJoystick non-null
+			if (!rotationPointJoystick.isXDeadzone() || !rotationPointJoystick.isYDeadzone()) {
+				final Vector2 position = new Vector2();
+				int x = (int) rotationPointJoystick.getX();
+				int y = (int) rotationPointJoystick.getY();
+				System.out.println("x: " + x + " y: " + y);
+				world.getWorldCoordinates(x, y, position);
+				float angle = position.sub(player.getLocation()).angle();
+				player.setRotation(angle);
 			}
+		} else {
+			InputPart rotateAxis = gameInput.getRotateAxis();
+			double position = rotateAxis.getPosition();
+			if (rotateAxis.getAxisType().isShouldUseDelta()) { // normal joystick
+				float desired = (float) (ROTATE_PER_SECOND * position);
+				if (rotateAxis.isDeadzone()) {
+					desired = 0;
+				}
 
-			if(move instanceof RotationalVelocitySetterMoveComponent){
-				((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(desired);
+				if (move instanceof RotationalVelocitySetterMoveComponent) {
+					((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(desired);
+				}
+			} else { // probably a mouse
+				if (move instanceof RotationalVelocitySetterMoveComponent) { // 0 velocity just in case
+					((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(0);
+				}
+				// change rotation manually
+				player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
 			}
-		} else { // probably a mouse
-			if(move instanceof RotationalVelocitySetterMoveComponent){ // 0 velocity just in case
-				((RotationalVelocitySetterMoveComponent) move).getRotationalVelocitySetter().setVelocity(0);
-			}
-			// change rotation manually
-			player.setRotation(player.getRotation() + (float) position * ROTATION_PER_MOUSE_PIXEL); // note ROTATION_PER_MOUSE_PIXEL should be negative
 		}
 
 		// ==== Rumble and Shoot ====

@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.PointerTouchpad;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
@@ -35,7 +36,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 		this.renderObject = renderObject;
 		stage = new Stage(new ScreenViewport(), renderObject.getBatch());
 	}
-	public Touchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalDiameterGetter proportionalDiameterGetter){
+	public PointerTouchpad createTouchpad(TouchpadVisibilityChanger visibilityChanger, ProportionalPositionGetter proportionalPositionGetter, ProportionalDiameterGetter proportionalDiameterGetter){
 		TouchpadRenderComponent touchpadRenderComponent = new TouchpadRenderComponent(visibilityChanger, proportionalPositionGetter, proportionalDiameterGetter, renderObject);
 		renderComponent.addComponent(touchpadRenderComponent);
 		return touchpadRenderComponent.touchpad;
@@ -70,7 +71,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 	static class TouchpadRenderComponent implements RenderComponent{
 
 		private final TouchpadVisibilityChanger visibilityChanger;
-		private final Touchpad touchpad;
+		private final PointerTouchpad touchpad;
 //		private final Vector2 proportionalPosition;
 		private final ProportionalPositionGetter proportionalPositionGetter;
 		private final ProportionalDiameterGetter proportionalDiameterGetter;
@@ -83,7 +84,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 								ProportionalDiameterGetter proportionalDiameterGetter, RenderObject renderObject){
 			this.visibilityChanger = Objects.requireNonNull(visibilityChanger);
 			final Skin skin = renderObject.getArcadeSkin();
-			touchpad = new Touchpad(0, skin);
+			touchpad = new PointerTouchpad(0, skin);
 			touchpad.setResetOnTouchUp(true);
 			touchpad.setTouchable(Touchable.enabled);
 			this.proportionalPositionGetter = Objects.requireNonNull(proportionalPositionGetter);

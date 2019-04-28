@@ -128,15 +128,15 @@ public class GameMain extends Game {
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
 				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl) : Collections.emptySet();
-				for(GameInput input : addBefore){
-					controllerManager.addController(input);
-				}
+//				for(GameInput input : addBefore){
+//					controllerManager.addController(input);
+//				}
 
 				// ==== Inputs to go into our ChangeableGameInput
 				final List<UsableGameInput> usableInputs = new ArrayList<>(addBefore);
 				usableInputs.add(controllerInput);
 
-				// ==== Create our ChangeableGameInput and add it to our offical inputs
+				// ==== Create our ChangeableGameInput and add it to our official inputs
 				GameInput realGameInput = new ChangeableGameInput(usableInputs);
 				controllerManager.addController(realGameInput);
 				inputs.add(realGameInput);
@@ -146,9 +146,9 @@ public class GameMain extends Game {
 		}
 		if(inputs.isEmpty()) { // if there were no controllers, add inputs from getPhysicalInputs()
 			List<UsableGameInput> gameInputs = getPhysicalInputs(rumbleAnalogControl);
-			for(UsableGameInput input : gameInputs){
-				controllerManager.addController(input);
-			}
+//			for(UsableGameInput input : gameInputs){
+//				controllerManager.addController(input);
+//			}
 			GameInput realGameInput = new ChangeableGameInput(gameInputs);
 			controllerManager.addController(realGameInput);
 			inputs.add(realGameInput);
