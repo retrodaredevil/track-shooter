@@ -48,6 +48,8 @@ class AndroidAchievementHandler implements AchievementHandler {
 	private EventsClient eventsClient = null;
 	private LeaderboardsClient leaderboardsClient = null;
 
+	private boolean wantsSignIn = false;
+
 	AndroidAchievementHandler(
 			Map<? extends GameEvent, String> eventIdMap, Map<? extends EventAchievement, String> eventAchievementIdMap,
 			Map<? extends ManualAchievement, String> manualAchievementIdMap,
@@ -84,7 +86,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 		GoogleSignInAccount account = getLastAccount();
 		if(account != null){
-			checkReveals(getAchievementsClient(account), getEventsClient(account));
+			doAccountSignIn(account);
 		}
 	}
 	// region Private Getters
@@ -143,6 +145,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 	@Override
 	public void signIn() {
 		System.out.println("Going to sign in now isSignedIn: " + isSignedIn());
+		wantsSignIn = true;
 		activity.startActivityForResult(signInClient.getSignInIntent(), REQUEST_SIGN_IN);
 	}
 	private void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -152,23 +155,28 @@ class AndroidAchievementHandler implements AchievementHandler {
 				GoogleSignInAccount account = task.getResult(ApiException.class);
 				doAccountSignIn(account);
 			} catch (ApiException apiException) {
-				String message = apiException.getMessage();
-				if (message == null || message.trim().isEmpty()) {
-					message = "Unable to connect";
-				}
-
 				onAccountLogout();
+				if(apiException.getStatusCode() == 12501){
+					System.out.println("Pressed back button while signing in.");
+				} else {
+					String message = apiException.getMessage();
+					if (message == null || message.trim().isEmpty()) {
+						message = "Unable to connect";
+					}
 
-				new AlertDialog.Builder(activity)
-						.setMessage(message)
-						.setNeutralButton(android.R.string.ok, null)
-						.show();
+
+					new AlertDialog.Builder(activity)
+							.setMessage(message)
+							.setNeutralButton(android.R.string.ok, null)
+							.show();
+				}
 			}
 		}
 	}
 
 	@Override
 	public void logout() {
+		wantsSignIn = false;
 		if(isSignedIn()){
 			signInClient.signOut()
 					.addOnSuccessListener(result -> onAccountLogout())
@@ -181,7 +189,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 		if(isSignedIn()){
 			System.out.println("We're already signed in!");
-		} else {
+		} else if(wantsSignIn){
 			signInClient.silentSignIn().addOnCompleteListener(accountTask -> {
 				if (accountTask.isSuccessful()) {
 					final GoogleSignInAccount account = requireNonNull(accountTask.getResult());
@@ -211,8 +219,8 @@ class AndroidAchievementHandler implements AchievementHandler {
 	private void doAccountSignIn(GoogleSignInAccount account){
 		requireNonNull(account);
 		System.out.println("Successfully signed in");
-//		getEventsClient(account);
-		checkReveals(getAchievementsClient(account), getEventsClient(account));
+		wantsSignIn = true;
+		checkReveals(getAchievementsClient(account), getEventsClient(account), true);
 	}
 	private void onAccountLogout(){
 		System.out.println("Logging out");
@@ -221,6 +229,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 			eventsClient = null;
 			leaderboardsClient = null;
 		}
+		wantsSignIn = false;
 	}
 	// endregion
 
@@ -243,12 +252,16 @@ class AndroidAchievementHandler implements AchievementHandler {
 			boolean needsCheck = false;
 			for(Map.Entry<? extends EventAchievement, String> entry : eventAchievementIdMap.entrySet()){
 				if(entry.getKey().getGameEvent() == event){
-					achievementsClient.increment(entry.getValue(), amount);
+					if(entry.getKey().isIncremental()) {
+						achievementsClient.increment(entry.getValue(), amount);
+					} else {
+						achievementsClient.unlock(entry.getValue());
+					}
 					needsCheck = true;
 				}
 			}
 			if(needsCheck) {
-				checkReveals(achievementsClient, null);
+				checkReveals(achievementsClient, null, false);
 			}
 		}
 	}
@@ -258,12 +271,12 @@ class AndroidAchievementHandler implements AchievementHandler {
 	 * @param achievementsClient The AchievementsClient. Must be non-null
 	 * @param eventsClient The EventsClient if you want to check EventAchievements to make sure they're up to date. If null, will not check
 	 */
-	private void checkReveals(AchievementsClient achievementsClient, EventsClient eventsClient){
+	private void checkReveals(AchievementsClient achievementsClient, EventsClient eventsClient, boolean reload){
 		/*
 		Go through each possible achievement. If that achievement is an EventAchievement and its GameEvent is event,
 		check to see if we need to reveal it
 		 */
-		requireNonNull(achievementsClient).load(true).addOnSuccessListener(result -> {
+		requireNonNull(achievementsClient).load(reload).addOnSuccessListener(result -> {
 			AchievementBuffer achievementBuffer = requireNonNull(result.get());
 			Map<EventAchievement, AchievementCache> achievementMap = new HashMap<>();
 			for (com.google.android.gms.games.achievement.Achievement a : achievementBuffer) {
@@ -280,7 +293,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 			}
 			achievementBuffer.release();
 			if(eventsClient != null) {
-				eventsClient.load(true).addOnSuccessListener(eventsResult -> {
+				eventsClient.load(reload).addOnSuccessListener(eventsResult -> {
 					EventBuffer eventBuffer = requireNonNull(eventsResult.get());
 
 					for (Event gmsEvent : eventBuffer) {
@@ -372,6 +385,18 @@ class AndroidAchievementHandler implements AchievementHandler {
 	}
 
 	@Override
+	public void manualReveal(ManualAchievement achievement) {
+		String key = manualAchievementIdMap.get(achievement);
+		if(key == null){
+			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
+		}
+		AchievementsClient achievementsClient = getAchievementsClient(getLastAccount());
+		if(achievementsClient != null){
+			achievementsClient.reveal(key);
+		}
+	}
+
+	@Override
 	public boolean isSupported(GameEvent event) {
 		return eventIdMap.containsKey(event);
 	}
@@ -404,7 +429,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 		}
 		LeaderboardsClient client = requireNonNull(getLeaderboardsClient(account));
 
-		Task<Intent> task = requireNonNull(client.getAllLeaderboardsIntent()); // TODO Do we want to just show the high score leaderboard?
+		Task<Intent> task = requireNonNull(client.getAllLeaderboardsIntent());
 
 		task.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE));
 	}

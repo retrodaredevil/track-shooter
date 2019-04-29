@@ -1,12 +1,11 @@
 package me.retrodaredevil.game.trackshooter.achievement.implementations;
 
-import me.retrodaredevil.game.trackshooter.achievement.Achievement;
 import me.retrodaredevil.game.trackshooter.achievement.ManualAchievement;
 
-import java.util.Collection;
-import java.util.Collections;
-
 public enum DefaultAchievement implements ManualAchievement {
+	CLEAR_LEVEL_5,
+	CLEAR_LEVEL_10,
+	CLEAR_LEVEL_30,
 	;
 
 	@Override
@@ -16,7 +15,7 @@ public enum DefaultAchievement implements ManualAchievement {
 
 	@Override
 	public Integer getIncrementsForReveal() {
-		return null; // TODO change this when implementing more enum values
+		return null;
 	}
 
 	@Override

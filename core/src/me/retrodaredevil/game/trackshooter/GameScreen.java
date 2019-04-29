@@ -176,7 +176,11 @@ public class GameScreen implements UsableScreen {
 				.addParallel(renderParts.getOptionsMenu())
 				.giveFocus(stage, renderParts.getInputMultiplexer());
 	}
-	public void setToExit(boolean wasFullGame){
+	private void setToExit(boolean wasFullGame){
+		if(shouldExit){
+			System.out.println("Was already set to exit!");
+			return;
+		}
 		shouldExit = true;
 		System.out.println("Exiting game.");
 		for(Player player : players){

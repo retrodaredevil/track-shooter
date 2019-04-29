@@ -6,28 +6,35 @@ filter: Nearest,Nearest
 repeat: none
 apple
   rotate: false
-  xy: 172, 59
+  xy: 204, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
+arrow
+  rotate: false
+  xy: 104, 88
+  size: 64, 32
+  orig: 64, 32
+  offset: 0, 0
+  index: -1
 bullet
   rotate: false
-  xy: 172, 41
+  xy: 206, 75
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 cargo_ship
   rotate: false
-  xy: 138, 77
+  xy: 138, 54
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 cherry
   rotate: false
-  xy: 190, 59
+  xy: 206, 57
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
@@ -41,21 +48,21 @@ even_bonus
   index: -1
 grapes
   rotate: false
-  xy: 190, 41
+  xy: 206, 39
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 help
   rotate: false
-  xy: 138, 25
+  xy: 170, 93
   size: 32, 16
   orig: 32, 16
   offset: 0, 0
   index: -1
 large_bonus
   rotate: false
-  xy: 138, 111
+  xy: 170, 111
   size: 60, 9
   orig: 60, 9
   offset: 0, 0
@@ -69,21 +76,21 @@ odd_bonus
   index: -1
 pizza
   rotate: false
-  xy: 172, 23
+  xy: 206, 21
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 player
   rotate: false
-  xy: 104, 22
+  xy: 138, 20
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 powerup
   rotate: false
-  xy: 138, 43
+  xy: 172, 59
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
@@ -111,35 +118,35 @@ shark_worn
   index: -1
 snake_part
   rotate: false
-  xy: 190, 23
+  xy: 222, 93
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 sniper
   rotate: false
-  xy: 172, 77
+  xy: 172, 25
   size: 32, 32
   orig: 32, 32
   offset: 0, 0
   index: -1
 space_station
   rotate: false
-  xy: 104, 56
+  xy: 104, 22
   size: 32, 64
   orig: 32, 64
   offset: 0, 0
   index: -1
 starfish
   rotate: false
-  xy: 206, 104
+  xy: 224, 75
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 strawberry
   rotate: false
-  xy: 206, 86
+  xy: 224, 57
   size: 16, 16
   orig: 16, 16
   offset: 0, 0

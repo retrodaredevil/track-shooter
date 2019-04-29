@@ -344,10 +344,10 @@ public class SnakePart extends SimpleEntity implements Enemy, DifficultEntity {
 		SnakePart part = start;
 		while(part != null){
 			part.hit = true; // kill everyone behind us including ourselves
-			part = inFront ? part.inFront : part.behind;
 			if(player != null){
 				player.getScoreObject().onKill(part, cause, 50);
 			}
+			part = inFront ? part.inFront : part.behind;
 		}
 	}
 

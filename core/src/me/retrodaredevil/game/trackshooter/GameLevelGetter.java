@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.util.Collection;
 
 import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
@@ -57,6 +58,17 @@ public class GameLevelGetter implements LevelGetter {
 			@Override
 			protected void onStart() {
 				super.onStart();
+				if(levelNumber > 5){
+					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_5);
+					achievementHandler.manualReveal(DefaultAchievement.CLEAR_LEVEL_10);
+				}
+				if(levelNumber > 10){
+					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_10);
+					achievementHandler.manualReveal(DefaultAchievement.CLEAR_LEVEL_30);
+				}
+				if(levelNumber > 30){
+					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_30);
+				}
 				final boolean isEasy = levelNumber >= 10 && (levelNumber - 2) % 8 == 0; // 10, 18, 26 // galaga level reference
 				final Track track = world.getTrack();
 				for(Player player : players){ // move all players to a random spot
@@ -101,12 +113,12 @@ public class GameLevelGetter implements LevelGetter {
 					} else if(levelNumber >= 10){
 						spawnAfter = 13;
 					}
-					addFunction(new StarFishFunction(world, spawnAfter, players));
+					addFunction(new StarFishFunction(world, spawnAfter, players, achievementHandler));
 				} else {
 					if(levelNumber <= 2){
-						addFunction(new StarFishFunction(world, 100, players));
+						addFunction(new StarFishFunction(world, 100, players, achievementHandler));
 					} else {
-						addFunction(new StarFishFunction(world, 50, players));
+						addFunction(new StarFishFunction(world, 50, players, achievementHandler));
 					}
 				}
 

@@ -45,6 +45,8 @@ public interface AchievementHandler {
 	 */
 	void manualIncrement(ManualAchievement achievement, int amount);
 
+	void manualReveal(ManualAchievement achievement);
+
 	boolean isSupported(GameEvent event);
 	boolean isSupported(ManualAchievement achievement);
 
@@ -83,6 +85,13 @@ public interface AchievementHandler {
 		manualAchieve(achievement);
 		return true;
 	}
+	default boolean manualRevealIfSupported(ManualAchievement achievement){
+		if(!isSupported(achievement)){
+			return false;
+		}
+		manualReveal(achievement);
+		return true;
+	}
 
 	class Defaults {
 		public static final AchievementHandler UNSUPPORTED_HANDLER = new AchievementHandler() {
@@ -118,6 +127,11 @@ public interface AchievementHandler {
 
 			@Override
 			public void manualIncrement(ManualAchievement achievement, int amount) {
+				throw new UnsupportedOperationException();
+			}
+
+			@Override
+			public void manualReveal(ManualAchievement achievement) {
 				throw new UnsupportedOperationException();
 			}
 

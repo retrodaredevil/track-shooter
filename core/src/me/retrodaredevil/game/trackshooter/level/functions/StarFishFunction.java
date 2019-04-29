@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.Collection;
 
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.StarFish;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
@@ -21,16 +22,18 @@ public class StarFishFunction implements LevelFunction {
 	private final World world;
 	private final Collection<? extends Entity> entities;
 	private final float spawnAfter;
+	private final AchievementHandler achievementHandler;
 
 	/**
 	 * @param spawnAfter the number of seconds to spawn the StarFish after
 	 * @param entities Some collection of entities (usually Players) that are on the track,
-	 *                    that will be used so the starfish doesn't spawn on top of them
+	 * @param achievementHandler
 	 */
-	public StarFishFunction(World world, float spawnAfter, Collection<? extends Entity> entities){
+	public StarFishFunction(World world, float spawnAfter, Collection<? extends Entity> entities, AchievementHandler achievementHandler){
 		this.world = world;
 		this.entities = entities;
 		this.spawnAfter = spawnAfter;
+		this.achievementHandler = achievementHandler;
 	}
 
 	@Override
@@ -55,7 +58,7 @@ public class StarFishFunction implements LevelFunction {
 				// TODO If there are many, many players, this *could* result in an infinite loop.
 				distance = world.getTrack().getTotalDistance() * MathUtils.random();
 			} while (!canSpawn(distance, world.getTrack()));
-			Entity entity = new StarFish(world, speed, distance);
+			Entity entity = new StarFish(world, speed, distance, achievementHandler);
 			world.getLevel().addEntity(entity);
 			return true;
 		}

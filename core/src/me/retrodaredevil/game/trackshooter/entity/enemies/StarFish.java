@@ -4,6 +4,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
@@ -18,17 +20,20 @@ public class StarFish extends SimpleEntity implements Enemy {
 
 	private final TravelVelocityOnTrackMoveComponent moveComponent;
 	private final float speed;
+	private final AchievementHandler achievementHandler;
 	private Float lastFlip = null;
 	private boolean remove;
 
 	/**
 	 * @param speed The speed of the starfish where the sign doesn't matter
 	 * @param startingDistance The starting distance of this starfish
+	 * @param achievementHandler
 	 */
-	public StarFish(World world, float speed, float startingDistance){
+	public StarFish(World world, float speed, float startingDistance, AchievementHandler achievementHandler){
 		super(world);
 		this.speed = speed;
 		moveComponent = new TravelVelocityOnTrackMoveComponent(world, this);
+		this.achievementHandler = achievementHandler;
 		moveComponent.setDistanceOnTrack(startingDistance);
 		setMoveComponent(moveComponent);
 		setHitboxSize(.5f);
@@ -60,6 +65,7 @@ public class StarFish extends SimpleEntity implements Enemy {
 		if(lastFlip == null || time - lastFlip > NO_FLIP_TIME) {
 			moveComponent.getTravelVelocitySetter().setVelocity(-1 * moveComponent.getTravelVelocity());
 			lastFlip = time;
+			achievementHandler.incrementIfSupported(DefaultGameEvent.REDIRECT_STARFISH, 1);
 		}
 	}
 

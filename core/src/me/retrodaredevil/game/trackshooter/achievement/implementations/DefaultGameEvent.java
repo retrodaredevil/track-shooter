@@ -10,6 +10,7 @@ public enum DefaultGameEvent implements GameEvent {
 	POWER_UPS_COLLECTED,
 	FRUIT_CONSUMED,
 	GAMES_COMPLETED,
+	REDIRECT_STARFISH
 	;
 
 	@Override

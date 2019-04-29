@@ -32,6 +32,7 @@ public abstract class PowerupPackage extends SimplePowerup {
 		}
 		Player player = (Player) other;
 		onHit(player);
+		player.getScoreObject().onKill(this, player, 0);
 		eaten = true;
 	}
 
