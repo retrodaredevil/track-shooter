@@ -8,18 +8,30 @@ Save this file as res/values/games-ids.xml in your project.
     <string name="app_id" translatable="false">894166175037</string>
     <!-- package_name -->
     <string name="package_name" translatable="false">me.retrodaredevil.game.trackshooter</string>
-    <!-- achievement 5 Sharks Killed -->
-    <string name="achievement_5_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQAw</string>
+    <!-- achievement First game completed -->
+    <string name="achievement_first_game_completed" translatable="false">CgkIvZrUg4MaEAIQCw</string>
     <!-- achievement Played 20 games -->
     <string name="achievement_played_20_games" translatable="false">CgkIvZrUg4MaEAIQAQ</string>
     <!-- achievement Played 100 Games -->
     <string name="achievement_played_100_games" translatable="false">CgkIvZrUg4MaEAIQAg</string>
-    <!-- achievement First game completed -->
-    <string name="achievement_first_game_completed" translatable="false">CgkIvZrUg4MaEAIQCw</string>
+    <!-- achievement Played 250 games -->
+    <string name="achievement_played_250_games" translatable="false">CgkIvZrUg4MaEAIQFA</string>
+    <!-- achievement Played 500 games -->
+    <string name="achievement_played_500_games" translatable="false">CgkIvZrUg4MaEAIQFQ</string>
+    <!-- achievement Played 1000 games -->
+    <string name="achievement_played_1000_games" translatable="false">CgkIvZrUg4MaEAIQFg</string>
+    <!-- achievement 5 Sharks Killed -->
+    <string name="achievement_5_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQAw</string>
     <!-- achievement 20 Sharks Killed -->
     <string name="achievement_20_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQDg</string>
     <!-- achievement 100 Sharks Killed -->
     <string name="achievement_100_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQDw</string>
+    <!-- achievement 250 Sharks Killed -->
+    <string name="achievement_250_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQEA</string>
+    <!-- achievement 500 Sharks Killed -->
+    <string name="achievement_500_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQEQ</string>
+    <!-- achievement 1000 Sharks Killed -->
+    <string name="achievement_1000_sharks_killed" translatable="false">CgkIvZrUg4MaEAIQEg</string>
     <!-- leaderboard High Score -->
     <string name="leaderboard_high_score" translatable="false">CgkIvZrUg4MaEAIQDA</string>
     <!-- event Sharks Killed -->
@@ -34,7 +46,7 @@ Save this file as res/values/games-ids.xml in your project.
     <string name="event_fruit_consumed" translatable="false">CgkIvZrUg4MaEAIQCA</string>
     <!-- event Games completed -->
     <string name="event_games_completed" translatable="false">CgkIvZrUg4MaEAIQCQ</string>
-    <!-- event Shots fired -->
-    <string name="event_shots_fired" translatable="false">CgkIvZrUg4MaEAIQCg</string>
+    <!-- event Mr Spaceship unprotected -->
+    <string name="event_mr_spaceship_unprotected" translatable="false">CgkIvZrUg4MaEAIQEw</string>
 </resources>
 

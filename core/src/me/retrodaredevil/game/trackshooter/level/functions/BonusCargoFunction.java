@@ -2,6 +2,8 @@ package me.retrodaredevil.game.trackshooter.level.functions;
 
 import java.util.Collection;
 
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -21,12 +23,12 @@ public class BonusCargoFunction implements LevelFunction {
 	private final Entity cargoEntity;
 	private final Collection<? extends Player> players; // may be mutated
 	private final Points points;
+	private final AchievementHandler achievementHandler;
 
 	private boolean showedHelp = false;
 
 	/**
-	 *
-	 * @param cargoEntity The entity that if survives the whole level, will give points to each player.
+	 *  @param cargoEntity The entity that if survives the whole level, will give points to each player.
 	 *                    This entity must be able to be removed. This entity should also already be added
 	 *                    to the world as this function will not add it to the level or world.<p>
 	 *                    It is also expected that the MoveComponent on this cargo entity is not null and that calling
@@ -34,12 +36,14 @@ public class BonusCargoFunction implements LevelFunction {
 	 * @param players A list of players that may be mutated outside this class (NOT A COPY).
 	 *                These players will receive points at the end of the level.
 	 * @param points The points object with contains the drawable and how much it's worth
+	 * @param achievementHandler
 	 */
-	public BonusCargoFunction(World world, Entity cargoEntity, Collection<? extends Player> players, Points points){
+	public BonusCargoFunction(World world, Entity cargoEntity, Collection<? extends Player> players, Points points, AchievementHandler achievementHandler){
 		this.world = world;
 		this.cargoEntity = cargoEntity;
 		this.players = players;
 		this.points = points;
+		this.achievementHandler = achievementHandler;
 		if(!cargoEntity.canSetToRemove()){
 			throw new IllegalArgumentException("The 'cargo entity' must be able to be removed!");
 		}
@@ -47,6 +51,7 @@ public class BonusCargoFunction implements LevelFunction {
 	@Override
 	public boolean update(float delta, Collection<? super LevelFunction> functionsToAdd) {
 		if(cargoEntity.isRemoved()){
+			achievementHandler.incrementIfSupported(DefaultGameEvent.CARGO_SHIPS_UNPROTECTED, 1);
 			return true; // we failed, end this function
 		}
 		if(!showedHelp){
@@ -61,6 +66,7 @@ public class BonusCargoFunction implements LevelFunction {
 			for(Player player : players) {
 				player.getScoreObject().onScore(points.getWorth());
 			}
+			achievementHandler.incrementIfSupported(DefaultGameEvent.CARGO_SHIPS_PROTECTED, 1);
 //			System.out.println("Gave " + players.size() + " player(s) " + points + " points");
 			return true;
 		}

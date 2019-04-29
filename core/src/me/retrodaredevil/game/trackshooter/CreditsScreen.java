@@ -54,7 +54,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.add("").center().row();
 		table.add("The control scheme can be changed in options").center().row();
 		table.add("Try out the gyro control scheme if your phone supports it!").center().row();
-		Constants.BUTTON_SIZE.apply(table.add(backButton = new TextButton("back", renderObject.getUISkin(), "small")));
+		Constants.START_SCREEN_BUTTON_SIZE.apply(table.add(backButton = new TextButton("back", renderObject.getUISkin(), "small")));
 	}
 	private Renderer createRenderer(){
 		return new Renderer(renderObject.getBatch(), stage)

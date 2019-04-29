@@ -23,7 +23,6 @@ import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderC
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
-import me.retrodaredevil.game.trackshooter.world.World;
 
 public class PauseMenu implements Updateable, Renderable, InputFocusable, CloseableMenu {
 
@@ -52,7 +51,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		renderComponent = new SelectionMenuRenderComponent(
 				renderObject, 0, gameInputs.get(0), new PlainTable(),
 				Collections.singleton(new MultiActorOptionProvider(
-						Constants.BUTTON_SIZE,
+						Constants.PAUSE_BUTTON_SIZE,
 						resumeButton = new TextButton("resume", renderObject.getUISkin()),
 						optionsButton = new TextButton("options", renderObject.getUISkin()),
 						exitButton = new TextButton("exit game", renderObject.getUISkin())

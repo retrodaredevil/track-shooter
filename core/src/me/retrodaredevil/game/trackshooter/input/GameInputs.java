@@ -229,7 +229,15 @@ public final class GameInputs {
 						return fireAreaGetter.containsPoint(x, y);
 					}, shouldIgnorePointer, true),
 					new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
-							inputPart -> !constantShoot.getBooleanOptionValue() && inputPart.isReleased()), // will fire if released when constant shoot not enabled
+							inputPart -> {
+								if(constantShoot.getBooleanOptionValue()){
+									return false;
+								}
+								if(isPointRotation.getBooleanOptionValue()){
+									return inputPart.isPressed();
+								}
+								return inputPart.isReleased();
+							}), // will fire if released when constant shoot not enabled
 					new LowestPositionInputPart( // this is for the constant shoot
 							new DigitalPatternInputPart(160, 80),
 							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),

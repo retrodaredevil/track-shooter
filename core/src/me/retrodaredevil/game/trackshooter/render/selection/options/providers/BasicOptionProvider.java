@@ -1,9 +1,6 @@
 package me.retrodaredevil.game.trackshooter.render.selection.options.providers;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
@@ -20,6 +17,9 @@ public class BasicOptionProvider implements SingleOptionProvider {
 
 	@Override
 	public Collection<? extends SingleOption> getOptionsToAdd() {
+		if(optionsToAdd.isEmpty()){
+			return Collections.emptySet();
+		}
         List<SingleOption> r = new ArrayList<>(optionsToAdd);
         optionsToAdd.clear();
         return r;

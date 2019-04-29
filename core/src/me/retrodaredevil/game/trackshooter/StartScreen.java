@@ -14,6 +14,10 @@ import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
+import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.GroupedSelectionSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
 import me.retrodaredevil.game.trackshooter.util.Constants;
@@ -68,15 +72,18 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		} else {
 			signInButton = null;
 		}
+		final List<SingleOption> horizontalOptions = new ArrayList<>();
 		if(achievementHandler.isEverAbleToShowAchievements()){
 			showAchievements = new TextButton("achievements", style);
-			buttons.add(showAchievements);
+//			buttons.add(showAchievements);
+			horizontalOptions.add(new PlainActorSingleOption(showAchievements, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
 		} else {
 			showAchievements = null;
 		}
 		if(achievementHandler.isEverAbleToShowLeaderboards()){
 			showLeaderboards = new TextButton("leaderboards", style);
-			buttons.add(showLeaderboards);
+//			buttons.add(showLeaderboards);
+			horizontalOptions.add(new PlainActorSingleOption(showLeaderboards, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
 		} else {
 			showLeaderboards = null;
 		}
@@ -87,7 +94,12 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
                 gameInputPlayerIndex,
 				gameInput,
 				new PlainTable(),
-				Collections.singleton(new MultiActorOptionProvider(Constants.BUTTON_SIZE, buttons.toArray(new Button[0]))),
+				Arrays.asList(
+						new MultiActorOptionProvider(Constants.START_SCREEN_BUTTON_SIZE, buttons.toArray(new Button[0])),
+						new BasicOptionProvider(
+								new GroupedSelectionSingleOption(Constants.START_SCREEN_BUTTON_SIZE, true, Collections.singleton(new BasicOptionProvider(horizontalOptions)))
+						)
+				),
 				() -> {} // do nothing on back button
 		));
 		this.tipsRenderable = new ComponentRenderable(new TipsRenderComponent());
@@ -209,13 +221,15 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	private static final String[] TIPS = new String[] {
 			"Change your controls in options!",
-			"There will only be 4 shots at a time!",
+			"Only be 4 shots at a time!",
 			"If you save Mr. Spaceship from fire, you'll get bonus points!",
 			"If you wait long enough, the AI will start playing the game!",
 			"Don't turn your back on the snake!",
 			"Keep shooting at the Sharks to make them spin longer!",
 			"Shoot the starfish once to change its direction!",
-			"Open Source!"
+			"Open Source!",
+			"Made by Joshua Shannon!",
+			"Sign in for achievements and leaderboards!"
 	};
 	private class TipsRenderComponent implements RenderComponent {
 		private final Group group = new Table(){{setFillParent(true);}};
@@ -227,7 +241,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			final Label label = new Label(tip, renderObject.getMainSkin(), "game_label", "tips");
 			label.setFontScale(Math.min(34.0f / tip.length(), 1)); // scale can only be <= 1
 			table.add(label);
-			table.center().bottom().padBottom(120);
+			table.center().bottom().padBottom(95);
 
 			group.addActor(table);
 		}

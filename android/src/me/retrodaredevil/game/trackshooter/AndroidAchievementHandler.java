@@ -14,14 +14,13 @@ import com.google.android.gms.games.EventsClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.achievement.AchievementBuffer;
+import com.google.android.gms.games.event.Event;
+import com.google.android.gms.games.event.EventBuffer;
 import com.google.android.gms.tasks.Task;
 import me.retrodaredevil.game.trackshooter.achievement.*;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
@@ -30,18 +29,19 @@ class AndroidAchievementHandler implements AchievementHandler {
 	private static final int REQUEST_IGNORE = 5001;
 
 	private final Map<? extends GameEvent, String> eventIdMap;
+	private final Map<String, ? extends GameEvent> idEventMap;
 
 	private final Map<? extends EventAchievement, String> eventAchievementIdMap;
 	private final Map<String, ? extends EventAchievement> idEventAchievementMap;
 	private final Map<? extends ManualAchievement, String> manualAchievementIdMap;
-	private final Map<String, ? extends ManualAchievement> idManualAchievementMap;
-
-	private final Set<Set<? extends Achievement>> linkedAchievementsSet;
+//	private final Map<String, ? extends ManualAchievement> idManualAchievementMap;
 
 	private final String highScoreKey;
 	private final Context context;
 	private final AndroidApplication activity;
 	private final GoogleSignInClient signInClient;
+
+	private final Map<GameEvent, Set<EventAchievement>> eventAchievementSetMap;
 
 
 	private AchievementsClient achievementsClient = null;
@@ -51,23 +51,41 @@ class AndroidAchievementHandler implements AchievementHandler {
 	AndroidAchievementHandler(
 			Map<? extends GameEvent, String> eventIdMap, Map<? extends EventAchievement, String> eventAchievementIdMap,
 			Map<? extends ManualAchievement, String> manualAchievementIdMap,
-			Set<Set<? extends Achievement>> linkedAchievementsSet,
 			String highScoreKey,
 			AndroidApplication activity, GoogleSignInClient signInClient){
 		this.eventIdMap = eventIdMap;
+		this.idEventMap = Util.reverseMap(eventIdMap, new HashMap<>());
 		this.eventAchievementIdMap = eventAchievementIdMap;
-		this.idEventAchievementMap = Util.reverseMap(eventAchievementIdMap, new HashMap<String, EventAchievement>());
+		this.idEventAchievementMap = Util.reverseMap(eventAchievementIdMap, new HashMap<>());
 		this.manualAchievementIdMap = manualAchievementIdMap;
-		this.idManualAchievementMap = Util.reverseMap(manualAchievementIdMap, new HashMap<String, ManualAchievement>());
-		this.linkedAchievementsSet = linkedAchievementsSet;
+//		this.idManualAchievementMap = Util.reverseMap(manualAchievementIdMap, new HashMap<>());
 		this.highScoreKey = highScoreKey;
 		this.activity = activity;
 		this.signInClient = signInClient;
 
 		this.context = activity.getContext();
 
+		Map<GameEvent, Set<EventAchievement>> eventAchievementSetMap = new HashMap<>();
+		for(EventAchievement eventAchievement : eventAchievementIdMap.keySet()){
+			GameEvent event = eventAchievement.getGameEvent();
+			Set<EventAchievement> set = eventAchievementSetMap.get(event);
+			if(set == null){
+				set = new HashSet<>();
+				eventAchievementSetMap.put(event, set);
+			}
+			if(!set.add(eventAchievement)){
+				throw new AssertionError("Already had " + eventAchievement + " in set!");
+			}
+		}
+		this.eventAchievementSetMap = Collections.unmodifiableMap(eventAchievementSetMap);
+
 		activity.addAndroidEventListener(this::onActivityResult);
 		activity.addLifecycleListener(new BasicListener());
+
+		GoogleSignInAccount account = getLastAccount();
+		if(account != null){
+			checkReveals(getAchievementsClient(account), getEventsClient(account));
+		}
 	}
 	// region Private Getters
 	private GoogleSignInAccount getLastAccount(){
@@ -194,7 +212,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 		requireNonNull(account);
 		System.out.println("Successfully signed in");
 //		getEventsClient(account);
-		checkReveals(getAchievementsClient(account));
+		checkReveals(getAchievementsClient(account), getEventsClient(account));
 	}
 	private void onAccountLogout(){
 		System.out.println("Logging out");
@@ -230,71 +248,76 @@ class AndroidAchievementHandler implements AchievementHandler {
 				}
 			}
 			if(needsCheck) {
-				checkReveals(achievementsClient);
+				checkReveals(achievementsClient, null);
 			}
 		}
 	}
-	private void checkReveals(AchievementsClient achievementsClient){
+
+	/**
+	 *
+	 * @param achievementsClient The AchievementsClient. Must be non-null
+	 * @param eventsClient The EventsClient if you want to check EventAchievements to make sure they're up to date. If null, will not check
+	 */
+	private void checkReveals(AchievementsClient achievementsClient, EventsClient eventsClient){
 		/*
 		Go through each possible achievement. If that achievement is an EventAchievement and its GameEvent is event,
 		check to see if we need to reveal it
 		 */
 		requireNonNull(achievementsClient).load(true).addOnSuccessListener(result -> {
-			AchievementBuffer buffer = requireNonNull(result.get());
-			Map<Achievement, com.google.android.gms.games.achievement.Achievement> achievementMap = new HashMap<>();
-			for (com.google.android.gms.games.achievement.Achievement a : buffer) {
+			AchievementBuffer achievementBuffer = requireNonNull(result.get());
+			Map<EventAchievement, AchievementCache> achievementMap = new HashMap<>();
+			for (com.google.android.gms.games.achievement.Achievement a : achievementBuffer) {
 				String key = a.getAchievementId();
 				EventAchievement eventAchievement = idEventAchievementMap.get(key);
 				if (eventAchievement != null) {
-					achievementMap.put(eventAchievement, a);
+					achievementMap.put(eventAchievement, new AchievementCache(a));
 					final int steps = getCurrentSteps(a);
 					Integer stepsToReveal = eventAchievement.getIncrementsForReveal();
 					if (stepsToReveal != null && (steps >= stepsToReveal)) {
 						achievementsClient.reveal(key);
 					}
-				} else {
-					ManualAchievement manualAchievement = idManualAchievementMap.get(key);
-					if(manualAchievement != null){
-						achievementMap.put(manualAchievement, a);
-					}
 				}
 			}
-			for(Set<? extends Achievement> set : linkedAchievementsSet){
-				int highest = 0;
-				for(Achievement achievement : set){
-					com.google.android.gms.games.achievement.Achievement gamesAchievement = achievementMap.get(achievement);
-					if(gamesAchievement == null){
-						throw new NoSuchElementException("Couldn't find gms Achievement for " + achievement);
-					}
-					int steps = getCurrentSteps(gamesAchievement);
-					if(steps > highest){
-						highest = steps;
-					}
-				}
-				if(highest > 0){
-					for(Achievement achievement : set){
-						com.google.android.gms.games.achievement.Achievement gamesAchievement = achievementMap.get(achievement);
-						if(gamesAchievement == null){
-							throw new AssertionError("Couldn't find gms Achievement for " + achievement + ". Should have already thrown! Map mutated?");
-						}
-						int steps = getCurrentSteps(gamesAchievement);
-						int neededSteps = highest - steps;
-						if(neededSteps > 0 && !isUnlocked(gamesAchievement)){ // we need more steps and the achievement isn't unlocked
-							System.out.println("Was a new achievement added? incrementing " + achievement + " by " + neededSteps);
-							boolean incremental = isIncremental(gamesAchievement);
-							if(incremental != achievement.isIncremental()){
-								throw new AssertionError("Achievement: " + achievement + " is incremental: " + achievement.isIncremental() + " should be opposite!");
-							}
-							if(incremental) {
-								achievementsClient.increment(gamesAchievement.getAchievementId(), neededSteps);
-							} else {
-								achievementsClient.unlock(gamesAchievement.getAchievementId());
+			achievementBuffer.release();
+			if(eventsClient != null) {
+				eventsClient.load(true).addOnSuccessListener(eventsResult -> {
+					EventBuffer eventBuffer = requireNonNull(eventsResult.get());
+
+					for (Event gmsEvent : eventBuffer) {
+						String eventId = gmsEvent.getEventId();
+						GameEvent event = idEventMap.get(eventId);
+						int counter = (int) Math.min(gmsEvent.getValue(), Integer.MAX_VALUE);
+						if (event != null) {
+							Set<EventAchievement> set = eventAchievementSetMap.get(event);
+							if(set != null) {
+								for (EventAchievement eventAchievement : set) {
+									AchievementCache achievementCache = requireNonNull(achievementMap.get(eventAchievement));
+									int neededSteps = counter - achievementCache.steps;
+									if (neededSteps > 0 && !achievementCache.unlocked) { // we need more steps and the achievement isn't unlocked
+										System.out.println("Was a new achievement added? incrementing " + eventAchievement + " by " + neededSteps + " to get to counter: " + counter);
+										if (achievementCache.incremental != eventAchievement.isIncremental()) {
+											throw new AssertionError("Achievement: " + eventAchievement
+													+ " is incremental: " + eventAchievement.isIncremental() + " should be opposite!");
+										}
+										if (achievementCache.incremental) {
+											achievementsClient.increment(achievementCache.id, neededSteps);
+											Integer stepsToReveal = eventAchievement.getIncrementsForReveal();
+											if (stepsToReveal != null && (counter >= stepsToReveal)) {
+												achievementsClient.reveal(achievementCache.id);
+											}
+										} else {
+											achievementsClient.unlock(achievementCache.id);
+										}
+									}
+
+								}
 							}
 						}
 					}
-				}
+
+					eventBuffer.release();
+				});
 			}
-			buffer.release();
 		});
 
 	}
@@ -409,6 +432,22 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 		@Override
 		public void dispose() {
+		}
+	}
+	private static class AchievementCache {
+
+		final String id;
+		final int steps;
+		final int totalSteps;
+		final boolean unlocked;
+		final boolean incremental;
+
+		AchievementCache(com.google.android.gms.games.achievement.Achievement achievement){
+			id = achievement.getAchievementId();
+			steps = getCurrentSteps(achievement);
+			totalSteps = getTotalSteps(achievement);
+			unlocked = isUnlocked(achievement);
+			incremental = isIncremental(achievement);
 		}
 	}
 }

@@ -51,13 +51,14 @@ public class GameScreen implements UsableScreen {
 		this.renderParts = renderParts;
 		this.achievementHandler = achievementHandler;
 
-		world = new World(new GameLevelGetter(players), 18, 18, renderObject, new StageCoordinatesConverter());
+		final AchievementHandler passedHandler = gameType == GameType.NORMAL ? achievementHandler : AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
+		world = new World(new GameLevelGetter(players, passedHandler), 18, 18, renderObject, new StageCoordinatesConverter());
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		if(gameType == GameType.NORMAL){
 			int i = 0;
 			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(world, gameInput::getRumble, achievementHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				Player player = new Player(world, gameInput::getRumble, passedHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
 				players.add(player);
 				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
@@ -65,7 +66,7 @@ public class GameScreen implements UsableScreen {
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
 		} else { // assume DEMO_AI
-			Player player = new Player(world, () -> null, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, Player.Type.NORMAL);
+			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL);
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);

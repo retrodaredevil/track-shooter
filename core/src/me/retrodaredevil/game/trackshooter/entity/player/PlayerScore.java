@@ -9,6 +9,8 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Fruit;
+import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
+import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupPackage;
 
 public class PlayerScore implements Score {
     private final int startingLives;
@@ -74,6 +76,8 @@ public class PlayerScore implements Score {
 			}
 		} else if(killed instanceof Fruit){
 			achievementHandler.incrementIfSupported(DefaultGameEvent.FRUIT_CONSUMED, 1);
+		} else if(killed instanceof PowerupPackage){
+			achievementHandler.incrementIfSupported(DefaultGameEvent.POWER_UPS_COLLECTED, 1);
 		}
 	}
 

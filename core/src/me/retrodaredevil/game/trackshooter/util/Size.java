@@ -105,6 +105,19 @@ public class Size {
 		applyOf(cell, Type.HEIGHT, percent);
 	}
 
+	public Size withWidth(float width){
+		return new Size((Float) width, height);
+	}
+	public Size withHeight(float height){
+		return new Size(width, (Float) height);
+	}
+	public Size withWidthPercent(float widthPercent){
+		return withWidth(requireWidth() * widthPercent);
+	}
+	public Size withHeightPercent(float heightPercent){
+		return withHeight(requireHeight() * heightPercent);
+	}
+
 	public enum Type {
 		WIDTH, HEIGHT
 	}

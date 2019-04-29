@@ -2,11 +2,10 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 
 import java.util.Collection;
-import java.util.List;
 
+import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;
@@ -16,12 +15,9 @@ import me.retrodaredevil.game.trackshooter.entity.movement.OnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
 import me.retrodaredevil.game.trackshooter.level.EnemyLevel;
 import me.retrodaredevil.game.trackshooter.level.Level;
-import me.retrodaredevil.game.trackshooter.level.LevelEndState;
 import me.retrodaredevil.game.trackshooter.level.LevelGetter;
-import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.level.functions.BonusCargoFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.FruitFunction;
-import me.retrodaredevil.game.trackshooter.level.functions.LevelFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.SnakeFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.StarFishFunction;
 import me.retrodaredevil.game.trackshooter.level.functions.TripleShotPowerupFunction;
@@ -41,13 +37,15 @@ public class GameLevelGetter implements LevelGetter {
 	private int levelNumber = 0; // still starts at 1 (incremented first thing in start of nextLevel())
 	private final Track[] tracks;
 	private final Collection<? extends Player> players; // may be mutated
+	private final AchievementHandler achievementHandler;
 
 	/**
 	 *
 	 * @param players The reference to the list of players (NOT a copy). May be mutated after this instance is constructed
 	 */
-	public GameLevelGetter(Collection<? extends Player> players){
+	public GameLevelGetter(Collection<? extends Player> players, AchievementHandler achievementHandler){
 		this.players = players;
+		this.achievementHandler = achievementHandler;
 		this.tracks = new Track[] { Tracks.newMazeTrack(), Tracks.newPointyTrack(), Tracks.newPlusTrack(), Tracks.newKingdomTrack(), Tracks.newCircleTrack() };
 	}
 
@@ -94,7 +92,7 @@ public class GameLevelGetter implements LevelGetter {
 					} else {
 						points = Resources.Points.P1000;
 					}
-					addFunction(new BonusCargoFunction(world, cargoEntity, players, points));
+					addFunction(new BonusCargoFunction(world, cargoEntity, players, points, achievementHandler));
 				}
 				if(levelNumber > 3 && levelNumber % 3 == 0 && levelNumber % 9 != 0 && !isEasy){ // 6, 12, 15, 21
 					float spawnAfter = 20;
