@@ -59,15 +59,15 @@ public class GameLevelGetter implements LevelGetter {
 			protected void onStart() {
 				super.onStart();
 				if(levelNumber > 5){
-					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_5);
-					achievementHandler.manualReveal(DefaultAchievement.CLEAR_LEVEL_10);
+					achievementHandler.manualAchieveIfSupported(DefaultAchievement.CLEAR_LEVEL_5);
+					achievementHandler.manualRevealIfSupported(DefaultAchievement.CLEAR_LEVEL_10);
 				}
 				if(levelNumber > 10){
-					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_10);
-					achievementHandler.manualReveal(DefaultAchievement.CLEAR_LEVEL_30);
+					achievementHandler.manualAchieveIfSupported(DefaultAchievement.CLEAR_LEVEL_10);
+					achievementHandler.manualRevealIfSupported(DefaultAchievement.CLEAR_LEVEL_30);
 				}
 				if(levelNumber > 30){
-					achievementHandler.manualAchieve(DefaultAchievement.CLEAR_LEVEL_30);
+					achievementHandler.manualAchieveIfSupported(DefaultAchievement.CLEAR_LEVEL_30);
 				}
 				final boolean isEasy = levelNumber >= 10 && (levelNumber - 2) % 8 == 0; // 10, 18, 26 // galaga level reference
 				final Track track = world.getTrack();
