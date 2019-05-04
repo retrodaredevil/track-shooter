@@ -3,6 +3,7 @@ package me.retrodaredevil.game.trackshooter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.widget.Toast;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -154,21 +155,32 @@ class AndroidAchievementHandler implements AchievementHandler {
 			try {
 				GoogleSignInAccount account = task.getResult(ApiException.class);
 				doAccountSignIn(account);
+				Toast.makeText(context, "Signed into Google", Toast.LENGTH_SHORT).show();
 			} catch (ApiException apiException) {
 				onAccountLogout();
-				if(apiException.getStatusCode() == 12501){
-					System.out.println("Pressed back button while signing in.");
-				} else {
-					String message = apiException.getMessage();
-					if (message == null || message.trim().isEmpty()) {
-						message = "Unable to connect";
-					}
+				switch(apiException.getStatusCode()){
+					case 12501:
+						System.out.println("Pressed back button while signing in.");
+						break;
+					case 4:
+						System.out.println("Dreaded status code 4...");
+						new AlertDialog.Builder(activity)
+								.setMessage("Status code 4. Unable to connect. This error is probably temporary and is likely being fixed.")
+								.setNeutralButton(android.R.string.ok, null)
+								.show();
+						break;
+					default:
+						String message = apiException.getMessage();
+						if (message == null || message.trim().isEmpty()) {
+							message = "Unable to connect";
+						}
 
 
-					new AlertDialog.Builder(activity)
-							.setMessage(message)
-							.setNeutralButton(android.R.string.ok, null)
-							.show();
+						new AlertDialog.Builder(activity)
+								.setMessage(message)
+								.setNeutralButton(android.R.string.ok, null)
+								.show();
+						break;
 				}
 			}
 		}

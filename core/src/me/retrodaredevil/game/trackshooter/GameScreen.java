@@ -162,6 +162,7 @@ public class GameScreen implements UsableScreen {
 				.addRenderable(world)
 				.addMainStage() // world should have added this anyway
 				.addRenderable(renderParts.getTouchpadRenderer())
+				.addRenderable(renderParts.getArrowRenderer())
 				.addRenderable(renderParts.getOptionsMenu())
 				.addRenderable(pauseMenu) // may be null
 				.addRenderable(renderParts.getOverlay());

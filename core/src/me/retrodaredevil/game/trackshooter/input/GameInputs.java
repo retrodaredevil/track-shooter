@@ -15,12 +15,14 @@ import java.util.Objects;
 
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import me.retrodaredevil.controller.ControllerPart;
+import me.retrodaredevil.controller.ControllerPartNotUpdatedException;
 import me.retrodaredevil.controller.input.*;
 import me.retrodaredevil.controller.options.*;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.trackshooter.input.implementations.*;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
+import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 
 import static java.util.Objects.requireNonNull;
@@ -67,8 +69,17 @@ public final class GameInputs {
 		options.add(r);
 		return r;
 	}
-	private static InputPart createRotationAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, boolean useYByDefault, String baseControlScheme){
-		final OptionValue useY = OptionValues.createBooleanOptionValue(useYByDefault);
+
+	/**
+	 *
+	 * @param xAxis The x axis
+	 * @param yAxis The y axis
+	 * @param options The options that useY will be added to
+	 * @param useY This will be automatically added to options and determines whether to use the x or y axis
+	 * @param baseControlScheme The simple name of the controls scheme to determine the category
+	 * @return The created InputPart
+	 */
+	private static InputPart createRotationAxisChooser(final InputPart xAxis, final InputPart yAxis, OptionTracker options, OptionValue useY, String baseControlScheme){
 		options.add(new ControlOption("Use Y Axis for Rotation", "Should the Y Axis be used for rotation",
 				"controls.rotation." + baseControlScheme + ".use_y_axis", useY));
 
@@ -80,13 +91,14 @@ public final class GameInputs {
 	private static InputPart createMouseAxis(OptionTracker options){
 		OptionValue mouseMultiplier = createRotationMultiplier(options, false, MOUSE).getOptionValue();
 		OptionValue mouseInverted = createRotationInvert(options, MOUSE).getOptionValue();
+		final OptionValue useY = OptionValues.createBooleanOptionValue(false);
 		return createRotationAxisChooser(
 				new GdxMouseAxis(false, () -> 1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
 				new GdxMouseAxis(true, () -> -1.0f * (float) mouseMultiplier.getOptionValue() * (mouseInverted.getBooleanOptionValue() ? -1 : 1)),
-				options, false, MOUSE
+				options, useY, MOUSE
 		);
 	}
-	private static InputPart createTouchAxis(OptionTracker options, ScreenArea screenArea, OptionValue isLeftHanded){
+	private static InputPart createTouchAxis(OptionValue useY, OptionTracker options, ScreenArea screenArea, OptionValue isLeftHanded){
 		OptionValue multiplier = createRotationMultiplier(options, true, TOUCH).getOptionValue();
 		OptionValue inverted = createRotationInvert(options, TOUCH).getOptionValue();
 		return createRotationAxisChooser(
@@ -94,7 +106,7 @@ public final class GameInputs {
 				new GdxMouseAxis(true,
 						() -> -7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
 						screenArea),
-				options, true, TOUCH
+				options, useY, TOUCH
 		);
 	}
 
@@ -128,9 +140,12 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createTouchInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl) {
-		if(renderParts == null && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
+	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl) {
+		if(isTouchpad && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
+		}
+		if(renderParts == null){
+			throw new NullPointerException("renderParts is null!");
 		}
 		if(rumbleAnalogControl == null){
 			throw new NullPointerException("rumbleAnalogControl is null! At least use GdxRumble.UNSUPPORTED_ANALOG!");
@@ -142,7 +157,7 @@ public final class GameInputs {
 		final InputPart rotateAxis, fireButton, startButton, slow, activatePowerup, pauseBackButton, dummyEnter;
 		final ControllerRumble rumble;
 		final OptionTracker options = new OptionTracker();
-		final TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger visibilityChanger; // may be null
+		final ActiveDetector activeDetector = new ActiveDetector();
 
 		final OptionValue isLeftHanded = OptionValues.createBooleanOptionValue(false);
 		options.add(new ControlOption("Left Handed", "Should the controls be reversed for left handed.",
@@ -177,8 +192,8 @@ public final class GameInputs {
 
 		final ShouldIgnorePointer shouldIgnorePointer;
 
-		if(renderParts != null){
-			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
+		if(isTouchpad){
+//			visibilityChanger = new TouchpadRenderer.UsableGameInputTouchpadVisibilityChanger();
 			OptionValue constantShoot = OptionValues.createBooleanOptionValue(true);
 			OptionValue distanceAwayX = OptionValues.createAnalogRangedOptionValue(.05, .5, .15);
 			OptionValue heightOption = OptionValues.createAnalogRangedOptionValue(.25, .75, .5);
@@ -195,7 +210,7 @@ public final class GameInputs {
 			options.add(new ControlOption("Joystick size",
 					"The size of the joystick relative to the height", "controls.movement." + TOUCH + ".joystick.size", diameterOption));
 
-			PointerTouchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(visibilityChanger, new TouchpadRenderer.ProportionalPositionGetter() {
+			PointerTouchpad touchpad = renderParts.getTouchpadRenderer().createTouchpad(activeDetector::isActive, new TouchpadRenderer.ProportionalPositionGetter() {
 				@Override
 				public float getX() {
 					double x = distanceAwayX.getOptionValue();
@@ -211,6 +226,7 @@ public final class GameInputs {
 				}
 			}, () -> (float) diameterOption.getOptionValue());
 			shouldIgnorePointer = (pointer) -> pointer == touchpad.getPointer();
+
 
 			mainJoystick = new GdxTouchpadJoystick(touchpad);
 
@@ -258,7 +274,6 @@ public final class GameInputs {
 					)
 			), true);
 		} else {
-			visibilityChanger = null;
 			shouldIgnorePointer = (pointer) -> false;
 			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt");
 			options.add((ConfigurableObject) mainJoystick);
@@ -270,7 +285,37 @@ public final class GameInputs {
 				return fireAreaGetter.containsPoint(x, y);
 			});
 		}
-		rotateAxis = createTouchAxis(options, rotateAreaGetter, isLeftHanded);
+		final OptionValue useY = OptionValues.createBooleanOptionValue(true);
+		rotateAxis = createTouchAxis(useY, options, rotateAreaGetter, isLeftHanded);
+		renderParts.getArrowRenderer().createArrow(new ArrowRenderer.ShouldShowArrow() {
+			long lastPress = 0;
+			@Override
+			public boolean shouldShow() {
+				boolean pressing = false;
+				try {
+					pressing = !rotateAxis.isDeadzone();
+				} catch(ControllerPartNotUpdatedException ex){
+				}
+				if(pressing){
+					lastPress = System.currentTimeMillis();
+					return false;
+				}
+				if(lastPress + 10000 > System.currentTimeMillis()){ // hasn't been pressed for 10 seconds
+					return false;
+				}
+				return activeDetector.isActive();
+			}
+
+			@Override
+			public boolean isHorizontal() {
+				return !useY.getBooleanOptionValue();
+			}
+
+			@Override
+			public boolean isLeft() {
+				return isLeftHanded.getBooleanOptionValue();
+			}
+		});
 
 		startButton = new DummyInputPart(0, false);
 		slow = new DummyInputPart(0, false);
@@ -306,23 +351,21 @@ public final class GameInputs {
 			}
 		};
 
-		DefaultUsableGameInput r = new DefaultUsableGameInput(renderParts != null ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
+		DefaultUsableGameInput r = new DefaultUsableGameInput(isTouchpad ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
 				mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup, startButton, pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList()
 		);
 
 		r.addChildren(false, false, mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup,
 				startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
-		if(visibilityChanger != null){
-			visibilityChanger.setGameInput(r);
-		}
+		activeDetector.setGameInput(r);
 		return r;
 	}
-	public static UsableGameInput createTouchGyroInput(RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(null, rumbleAnalogControl);
+	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
+		return createTouchInput(false, renderParts, rumbleAnalogControl);
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(requireNonNull(renderParts), rumbleAnalogControl);
+		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl);
 	}
 
 	private static ControlOption createRumbleOnSingleShotControlOption(){
@@ -345,5 +388,16 @@ public final class GameInputs {
 		parent.addChild(inputPart);
 		controlOptions.add(inputPart);
 		return inputPart;
+	}
+	private static class ActiveDetector {
+		private UsableGameInput gameInput = null;
+
+		public boolean isActive() {
+			return gameInput != null && gameInput.isActiveInput();
+		}
+		public void setGameInput(UsableGameInput gameInput){
+			this.gameInput = gameInput;
+		}
+		public UsableGameInput getGameInput(){ return gameInput; }
 	}
 }

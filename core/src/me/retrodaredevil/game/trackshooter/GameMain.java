@@ -36,13 +36,9 @@ import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.*;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxRumble;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
-import me.retrodaredevil.game.trackshooter.render.parts.Background;
-import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
-import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
-import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
+import me.retrodaredevil.game.trackshooter.render.parts.*;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -87,7 +83,7 @@ public class GameMain extends Game {
 		renderObject = new RenderObject(batch, skin, uiSkin, arcadeSkin);
 		saveObject = new SaveObject();
 		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject, saveObject),
-				new Overlay(renderObject), new TouchpadRenderer(renderObject), new InputMultiplexer());
+				new Overlay(renderObject), new TouchpadRenderer(renderObject), new ArrowRenderer(renderObject), new InputMultiplexer());
 		controllerManager = new DefaultControllerManager();
 		{
 			boolean firstRun = true;
@@ -171,7 +167,7 @@ public class GameMain extends Game {
 		if(Gdx.app.getType() == Application.ApplicationType.Android){
 			gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts, rumbleAnalogControl));
 			if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
-				gameInputs.add(GameInputs.createTouchGyroInput(rumbleAnalogControl));
+				gameInputs.add(GameInputs.createTouchGyroInput(renderParts, rumbleAnalogControl));
 			}
 		}
 		gameInputs.add(GameInputs.createMouseAndKeyboardInput());

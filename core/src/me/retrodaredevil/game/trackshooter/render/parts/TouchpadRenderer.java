@@ -156,6 +156,7 @@ public class TouchpadRenderer implements Renderable, InputFocusable {
 	 * A simple concrete class for {@link TouchpadVisibilityChanger}. This allows you to set
 	 * a {@link UsableGameInput} that if active, will show the touchpad.
 	 */
+	@Deprecated
 	public static class UsableGameInputTouchpadVisibilityChanger implements TouchpadVisibilityChanger{
 		private UsableGameInput gameInput = null;
 
