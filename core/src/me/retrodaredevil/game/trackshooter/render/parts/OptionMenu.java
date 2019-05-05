@@ -5,11 +5,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
 import me.retrodaredevil.game.trackshooter.InputFocusable;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -25,19 +24,19 @@ import me.retrodaredevil.game.trackshooter.render.selection.options.providers.Co
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.PageControlOptionVisibility;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.DialogTable;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
-import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.Size;
 
 public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
 	private final Stage preferredStage;
+	private final List<ConfigurableObject> globalConfigurableObjectList;
 	private SelectionMenuRenderComponent renderComponent = null;
-	private ConfigurableControllerPart currentController = null;
 
-	public OptionMenu(RenderObject renderObject, SaveObject saveObject) {
+	public OptionMenu(RenderObject renderObject, SaveObject saveObject, List<? extends ConfigurableObject> globalConfigurableObjectList) {
 		this.renderObject = renderObject;
 		this.saveObject = saveObject;
+		this.globalConfigurableObjectList = Collections.unmodifiableList(new ArrayList<>(globalConfigurableObjectList));
 
 		this.preferredStage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
 	}
@@ -54,10 +53,6 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 	 */
 	public void setToController(int configControllerPlayerIndex, ConfigurableControllerPart configController, int menuControllerPlayerIndex, GameInput menuController){
 		if (renderComponent != null) {
-			if(currentController == configController){
-				System.err.println("it's the same!");
-				return; // don't do anything, it's the same
-			}
 			renderComponent.dispose();
 		}
 		if(configController == null){
@@ -70,6 +65,12 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 		final PageControlOptionVisibility pageControlOptionVisibility = new PageControlOptionVisibility();
 		final Size topSize = Size.createSize(70, 35);
 		final Size bottomSize = Size.createSize(100, 40);
+
+		List<ConfigurableObjectOptionProvider> configProviders = new ArrayList<>();
+		configProviders.add(new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, configController, renderObject, saveObject, pageControlOptionVisibility));
+		for(ConfigurableObject configurableObject : globalConfigurableObjectList){
+			configProviders.add(new ConfigurableObjectOptionProvider(Size.widthOnly(400), null, configurableObject, renderObject, saveObject, pageControlOptionVisibility));
+		}
 
 		renderComponent = new SelectionMenuRenderComponent(renderObject, menuControllerPlayerIndex, menuController,
 				new DialogTable("Options", renderObject),
@@ -88,9 +89,7 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 								new PageButtonSingleOption(new TextButton("all", renderObject.getUISkin(), "small"), topSize,
 										PageControlOptionVisibility.Page.ALL, pageControlOptionVisibility)
 						))),
-						new GroupedSelectionSingleOption(Size.NONE, false, Collections.singletonList(
-								new ConfigurableObjectOptionProvider(Size.widthOnly(400), configControllerPlayerIndex, menuController, renderObject, saveObject, pageControlOptionVisibility))
-						),
+						new GroupedSelectionSingleOption(Size.NONE, false, configProviders),
 						new GroupedSelectionSingleOption(Size.createSize(400, 65), true, Collections.singletonList(new BasicOptionProvider(
 								new ButtonExitMenuSingleOption(new TextButton("back", renderObject.getUISkin(), "small"), bottomSize),
 								new ButtonSingleOption(new TextButton("reset", renderObject.getUISkin(), "small"), bottomSize,
@@ -103,7 +102,6 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 						)))
 				)),
 				this::closeMenu);
-		currentController = menuController; // TODO I believe I originally set this up to check for errors, but this may be unnecessary
 	}
 	@Override
 	public void closeMenu(){

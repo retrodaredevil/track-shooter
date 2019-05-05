@@ -24,7 +24,7 @@ public final class OptionSaver {
 		optionPreferences = Gdx.app.getPreferences("options");
 	}
 
-	public void loadControllerConfiguration(int playerIndex, ConfigurableObject configController){
+	public void loadControllerConfiguration(Integer playerIndex, ConfigurableObject configController){
 		final Collection<? extends ControlOption> options = configController.getControlOptions();
 		for(ControlOption option : options){
 			loadControlOption(playerIndex, option);
@@ -34,9 +34,10 @@ public final class OptionSaver {
 	/**
 	 * Overrides the value of the control option using the saved value or leaves it untouched if
 	 * there was no saved value found
+	 * @param playerIndex The player index starting at 0 or null for global
 	 * @param controlOption
 	 */
-	public void loadControlOption(int playerIndex, ControlOption controlOption){
+	public void loadControlOption(Integer playerIndex, ControlOption controlOption){
 		final OptionValue value = controlOption.getOptionValue();
 		final float defaultValue = (float) value.getDefaultOptionValue();
 		final float savedValue = optionPreferences.getFloat(getKey(playerIndex, controlOption), defaultValue);
@@ -49,9 +50,10 @@ public final class OptionSaver {
 
 	/**
 	 * Saves the value of the control option to a file
+	 * @param playerIndex The player index starting at 0 or null for global
 	 * @param controlOption The control option
 	 */
-	public void saveControlOption(int playerIndex, ControlOption controlOption, boolean flush){
+	public void saveControlOption(Integer playerIndex, ControlOption controlOption, boolean flush){
 		final OptionValue optionValue = controlOption.getOptionValue();
 		final double value = optionValue.getOptionValue();
 		final String key = getKey(playerIndex, controlOption);
@@ -67,12 +69,15 @@ public final class OptionSaver {
 		}
 	}
 	/**
-	 * @see #saveControlOption(int, ControlOption, boolean)
+	 * @see #saveControlOption(Integer, ControlOption, boolean)
 	 */
-	public void saveControlOption(int playerIndex, ControlOption controlOption){
+	public void saveControlOption(Integer playerIndex, ControlOption controlOption){
 		this.saveControlOption(playerIndex, controlOption, true);
 	}
-	private String getKey(int playerIndex, ControlOption controlOption){
+	private String getKey(Integer playerIndex, ControlOption controlOption){
+		if(playerIndex == null){
+			return "global." + controlOption.getCategory();
+		}
 		return "player." + playerIndex + "." + controlOption.getCategory();
 	}
 }

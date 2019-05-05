@@ -20,6 +20,7 @@ import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSi
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.MultiActorOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.tables.PlainTable;
+import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 
 import java.util.*;
@@ -33,6 +34,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
 	private final AchievementHandler achievementHandler;
+	private final VolumeControl volumeControl;
 	private UsableScreen nextScreen = null;
 
 	private final Stage uiStage;
@@ -52,13 +54,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private boolean showLeaderboardsDown = false;
 	private float idleTime = 0;
 
-	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler){
+	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler, VolumeControl volumeControl){
 		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
 		this.gameInputPlayerIndex = 0;
 		this.gameInput = gameInputs.get(gameInputPlayerIndex);
 		this.renderObject = Objects.requireNonNull(renderObject);
 		this.renderParts = Objects.requireNonNull(renderParts);
 		this.achievementHandler = achievementHandler;
+		this.volumeControl = volumeControl;
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
 		final TextButton.TextButtonStyle style = renderObject.getUISkin().get(TextButton.TextButtonStyle.class);
@@ -131,7 +134,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			return;
 		}
 		if(creditsButton.isPressed()){
-			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, achievementHandler);
+			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, achievementHandler, volumeControl);
 			return;
 		}
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
@@ -187,12 +190,12 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	}
 	private void normalGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, achievementHandler);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, achievementHandler, volumeControl);
 		}
 	}
 	private void demoGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, achievementHandler);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, achievementHandler, volumeControl);
 		}
 	}
 

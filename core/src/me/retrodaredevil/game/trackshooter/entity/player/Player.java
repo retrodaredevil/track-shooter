@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
+import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
 import me.retrodaredevil.game.trackshooter.util.Constants;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
@@ -39,14 +40,16 @@ public class Player extends SimpleEntity {
 	private final Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new EnumMap<>(Bullet.ShotType.class);
 	private final Score score;
 	private final Type playerType;
+	private final VolumeControl volumeControl;
 
 	private boolean hit = false;
 	private boolean triplePowerup = false;
 
 
-	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, AchievementHandler achievementHandler, Type playerType){
+	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, AchievementHandler achievementHandler, Type playerType, VolumeControl volumeControl){
 		super(world);
 		this.playerType = playerType;
+		this.volumeControl = volumeControl;
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(world, this));
 //		setMoveComponent(new FreeVelocityMoveComponent(this));
 		setHitboxSize(.7f);
@@ -187,7 +190,9 @@ public class Player extends SimpleEntity {
 		}
 		shotsList.add(bullets);
 
-		world.getMainSkin().get("bullet", Sound.class).play(1, 4, 0);
+		if(!volumeControl.isMuted()) {
+			world.getMainSkin().get("bullet", Sound.class).play(volumeControl.getVolume(), 4, 0);
+		}
 		getScoreObject().onShot(bullets.size());
 		return bullets;
 	}

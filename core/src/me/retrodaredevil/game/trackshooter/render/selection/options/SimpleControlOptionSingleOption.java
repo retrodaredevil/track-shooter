@@ -8,12 +8,12 @@ import me.retrodaredevil.game.trackshooter.util.Size;
 
 abstract class SimpleControlOptionSingleOption extends ContainerSingleOption implements ControlOptionSingleOption {
 
-	private final int playerIndex;
+	private final Integer playerIndex;
 	protected final ControlOption controlOption;
 	protected final OptionSaver optionSaver;
 	private boolean shouldSave = false;
 
-	SimpleControlOptionSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver){
+	SimpleControlOptionSingleOption(Size size, Integer playerIndex, ControlOption controlOption, OptionSaver optionSaver){
 		super(size);
 		this.playerIndex = playerIndex;
 		this.controlOption = controlOption;

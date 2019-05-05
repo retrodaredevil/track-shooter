@@ -2,7 +2,6 @@ package me.retrodaredevil.game.trackshooter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
@@ -24,6 +23,7 @@ import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
 import me.retrodaredevil.game.trackshooter.render.parts.PauseMenu;
 import me.retrodaredevil.game.trackshooter.render.viewports.WorldViewport;
+import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
 import me.retrodaredevil.game.trackshooter.world.World;
 
 public class GameScreen implements UsableScreen {
@@ -39,17 +39,19 @@ public class GameScreen implements UsableScreen {
 	/** The pause menu or null */
 	private final PauseMenu pauseMenu;
 	private final AchievementHandler achievementHandler;
+	private final VolumeControl volumeControl;
 
 	private final Stage stage;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType, AchievementHandler achievementHandler){
+	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType, AchievementHandler achievementHandler, VolumeControl volumeControl){
 		this.gameInputs = gameInputs;
 		this.gameType = gameType;
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
 		this.achievementHandler = achievementHandler;
+		this.volumeControl = volumeControl;
 
 		final AchievementHandler passedHandler = gameType == GameType.NORMAL ? achievementHandler : AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
 		world = new World(new GameLevelGetter(players, passedHandler), 18, 18, renderObject, new StageCoordinatesConverter());
@@ -58,7 +60,7 @@ public class GameScreen implements UsableScreen {
 		if(gameType == GameType.NORMAL){
 			int i = 0;
 			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(world, gameInput::getRumble, passedHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER);
+				Player player = new Player(world, gameInput::getRumble, passedHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER, volumeControl);
 				players.add(player);
 				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
@@ -66,7 +68,7 @@ public class GameScreen implements UsableScreen {
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
 		} else { // assume DEMO_AI
-			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL);
+			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED);
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);
@@ -260,7 +262,7 @@ public class GameScreen implements UsableScreen {
 		if(!shouldExit){
 			throw new IllegalStateException("Cannot create a StartScreen if we aren't done!");
 		}
-		return new StartScreen(gameInputs, renderObject, renderParts, achievementHandler);
+		return new StartScreen(gameInputs, renderObject, renderParts, achievementHandler, volumeControl);
 	}
 
 	public enum GameType {

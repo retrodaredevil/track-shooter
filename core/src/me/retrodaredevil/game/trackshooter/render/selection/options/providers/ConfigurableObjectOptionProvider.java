@@ -24,7 +24,7 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	 */
 
 	private final Size size;
-	private final int playerIndex;
+	private final Integer playerIndex;
 	private final ConfigurableObject configurableObject;
 	private final RenderObject renderObject;
 	private final SaveObject saveObject;
@@ -34,12 +34,12 @@ public class ConfigurableObjectOptionProvider implements SingleOptionProvider {
 	/**
 	 *
 	 * @param size The size that must include a width. This width will be applied to each option
-	 * @param playerIndex The player index of the configurableObject
+	 * @param playerIndex The player index of the configurableObject or null for global
 	 * @param configurableObject The object/controller that has ControlOptions to be altered by
 	 * @param renderObject The RenderObject
 	 * @param saveObject The SaveObject
 	 */
-	public ConfigurableObjectOptionProvider(Size size, int playerIndex, ConfigurableObject configurableObject,
+	public ConfigurableObjectOptionProvider(Size size, Integer playerIndex, ConfigurableObject configurableObject,
 											RenderObject renderObject, SaveObject saveObject, ControlOptionVisibility controlOptionVisibility){
 		this.size = size;
 		this.playerIndex = playerIndex;

@@ -19,7 +19,7 @@ public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 
 	private final CheckBox checkBox;
 
-	public CheckBoxSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+	public CheckBoxSingleOption(Size size, Integer playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
 		super(size, playerIndex, controlOption, optionSaver);
 
 		checkBox = new CheckBox(controlOption.getLabel(), renderObject.getUISkin());

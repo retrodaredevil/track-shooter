@@ -40,6 +40,9 @@ import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.*;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
+import me.retrodaredevil.game.trackshooter.sound.OptionValueVolumeControl;
+import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
+import me.retrodaredevil.game.trackshooter.util.ImmutableConfigurableObject;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Resources;
 
@@ -55,6 +58,7 @@ public class GameMain extends Game {
 
 	private RenderObject renderObject;
 	private SaveObject saveObject;
+	private VolumeControl volumeControl;
 	private RenderParts renderParts;
 
 	private ControllerManager controllerManager;
@@ -82,7 +86,12 @@ public class GameMain extends Game {
 		Skin arcadeSkin = new Skin(Gdx.files.internal("skins/arcade/arcade-ui.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin, arcadeSkin);
 		saveObject = new SaveObject();
-		renderParts = new RenderParts(new Background(renderObject), new OptionMenu(renderObject, saveObject),
+		OptionValue volumeOption = OptionValues.createAnalogRangedOptionValue(0, 1, 1);
+		volumeControl = new OptionValueVolumeControl(volumeOption);
+		OptionMenu optionMenu = new OptionMenu(renderObject, saveObject, Collections.singletonList(
+				new ImmutableConfigurableObject(new ControlOption("Volume", "The volume percentage", "controls.main.options.volume", volumeOption))
+		));
+		renderParts = new RenderParts(new Background(renderObject), optionMenu,
 				new Overlay(renderObject), new TouchpadRenderer(renderObject), new ArrowRenderer(renderObject), new InputMultiplexer());
 		controllerManager = new DefaultControllerManager();
 		{
@@ -211,7 +220,7 @@ public class GameMain extends Game {
 		}
 	}
 	private void startScreen(){
-		setScreen(new StartScreen(inputs, renderObject, renderParts, achievementHandler));
+		setScreen(new StartScreen(inputs, renderObject, renderParts, achievementHandler, volumeControl));
 	}
 
 	@Override

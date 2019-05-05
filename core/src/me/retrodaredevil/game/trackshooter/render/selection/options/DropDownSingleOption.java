@@ -24,7 +24,7 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 	private final Array<String> itemsArray;
 	private boolean isShown = false;
 
-	public DropDownSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+	public DropDownSingleOption(Size size, Integer playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
 		super(size, playerIndex, controlOption, optionSaver);
 		OptionValue value = controlOption.getOptionValue();
 		if(!value.isOptionValueRadio()){

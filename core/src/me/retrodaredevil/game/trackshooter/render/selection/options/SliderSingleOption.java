@@ -28,10 +28,12 @@ public class SliderSingleOption extends SimpleControlOptionSingleOption {
 	private final RenderObject renderObject;
 
 	private final Slider slider;
+	/** Initialized in onInit() and is used to show the percentage*/
 	private Label valueLabel = null;
+	/** Keeps track of the slider percent without rounding. Useful for joysticks to make slider seem more analog*/
 	private Float sliderPercent = null;
 
-	public SliderSingleOption(Size size, int playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
+	public SliderSingleOption(Size size, Integer playerIndex, ControlOption controlOption, OptionSaver optionSaver, RenderObject renderObject){
 		super(size, playerIndex, controlOption, optionSaver);
 		this.renderObject = renderObject;
 

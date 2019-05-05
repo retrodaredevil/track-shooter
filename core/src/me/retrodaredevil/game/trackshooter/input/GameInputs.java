@@ -291,19 +291,15 @@ public final class GameInputs {
 			long lastPress = 0;
 			@Override
 			public boolean shouldShow() {
-				boolean pressing = false;
-				try {
-					pressing = !rotateAxis.isDeadzone();
-				} catch(ControllerPartNotUpdatedException ex){
+				if(!activeDetector.isActive()){
+					lastPress = 0;
+					return false;
 				}
-				if(pressing){
+				if(!rotateAxis.isDeadzone()){
 					lastPress = System.currentTimeMillis();
 					return false;
 				}
-				if(lastPress + 10000 > System.currentTimeMillis()){ // hasn't been pressed for 10 seconds
-					return false;
-				}
-				return activeDetector.isActive();
+				return lastPress + 10000 < System.currentTimeMillis(); // hasn't been pressed for 10 seconds
 			}
 
 			@Override
