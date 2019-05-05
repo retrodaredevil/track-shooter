@@ -4,13 +4,16 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.view.View;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesClient;
 import me.retrodaredevil.game.trackshooter.achievement.Achievement;
 import me.retrodaredevil.game.trackshooter.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.ManualAchievement;
@@ -94,6 +97,8 @@ public class AndroidLauncher extends AndroidApplication {
 				this,
 				client);
 		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, achievementHandler), config);
+		achievementHandler.setView(graphics.getView());
+
 	}
 
 

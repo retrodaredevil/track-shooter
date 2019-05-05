@@ -224,10 +224,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 	private static final String[] TIPS = new String[] {
 			"Change your controls in options!",
-			"Only be 4 shots at a time!",
+			"Extra life at 10,000 and every 30,000!",
+			"Only 4 shots at a time!",
 			"If you save Mr. Spaceship from fire, you'll get bonus points!",
 			"If you wait long enough, the AI will start playing the game!",
 			"Don't turn your back on the snake!",
+			"Shoot the snake's head!",
+			"Don't let the snake eat your fruit or power-ups!",
+			"Don't shoot the sharks while they're blocking your escape route!",
 			"Keep shooting at the Sharks to make them spin longer!",
 			"Shoot the starfish once to change its direction!",
 			"Open Source!",

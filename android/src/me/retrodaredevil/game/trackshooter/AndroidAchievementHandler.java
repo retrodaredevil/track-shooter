@@ -3,6 +3,8 @@ package me.retrodaredevil.game.trackshooter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.Toast;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -10,10 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.games.AchievementsClient;
-import com.google.android.gms.games.EventsClient;
-import com.google.android.gms.games.Games;
-import com.google.android.gms.games.LeaderboardsClient;
+import com.google.android.gms.games.*;
 import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.event.Event;
 import com.google.android.gms.games.event.EventBuffer;
@@ -44,6 +43,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	private final Map<GameEvent, Set<EventAchievement>> eventAchievementSetMap;
 
+	private View view;
 
 	private AchievementsClient achievementsClient = null;
 	private EventsClient eventsClient = null;
@@ -90,6 +90,15 @@ class AndroidAchievementHandler implements AchievementHandler {
 			doAccountSignIn(account);
 		}
 	}
+
+	void setView(View view){
+		this.view = view;
+		GoogleSignInAccount account = getLastAccount();
+		if(account != null){
+			initGamesClient(Games.getGamesClient(context, account));
+		}
+	}
+
 	// region Private Getters
 	private GoogleSignInAccount getLastAccount(){
 		return GoogleSignIn.getLastSignedInAccount(context);
@@ -232,7 +241,15 @@ class AndroidAchievementHandler implements AchievementHandler {
 		requireNonNull(account);
 		System.out.println("Successfully signed in");
 		wantsSignIn = true;
+		initGamesClient(Games.getGamesClient(context, account));
 		checkReveals(getAchievementsClient(account), getEventsClient(account), true);
+	}
+	private void initGamesClient(GamesClient gamesClient){
+		gamesClient.setGravityForPopups(Gravity.TOP);
+		final View view = this.view;
+		if(view != null) {
+			gamesClient.setViewForPopups(view);
+		}
 	}
 	private void onAccountLogout(){
 		System.out.println("Logging out");
