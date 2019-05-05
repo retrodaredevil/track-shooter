@@ -41,14 +41,15 @@ android {
     }
     packagingOptions {
         exclude 'META-INF/robovm/ios/robovm.xml'
+        exclude 'icon-backups/*'
     }
     defaultConfig {
         applicationId "me.retrodaredevil.game.trackshooter"
         minSdkVersion 19
         targetSdkVersion 28
-        versionCode 91
+        versionCode 100
         // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
-        versionName '1.9'
+        versionName '1.10'
     }
     buildTypes {
         release {
