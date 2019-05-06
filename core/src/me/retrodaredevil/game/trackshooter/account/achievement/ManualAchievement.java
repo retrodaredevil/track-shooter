@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.achievement;
+package me.retrodaredevil.game.trackshooter.account.achievement;
 
 /**
  * Represents an achievement that must be manually unlocked by the program

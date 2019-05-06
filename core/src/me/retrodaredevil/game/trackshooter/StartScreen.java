@@ -9,7 +9,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.AccountManager;
+import me.retrodaredevil.game.trackshooter.account.Show;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -33,7 +35,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final int gameInputPlayerIndex;
 	private final RenderObject renderObject;
 	private final RenderParts renderParts;
-	private final AchievementHandler achievementHandler;
+	private final AccountObject accountObject;
 	private final VolumeControl volumeControl;
 	private UsableScreen nextScreen = null;
 
@@ -54,13 +56,13 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private boolean showLeaderboardsDown = false;
 	private float idleTime = 0;
 
-	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AchievementHandler achievementHandler, VolumeControl volumeControl){
+	public StartScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, AccountObject accountObject, VolumeControl volumeControl){
 		this.gameInputs = Collections.unmodifiableList(new ArrayList<>(gameInputs)); // copy gameInputs for safe keeping
 		this.gameInputPlayerIndex = 0;
 		this.gameInput = gameInputs.get(gameInputPlayerIndex);
 		this.renderObject = Objects.requireNonNull(renderObject);
 		this.renderParts = Objects.requireNonNull(renderParts);
-		this.achievementHandler = achievementHandler;
+		this.accountObject = accountObject;
 		this.volumeControl = volumeControl;
 		this.uiStage = new Stage(new FitViewport(640, 640), renderObject.getBatch());
 
@@ -69,21 +71,22 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		optionsButton = new TextButton("options", style);
 		creditsButton = new TextButton("info", style);
 		final List<Button> buttons = new ArrayList<>(Arrays.asList(startButton, optionsButton, creditsButton));
-		if(achievementHandler.isNeedsSignIn()){
+		if(accountObject.getAccountManager().isEverAbleToSignIn()){
 			signInButton = new TextButton("sign in", style);
 			buttons.add(signInButton);
 		} else {
 			signInButton = null;
 		}
 		final List<SingleOption> horizontalOptions = new ArrayList<>();
-		if(achievementHandler.isEverAbleToShowAchievements()){
+		final AchievementHandler achievementHandler = accountObject.getAchievementHandler();
+		if(achievementHandler.getShowAchievements().isEverAbleToShow()){
 			showAchievements = new TextButton("achievements", style);
 //			buttons.add(showAchievements);
 			horizontalOptions.add(new PlainActorSingleOption(showAchievements, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
 		} else {
 			showAchievements = null;
 		}
-		if(achievementHandler.isEverAbleToShowLeaderboards()){
+		if(achievementHandler.getShowLeaderboards().isEverAbleToShow()){
 			showLeaderboards = new TextButton("leaderboards", style);
 //			buttons.add(showLeaderboards);
 			horizontalOptions.add(new PlainActorSingleOption(showLeaderboards, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
@@ -134,7 +137,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			return;
 		}
 		if(creditsButton.isPressed()){
-			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, achievementHandler, volumeControl);
+			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, accountObject, volumeControl);
 			return;
 		}
 		if(optionsDown && !optionsButton.isPressed()){ // just released options button
@@ -142,8 +145,9 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 		optionsDown = optionsButton.isPressed();
 
-		if(signInButton != null && achievementHandler.isNeedsSignIn()){
-			final boolean signedIn = achievementHandler.isSignedIn();
+		final AccountManager accountManager = accountObject.getAccountManager();
+		if(signInButton != null && accountManager.isEverAbleToSignIn()){
+			final boolean signedIn = accountManager.isSignedIn();
 			if(signedIn){
 				signInButton.setText("sign out");
 			} else {
@@ -151,29 +155,31 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			}
 			if(signInDown && !signInButton.isPressed()){ // just released sign in
 				if(signedIn){
-					achievementHandler.logout();
+					accountManager.logout();
 				} else {
-					achievementHandler.signIn();
+					accountManager.signIn();
 				}
 			}
 			signInDown = signInButton.isPressed();
 		}
 		if(showAchievements != null){
-			boolean canShow = achievementHandler.isCurrentlyAbleToShowAchievements();
+			final Show achievementsShow = accountObject.getAchievementHandler().getShowAchievements();
+			boolean canShow = achievementsShow.isCurrentlyAbleToShow();
 			showAchievements.setVisible(canShow);
 			if(canShow){
 				if (showAchievementsDown && !showAchievements.isPressed()) { // just released show achievements
-					achievementHandler.showAchievements();
+					achievementsShow.show();
 				}
 				showAchievementsDown = showAchievements.isPressed();
 			}
 		}
 		if(showLeaderboards != null){
-			boolean canShow = achievementHandler.isCurrentlyAbleToShowLeaderboards();
+			final Show leaderboardsShow = accountObject.getAchievementHandler().getShowLeaderboards();
+			boolean canShow = leaderboardsShow.isCurrentlyAbleToShow();
 			showLeaderboards.setVisible(canShow);
 			if(canShow){
 				if(showLeaderboardsDown && !showLeaderboards.isPressed()){ // just released show leaderboards
-					achievementHandler.showLeaderboards();
+					leaderboardsShow.show();
 				}
 				showLeaderboardsDown = showLeaderboards.isPressed();
 			}
@@ -190,12 +196,12 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	}
 	private void normalGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, achievementHandler, volumeControl);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, accountObject, volumeControl);
 		}
 	}
 	private void demoGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, achievementHandler, volumeControl);
+			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, accountObject, volumeControl);
 		}
 	}
 

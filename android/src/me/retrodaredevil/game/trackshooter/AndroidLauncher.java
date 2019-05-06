@@ -4,22 +4,17 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.view.View;
-import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
-import com.google.android.gms.games.GamesClient;
-import me.retrodaredevil.game.trackshooter.achievement.Achievement;
-import me.retrodaredevil.game.trackshooter.achievement.EventAchievement;
-import me.retrodaredevil.game.trackshooter.achievement.ManualAchievement;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultAchievement;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultEventAchievement;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.EventAchievement;
+import me.retrodaredevil.game.trackshooter.account.achievement.ManualAchievement;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultEventAchievement;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 
@@ -91,12 +86,14 @@ public class AndroidLauncher extends AndroidApplication {
 		);
 		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
 
+		GoogleAccountManager accountManager = new GoogleAccountManager(this, client);
+
 		AndroidAchievementHandler achievementHandler = new AndroidAchievementHandler(
 				Collections.unmodifiableMap(eventMap), Collections.unmodifiableMap(achievementMap), Collections.unmodifiableMap(manualAchievementMap),
 				getString(R.string.leaderboard_high_score),
 				this,
-				client);
-		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, achievementHandler), config);
+				accountManager);
+		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler)), config);
 		achievementHandler.setView(graphics.getView());
 
 	}

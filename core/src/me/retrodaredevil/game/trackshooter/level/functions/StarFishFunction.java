@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.MathUtils;
 
 import java.util.Collection;
 
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.StarFish;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;

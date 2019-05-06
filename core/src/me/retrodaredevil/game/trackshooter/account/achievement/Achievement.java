@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.achievement;
+package me.retrodaredevil.game.trackshooter.account.achievement;
 
 /**
  * This represents an Achievement

@@ -1,6 +1,6 @@
-package me.retrodaredevil.game.trackshooter.achievement.implementations;
+package me.retrodaredevil.game.trackshooter.achievement;
 
-import me.retrodaredevil.game.trackshooter.achievement.GameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.GameEvent;
 
 public enum DefaultGameEvent implements GameEvent {
 	SHARKS_KILLED,

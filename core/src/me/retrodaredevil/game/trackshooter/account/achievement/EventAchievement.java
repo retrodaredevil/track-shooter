@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter.achievement;
+package me.retrodaredevil.game.trackshooter.account.achievement;
 
 /**
  * An achievement that is achieved when an event has reached a certain number of increments

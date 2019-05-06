@@ -34,7 +34,8 @@ import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.AccountManager;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.input.*;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -55,7 +56,7 @@ public class GameMain extends Game {
 
 	private final PreferencesGetter scorePreferencesGetter;
 	private final RumbleAnalogControl rumbleAnalogControl;
-	private final AchievementHandler achievementHandler;
+	private final AccountObject accountObject;
 
 	private RenderObject renderObject;
 	private SaveObject saveObject;
@@ -65,14 +66,17 @@ public class GameMain extends Game {
 	private ControllerManager controllerManager;
 	private List<GameInput> inputs = new ArrayList<>();
 
-	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AchievementHandler achievementHandler){
+	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject){
 		this.scorePreferencesGetter = scorePreferencesGetter;
 		this.rumbleAnalogControl = requireNonNull(rumbleAnalogControl);
-		this.achievementHandler = requireNonNull(achievementHandler);
+		this.accountObject = requireNonNull(accountObject);
 	}
 
 	public GameMain(PreferencesGetter scorePreferencesGetter){
-		this(scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG, AchievementHandler.Defaults.UNSUPPORTED_HANDLER);
+		this(
+				scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG,
+				new AccountObject(AccountManager.Defaults.NO_MANAGER, AchievementHandler.Defaults.UNSUPPORTED_HANDLER)
+		);
 	}
 
 
@@ -231,7 +235,7 @@ public class GameMain extends Game {
 		}
 	}
 	private void startScreen(){
-		setScreen(new StartScreen(inputs, renderObject, renderParts, achievementHandler, volumeControl));
+		setScreen(new StartScreen(inputs, renderObject, renderParts, accountObject, volumeControl));
 	}
 
 	@Override

@@ -1,6 +1,6 @@
-package me.retrodaredevil.game.trackshooter.achievement.implementations;
+package me.retrodaredevil.game.trackshooter.achievement;
 
-import me.retrodaredevil.game.trackshooter.achievement.ManualAchievement;
+import me.retrodaredevil.game.trackshooter.account.achievement.ManualAchievement;
 
 public enum DefaultAchievement implements ManualAchievement {
 	CLEAR_LEVEL_5,
