@@ -4,7 +4,6 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.Collection;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.Set;
 
 import me.retrodaredevil.controller.input.InputPart;
@@ -12,6 +11,8 @@ import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A class that deals with rendering and logic for a selection menu
@@ -23,6 +24,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 
 	/** The menu controller. May be null*/
 	private GameInput menuController = null;
+	/** The player index of the player operating the menu*/
 	private Integer playerIndex = null;
 
 
@@ -36,9 +38,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 	 * @param exitRequestListener Will be called when the back button is pressed
 	 */
 	public SelectionMenuRenderComponent(RenderObject renderObject, Integer playerIndex, GameInput menuController,
-										ContentTableProvider contentTableProvider,
-										Collection<? extends SingleOptionProvider> optionProviders,
-										ExitRequestListener exitRequestListener){
+										ContentTableProvider contentTableProvider, Collection<? extends SingleOptionProvider> optionProviders, ExitRequestListener exitRequestListener){
 		setMenuController(playerIndex, menuController);
 		this.optionHolder = new OptionHolder(0, contentTableProvider, optionProviders);
 		this.exitRequestListener = exitRequestListener;
@@ -64,9 +64,9 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 	@Override
 	public void render(float delta, Stage stage) {
 
-		final JoystickPart selectJoystick = menuController == null ? null : Objects.requireNonNull(menuController.getSelectorJoystick());
-		final InputPart selectButton = menuController == null ? null : Objects.requireNonNull(menuController.getEnterButton());
-		final InputPart backButton = menuController == null ? null : Objects.requireNonNull(menuController.getBackButton());
+		final JoystickPart selectJoystick = menuController == null ? null : requireNonNull(menuController.getSelectorJoystick());
+		final InputPart selectButton = menuController == null ? null : requireNonNull(menuController.getEnterButton());
+		final InputPart backButton = menuController == null ? null : requireNonNull(menuController.getBackButton());
 		final Set<SelectAction> requestingActions = EnumSet.noneOf(SelectAction.class);
 		boolean active = optionHolder.isActive();
 		int newOptionIndex = optionHolder.getSelectedOptionIndex();

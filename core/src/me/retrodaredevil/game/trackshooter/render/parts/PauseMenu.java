@@ -122,6 +122,8 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		wasResumeDown = resumeDown;
 
 		if(optionsButton.isPressed()){
+			// if the optionsButton is pressed, open the option menu to allow the player controlling this pause menu
+			// to edit their own configuration
 			final GameInput gameInput = renderComponent.getMenuController();
 			final int playerIndex = renderComponent.getPlayerIndex();
 			renderParts.getOptionsMenu().setToController(playerIndex, gameInput, playerIndex, gameInput);

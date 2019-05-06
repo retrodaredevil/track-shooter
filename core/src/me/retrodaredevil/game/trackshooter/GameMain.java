@@ -29,6 +29,7 @@ import me.retrodaredevil.controller.implementations.ControllerPartCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultExtremeFlightJoystickInputCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultLogitechAttack3JoystickInputCreator;
 import me.retrodaredevil.controller.implementations.mappings.DefaultStandardControllerInputCreator;
+import me.retrodaredevil.controller.implementations.mappings.PS4StandardControllerInputCreator;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionTracker;
 import me.retrodaredevil.controller.options.OptionValue;
@@ -108,11 +109,18 @@ public class GameMain extends Game {
 							new DefaultExtremeFlightJoystickInputCreator(),
 							controllerPartCreator
 					));
-				} else if(controllerName.contains("attack") && controllerName.contains("logitech")){
+				} else if(controllerName.contains("attack") && controllerName.contains("logitech")) {
 					controllerInput = new ControllerGameInput(new BaseLogitechAttack3JoystickControllerInput(
 							new DefaultLogitechAttack3JoystickInputCreator(),
-                            controllerPartCreator
+							controllerPartCreator
 					));
+				} else if(controllerName.contains("ps4")){
+					controllerInput = new ControllerGameInput(new BaseStandardControllerInput(
+							new PS4StandardControllerInputCreator(),
+							controllerPartCreator,
+							OptionValues.createImmutableBooleanOptionValue(false),
+							OptionValues.createImmutableBooleanOptionValue(false)
+					), new OptionTracker());
 				} else {
 					OptionValue physicalLocationsSwapped = OptionValues.createBooleanOptionValue(false);
 					OptionTracker tracker = new OptionTracker();
@@ -158,6 +166,8 @@ public class GameMain extends Game {
 			controllerManager.addController(realGameInput);
 			inputs.add(realGameInput);
 		}
+
+		// Load all saved player control configurations
 		{
 			int i = 0;
 			for (GameInput input : inputs) {
@@ -165,8 +175,9 @@ public class GameMain extends Game {
 				i++;
 			}
 		}
+		// Load global configuration, not player or control specific
+		optionMenu.loadGlobalConfiguration();
 
-//		Gdx.app.setLogLevel(Application.LOG_ERROR);
 		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
 	}

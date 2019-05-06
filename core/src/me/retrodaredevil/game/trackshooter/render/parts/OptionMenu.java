@@ -40,6 +40,11 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 
 		this.preferredStage = new Stage(new ExtendViewport(480, 480), renderObject.getBatch());
 	}
+	public void loadGlobalConfiguration(){
+		for(ConfigurableObject configurableObject : globalConfigurableObjectList){
+			saveObject.getOptionSaver().loadControllerConfiguration(null, configurableObject);
+		}
+	}
 
 	@Override
 	public RenderComponent getRenderComponent() {
@@ -48,7 +53,9 @@ public class OptionMenu implements Renderable, InputFocusable, CloseableMenu {
 
 	/**
 	 *
+	 * @param configControllerPlayerIndex The index of the player who is controlling the menu
 	 * @param configController The Controller to config
+	 * @param menuControllerPlayerIndex The index of the player whose settings are being configured
 	 * @param menuController The controller to control the options menu
 	 */
 	public void setToController(int configControllerPlayerIndex, ConfigurableControllerPart configController, int menuControllerPlayerIndex, GameInput menuController){
