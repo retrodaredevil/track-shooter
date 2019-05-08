@@ -40,29 +40,10 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	private final Map<GameEvent, Set<EventAchievement>> eventAchievementSetMap;
 
-	private final Show showAchievements = new GoogleSignInShow() {
-		@Override void show(GoogleSignInAccount account) {
-			AchievementsClient client = requireNonNull(getAchievementsClient(account));
-
-			Task<Intent> task = requireNonNull(client.getAchievementsIntent());
-			task.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE));
-		}
-	};
-	private final Show showLeaderboards = new GoogleSignInShow() {
-		@Override void show(GoogleSignInAccount account) {
-			LeaderboardsClient client = requireNonNull(getLeaderboardsClient(account));
-
-			Task<Intent> task = requireNonNull(client.getAllLeaderboardsIntent());
-			task.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE));
-		}
-	};
+	private final Show showAchievements;
+	private final Show showLeaderboards;
 
 	private View view;
-
-	private AchievementsClient achievementsClient = null;
-	private EventsClient eventsClient = null;
-	private LeaderboardsClient leaderboardsClient = null;
-
 
 	AndroidAchievementHandler(
 			Map<? extends GameEvent, String> eventIdMap, Map<? extends EventAchievement, String> eventAchievementIdMap,
@@ -96,11 +77,26 @@ class AndroidAchievementHandler implements AchievementHandler {
 		this.eventAchievementSetMap = Collections.unmodifiableMap(eventAchievementSetMap);
 
 
-		GoogleSignInAccount account = accountManager.getLastAccount();
-		if(account != null){
-			onAccountSignIn(account);
+		{
+			GoogleSignInAccount account = accountManager.getLastAccount();
+			if (account != null) {
+				onAccountSignIn(account);
+			}
 		}
 		accountManager.addSignInListener(this::onAccountSignIn);
+
+		showAchievements = GoogleSignInShow.create(
+				accountManager,
+				account -> Games.getAchievementsClient(context, account)
+						.getAchievementsIntent()
+						.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE))
+		);
+		showLeaderboards = GoogleSignInShow.create(
+				accountManager,
+				account -> Games.getLeaderboardsClient(context, account)
+						.getAllLeaderboardsIntent()
+						.addOnSuccessListener(result -> activity.startActivityForResult(result, REQUEST_IGNORE))
+		);
 	}
 
 	void setView(View view){
@@ -111,59 +107,10 @@ class AndroidAchievementHandler implements AchievementHandler {
 		}
 	}
 
-	// region Private Getters
-
-	/**
-	 * @param account The account
-	 * @return The EventClient or null if we aren't signed in
-	 */
-	private synchronized EventsClient getEventsClient(GoogleSignInAccount account){
-		if(account == null){
-			eventsClient = null;
-			return null;
-		}
-		EventsClient currentEventsClient = eventsClient;
-		if(currentEventsClient == null){
-			EventsClient client = Games.getEventsClient(context, account);
-			eventsClient = client;
-			return client;
-		}
-		return currentEventsClient;
-	}
-	private synchronized AchievementsClient getAchievementsClient(GoogleSignInAccount account){
-		if(account == null){
-			eventsClient = null;
-			return null;
-		}
-		AchievementsClient currentClient = achievementsClient;
-		if(currentClient == null){
-			AchievementsClient client = Games.getAchievementsClient(context, account);
-			achievementsClient = client;
-
-			return client;
-		}
-		return currentClient;
-	}
-	private synchronized LeaderboardsClient getLeaderboardsClient(GoogleSignInAccount account){
-		if(account == null){
-			leaderboardsClient = null;
-			return null;
-		}
-		LeaderboardsClient currentClient = leaderboardsClient;
-		if(currentClient == null){
-			LeaderboardsClient client = Games.getLeaderboardsClient(context, account);
-			leaderboardsClient = client;
-
-			return client;
-		}
-		return currentClient;
-	}
-	// endregion
-
 	private void onAccountSignIn(GoogleSignInAccount account){
 		requireNonNull(account);
 		initGamesClient(Games.getGamesClient(context, account));
-		checkReveals(getAchievementsClient(account), getEventsClient(account), true);
+		checkReveals(Games.getAchievementsClient(context, account), Games.getEventsClient(context, account), true);
 	}
 	private void initGamesClient(GamesClient gamesClient){
 		gamesClient.setGravityForPopups(Gravity.TOP);
@@ -174,7 +121,7 @@ class AndroidAchievementHandler implements AchievementHandler {
 	}
 
 	@Override
-	public synchronized void increment(GameEvent event, int amount) {
+	public void increment(GameEvent event, int amount) {
 		final String value = eventIdMap.get(event);
 		if(value == null){
 			throw new NoSuchElementException("No value for event: " + event);
@@ -184,10 +131,10 @@ class AndroidAchievementHandler implements AchievementHandler {
 		}
 		GoogleSignInAccount account = accountManager.getLastAccount();
 		if(account != null){
-			final EventsClient eventsClient = requireNonNull(getEventsClient(account));
+			final EventsClient eventsClient = Games.getEventsClient(context, account);
 			eventsClient.increment(value, amount);
 			System.out.println("Incrementing " + event + " by " + amount);
-			final AchievementsClient achievementsClient = requireNonNull(getAchievementsClient(account));
+			final AchievementsClient achievementsClient = Games.getAchievementsClient(context, account);
 
 			boolean needsCheck = false;
 			for(Map.Entry<? extends EventAchievement, String> entry : eventAchievementIdMap.entrySet()){
@@ -304,8 +251,9 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(key == null){
 			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
 		}
-		AchievementsClient achievementsClient = getAchievementsClient(accountManager.getLastAccount());
-		if(achievementsClient != null){
+		GoogleSignInAccount account = accountManager.getLastAccount();
+		if(account != null){
+			AchievementsClient achievementsClient = Games.getAchievementsClient(context, account);
 			achievementsClient.unlock(key);
 		}
 	}
@@ -320,8 +268,9 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(key == null){
 			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
 		}
-		AchievementsClient achievementsClient = getAchievementsClient(accountManager.getLastAccount());
-		if(achievementsClient != null){
+		GoogleSignInAccount account = accountManager.getLastAccount();
+		if(account != null){
+			AchievementsClient achievementsClient = Games.getAchievementsClient(context, account);
 			achievementsClient.increment(key, amount);
 		}
 	}
@@ -332,8 +281,9 @@ class AndroidAchievementHandler implements AchievementHandler {
 		if(key == null){
 			throw new UnsupportedOperationException("Unsupported manual achievement: " + achievement);
 		}
-		AchievementsClient achievementsClient = getAchievementsClient(accountManager.getLastAccount());
-		if(achievementsClient != null){
+		GoogleSignInAccount account = accountManager.getLastAccount();
+		if(account != null){
+			AchievementsClient achievementsClient = Games.getAchievementsClient(context, account);
 			achievementsClient.reveal(key);
 		}
 	}
@@ -360,9 +310,9 @@ class AndroidAchievementHandler implements AchievementHandler {
 
 	@Override
 	public void submitScore(int score) {
-		LeaderboardsClient client = getLeaderboardsClient(accountManager.getLastAccount());
-		if(client != null) {
-			client.submitScore(highScoreKey, score);
+		GoogleSignInAccount account = accountManager.getLastAccount();
+		if(account != null){
+			Games.getLeaderboardsClient(context, account).submitScore(highScoreKey, score);
 		}
 	}
 
@@ -380,27 +330,6 @@ class AndroidAchievementHandler implements AchievementHandler {
 			totalSteps = getTotalSteps(achievement);
 			unlocked = isUnlocked(achievement);
 			incremental = isIncremental(achievement);
-		}
-	}
-	private abstract class GoogleSignInShow implements Show {
-		abstract void show(GoogleSignInAccount account);
-		@Override
-		public void show() {
-			GoogleSignInAccount account = accountManager.getLastAccount();
-			if(account == null){
-				throw new IllegalStateException("account is null! We cannot show now! You should check isCurrentlyAbleToShow()!");
-			}
-			show(account);
-		}
-
-		@Override
-		public boolean isCurrentlyAbleToShow() {
-			return accountManager.isSignedIn();
-		}
-
-		@Override
-		public boolean isEverAbleToShow() {
-			return true;
 		}
 	}
 }
