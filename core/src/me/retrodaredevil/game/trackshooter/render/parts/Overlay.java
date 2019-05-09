@@ -134,6 +134,9 @@ public class Overlay implements Renderable, Updateable, Disposable, InputFocusab
 
 	@Override
 	public void update(float delta) {
+		if(players == null){
+			return;
+		}
 		for(Player player : players){
 			int score = player.getScoreObject().getScore();
 			if(score > getHighScore()){

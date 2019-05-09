@@ -36,6 +36,7 @@ import me.retrodaredevil.controller.options.OptionValue;
 import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.input.*;
 import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
@@ -75,7 +76,7 @@ public class GameMain extends Game {
 	public GameMain(PreferencesGetter scorePreferencesGetter){
 		this(
 				scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG,
-				new AccountObject(AccountManager.Defaults.NO_MANAGER, AchievementHandler.Defaults.UNSUPPORTED_HANDLER)
+				new AccountObject(AccountManager.Defaults.NO_MANAGER, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, Multiplayer.Defaults.NOT_SUPPORTED)
 		);
 	}
 

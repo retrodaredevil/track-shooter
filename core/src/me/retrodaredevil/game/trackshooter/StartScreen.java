@@ -17,6 +17,7 @@ import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SingleOption;
+import me.retrodaredevil.game.trackshooter.render.selection.SingleOptionProvider;
 import me.retrodaredevil.game.trackshooter.render.selection.options.GroupedSelectionSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.PlainActorSingleOption;
 import me.retrodaredevil.game.trackshooter.render.selection.options.providers.BasicOptionProvider;
@@ -48,10 +49,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	private final Button creditsButton;
 	/** The sign in button or null*/
 	private final TextButton signInButton;
+	private final Button joinRoom;
+	private final Button showInbox;
 	private final Button showAchievements;
 	private final Button showLeaderboards;
 	private boolean optionsDown = false;
 	private boolean signInDown = false;
+	private boolean joinRoomDown = false;
+	private boolean showInboxDown = false;
 	private boolean showAchievementsDown = false;
 	private boolean showLeaderboardsDown = false;
 	private float idleTime = 0;
@@ -70,28 +75,75 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		startButton = new TextButton("start", style); // do stuff with getStartButton.getStyle()
 		optionsButton = new TextButton("options", style);
 		creditsButton = new TextButton("info", style);
-		final List<Button> buttons = new ArrayList<>(Arrays.asList(startButton, optionsButton, creditsButton));
 		if(accountObject.getAccountManager().isEverAbleToSignIn()){
 			signInButton = new TextButton("sign in", style);
-			buttons.add(signInButton);
 		} else {
 			signInButton = null;
 		}
-		final List<SingleOption> horizontalOptions = new ArrayList<>();
+		if(accountObject.getMultiplayer().getShowInvitePlayers().isEverAbleToShow()){
+			joinRoom = new TextButton("join room", style);
+		} else {
+			joinRoom = null;
+		}
+		if(accountObject.getMultiplayer().getShowInbox().isEverAbleToShow()){
+			showInbox = new TextButton("invitations", style);
+		} else {
+			showInbox = null;
+		}
 		final AchievementHandler achievementHandler = accountObject.getAchievementHandler();
 		if(achievementHandler.getShowAchievements().isEverAbleToShow()){
 			showAchievements = new TextButton("achievements", style);
-//			buttons.add(showAchievements);
-			horizontalOptions.add(new PlainActorSingleOption(showAchievements, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
 		} else {
 			showAchievements = null;
 		}
 		if(achievementHandler.getShowLeaderboards().isEverAbleToShow()){
 			showLeaderboards = new TextButton("leaderboards", style);
-//			buttons.add(showLeaderboards);
-			horizontalOptions.add(new PlainActorSingleOption(showLeaderboards, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f)));
 		} else {
 			showLeaderboards = null;
+		}
+
+		List<SingleOptionProvider> providerList = new ArrayList<>();
+		providerList.add(new MultiActorOptionProvider(Constants.START_SCREEN_BUTTON_SIZE, startButton));
+		{
+			SingleOption options = new PlainActorSingleOption(optionsButton, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			SingleOption credits = new PlainActorSingleOption(creditsButton, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			providerList.add(new BasicOptionProvider(
+					new GroupedSelectionSingleOption(Constants.START_SCREEN_BUTTON_SIZE, true, Collections.singleton(new BasicOptionProvider(
+							options,
+							credits
+					)))
+			));
+		}
+		if(signInButton != null){
+			providerList.add(new MultiActorOptionProvider(Constants.START_SCREEN_BUTTON_SIZE, signInButton));
+		}
+		if(showAchievements != null && showLeaderboards != null){ // both are available
+			SingleOption achievements = new PlainActorSingleOption(showAchievements, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			SingleOption leaderboards = new PlainActorSingleOption(showLeaderboards, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			providerList.add(new BasicOptionProvider(
+					new GroupedSelectionSingleOption(Constants.START_SCREEN_BUTTON_SIZE, true, Collections.singleton(new BasicOptionProvider(
+							achievements, leaderboards
+					)))
+			));
+		} else if(showAchievements != null || showLeaderboards != null){ // only one of these is available
+			providerList.add(new MultiActorOptionProvider(
+					Constants.START_SCREEN_BUTTON_SIZE,
+					showAchievements != null ? showAchievements : showLeaderboards
+			));
+		}
+		if(joinRoom != null && showInbox != null){ // both are available
+			SingleOption join = new PlainActorSingleOption(joinRoom, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			SingleOption inbox = new PlainActorSingleOption(showInbox, Constants.START_SCREEN_BUTTON_SIZE.withWidthPercent(.5f));
+			providerList.add(new BasicOptionProvider(
+					new GroupedSelectionSingleOption(Constants.START_SCREEN_BUTTON_SIZE, true, Collections.singleton(new BasicOptionProvider(
+							join, inbox
+					)))
+			));
+		} else if(joinRoom != null || showInbox != null){ // only one of these is available
+			providerList.add(new MultiActorOptionProvider(
+					Constants.START_SCREEN_BUTTON_SIZE,
+					joinRoom != null ? joinRoom : showInbox
+			));
 		}
 
 		// this is initialized after each button because it uses them
@@ -100,12 +152,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
                 gameInputPlayerIndex,
 				gameInput,
 				new PlainTable(),
-				Arrays.asList(
-						new MultiActorOptionProvider(Constants.START_SCREEN_BUTTON_SIZE, buttons.toArray(new Button[0])),
-						new BasicOptionProvider(
-								new GroupedSelectionSingleOption(Constants.START_SCREEN_BUTTON_SIZE, true, Collections.singleton(new BasicOptionProvider(horizontalOptions)))
-						)
-				),
+				providerList,
 				() -> {} // do nothing on back button
 		));
 		this.tipsRenderable = new ComponentRenderable(new TipsRenderComponent());
@@ -146,7 +193,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		optionsDown = optionsButton.isPressed();
 
 		final AccountManager accountManager = accountObject.getAccountManager();
-		if(signInButton != null && accountManager.isEverAbleToSignIn()){
+		if(signInButton != null){
 			final boolean signedIn = accountManager.isSignedIn();
 			if(signedIn){
 				signInButton.setText("sign out");
@@ -161,6 +208,28 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 				}
 			}
 			signInDown = signInButton.isPressed();
+		}
+		if(joinRoom != null){
+			final Show roomShow = accountObject.getMultiplayer().getShowInvitePlayers();
+			boolean canShow = roomShow.isCurrentlyAbleToShow();
+			joinRoom.setVisible(canShow);
+			if(canShow){
+				if(joinRoomDown && !joinRoom.isPressed()){
+					roomShow.show();
+				}
+				joinRoomDown = joinRoom.isPressed();
+			}
+		}
+		if(showInbox != null){
+			final Show inboxShow = accountObject.getMultiplayer().getShowInbox();
+			boolean canShow = inboxShow.isCurrentlyAbleToShow();
+			showInbox.setVisible(canShow);
+			if(canShow){
+				if(showInboxDown && !showInbox.isPressed()){
+					inboxShow.show();
+				}
+				showInboxDown = showInbox.isPressed();
+			}
 		}
 		if(showAchievements != null){
 			final Show achievementsShow = accountObject.getAchievementHandler().getShowAchievements();

@@ -68,6 +68,7 @@ public class GameScreen implements UsableScreen {
 				i++;
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
+			renderParts.getOverlay().setGame(players, world); // only do this for a normal game so it doesn't replace or show the score
 		} else { // assume DEMO_AI
 			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED);
 			players.add(player);
@@ -76,7 +77,6 @@ public class GameScreen implements UsableScreen {
 			pauseMenu = null;
 		}
 
-		renderParts.getOverlay().setGame(players, world);
 	}
 
 	@Override

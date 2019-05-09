@@ -81,7 +81,7 @@ public class AndroidLauncher extends AndroidApplication {
 
 		GoogleSignInClient client = GoogleSignIn.getClient(this,
 				new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_GAMES_SIGN_IN)
-						.requestScopes(Games.SCOPE_GAMES_LITE)
+						.requestScopes(Games.SCOPE_GAMES)
 						.build()
 		);
 		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
@@ -92,8 +92,11 @@ public class AndroidLauncher extends AndroidApplication {
 				Collections.unmodifiableMap(eventMap), Collections.unmodifiableMap(achievementMap), Collections.unmodifiableMap(manualAchievementMap),
 				getString(R.string.leaderboard_high_score),
 				this,
-				accountManager);
-		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler)), config);
+				accountManager
+		);
+		AndroidMultiplayer multiplayer = new AndroidMultiplayer(this, accountManager);
+
+		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler, multiplayer)), config);
 		achievementHandler.setView(graphics.getView());
 
 	}

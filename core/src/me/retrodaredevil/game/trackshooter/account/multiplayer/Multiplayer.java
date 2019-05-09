@@ -4,9 +4,11 @@ import me.retrodaredevil.game.trackshooter.account.Show;
 
 public interface Multiplayer {
 	Show getShowInvitePlayers();
-	State getState();
+	Show getShowInbox();
 
-	enum State {
+	ConnectionState getConnectionState();
+
+	enum ConnectionState {
 		CONNECTED, JOINING, DISCONNECTED, LEAVING
 	}
 
@@ -18,8 +20,13 @@ public interface Multiplayer {
 			}
 
 			@Override
-			public State getState() {
-				return State.DISCONNECTED;
+			public Show getShowInbox() {
+				return Show.Defaults.NOT_ABLE;
+			}
+
+			@Override
+			public ConnectionState getConnectionState() {
+				return ConnectionState.DISCONNECTED;
 			}
 		};
 	}
