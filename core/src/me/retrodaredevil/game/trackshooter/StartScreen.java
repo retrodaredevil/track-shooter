@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.Show;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -169,31 +170,35 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	@Override
 	public void render(float delta) {
 		idleTime += delta;
+		final boolean isMultiplayerConnected = accountObject.getMultiplayer().getConnectionState() != Multiplayer.ConnectionState.DISCONNECTED;
 		if(gameInput.getFireButton().isPressed() || gameInput.getEnterButton().isPressed()
 				|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
-				|| renderParts.getOptionsMenu().isMenuOpen()){
+				|| renderParts.getOptionsMenu().isMenuOpen()
+				|| isMultiplayerConnected){
 			idleTime = 0;
 		}
 
-		if(gameInput.getStartButton().isPressed() || startButton.isPressed()){
-			normalGame();
-			return;
+		if(!isMultiplayerConnected) {
+			if (gameInput.getStartButton().isPressed() || startButton.isPressed()) {
+				normalGame();
+				return;
+			}
+			if (!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isPressed() || idleTime > DEMO_GAME_INIT_IDLE)) {
+				demoGame();
+				return;
+			}
+			if (creditsButton.isPressed()) {
+				nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, accountObject, volumeControl);
+				return;
+			}
+			if (optionsDown && !optionsButton.isPressed()) { // just released options button
+				renderParts.getOptionsMenu().setToController(gameInputPlayerIndex, gameInput, gameInputPlayerIndex, gameInput);
+			}
+			optionsDown = optionsButton.isPressed();
 		}
-		if(!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isPressed() || idleTime > DEMO_GAME_INIT_IDLE)){
-			demoGame();
-			return;
-		}
-		if(creditsButton.isPressed()){
-			nextScreen = new CreditsScreen(gameInputs, renderObject, renderParts, accountObject, volumeControl);
-			return;
-		}
-		if(optionsDown && !optionsButton.isPressed()){ // just released options button
-			renderParts.getOptionsMenu().setToController(gameInputPlayerIndex, gameInput, gameInputPlayerIndex, gameInput);
-		}
-		optionsDown = optionsButton.isPressed();
 
 		final AccountManager accountManager = accountObject.getAccountManager();
-		if(signInButton != null){
+		if(signInButton != null && !isMultiplayerConnected){
 			final boolean signedIn = accountManager.isSignedIn();
 			if(signedIn){
 				signInButton.setText("sign out");
@@ -222,7 +227,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 		if(showInbox != null){
 			final Show inboxShow = accountObject.getMultiplayer().getShowInbox();
-			boolean canShow = inboxShow.isCurrentlyAbleToShow();
+			boolean canShow = inboxShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
 			showInbox.setVisible(canShow);
 			if(canShow){
 				if(showInboxDown && !showInbox.isPressed()){
@@ -233,7 +238,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 		if(showAchievements != null){
 			final Show achievementsShow = accountObject.getAchievementHandler().getShowAchievements();
-			boolean canShow = achievementsShow.isCurrentlyAbleToShow();
+			boolean canShow = achievementsShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
 			showAchievements.setVisible(canShow);
 			if(canShow){
 				if (showAchievementsDown && !showAchievements.isPressed()) { // just released show achievements
@@ -244,7 +249,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 		if(showLeaderboards != null){
 			final Show leaderboardsShow = accountObject.getAchievementHandler().getShowLeaderboards();
-			boolean canShow = leaderboardsShow.isCurrentlyAbleToShow();
+			boolean canShow = leaderboardsShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
 			showLeaderboards.setVisible(canShow);
 			if(canShow){
 				if(showLeaderboardsDown && !showLeaderboards.isPressed()){ // just released show leaderboards

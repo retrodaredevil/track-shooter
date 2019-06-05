@@ -47,9 +47,15 @@ public class AndroidMultiplayer implements Multiplayer {
 
 		showInvitePlayers = GoogleSignInShow.create(
 				accountManager,
-				account -> Games.getRealTimeMultiplayerClient(context, account)
-						.getSelectOpponentsIntent(1, 3, true) // create a room selector with 1 to 3 other players with auto matching enabled
-						.addOnSuccessListener(result -> activity.startActivityForResult(result, RC_SELECT_PLAYERS))
+				account -> {
+					if(game != null && !game.fullyLeft){
+						game.showWaiting(game.getRoom());
+					} else {
+						Games.getRealTimeMultiplayerClient(context, account)
+								.getSelectOpponentsIntent(1, 3, true) // create a room selector with 1 to 3 other players with auto matching enabled
+								.addOnSuccessListener(result -> activity.startActivityForResult(result, RC_SELECT_PLAYERS));
+					}
+				}
 		);
 		showInbox = GoogleSignInShow.create(
 				accountManager,
@@ -79,17 +85,17 @@ public class AndroidMultiplayer implements Multiplayer {
 				final Game game = this.game;
 				if(game != null){
 					final ConnectionState connectionState = getConnectionState();
-					if(connectionState != ConnectionState.DISCONNECTED){
-						if(resultCode != Activity.RESULT_CANCELED){
-							throw new AssertionError("The only reason onActivityResult would be called after the game started would be if we called finishActivity. Code resultCode: " + resultCode + " connectionState: " + connectionState);
-						}
-						return;
-					}
 					switch(resultCode){
 						case Activity.RESULT_OK:
-							game.start();
+							if(connectionState == ConnectionState.JOINING) {
+								game.start();
+							} else if(connectionState == ConnectionState.CONNECTED){
+								System.out.println("We are already connected!");
+							} else {
+								throw new IllegalStateException("Trying to open waiting room, but state is: " + connectionState);
+							}
 							break;
-						case Activity.RESULT_CANCELED: case GamesActivityResultCodes.RESULT_LEFT_ROOM:
+						case Activity.RESULT_CANCELED: case GamesActivityResultCodes.RESULT_LEFT_ROOM: // back button or explicit leave
 							game.leave();
 							break;
 						default:
@@ -174,6 +180,7 @@ public class AndroidMultiplayer implements Multiplayer {
 					}
 				});
 			} else if(intentType == IntentType.RECEIVED_INVITE){
+				// region unsupported
 				if(true) throw new AssertionError("This part of the code isn't supposed to be called!");
 
 				Invitation invitation = data.getExtras().getParcelable(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_INVITATION);
@@ -187,6 +194,7 @@ public class AndroidMultiplayer implements Multiplayer {
 						.build();
 				RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 				client.join(config);
+				// endregion
 			} else throw new UnsupportedOperationException("Unsupported IntentType: " + intentType);
 		}
 		private void updateRoom(Room room){

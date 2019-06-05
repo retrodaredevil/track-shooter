@@ -49,7 +49,7 @@ android {
         targetSdkVersion 28
         versionCode 105
         // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
-        versionName '1.10+ alpha'
+        versionName '1.10+d alpha'
     }
     buildTypes {
         release {
