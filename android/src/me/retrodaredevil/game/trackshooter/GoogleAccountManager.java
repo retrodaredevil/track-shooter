@@ -101,25 +101,23 @@ public class GoogleAccountManager implements AccountManager {
 	}
 
 	private void onResume(){
-		System.out.println("Going to silently sign in again");
-
-		if(isSignedIn()){
-			System.out.println("We're already signed in!");
-		} else if(wantsSignIn){
-			signInClient.silentSignIn().addOnCompleteListener(accountTask -> {
-				if (accountTask.isSuccessful()) {
-					final GoogleSignInAccount account = requireNonNull(accountTask.getResult());
-					doAccountSignIn(account);
-					System.out.println("Successfully connected to google");
-				} else {
-					Exception exception = requireNonNull(accountTask.getException());
-					if (exception instanceof ApiException) {
-						System.err.println("Tried to connect to google. My best guess on this exception is that the app isn't signed correctly. Status code: " + ((ApiException) exception).getStatusCode());
+		if (!isSignedIn()) {
+			if(wantsSignIn){
+				signInClient.silentSignIn().addOnCompleteListener(accountTask -> {
+					if (accountTask.isSuccessful()) {
+						final GoogleSignInAccount account = requireNonNull(accountTask.getResult());
+						doAccountSignIn(account);
+						System.out.println("Successfully connected to google");
+					} else {
+						Exception exception = requireNonNull(accountTask.getException());
+						if (exception instanceof ApiException) {
+							System.err.println("Tried to connect to google. My best guess on this exception is that the app isn't signed correctly. Status code: " + ((ApiException) exception).getStatusCode());
+						}
+						System.err.println("Failed to sign in. Message: " + exception.getMessage());
+						exception.printStackTrace();
 					}
-					System.err.println("Failed to sign in. Message: " + exception.getMessage());
-					exception.printStackTrace();
-				}
-			});
+				});
+			}
 		}
 	}
 	@Override

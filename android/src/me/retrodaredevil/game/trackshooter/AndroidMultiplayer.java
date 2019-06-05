@@ -3,13 +3,14 @@ package me.retrodaredevil.game.trackshooter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.widget.Toast;
+import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.games.Games;
 import com.google.android.gms.games.GamesActivityResultCodes;
 import com.google.android.gms.games.GamesCallbackStatusCodes;
@@ -65,55 +66,73 @@ public class AndroidMultiplayer implements Multiplayer {
 		);
 
 		activity.addAndroidEventListener(this::onActivityResult);
+		activity.addLifecycleListener(new Lifecycle());
 	}
 
 	private void onActivityResult(int requestCode, int resultCode, Intent data){
-		switch(requestCode){
-			case RC_SELECT_PLAYERS:
-				if(resultCode != Activity.RESULT_OK){
-					if(resultCode == Activity.RESULT_CANCELED){
-						System.out.println("Back button hit while selecting players");
-					}
-					return;
+		if (requestCode == RC_SELECT_PLAYERS) {
+			if (resultCode != Activity.RESULT_OK) {
+				if (resultCode == Activity.RESULT_CANCELED) {
+					System.out.println("Back button hit while selecting players");
 				}
-				if(game != null && !game.fullyLeft){
-					throw new IllegalStateException("Cannot join another game before the previous game has been left!");
+				return;
+			}
+			if (game != null && !game.fullyLeft) {
+				throw new IllegalStateException("Cannot join another game before the previous game has been left!");
+			}
+			game = new Game(data, IntentType.CREATE_ROOM);
+		} else if (requestCode == RC_WAITING_ROOM) {
+			final Game game = this.game;
+			if (game != null) {
+				final ConnectionState connectionState = getConnectionState();
+				switch (resultCode) {
+					case Activity.RESULT_OK:
+						if (connectionState == ConnectionState.JOINING) {
+							game.start();
+						} else if (connectionState == ConnectionState.CONNECTED) {
+							System.out.println("We are already connected!");
+						} else {
+							throw new IllegalStateException("Trying to open waiting room, but state is: " + connectionState);
+						}
+						break;
+					case Activity.RESULT_CANCELED:
+					case GamesActivityResultCodes.RESULT_LEFT_ROOM: // back button or explicit leave
+						game.leave();
+						break;
+					default:
+						System.err.println("Unknown result code for waiting room RC. resultCode: " + resultCode);
+						break;
 				}
-				game = new Game(data, IntentType.CREATE_ROOM);
-				break;
-			case RC_WAITING_ROOM:
-				final Game game = this.game;
-				if(game != null){
-					final ConnectionState connectionState = getConnectionState();
-					switch(resultCode){
-						case Activity.RESULT_OK:
-							if(connectionState == ConnectionState.JOINING) {
-								game.start();
-							} else if(connectionState == ConnectionState.CONNECTED){
-								System.out.println("We are already connected!");
-							} else {
-								throw new IllegalStateException("Trying to open waiting room, but state is: " + connectionState);
-							}
-							break;
-						case Activity.RESULT_CANCELED: case GamesActivityResultCodes.RESULT_LEFT_ROOM: // back button or explicit leave
-							game.leave();
-							break;
-						default:
-							System.err.println("Unknown result code for waiting room RC. resultCode: " + resultCode);
-							break;
-					}
-				} else {
-					System.err.println("Game is null when we got the waiting room finished! requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
-				}
-				break;
-			default:
-				break;
+			} else {
+				System.err.println("Game is null when we got the waiting room finished! requestCode: " + requestCode + " resultCode: " + resultCode + " data: " + data);
+			}
+		} else if (requestCode == RC_INBOX) {
+			if (resultCode != Activity.RESULT_OK) {
+				return;
+			}
+			game = new Game(data, IntentType.RECEIVED_INVITE);
+		}
+	}
+
+	private final class Lifecycle implements LifecycleListener {
+		@Override
+		public void pause() {
+		}
+		@Override
+		public void resume() {
+		}
+		@Override
+		public void dispose() {
+			final Game game = AndroidMultiplayer.this.game;
+			if(game != null && !game.fullyLeft){
+				game.leave();
+			}
 		}
 	}
 
 
 	@Override
-	public Show getShowInvitePlayers() {
+	public Show getShowRoomConfig() {
 		return showInvitePlayers;
 	}
 
@@ -155,35 +174,23 @@ public class AndroidMultiplayer implements Multiplayer {
 
 			if(intentType == IntentType.CREATE_ROOM) {
 				ArrayList<String> invited = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
-				int minPlayers = data.getIntExtra(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
-				int maxPlayers = data.getIntExtra(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
-				if (minPlayers <= 0) {
-					throw new IllegalStateException("minPlayers is " + minPlayers);
-				}
-				if (maxPlayers <= 0) {
-					throw new IllegalStateException("maxPlayers is " + maxPlayers);
-				}
 
 				RoomConfig.Builder builder = RoomConfig.builder(updateCallback)
 						.setOnMessageReceivedListener(this::onRealTimeMessageReceived)
 						.setRoomStatusUpdateCallback(statusUpdateCallback)
-						.addPlayersToInvite(invited)
-						.setAutoMatchCriteria(RoomConfig.createAutoMatchCriteria(minPlayers, maxPlayers, 0));
+						.addPlayersToInvite(invited);
+
+				final int minPlayers = data.getIntExtra(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS, 0);
+				final int maxPlayers = data.getIntExtra(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS, 0);
+				if(minPlayers != 0 || maxPlayers != 0){
+					builder.setAutoMatchCriteria(RoomConfig.createAutoMatchCriteria(minPlayers, maxPlayers, 0));
+				}
 
 				config = builder.build();
 				RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
-				client.create(config).addOnCompleteListener(result -> {
-					if(result.isSuccessful()){
-						System.out.println("Successfully created a room!");
-					} else {
-						result.getException().printStackTrace();
-					}
-				});
+				client.create(config);
 			} else if(intentType == IntentType.RECEIVED_INVITE){
-				// region unsupported
-				if(true) throw new AssertionError("This part of the code isn't supposed to be called!");
-
-				Invitation invitation = data.getExtras().getParcelable(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_INVITATION);
+				Invitation invitation = requireNonNull(data.getExtras()).getParcelable(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_INVITATION);
 				if(invitation == null){
 					throw new IllegalArgumentException("data's extras had a null Invitation!");
 				}
@@ -194,7 +201,6 @@ public class AndroidMultiplayer implements Multiplayer {
 						.build();
 				RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 				client.join(config);
-				// endregion
 			} else throw new UnsupportedOperationException("Unsupported IntentType: " + intentType);
 		}
 		private void updateRoom(Room room){
@@ -204,10 +210,18 @@ public class AndroidMultiplayer implements Multiplayer {
 			return _roomCache;
 		}
 		private int getMinPlayers(){
-			return config.getAutoMatchCriteria().getInt(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS);
+			final Bundle autoMatch = config.getAutoMatchCriteria();
+			if(autoMatch == null){
+				return config.getInvitedPlayerIds().length;
+			}
+			return autoMatch.getInt(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MIN_AUTOMATCH_PLAYERS);
 		}
 		private int getMaxPlayers(){
-			return config.getAutoMatchCriteria().getInt(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS);
+			final Bundle autoMatch = config.getAutoMatchCriteria();
+			if(autoMatch == null){
+				return config.getInvitedPlayerIds().length;
+			}
+			return autoMatch.getInt(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_MAX_AUTOMATCH_PLAYERS);
 		}
 
 		private void showWaiting(Room room){
@@ -219,6 +233,11 @@ public class AndroidMultiplayer implements Multiplayer {
 			System.out.println("Starting game");
 			gameStarted = true;
 			activity.finishActivity(RC_WAITING_ROOM);
+//			Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()))
+//					.sendReliableMessage(new byte[]{0}, "", "", (statusCode, tokenId, recipientId) -> {
+//				System.out.println("reliable message send. Status code: " + statusCode + " token id: " + tokenId + " recipient: " + recipientId);
+//			});
+			sendMessage(true, null, new byte[] {0});
 		}
 		private void leave(){
 			if(gameEnded){
@@ -236,12 +255,63 @@ public class AndroidMultiplayer implements Multiplayer {
 			gameEnded = true;
 			System.out.println("Left game");
 		}
+		// region Messages
 
-		// region Callback Methods
-		private void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+		/**
+		 * NOTE: If a recipient is not connected to the room, they will not be sent the message. You can use the return
+		 * value to see how many recipients it was sent to.
+		 * @param reliable true if reliable, false otherwise
+		 * @param recipients The list of participation ids of each recipient or null to send to everyone in the room.
+		 * @param message The message to send
+		 * @return The number of recipients the message was sent to
+		 */
+		private int sendMessage(boolean reliable, @Nullable List<String> recipients, byte[] message){
+			if(recipients != null && recipients.isEmpty()){
+				throw new IllegalArgumentException("recipients is empty!");
+			}
+			Room room = requireNonNull(getRoom());
+			if(recipients == null){
+				recipients = room.getParticipantIds();
+			}
+			requireNonNull(recipients);
+			RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 
+			if(reliable){
+				int r = 0;
+				for(String recipient : recipients) {
+					if(room.getParticipant(recipient).isConnectedToRoom()) {
+						client.sendReliableMessage(message, room.getRoomId(), recipient, null);
+						r++;
+					}
+				}
+				return r;
+			} else {
+				if(recipients.size() == 1){
+					String recipient = recipients.get(0);
+					if(room.getParticipant(recipient).isConnectedToRoom()) {
+						client.sendUnreliableMessage(message, room.getRoomId(), recipients.get(0));
+						return 1;
+					}
+					return 0;
+				} else {
+					List<String> connectedRecipients = new ArrayList<>(recipients.size());
+					for(String recipient : recipients){
+						if(room.getParticipant(recipient).isConnectedToRoom()){
+							connectedRecipients.add(recipient);
+						}
+					}
+					client.sendUnreliableMessage(message, room.getRoomId(), connectedRecipients);
+					return connectedRecipients.size();
+				}
+			}
 		}
 
+		private void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
+			System.out.println("got real time message: " + realTimeMessage + " sender: " + realTimeMessage.getSenderParticipantId() + " reliable: " + realTimeMessage.isReliable());
+		}
+		// endregion
+
+		// region Callback Methods
 		/**
 		 * Handles all callbacks related to the connection/disconnection of the player. NOT other players
 		 */

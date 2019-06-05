@@ -81,7 +81,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		} else {
 			signInButton = null;
 		}
-		if(accountObject.getMultiplayer().getShowInvitePlayers().isEverAbleToShow()){
+		if(accountObject.getMultiplayer().getShowRoomConfig().isEverAbleToShow()){
 			joinRoom = new TextButton("join room", style);
 		} else {
 			joinRoom = null;
@@ -215,7 +215,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			signInDown = signInButton.isPressed();
 		}
 		if(joinRoom != null){
-			final Show roomShow = accountObject.getMultiplayer().getShowInvitePlayers();
+			final Show roomShow = accountObject.getMultiplayer().getShowRoomConfig();
 			boolean canShow = roomShow.isCurrentlyAbleToShow();
 			joinRoom.setVisible(canShow);
 			if(canShow){
