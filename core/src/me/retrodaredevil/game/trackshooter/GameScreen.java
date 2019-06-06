@@ -93,7 +93,7 @@ public class GameScreen implements UsableScreen {
 		}
 		if(gameType == GameType.DEMO_AI){
 			for(GameInput input : gameInputs){
-				if(input.getBackButton().isPressed() || input.getFireButton().isPressed() || input.getStartButton().isPressed()){
+				if(input.getBackButton().isJustPressed() || input.getFireButton().isJustPressed() || input.getStartButton().isJustPressed()){
 					setToExit(false);
 					return;
 				}

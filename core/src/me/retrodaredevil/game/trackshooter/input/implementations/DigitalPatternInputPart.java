@@ -5,7 +5,7 @@ import com.badlogic.gdx.Gdx;
 import java.util.Arrays;
 import java.util.Objects;
 
-import me.retrodaredevil.controller.input.AutoCachingInputPart;
+import me.retrodaredevil.controller.input.implementations.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.game.trackshooter.util.MathUtil;
 

@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Collections;
 
 import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
+import me.retrodaredevil.controller.input.implementations.JoystickAxisFollowerPart;
 import me.retrodaredevil.controller.input.JoystickType;
-import me.retrodaredevil.controller.input.SimpleJoystickPart;
+import me.retrodaredevil.controller.input.implementations.SimpleJoystickPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
 import me.retrodaredevil.controller.options.OptionValue;
@@ -21,8 +21,8 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 	private final OptionValue maxDegreesOption;
 	private final Collection<ControlOption> controlOptions;
 
-	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
-	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
+	private final InputPart xAxis = new JoystickAxisFollowerPart(this, partUpdater, false);
+	private final InputPart yAxis = new JoystickAxisFollowerPart(this, partUpdater, true);
 
 
 	private double x, y;

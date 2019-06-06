@@ -1,14 +1,12 @@
 package me.retrodaredevil.game.trackshooter.input.implementations;
 
 import com.badlogic.gdx.controllers.Controller;
-
 import me.retrodaredevil.controller.implementations.ControllerPartCreator;
-import me.retrodaredevil.controller.input.AxisType;
-import me.retrodaredevil.controller.input.DigitalAnalogInputPart;
-import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
+import me.retrodaredevil.controller.input.*;
+import me.retrodaredevil.controller.input.implementations.DigitalAnalogInputPart;
+import me.retrodaredevil.controller.input.implementations.TwoAxisJoystickPart;
 import me.retrodaredevil.controller.output.ControllerRumble;
+import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
 public class GdxControllerPartCreator implements ControllerPartCreator {
@@ -84,7 +82,7 @@ public class GdxControllerPartCreator implements ControllerPartCreator {
 
 	@Override
 	public ControllerRumble createRumble() {
-        return new GdxControllerRumble(controller);
+        return DisconnectedRumble.getInstance();
 	}
 
 	@Override

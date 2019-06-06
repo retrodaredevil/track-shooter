@@ -1,11 +1,10 @@
 package me.retrodaredevil.game.trackshooter.input.implementations;
 
 
-import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
+import me.retrodaredevil.controller.input.implementations.AutoCachingInputPart;
 import me.retrodaredevil.controller.options.ConfigurableControllerPart;
 import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.output.ControllerRumble;
 
 import java.util.Collection;
 import java.util.Collections;

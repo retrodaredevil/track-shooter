@@ -39,12 +39,14 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 	 * Note that none of the passed parameters are added as children. The caller must add the necessary {@link ControllerPart}s
 	 * as children in order for this to function properly
 	 */
-	public DefaultUsableGameInput(String controlName, JoystickPart mainJoystick,
-								  InputPart rotateAxis, JoystickPart rotationPointInput,
-								  InputPart fireButton, InputPart slow, InputPart activatePowerup,
-								  InputPart startButton, InputPart pauseButton, InputPart backButton,
-								  JoystickPart selectorJoystick, InputPart enterButton, ControllerRumble rumble,
-								  OptionTracker controlOptions, Collection<ControllerPart> reliesOnCollection){
+	public DefaultUsableGameInput(
+			String controlName, JoystickPart mainJoystick,
+			InputPart rotateAxis, JoystickPart rotationPointInput,
+			InputPart fireButton, InputPart slow, InputPart activatePowerup,
+			InputPart startButton, InputPart pauseButton, InputPart backButton,
+			JoystickPart selectorJoystick, InputPart enterButton, ControllerRumble rumble,
+			OptionTracker controlOptions, Collection<ControllerPart> reliesOnCollection
+	){
 		this.controlName = controlName;
 		this.mainJoystick = mainJoystick;
 		this.rotateAxis = rotateAxis;
@@ -63,7 +65,7 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 		this.controlOptions = controlOptions;
 		this.reliesOnCollection = reliesOnCollection;
 
-		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(partUpdater, controlOptions, rumble);
 	}
 
 
@@ -155,7 +157,7 @@ public class DefaultUsableGameInput extends SimpleUsableGameInput {
 			}
 		}
 
-		return areAnyChildrenConnected();
+		return partUpdater.isAnyPartsConnected();
 	}
 
 }

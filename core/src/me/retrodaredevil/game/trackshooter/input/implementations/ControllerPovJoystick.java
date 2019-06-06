@@ -2,18 +2,17 @@ package me.retrodaredevil.game.trackshooter.input.implementations;
 
 import com.badlogic.gdx.controllers.Controller;
 import com.badlogic.gdx.controllers.PovDirection;
-
 import me.retrodaredevil.controller.input.InputPart;
-import me.retrodaredevil.controller.input.JoystickAxisFollowerPart;
 import me.retrodaredevil.controller.input.JoystickType;
-import me.retrodaredevil.controller.input.SimpleJoystickPart;
+import me.retrodaredevil.controller.input.implementations.JoystickAxisFollowerPart;
+import me.retrodaredevil.controller.input.implementations.SimpleJoystickPart;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
-public class ControllerPovJoystick extends SimpleJoystickPart{
+public class ControllerPovJoystick extends SimpleJoystickPart {
 	private static final double INV_SQRT2 = 1.0 / Math.sqrt(2.0);
 
-	private final InputPart xAxis = new JoystickAxisFollowerPart(this, false);
-	private final InputPart yAxis = new JoystickAxisFollowerPart(this, true);
+	private final InputPart xAxis = new JoystickAxisFollowerPart(this, partUpdater, false);
+	private final InputPart yAxis = new JoystickAxisFollowerPart(this, partUpdater, true);
 
 	private final Controller controller;
 	private final int povCode;

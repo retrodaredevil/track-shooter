@@ -88,7 +88,7 @@ public class PauseMenu implements Updateable, Renderable, InputFocusable, Closea
 		{
 			int i = 0;
 			for (GameInput input : gameInputs) {
-				if (input.getPauseButton().isPressed()) {
+				if (input.getPauseButton().isJustPressed()) {
 					toggle(i, input);
 					break;
 				}

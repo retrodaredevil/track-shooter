@@ -59,7 +59,7 @@ public class CheckBoxSingleOption extends SimpleControlOptionSingleOption {
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(checkBox, InputEvent.Type.enter);
-		if(select.isPressed()){
+		if(select.isJustPressed()){
 			checkBox.toggle();
 		}
 	}

@@ -71,7 +71,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 		boolean active = optionHolder.isActive();
 		int newOptionIndex = optionHolder.getSelectedOptionIndex();
 		if(menuController != null) {
-			if (selectJoystick.getYAxis().isPressed()) { // will be true if digital position just changed to 1 or -1
+			if (selectJoystick.getYAxis().isJustPressed()) { // will be true if digital position just changed to 1 or -1
 				int digitalY = selectJoystick.getYAxis().getDigitalPosition();
 				if(active) {
 					newOptionIndex -= digitalY; // minus equals because the menu is shown top to bottom
@@ -80,7 +80,7 @@ public class SelectionMenuRenderComponent implements RenderComponent {
 				}
 				requestingActions.add(SelectAction.CHANGE_OPTION);
 			}
-			if (backButton.isPressed()) {
+			if (backButton.isJustPressed()) {
 				requestingActions.add(SelectAction.EXIT_MENU);
 			}
 		}

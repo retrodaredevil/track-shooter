@@ -3,8 +3,8 @@ package me.retrodaredevil.game.trackshooter.input.implementations;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 
-import me.retrodaredevil.controller.input.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
+import me.retrodaredevil.controller.input.implementations.AutoCachingInputPart;
 import me.retrodaredevil.controller.options.OptionValue;
 
 /**

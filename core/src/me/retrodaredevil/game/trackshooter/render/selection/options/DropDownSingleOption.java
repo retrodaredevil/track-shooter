@@ -91,7 +91,7 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 		ActorUtil.fireInputEvents(selectBox, InputEvent.Type.enter);
 		// The reason we have the use the 'isShown' variable, is that in a SelectBox, pressing escape
 		// (sometimes mapped to the back button) closes the drop down (IT'S FREAKING HARD CODED)
-		// and because of that, we think it's already down on the frame isPressed() for 'back' returns true.
+		// and because of that, we think it's already down on the frame isJustPressed() for 'back' returns true.
 		// Using isShown is just an extra precaution to make sure it does what we want
 		if(isShown != selectBox.getList().isTouchable()){
 			if(isShown){
@@ -102,12 +102,12 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 		}
 		if(isShown){
 			requestedActions.clear();
-			if(back.isPressed()){
+			if(back.isJustPressed()){
 				hide();
-			} else if(select.isPressed()){
+			} else if(select.isJustPressed()){
 				ActorUtil.fireInputEvents(selectBox, InputEvent.Type.touchDown, InputEvent.Type.touchUp);
 				hide();
-			} else if(selector.getYAxis().isPressed()){
+			} else if(selector.getYAxis().isJustPressed()){
 				final int y = selector.getYAxis().getDigitalPosition();
 				final int currentIndex = selectBox.getSelectedIndex();
 				final int size = selectBox.getItems().size;
@@ -118,7 +118,7 @@ public class DropDownSingleOption extends SimpleControlOptionSingleOption {
 				}
 			}
 		} else {
-			if(select.isPressed()){
+			if(select.isJustPressed()){
 				show();
 			}
 		}

@@ -31,7 +31,7 @@ public class PlainActorSingleOption extends ContainerSingleOption {
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		ActorUtil.fireInputEvents(actor, InputEvent.Type.enter);
-		if(select.isPressed()){
+		if(select.isJustPressed()){
 			ActorUtil.fireInputEvents(actor, InputEvent.Type.touchDown, InputEvent.Type.touchUp);
 		}
 	}

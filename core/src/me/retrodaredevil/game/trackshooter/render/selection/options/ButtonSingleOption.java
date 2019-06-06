@@ -34,7 +34,7 @@ public class ButtonSingleOption extends PlainActorSingleOption {
 	@Override
 	public void selectUpdate(float delta, JoystickPart selector, InputPart select, InputPart back, Set<? super SelectAction> requestedActions) {
 		super.selectUpdate(delta, selector, select, back, requestedActions);
-		if(select.isPressed()){
+		if(select.isJustPressed()){
 			onButtonPress.onButtonPress(requestedActions);
 		}
 	}

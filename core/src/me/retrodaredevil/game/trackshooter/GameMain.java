@@ -83,8 +83,6 @@ public class GameMain extends Game {
 
 	@Override
 	public void create () {
-		SimpleControllerPart.setDebugChangeInParent(true);
-
 		Batch batch = new SpriteBatch();
 		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
 		Resources.loadToSkin(skin);

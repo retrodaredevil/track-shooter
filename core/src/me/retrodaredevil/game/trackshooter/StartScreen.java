@@ -171,7 +171,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	public void render(float delta) {
 		idleTime += delta;
 		final boolean isMultiplayerConnected = accountObject.getMultiplayer().getConnectionState() != Multiplayer.ConnectionState.DISCONNECTED;
-		if(gameInput.getFireButton().isPressed() || gameInput.getEnterButton().isPressed()
+		if(gameInput.getFireButton().isJustPressed() || gameInput.getEnterButton().isJustPressed()
 				|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
 				|| renderParts.getOptionsMenu().isMenuOpen()
 				|| isMultiplayerConnected){
@@ -179,11 +179,11 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		}
 
 		if(!isMultiplayerConnected) {
-			if (gameInput.getStartButton().isPressed() || startButton.isPressed()) {
+			if (gameInput.getStartButton().isJustPressed() || startButton.isPressed()) {
 				normalGame();
 				return;
 			}
-			if (!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isPressed() || idleTime > DEMO_GAME_INIT_IDLE)) {
+			if (!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isJustPressed() || idleTime > DEMO_GAME_INIT_IDLE)) {
 				demoGame();
 				return;
 			}

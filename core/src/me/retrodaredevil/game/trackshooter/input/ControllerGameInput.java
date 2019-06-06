@@ -1,30 +1,22 @@
 package me.retrodaredevil.game.trackshooter.input;
 
-import java.util.Collection;
-
 import me.retrodaredevil.controller.ControllerPart;
-import me.retrodaredevil.controller.SimpleControllerPart;
-import me.retrodaredevil.controller.input.DummyInputPart;
-import me.retrodaredevil.controller.input.HighestPositionInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
-import me.retrodaredevil.controller.input.MultiplexerJoystickPart;
 import me.retrodaredevil.controller.input.References;
-import me.retrodaredevil.controller.input.SensitiveInputPart;
-import me.retrodaredevil.controller.input.TwoAxisJoystickPart;
-import me.retrodaredevil.controller.input.TwoWayInput;
-import me.retrodaredevil.controller.options.ConfigurableControllerPart;
-import me.retrodaredevil.controller.options.ConfigurableObject;
-import me.retrodaredevil.controller.options.ControlOption;
-import me.retrodaredevil.controller.options.OptionTracker;
-import me.retrodaredevil.controller.options.OptionValues;
+import me.retrodaredevil.controller.input.implementations.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.implementations.MultiplexerJoystickPart;
+import me.retrodaredevil.controller.input.implementations.SensitiveInputPart;
+import me.retrodaredevil.controller.input.implementations.TwoWayInput;
+import me.retrodaredevil.controller.options.*;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.controller.types.ExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.types.LogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
-import me.retrodaredevil.game.trackshooter.input.implementations.BooleanConfigInputPart;
+
+import java.util.Collection;
 
 public class ControllerGameInput extends SimpleUsableGameInput {
 	private final ControllerPart reliesOn;
@@ -55,7 +47,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 	 * @param controller The controller to use. This will also be added as a child to this object. When passed, it CANNOT have a parent
 	 */
 	public ControllerGameInput(final StandardControllerInput controller, ConfigurableObject extraOptions){
-		addChildren(false, false, controller);
+		partUpdater.addPartAssertNotPresent(controller);
 		reliesOn = controller;
 
 		controlOptions.add(extraOptions);
@@ -88,11 +80,10 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof RumbleCapableController) {
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
-			rumble = new DisconnectedRumble();
-			addChildren(false, false, rumble);
+			rumble = DisconnectedRumble.getInstance(); // we don't have to update a disconnected rumble
 		}
 
-		addChildren(false, false,
+		partUpdater.addPartsAssertNonePresent(
 				mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, backButton, enterButton, selectorJoystick);
 
@@ -100,10 +91,10 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
-		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(partUpdater, controlOptions, rumble);
 	}
 	public ControllerGameInput(final LogitechAttack3JoystickControllerInput controller){
-		addChildren(false, false, controller);
+		partUpdater.addPartAssertNotPresent(controller);
 		reliesOn = controller;
 
 		mainJoystick = References.create(controller::getMainJoystick);
@@ -126,18 +117,17 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof RumbleCapableController){
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
-			rumble = new DisconnectedRumble();
-			addChildren(false, false, rumble);
+			rumble = DisconnectedRumble.getInstance();
 		}
-		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
+		partUpdater.addPartsAssertNonePresent(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
-		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(partUpdater, controlOptions, rumble);
 	}
 	public ControllerGameInput(final ExtremeFlightJoystickControllerInput controller){
-		addChildren(false, false, controller);
+		partUpdater.addPartAssertNotPresent(controller);
 		reliesOn = controller;
 
 		mainJoystick = References.create(controller::getMainJoystick);
@@ -158,16 +148,15 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		if(controller instanceof RumbleCapableController){
 			rumble = ((RumbleCapableController) controller).getRumble();
 		} else {
-			rumble = new DisconnectedRumble();
-			addChildren(false, false, rumble);
+			rumble = DisconnectedRumble.getInstance();
 		}
-		addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
+		partUpdater.addPartsAssertNonePresent(mainJoystick, rotateAxis, fireButton, slow, activatePowerup, startButton, backButton, enterButton, selectorJoystick);
 		controlOptions.add(rotateAxisSensitivity);
 		if(controller instanceof ConfigurableObject){
 			controlOptions.add((ConfigurableObject) controller);
 		}
 
-		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(this, controlOptions, rumble);
+		rumbleOnSingleShot = GameInputs.createRumbleOnSingleShotInputPart(partUpdater, controlOptions, rumble);
 	}
 	private static ControlOption createRotationalAxisSensitivity(){
 		return new ControlOption("Rotation Sensitivity", "Adjust the sensitivity when rotating",
@@ -246,7 +235,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 	@Override
 	public boolean isConnected() {
-		return areAnyChildrenConnected() && (reliesOn == null || reliesOn.isConnected());
+		return partUpdater.isAnyPartsConnected() && (reliesOn == null || reliesOn.isConnected());
 	}
 
 	@Override

@@ -3,20 +3,13 @@ package me.retrodaredevil.game.trackshooter.input;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
 import com.badlogic.gdx.scenes.scene2d.ui.PointerTouchpad;
-import com.badlogic.gdx.scenes.scene2d.ui.Touchpad;
-
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Objects;
-
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import me.retrodaredevil.controller.ControllerPart;
-import me.retrodaredevil.controller.ControllerPartNotUpdatedException;
-import me.retrodaredevil.controller.input.*;
+import me.retrodaredevil.controller.PartUpdater;
+import me.retrodaredevil.controller.input.InputPart;
+import me.retrodaredevil.controller.input.JoystickPart;
+import me.retrodaredevil.controller.input.References;
+import me.retrodaredevil.controller.input.implementations.*;
 import me.retrodaredevil.controller.options.*;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
@@ -24,6 +17,9 @@ import me.retrodaredevil.game.trackshooter.input.implementations.*;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 import static java.util.Objects.requireNonNull;
 
@@ -84,9 +80,35 @@ public final class GameInputs {
 				"controls.rotation." + baseControlScheme + ".use_y_axis", useY));
 
 		InputPart r = References.create(() -> useY.getBooleanOptionValue() ? yAxis : xAxis);
-		r.addChild(xAxis);
-		r.addChild(yAxis);
-		return r;
+		return new SimpleInputPart(r.getAxisType()) { // TODO - this is a temporary fix until we can easily add ControllerParts to another controller parts partUpdater.
+			{
+				partUpdater.addPartsAssertNonePresent(xAxis, yAxis, r);
+			}
+			@Override
+			public double getPosition() {
+				return r.getPosition();
+			}
+
+			@Override
+			public boolean isDown() {
+				return r.isDown();
+			}
+
+			@Override
+			public boolean isJustPressed() {
+				return r.isJustPressed();
+			}
+
+			@Override
+			public boolean isJustReleased() {
+				return r.isJustReleased();
+			}
+
+			@Override
+			public boolean isConnected() {
+				return r.isConnected();
+			}
+		};
 	}
 	private static InputPart createMouseAxis(OptionTracker options){
 		OptionValue mouseMultiplier = createRotationMultiplier(options, false, MOUSE).getOptionValue();
@@ -126,13 +148,12 @@ public final class GameInputs {
 		backButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE));
 		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
 
-		DefaultUsableGameInput r = new DefaultUsableGameInput("Keyboard Controls",
-				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseButton, backButton, selectorJoystick, enterButton, new DisconnectedRumble(), options, Collections.emptyList()
-		);
-
-		r.addChildren(false, false, mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
+		return new DefaultUsableGameInput("Keyboard Controls",
+				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseButton, backButton, selectorJoystick, enterButton, DisconnectedRumble.getInstance(), options, Collections.emptyList()
+		){{
+			partUpdater.addPartsAssertNonePresent(mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
 				startButton, pauseButton, backButton, selectorJoystick, enterButton);
-		return r;
+		}};
 	}
 
 	/**
@@ -250,9 +271,9 @@ public final class GameInputs {
 									return false;
 								}
 								if(isPointRotation.getBooleanOptionValue()){
-									return inputPart.isPressed();
+									return inputPart.isJustPressed();
 								}
-								return inputPart.isReleased();
+								return inputPart.isJustReleased();
 							}), // will fire if released when constant shoot not enabled
 					new LowestPositionInputPart( // this is for the constant shoot
 							new DigitalPatternInputPart(160, 80),
@@ -338,7 +359,7 @@ public final class GameInputs {
 			rumble = gdxRumble;
 			options.add(gdxRumble);
 		} else {
-			rumble = new DisconnectedRumble();
+			rumble = DisconnectedRumble.getInstance();
 		}
 		rotationPointInput = new ScreenPositionJoystick(shouldIgnorePointer){
 			@Override
@@ -349,10 +370,11 @@ public final class GameInputs {
 
 		DefaultUsableGameInput r = new DefaultUsableGameInput(isTouchpad ? "Phone Virtual Joystick Controls" : "Phone Gyro Controls",
 				mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup, startButton, pauseBackButton, pauseBackButton, dummySelector, dummyEnter, rumble, options, Collections.emptyList()
-		);
+		){{
+			partUpdater.addPartsAssertNonePresent(mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup,
+					startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
+		}};
 
-		r.addChildren(false, false, mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup,
-				startButton, pauseBackButton, dummySelector, dummyEnter, rumble);
 		activeDetector.setGameInput(r);
 		return r;
 	}
@@ -374,14 +396,15 @@ public final class GameInputs {
 
 	/**
 	 * Creates the "rumble on single shot" input part and mutates the passed controlOptions
+	 * @param partUpdater The part updater to add the returned value to
 	 * @param controlOptions The {@link OptionTracker} to add the {@link ControlOption} to
+	 * @param rumble The controller rumble used to determine whether or not is is connected
 	 * @return The {@link InputPart} representing whether or not the created {@link ControlOption} boolean is checked
 	 */
-	static InputPart createRumbleOnSingleShotInputPart(ControllerPart parent, OptionTracker controlOptions, ControllerRumble rumble){
+	static InputPart createRumbleOnSingleShotInputPart(PartUpdater partUpdater, OptionTracker controlOptions, ControllerRumble rumble){
 		final ControlOption option = GameInputs.createRumbleOnSingleShotControlOption();
 		BooleanConfigInputPart inputPart = new BooleanConfigInputPart(option, rumble::isConnected);
-//		inputPart.setParent(parent);
-		parent.addChild(inputPart);
+		partUpdater.addPartAssertNotPresent(inputPart);
 		controlOptions.add(inputPart);
 		return inputPart;
 	}

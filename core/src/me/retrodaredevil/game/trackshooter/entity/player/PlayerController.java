@@ -106,7 +106,7 @@ public class PlayerController implements EntityController{
 		}
 
 		// ==== Rumble and Shoot ====
-		if (gameInput.getFireButton().isPressed()) {
+		if (gameInput.getFireButton().isJustPressed()) {
 			int numberShot = player.shootBullet(null).size();
 			ControllerRumble rumble = gameInput.getRumble();
 			if(numberShot > 0 && (numberShot > 1 || gameInput.getRumbleOnSingleShot().isDown()) && rumble.isConnected()){
@@ -115,8 +115,13 @@ public class PlayerController implements EntityController{
 		}
 
 		// ==== Powerup ====
-		if(gameInput.getActivatePowerup().isPressed()){
-			player.activatePowerup();
+		if(gameInput.getActivatePowerup().isJustPressed()){
+			if(player.activatePowerup()){
+				ControllerRumble rumble = gameInput.getRumble();
+				if(rumble.isConnected()){
+					rumble.rumbleTime(300, .3);
+				}
+			}
 		}
 	}
 }

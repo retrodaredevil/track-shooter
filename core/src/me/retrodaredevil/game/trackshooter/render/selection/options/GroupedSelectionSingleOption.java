@@ -40,13 +40,13 @@ public class GroupedSelectionSingleOption extends ContainerSingleOption {
 
 		if(horizontal) {
 			final InputPart xAxis = selector.getXAxis();
-			if (xAxis.isPressed()) {
+			if (xAxis.isJustPressed()) {
 				index += xAxis.getDigitalPosition();
 				requestedActions.add(SelectAction.CHANGE_OPTION);
 			}
 		} else {
 			final InputPart yAxis = selector.getYAxis();
-			if (yAxis.isPressed()) {
+			if (yAxis.isJustPressed()) {
 				index -= yAxis.getDigitalPosition();
 				requestedActions.add(SelectAction.CHANGE_OPTION);
                 index = Math.max(0, Math.min(index, optionHolder.getOptionPairs().size() - 1));

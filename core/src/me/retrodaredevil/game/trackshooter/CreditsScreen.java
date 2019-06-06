@@ -70,7 +70,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		createRenderer().render(delta);
 
 		Gdx.input.setInputProcessor(stage);
-		if(gameInput.getBackButton().isPressed() || backButton.isPressed()){
+		if(gameInput.getBackButton().isJustPressed() || backButton.isPressed()){
 			done = true;
 		}
 	}

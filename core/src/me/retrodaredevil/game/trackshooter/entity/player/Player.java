@@ -113,17 +113,26 @@ public class Player extends SimpleEntity {
 		}
 		return shotType;
 	}
-	public void activatePowerup(){
+
+	/**
+	 * NOTE: Does not activate powerup if already activated.
+	 * @return true if the powerup was successfully activated
+	 */
+	public boolean activatePowerup(){
+		if(triplePowerup){ // we already have it activated!
+			return false;
+		}
 		Collection<PowerupActivateListenerItem> items = getItems(PowerupActivateListenerItem.class);
 		if(items == null){
-			return;
+			return false;
 		}
 		for(PowerupActivateListenerItem item : items){
 			boolean didSomething = item.activatePowerup(this);
 			if(didSomething){
-				break;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	/**
