@@ -1,7 +1,7 @@
-package me.retrodaredevil.game.trackshooter.achievement.implementations;
+package me.retrodaredevil.game.trackshooter.achievement;
 
-import me.retrodaredevil.game.trackshooter.achievement.EventAchievement;
-import me.retrodaredevil.game.trackshooter.achievement.GameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.EventAchievement;
+import me.retrodaredevil.game.trackshooter.account.achievement.GameEvent;
 
 public enum DefaultEventAchievement implements EventAchievement {
 	FIRST_GAME(DefaultGameEvent.GAMES_COMPLETED, false),

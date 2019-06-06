@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.badlogic.gdx.utils.viewport.Viewport;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.player.PlayerAIController;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;
@@ -38,22 +38,23 @@ public class GameScreen implements UsableScreen {
 	private final RenderParts renderParts;
 	/** The pause menu or null */
 	private final PauseMenu pauseMenu;
-	private final AchievementHandler achievementHandler;
+	private final AccountObject accountObject;
 	private final VolumeControl volumeControl;
 
 	private final Stage stage;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType, AchievementHandler achievementHandler, VolumeControl volumeControl){
+	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType,
+					  AccountObject accountObject, VolumeControl volumeControl){
 		this.gameInputs = gameInputs;
 		this.gameType = gameType;
 		this.renderObject = renderObject;
 		this.renderParts = renderParts;
-		this.achievementHandler = achievementHandler;
+		this.accountObject = accountObject;
 		this.volumeControl = volumeControl;
 
-		final AchievementHandler passedHandler = gameType == GameType.NORMAL ? achievementHandler : AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
+		final AchievementHandler passedHandler = gameType == GameType.NORMAL ? accountObject.getAchievementHandler() : AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
 		world = new World(new GameLevelGetter(players, passedHandler), 18, 18, renderObject, new StageCoordinatesConverter());
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
@@ -67,6 +68,7 @@ public class GameScreen implements UsableScreen {
 				i++;
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
+			renderParts.getOverlay().setGame(players, world); // only do this for a normal game so it doesn't replace or show the score
 		} else { // assume DEMO_AI
 			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED);
 			players.add(player);
@@ -75,7 +77,6 @@ public class GameScreen implements UsableScreen {
 			pauseMenu = null;
 		}
 
-		renderParts.getOverlay().setGame(players, world);
 	}
 
 	@Override
@@ -192,7 +193,7 @@ public class GameScreen implements UsableScreen {
 			score.onGameEnd();
 		}
 		if(wasFullGame && gameType != GameType.DEMO_AI){
-			achievementHandler.incrementIfSupported(DefaultGameEvent.GAMES_COMPLETED, 1);
+			accountObject.getAchievementHandler().incrementIfSupported(DefaultGameEvent.GAMES_COMPLETED, 1);
 		}
 	}
 
@@ -262,7 +263,7 @@ public class GameScreen implements UsableScreen {
 		if(!shouldExit){
 			throw new IllegalStateException("Cannot create a StartScreen if we aren't done!");
 		}
-		return new StartScreen(gameInputs, renderObject, renderParts, achievementHandler, volumeControl);
+		return new StartScreen(gameInputs, renderObject, renderParts, accountObject, volumeControl);
 	}
 
 	public enum GameType {

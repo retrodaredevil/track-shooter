@@ -5,8 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.Collection;
 
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultAchievement;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.SharkAIController;

@@ -3,13 +3,12 @@ package me.retrodaredevil.game.trackshooter.entity.player;
 import com.badlogic.gdx.Gdx;
 
 import me.retrodaredevil.controller.output.ControllerRumble;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.enemies.shark.Shark;
 import me.retrodaredevil.game.trackshooter.entity.enemies.snake.SnakePart;
 import me.retrodaredevil.game.trackshooter.entity.powerup.Fruit;
-import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupEntity;
 import me.retrodaredevil.game.trackshooter.entity.powerup.PowerupPackage;
 
 public class PlayerScore implements Score {

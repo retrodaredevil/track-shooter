@@ -1,32 +1,9 @@
-package me.retrodaredevil.game.trackshooter.achievement;
+package me.retrodaredevil.game.trackshooter.account.achievement;
+
+import me.retrodaredevil.game.trackshooter.account.Show;
 
 public interface AchievementHandler {
 
-	/**
-	 * Should only be called if {@link #isNeedsSignIn()} == true and {@link #isSignedIn()} == false
-	 */
-	void signIn();
-
-	/**
-	 * Should only be called if {@link #isNeedsSignIn()} == true and {@link #isSignedIn()} == true
-	 */
-	void logout();
-
-	/**
-	 * If this returns false, {@link #signIn()} should never be called
-	 *
-	 * NOTE: Throughout this object's lifetime, you should expect this to remain the same
-	 *
-	 * NOTE: This may not change if {@link #signIn()} is called. You should use {@link #isSignedIn()} to check if it is signed in
-	 * @return true if {@link #signIn()} needs to be called for this to work, false otherwise.
-	 */
-	boolean isNeedsSignIn();
-
-	/**
-	 * This value only has meaning if {@link #isNeedsSignIn()} == true
-	 * @return true if {@link #signIn()} was called and the user is logged in successfully. False otherwise
-	 */
-	boolean isSignedIn();
 
 	void increment(GameEvent event, int amount);
 
@@ -50,13 +27,8 @@ public interface AchievementHandler {
 	boolean isSupported(GameEvent event);
 	boolean isSupported(ManualAchievement achievement);
 
-	void showAchievements();
-	boolean isEverAbleToShowAchievements();
-	boolean isCurrentlyAbleToShowAchievements();
-
-	void showLeaderboards();
-	boolean isEverAbleToShowLeaderboards();
-	boolean isCurrentlyAbleToShowLeaderboards();
+	Show getShowAchievements();
+	Show getShowLeaderboards();
 
 	/**
 	 * If able, submits the score. Implementation may do nothing. You don't have to worry about that.
@@ -97,26 +69,6 @@ public interface AchievementHandler {
 		public static final AchievementHandler UNSUPPORTED_HANDLER = new AchievementHandler() {
 
 			@Override
-			public void signIn() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public void logout() {
-				throw new UnsupportedOperationException();
-			}
-
-			@Override
-			public boolean isNeedsSignIn() {
-				return false;
-			}
-
-			@Override
-			public boolean isSignedIn() {
-				return false;
-			}
-
-			@Override
 			public void increment(GameEvent event, int amount) {
 				throw new UnsupportedOperationException();
 			}
@@ -146,19 +98,14 @@ public interface AchievementHandler {
 			}
 
 			@Override
-			public void showAchievements() {
-				throw new UnsupportedOperationException();
+			public Show getShowAchievements() {
+				return Show.Defaults.NOT_ABLE;
 			}
-			@Override public boolean isEverAbleToShowAchievements() { return false; }
-
-			@Override public boolean isCurrentlyAbleToShowAchievements() { return false; }
 
 			@Override
-			public void showLeaderboards() {
-				throw new UnsupportedOperationException();
+			public Show getShowLeaderboards() {
+				return Show.Defaults.NOT_ABLE;
 			}
-			@Override public boolean isEverAbleToShowLeaderboards() { return false; }
-			@Override public boolean isCurrentlyAbleToShowLeaderboards() { return false; }
 
 			@Override
 			public void submitScore(int score) {

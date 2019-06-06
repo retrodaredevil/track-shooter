@@ -2,8 +2,8 @@ package me.retrodaredevil.game.trackshooter.level.functions;
 
 import java.util.Collection;
 
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.movement.MoveComponent;
 import me.retrodaredevil.game.trackshooter.entity.player.Player;

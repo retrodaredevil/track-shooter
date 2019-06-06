@@ -8,7 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.entity.movement.TravelRotateVelocityOnTrackMoveComponent;
 import me.retrodaredevil.game.trackshooter.item.PowerupActivateListenerItem;
 import me.retrodaredevil.game.trackshooter.entity.Bullet;

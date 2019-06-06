@@ -4,8 +4,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import me.retrodaredevil.game.trackshooter.CollisionIdentity;
-import me.retrodaredevil.game.trackshooter.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.achievement.implementations.DefaultGameEvent;
+import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
+import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.entity.Enemy;
 import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
