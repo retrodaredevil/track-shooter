@@ -4,10 +4,7 @@ import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
-import me.retrodaredevil.controller.input.implementations.HighestPositionInputPart;
-import me.retrodaredevil.controller.input.implementations.MultiplexerJoystickPart;
-import me.retrodaredevil.controller.input.implementations.SensitiveInputPart;
-import me.retrodaredevil.controller.input.implementations.TwoWayInput;
+import me.retrodaredevil.controller.input.implementations.*;
 import me.retrodaredevil.controller.options.*;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
@@ -40,6 +37,14 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 	private final InputPart rumbleOnSingleShot;
 
+	private final JoystickPart rotationPointInput;
+
+	{
+		rotationPointInput = new TwoAxisJoystickPart(
+				new DummyInputPart(0, true),
+				new DummyInputPart(0, true)
+		);
+	}
 
 	/**
 	 * If the passed controller is an instanceof {@link ConfigurableControllerPart}, its ControlOptions
@@ -185,7 +190,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 	@Override
 	public JoystickPart getRotationPointInput() {
-		return null;
+		return rotationPointInput;
 	}
 
 	@Override

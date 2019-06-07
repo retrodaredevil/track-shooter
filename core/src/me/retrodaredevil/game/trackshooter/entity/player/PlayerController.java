@@ -74,7 +74,7 @@ public class PlayerController implements EntityController{
 		}
 		// ==== Rotation ====
 		JoystickPart rotationPointJoystick = gameInput.getRotationPointInput();
-		if(rotationPointJoystick != null && rotationPointJoystick.isConnected()){ // TODO make rotationPointJoystick non-null
+		if(rotationPointJoystick.isConnected()){
 			if (!rotationPointJoystick.isXDeadzone() || !rotationPointJoystick.isYDeadzone()) {
 				final Vector2 position = new Vector2();
 				int x = (int) rotationPointJoystick.getX();

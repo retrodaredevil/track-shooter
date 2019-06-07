@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter.account.multiplayer;
 
 import me.retrodaredevil.game.trackshooter.account.Show;
 
-public interface Multiplayer {
+public interface AccountMultiplayer {
 	Show getShowRoomConfig();
 	Show getShowInbox();
 
@@ -13,7 +13,7 @@ public interface Multiplayer {
 	}
 
 	class Defaults {
-		public static final Multiplayer NOT_SUPPORTED = new Multiplayer() {
+		public static final AccountMultiplayer NOT_SUPPORTED = new AccountMultiplayer() {
 			@Override
 			public Show getShowRoomConfig() {
 				return Show.Defaults.NOT_ABLE;

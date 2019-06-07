@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
+import me.retrodaredevil.game.trackshooter.multiplayer.AndroidAccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 
 import java.util.*;
@@ -94,7 +95,7 @@ public class AndroidLauncher extends AndroidApplication {
 				this,
 				accountManager
 		);
-		AndroidMultiplayer multiplayer = new AndroidMultiplayer(this, accountManager);
+		AndroidAccountMultiplayer multiplayer = new AndroidAccountMultiplayer(this, accountManager);
 
 		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler, multiplayer)), config);
 		achievementHandler.setView(graphics.getView());

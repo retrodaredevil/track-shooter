@@ -2,7 +2,7 @@ package me.retrodaredevil.game.trackshooter;
 
 import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 
 /**
  * A simple POJO that holds objects related to account things
@@ -10,12 +10,12 @@ import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
 public final class AccountObject {
 	private final AccountManager accountManager;
 	private final AchievementHandler achievementHandler;
-	private final Multiplayer multiplayer;
+	private final AccountMultiplayer accountMultiplayer;
 
-	public AccountObject(AccountManager accountManager, AchievementHandler achievementHandler, Multiplayer multiplayer) {
+	public AccountObject(AccountManager accountManager, AchievementHandler achievementHandler, AccountMultiplayer accountMultiplayer) {
 		this.accountManager = accountManager;
 		this.achievementHandler = achievementHandler;
-		this.multiplayer = multiplayer;
+		this.accountMultiplayer = accountMultiplayer;
 	}
 
 	public AccountManager getAccountManager() {
@@ -26,7 +26,7 @@ public final class AccountObject {
 		return achievementHandler;
 	}
 
-	public Multiplayer getMultiplayer() {
-		return multiplayer;
+	public AccountMultiplayer getAccountMultiplayer() {
+		return accountMultiplayer;
 	}
 }

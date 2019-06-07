@@ -13,13 +13,12 @@ import me.retrodaredevil.controller.types.RumbleCapableController;
 public interface GameInput extends ControllerInput, RumbleCapableController, ConfigurableControllerPart {
 	/** @return main joystick that controls movement */
 	JoystickPart getMainJoystick();
-//	SimpleJoystickPart rotateJoystick();
 	/** @return The rotate InputPart where a positive position turns clockwise and negative turns counter clockwise*/
 	InputPart getRotateAxis();
 	/** @return a joystick that represents the point where the player is pressing on screen. If connected, should be used over {@link #getRotateAxis()}*/
 	JoystickPart getRotationPointInput();
 	InputPart getFireButton();
-	InputPart getSlowButton(); // maybe remove this entirely and refactor it into main joystick
+	InputPart getSlowButton(); // TODO maybe remove this entirely and refactor it into main joystick
 	InputPart getActivatePowerup();
 
 	InputPart getStartButton();
@@ -27,7 +26,10 @@ public interface GameInput extends ControllerInput, RumbleCapableController, Con
 	InputPart getBackButton();
 
 	JoystickPart getSelectorJoystick();
+
+	/** @return A button to select the current selection */
 	InputPart getEnterButton();
 
+	/** @return A simple {@link InputPart} that if {@link InputPart#isDown()}, then rumble should be activated on single and triple shots. */
 	InputPart getRumbleOnSingleShot();
 }

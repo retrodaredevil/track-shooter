@@ -4,7 +4,7 @@ package me.retrodaredevil.game.trackshooter;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import me.retrodaredevil.game.trackshooter.account.Show;
 
-abstract class GoogleSignInShow implements Show {
+public abstract class GoogleSignInShow implements Show {
 
 	private final GoogleAccountManager accountManager;
 
@@ -31,10 +31,10 @@ abstract class GoogleSignInShow implements Show {
 	public boolean isEverAbleToShow() {
 		return true;
 	}
-	interface OnShow{
+	public interface OnShow{
 		void show(GoogleSignInAccount account);
 	}
-	static Show create(GoogleAccountManager account, OnShow onShow){
+	public static Show create(GoogleAccountManager account, OnShow onShow){
 		return new GoogleSignInShow(account) {
 			@Override
 			void show(GoogleSignInAccount account) {

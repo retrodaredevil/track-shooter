@@ -12,7 +12,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.Show;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
-import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
@@ -81,12 +81,12 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 		} else {
 			signInButton = null;
 		}
-		if(accountObject.getMultiplayer().getShowRoomConfig().isEverAbleToShow()){
+		if(accountObject.getAccountMultiplayer().getShowRoomConfig().isEverAbleToShow()){
 			joinRoom = new TextButton("join room", style);
 		} else {
 			joinRoom = null;
 		}
-		if(accountObject.getMultiplayer().getShowInbox().isEverAbleToShow()){
+		if(accountObject.getAccountMultiplayer().getShowInbox().isEverAbleToShow()){
 			showInbox = new TextButton("invitations", style);
 		} else {
 			showInbox = null;
@@ -170,7 +170,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	@Override
 	public void render(float delta) {
 		idleTime += delta;
-		final boolean isMultiplayerConnected = accountObject.getMultiplayer().getConnectionState() != Multiplayer.ConnectionState.DISCONNECTED;
+		final boolean isMultiplayerConnected = accountObject.getAccountMultiplayer().getConnectionState() != AccountMultiplayer.ConnectionState.DISCONNECTED;
 		if(gameInput.getFireButton().isJustPressed() || gameInput.getEnterButton().isJustPressed()
 				|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
 				|| renderParts.getOptionsMenu().isMenuOpen()
@@ -215,7 +215,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			signInDown = signInButton.isPressed();
 		}
 		if(joinRoom != null){
-			final Show roomShow = accountObject.getMultiplayer().getShowRoomConfig();
+			final Show roomShow = accountObject.getAccountMultiplayer().getShowRoomConfig();
 			boolean canShow = roomShow.isCurrentlyAbleToShow();
 			joinRoom.setVisible(canShow);
 			if(canShow){
@@ -226,7 +226,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			}
 		}
 		if(showInbox != null){
-			final Show inboxShow = accountObject.getMultiplayer().getShowInbox();
+			final Show inboxShow = accountObject.getAccountMultiplayer().getShowInbox();
 			boolean canShow = inboxShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
 			showInbox.setVisible(canShow);
 			if(canShow){

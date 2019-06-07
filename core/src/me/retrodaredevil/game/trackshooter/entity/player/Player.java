@@ -68,7 +68,6 @@ public class Player extends SimpleEntity {
 	@Override
 	public void beforeSpawn() {
 		super.beforeSpawn();
-//		hit = false; // set in afterRemove()
 		assert !hit : "afterRemove() didn't set hit to false!";
 		setRenderComponent(new ImageRenderComponent(new Image(playerType.getDrawable(world.getMainSkin())), this, .8f, .8f));
 	}
@@ -76,12 +75,6 @@ public class Player extends SimpleEntity {
 	public Score getScoreObject(){
 		return score;
 	}
-
-	@Override
-	public void update(float delta) {
-		super.update(delta);
-	}
-
 
 	@Override
 	public void onHit(Entity other) {

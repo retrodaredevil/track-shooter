@@ -1,4 +1,4 @@
-package me.retrodaredevil.game.trackshooter;
+package me.retrodaredevil.game.trackshooter.multiplayer;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,15 +17,16 @@ import com.google.android.gms.games.GamesCallbackStatusCodes;
 import com.google.android.gms.games.RealTimeMultiplayerClient;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.realtime.*;
+import me.retrodaredevil.game.trackshooter.GoogleAccountManager;
+import me.retrodaredevil.game.trackshooter.GoogleSignInShow;
 import me.retrodaredevil.game.trackshooter.account.Show;
-import me.retrodaredevil.game.trackshooter.account.multiplayer.Multiplayer;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
-public class AndroidMultiplayer implements Multiplayer {
+public class AndroidAccountMultiplayer implements AccountMultiplayer {
 	private static final int RC_SELECT_PLAYERS = 9006;
 	private static final int RC_WAITING_ROOM = 9007;
 	private static final int RC_INBOX = 9008;
@@ -40,7 +41,7 @@ public class AndroidMultiplayer implements Multiplayer {
 
 	private Game game = null;
 
-	public AndroidMultiplayer(AndroidApplication activity, GoogleAccountManager accountManager) {
+	public AndroidAccountMultiplayer(AndroidApplication activity, GoogleAccountManager accountManager) {
 		this.activity = activity;
 		this.accountManager = accountManager;
 
@@ -123,7 +124,7 @@ public class AndroidMultiplayer implements Multiplayer {
 		}
 		@Override
 		public void dispose() {
-			final Game game = AndroidMultiplayer.this.game;
+			final Game game = AndroidAccountMultiplayer.this.game;
 			if(game != null && !game.fullyLeft){
 				game.leave();
 			}
@@ -153,7 +154,7 @@ public class AndroidMultiplayer implements Multiplayer {
 		if(game.gameEnded){
 			return ConnectionState.LEAVING;
 		}
-		if(game.getRoom() != null && game.gameStarted){
+		if(game.getRoom() != null && game.isGameStarted()){
 			return ConnectionState.CONNECTED;
 		}
 		return ConnectionState.JOINING;
@@ -165,9 +166,12 @@ public class AndroidMultiplayer implements Multiplayer {
 	private class Game {
 		private final RoomConfig config;
 		private Room _roomCache = null;
-		private boolean gameStarted = false;
+//		private boolean gameStarted = false;
 		private boolean gameEnded = false;
 		private boolean fullyLeft = false;
+		private String myParticipantId = null;
+
+		private GameMultiplayer gameMultiplayer = null;
 		Game(Intent data, IntentType intentType){
 			requireNonNull(data);
 			requireNonNull(intentType);
@@ -230,14 +234,19 @@ public class AndroidMultiplayer implements Multiplayer {
 					.addOnSuccessListener(result -> activity.startActivityForResult(result, RC_WAITING_ROOM));
 		}
 		private void start(){
+			if(gameEnded){
+				throw new IllegalStateException("We can't start a game that has ended!!");
+			}
 			System.out.println("Starting game");
-			gameStarted = true;
 			activity.finishActivity(RC_WAITING_ROOM);
 //			Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()))
 //					.sendReliableMessage(new byte[]{0}, "", "", (statusCode, tokenId, recipientId) -> {
 //				System.out.println("reliable message send. Status code: " + statusCode + " token id: " + tokenId + " recipient: " + recipientId);
 //			});
-			sendMessage(true, null, new byte[] {0});
+			gameMultiplayer = new GameMultiplayer(this, requireNonNull(myParticipantId));
+		}
+		private boolean isGameStarted(){
+			return gameMultiplayer != null;
 		}
 		private void leave(){
 			if(gameEnded){
@@ -253,6 +262,7 @@ public class AndroidMultiplayer implements Multiplayer {
 			}
 			updateRoom(null);
 			gameEnded = true;
+			gameMultiplayer = null;
 			System.out.println("Left game");
 		}
 		// region Messages
@@ -308,6 +318,17 @@ public class AndroidMultiplayer implements Multiplayer {
 
 		private void onRealTimeMessageReceived(@NonNull RealTimeMessage realTimeMessage) {
 			System.out.println("got real time message: " + realTimeMessage + " sender: " + realTimeMessage.getSenderParticipantId() + " reliable: " + realTimeMessage.isReliable());
+			Packet packet = PacketHelper.parseFromBytes(realTimeMessage.getMessageData());
+			if(!isGameStarted()){
+				start();
+			}
+			try {
+				gameMultiplayer.receivePacket(realTimeMessage.getSenderParticipantId(), packet);
+			} catch (UnableToAgreeException e) {
+				e.printStackTrace();
+				game.leave();
+				System.out.println("We left the game because we weren't able to agree on something.");
+			}
 		}
 		// endregion
 
@@ -391,12 +412,19 @@ public class AndroidMultiplayer implements Multiplayer {
 			}
 			@Override
 			public void onConnectedToRoom(@Nullable Room room) {
+				requireNonNull(room);
 				updateRoom(room);
+				Games.getPlayersClient(context, requireNonNull(accountManager.getLastAccount())).getCurrentPlayerId().addOnSuccessListener(playerId -> {
+					myParticipantId = room.getParticipantId(playerId);
+				});
 			}
 
 			@Override
 			public void onDisconnectedFromRoom(@Nullable Room room) {
 				updateRoom(room);
+				if (!game.gameEnded) {
+					game.leave();
+				}
 			}
 
 			@Override
@@ -407,6 +435,13 @@ public class AndroidMultiplayer implements Multiplayer {
 			@Override
 			public void onPeersDisconnected(@Nullable Room room, @NonNull List<String> list) {
 				updateRoom(room);
+				GameMultiplayer multiplayer = game.gameMultiplayer;
+				if(multiplayer != null){
+					if(list.contains(multiplayer.host)){
+						System.out.println("Leaving game because host left!");
+						game.leave();
+					}
+				}
 			}
 
 			@Override
@@ -416,6 +451,137 @@ public class AndroidMultiplayer implements Multiplayer {
 			public void onP2PDisconnected(@NonNull String participantId) { }
 		};
 		// endregion
+	}
+
+	private class GameMultiplayer implements Multiplayer {
+
+		private final Game game;
+		/** Our own participant id*/
+		private final String participantId;
+		private final List<String> participants;
+		private final List<GamePlayer> players;
+		/** The participant id of the host*/
+		private final String host;
+
+		private final Set<String> participantsReady = new HashSet<>();
+
+		private GameMultiplayer(Game game, String participantId) {
+			this.game = game;
+			this.participantId = requireNonNull(participantId);
+			Room room = game.getRoom();
+			final List<String> participants = new ArrayList<>();
+			final List<GamePlayer> players = new ArrayList<>();
+			for(String participant : room.getParticipantIds()){
+				if(room.getParticipant(participant).isConnectedToRoom()){
+					participants.add(participant);
+					players.add(new GamePlayer(participant)); // TODO in the future a single participant might have multiple players
+				} else {
+					System.out.println("Participant: " + participant + " is not connected.");
+				}
+			}
+			this.participants = Collections.unmodifiableList(participants);
+			this.players = Collections.unmodifiableList(players);
+			host = new TreeSet<>(participants).first();
+			if(isHost()){
+				System.out.println("We are the host! We will wait to make sure everyone is ready!");
+			} else {
+				System.out.println(host + " is the host. We will send them a client ready packet");
+				sendToHost(new ClientReadyPacket(host, this.participantId, this.participants));
+			}
+		}
+
+		private void receivePacket(String sender, Packet packet) throws UnableToAgreeException {
+			if(packet instanceof ClientReadyPacket){
+				if(!isHost()){
+					throw new IllegalStateException("sender: " + sender + " is trying to send us a packet meant to go to the host!");
+				}
+				ClientReadyPacket gameStarting = (ClientReadyPacket) packet;
+				boolean fromCorrectSender = sender.equals(gameStarting.getParticipantId());
+				if(!fromCorrectSender){
+					throw new UnableToAgreeException("The sender sent an incorrect id! sender: " + sender + ". they thought they were: " + gameStarting.getParticipantId());
+				}
+				if(!participants.contains(sender)){
+					throw new IllegalStateException("Received a packet from sender: " + sender);
+				}
+				boolean hostCorrect = gameStarting.getHostId().equals(host);
+				if(!hostCorrect){
+					throw new UnableToAgreeException("Cannot agree on a host! We want host: " + host + " while sender: " + sender + " wants host: " + gameStarting.getHostId());
+				}
+				boolean participantsCorrect = new HashSet<>(participants).equals(new HashSet<>(gameStarting.getAllParticipants()));
+				if(!participantsCorrect){
+					throw new UnableToAgreeException("Cannot agree on participants! We want participants: " + participants
+							+ " while sender: " + sender + " wants participants: " + gameStarting.getAllParticipants());
+				}
+				if(!participantsReady.add(sender)){
+					throw new IllegalStateException("Unable to add sender to participantsReady meaning they sent this packet twice!");
+				}
+				System.out.println(sender + " was able to agree on everything!");
+				if(participantsReady.size() + 1 == participants.size()){
+					System.out.println("It looks like everyone has sent us a ready packet! Time to begin the game!");
+				}
+				return;
+			}
+			if(participantsReady.size() + 1 != participants.size()){
+				throw new IllegalStateException(sender + " is trying to send us a packet when not everyone is ready! packet: " + packet);
+			}
+			System.out.println("received game packet: " + packet);
+		}
+
+		@Override
+		public boolean isConnected() {
+			return getConnectionState() == ConnectionState.CONNECTED;
+		}
+
+		@Override
+		public void leave() {
+			if(!isConnected()){
+				throw new IllegalStateException("Cannot leave if we aren't connected!");
+			}
+			game.leave();
+		}
+
+		@Override
+		public boolean isHost() {
+			return participantId.equals(host);
+		}
+
+		@Override
+		public void sendToHost(Packet packet) {
+			game.sendMessage(packet.isReliable(), Collections.singletonList(host), PacketHelper.convertToBytes(packet));
+		}
+
+		@Override
+		public void sendToEveryone(Packet packet) {
+			game.sendMessage(packet.isReliable(), participants, PacketHelper.convertToBytes(packet));
+		}
+
+		@Override
+		public void sendToPlayer(Packet packet, Player player) {
+			GamePlayer gamePlayer = (GamePlayer) player;
+			game.sendMessage(packet.isReliable(), Collections.singletonList(gamePlayer.participantId), PacketHelper.convertToBytes(packet));
+		}
+
+		@Override
+		public void sendToPlayers(Packet packet, List<Player> players) {
+			Set<String> ids = new HashSet<>();
+			for(Player player : players){
+				GamePlayer gamePlayer = (GamePlayer) player;
+				ids.add(gamePlayer.participantId);
+			}
+			game.sendMessage(packet.isReliable(), new ArrayList<>(ids), PacketHelper.convertToBytes(packet));
+		}
+
+		@Override
+		public Collection<? extends Player> getPlayers() {
+			return players;
+		}
+	}
+	private static class GamePlayer implements Multiplayer.Player{
+		private final String participantId;
+
+		private GamePlayer(String participantId) {
+			this.participantId = participantId;
+		}
 	}
 
 }
