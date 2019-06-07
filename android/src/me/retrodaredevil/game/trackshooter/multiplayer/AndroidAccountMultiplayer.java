@@ -98,6 +98,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 						break;
 					case Activity.RESULT_CANCELED:
 					case GamesActivityResultCodes.RESULT_LEFT_ROOM: // back button or explicit leave
+						System.out.println("Leaving room because user pressed back button or explicitly asked to leave.");
 						game.leave();
 						break;
 					default:
@@ -126,6 +127,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		public void dispose() {
 			final Game game = AndroidAccountMultiplayer.this.game;
 			if(game != null && !game.fullyLeft){
+				System.out.println("dispose() called. Leaving game");
 				game.leave();
 			}
 		}
@@ -423,6 +425,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			public void onDisconnectedFromRoom(@Nullable Room room) {
 				updateRoom(room);
 				if (!game.gameEnded) {
+					System.out.println("We disconnected from the room and the game wasn't ended so we will now leave");
 					game.leave();
 				}
 			}
@@ -537,6 +540,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			if(!isConnected()){
 				throw new IllegalStateException("Cannot leave if we aren't connected!");
 			}
+			System.out.println("leave() called on Multiplayer instance. Leaving game");
 			game.leave();
 		}
 
