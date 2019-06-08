@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import java.util.*;
 
 import me.retrodaredevil.game.trackshooter.CollisionHandler;
+import me.retrodaredevil.game.trackshooter.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.Renderable;
 import me.retrodaredevil.game.trackshooter.Updateable;
@@ -19,25 +20,32 @@ import me.retrodaredevil.game.trackshooter.render.components.WorldRenderComponen
 
 public class World implements Updateable, Renderable {
 
+	private final Multiplayer multiplayer;
 	private final LevelGetter levelGetter;
 	private final RenderObject renderObject;
 	private final WorldCoordinatesGetter worldCoordinatesGetter;
 	private final Rectangle bounds;
+
 	private final RenderComponent renderComponent;
-	private final CollisionHandler collisionHandler;
+	private final Updateable collisionHandler;
 	private final Queue<Entity> entitiesToAdd = new LinkedList<>();
 	private final List<Entity> entities = new ArrayList<>();
 
 	private Level level;
 	private float timeInSeconds = 0;
 
-	public World(LevelGetter levelGetter, float width, float height, RenderObject renderObject, WorldCoordinatesGetter worldCoordinatesGetter){
+	public World(Multiplayer multiplayer, LevelGetter levelGetter, float width, float height, RenderObject renderObject, WorldCoordinatesGetter worldCoordinatesGetter){
+		this.multiplayer = multiplayer;
 		this.levelGetter = levelGetter;
 		this.renderObject = renderObject;
 		this.worldCoordinatesGetter = worldCoordinatesGetter;
 		this.bounds = new Rectangle(width / -2f, height / -2f, width, height);
 		this.renderComponent = new WorldRenderComponent(this);
-		this.collisionHandler = new CollisionHandler(this);
+		if(multiplayer.isHost()) {
+			this.collisionHandler = new CollisionHandler(this);
+		} else {
+			this.collisionHandler = (delta) -> {};
+		}
 
 		this.level = levelGetter.nextLevel(this);
 

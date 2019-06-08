@@ -148,11 +148,21 @@ public final class GameInputs {
 		backButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE));
 		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
 
+		final JoystickPart rotationPointInput = new TwoAxisJoystickPart(
+				new DummyInputPart(0, true),
+				new DummyInputPart(0, true)
+		){
+			@Override
+			public boolean isConnected() {
+				return false;
+			}
+		};
+
 		return new DefaultUsableGameInput("Keyboard Controls",
-				mainJoystick, rotateAxis, null, fireButton, slow, activatePowerup, startButton, pauseButton, backButton, selectorJoystick, enterButton, DisconnectedRumble.getInstance(), options, Collections.emptyList()
+				mainJoystick, rotateAxis, rotationPointInput, fireButton, slow, activatePowerup, startButton, pauseButton, backButton, selectorJoystick, enterButton, DisconnectedRumble.getInstance(), options, Collections.emptyList()
 		){{
 			partUpdater.addPartsAssertNonePresent(mainJoystick, rotateAxis, fireButton, slow, activatePowerup,
-				startButton, pauseButton, backButton, selectorJoystick, enterButton);
+				startButton, pauseButton, backButton, selectorJoystick, enterButton, rotationPointInput);
 		}};
 	}
 
@@ -344,8 +354,13 @@ public final class GameInputs {
 				"controls.misc." + TOUCH + ".powerup.shake_threshold", shakeThresholdValue));
 		activatePowerup = button;
 		if(Gdx.app.getType() == Application.ApplicationType.Android) {
-			pauseBackButton = new KeyInputPart(Input.Keys.BACK);
-			Gdx.input.setCatchBackKey(true);
+			pauseBackButton = new KeyInputPart(Input.Keys.BACK){
+				@Override
+				protected void onUpdate() {
+					super.onUpdate();
+					Gdx.input.setCatchBackKey(true);
+				}
+			};
 		} else {
 			// TODO Provide replacement button for non-android devices
 			pauseBackButton = new DummyInputPart(0, false);

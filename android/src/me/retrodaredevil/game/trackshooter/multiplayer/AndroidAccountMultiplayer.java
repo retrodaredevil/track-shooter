@@ -336,6 +336,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 				gameMultiplayer.receivePacket(realTimeMessage.getSenderParticipantId(), packet);
 			} catch (UnableToAgreeException e) {
 				e.printStackTrace();
+				Toast.makeText(context, "One of the players couldn't agree on something!", Toast.LENGTH_LONG).show();
 				game.leave();
 				System.out.println("We left the game because we weren't able to agree on something.");
 			}
@@ -434,6 +435,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 				updateRoom(room);
 				if (!game.gameEnded) {
 					System.out.println("We disconnected from the room and the game wasn't ended so we will now leave");
+					Toast.makeText(context, "We disconnected from the room because of an error!", Toast.LENGTH_LONG).show();
 					game.leave();
 				}
 			}
@@ -450,6 +452,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 				if(multiplayer != null){
 					if(list.contains(multiplayer.host)){
 						System.out.println("Leaving game because host left!");
+						Toast.makeText(context, "The host left! Room closed.", Toast.LENGTH_LONG).show();
 						game.leave();
 					}
 				}
@@ -470,9 +473,12 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		/** Our own participant id*/
 		private final String participantId;
 		private final List<String> participants;
+		/** All the players*/
 		private final List<GamePlayer> players;
 		/** Players that we handle */
 		private final List<GamePlayer> handledPlayers;
+		/** Players that we don't handle */
+		private final List<GamePlayer> nonHandledPlayers;
 		/** The participant id of the host*/
 		private final String host;
 
@@ -485,6 +491,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			final List<String> participants = new ArrayList<>();
 			final List<GamePlayer> players = new ArrayList<>();
 			final List<GamePlayer> handledPlayers = new ArrayList<>(1);
+			final List<GamePlayer> nonHandledPlayers = new ArrayList<>();
 			for(String participant : room.getParticipantIds()){
 				if(room.getParticipant(participant).isConnectedToRoom()){
 					participants.add(participant);
@@ -492,6 +499,8 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 					players.add(player); // TODO in the future a single participant might have multiple players
 					if(participant.equals(participantId)){
 						handledPlayers.add(player);
+					} else {
+						nonHandledPlayers.add(player);
 					}
 				} else {
 					System.out.println("Participant: " + participant + " is not connected.");
@@ -500,6 +509,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			this.participants = Collections.unmodifiableList(participants);
 			this.players = Collections.unmodifiableList(players);
 			this.handledPlayers = Collections.unmodifiableList(handledPlayers);
+			this.nonHandledPlayers = Collections.unmodifiableList(nonHandledPlayers);
 			host = new TreeSet<>(participants).first();
 			if(isHost()){
 				System.out.println("We are the host! We will wait to make sure everyone is ready!");
@@ -599,6 +609,11 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		@Override
 		public Collection<? extends Player> getHandledPlayers() {
 			return handledPlayers;
+		}
+
+		@Override
+		public Collection<? extends Player> getNonHandledPlayers() {
+			return nonHandledPlayers;
 		}
 	}
 	private static class GamePlayer implements Multiplayer.Player{

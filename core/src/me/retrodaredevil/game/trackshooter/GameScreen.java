@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,11 +60,11 @@ public class GameScreen implements UsableScreen {
 		this.volumeControl = volumeControl;
 
 		final AchievementHandler passedHandler = gameType == GameType.NORMAL ? accountObject.getAchievementHandler() : AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
-		world = new World(new GameLevelGetter(players, passedHandler), 18, 18, renderObject, new StageCoordinatesConverter());
+		world = new World(multiplayer, new GameLevelGetter(players, passedHandler), 18, 18, renderObject, new StageCoordinatesConverter());
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		if(gameType == GameType.NORMAL){
-			List<Multiplayer.Player> handledPlayers = new ArrayList<>(multiplayer.getHandledPlayers());
+			Collection<? extends Multiplayer.Player> handledPlayers = multiplayer.getHandledPlayers();
 			if(gameInputs.size() > handledPlayers.size()){
 				throw new IllegalArgumentException("gameInputs cannot be bigger than handledPlayers!");
 			}
@@ -75,6 +76,11 @@ public class GameScreen implements UsableScreen {
 				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
 				i++;
+			}
+			for(Multiplayer.Player multiplayerPlayer : multiplayer.getNonHandledPlayers()){
+				Player player = new Player(world, () -> null, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, Player.Type.SNIPER, VolumeControl.Defaults.MUTED, multiplayerPlayer);
+				players.add(player);
+				world.addEntity(player);
 			}
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
 			renderParts.getOverlay().setGame(players, world); // only do this for a normal game so it doesn't replace or show the score

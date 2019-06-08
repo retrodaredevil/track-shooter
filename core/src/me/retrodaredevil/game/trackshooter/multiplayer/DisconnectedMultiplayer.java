@@ -2,6 +2,7 @@ package me.retrodaredevil.game.trackshooter.multiplayer;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 public class DisconnectedMultiplayer implements Multiplayer {
@@ -58,6 +59,12 @@ public class DisconnectedMultiplayer implements Multiplayer {
 	public Collection<? extends Player> getHandledPlayers() {
 		return players;
 	}
+
+	@Override
+	public Collection<? extends Player> getNonHandledPlayers() {
+		return Collections.emptyList();
+	}
+
 	private static class DisconnectedPlayer implements Player {
 
 		@Override

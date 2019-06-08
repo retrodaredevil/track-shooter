@@ -21,8 +21,10 @@ public interface Multiplayer {
 
 	/** @return A collection of players including us*/
 	Collection<? extends Player> getPlayers();
-	/** @return A collection of players that is handled by us */
+	/** @return A collection of players that are handled by us */
 	Collection<? extends Player> getHandledPlayers();
+	/** @return A collection of players that are not handled by us*/
+	Collection<? extends Player> getNonHandledPlayers();
 
 	interface Player {
 		/**
