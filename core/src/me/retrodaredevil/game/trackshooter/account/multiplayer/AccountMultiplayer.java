@@ -1,12 +1,20 @@
 package me.retrodaredevil.game.trackshooter.account.multiplayer;
 
 import me.retrodaredevil.game.trackshooter.account.Show;
+import me.retrodaredevil.game.trackshooter.multiplayer.Multiplayer;
 
 public interface AccountMultiplayer {
 	Show getShowRoomConfig();
 	Show getShowInbox();
 
 	ConnectionState getConnectionState();
+
+	/**
+	 *
+	 * @throws IllegalStateException if {@link #getConnectionState()} != {@link ConnectionState#CONNECTED}
+	 * @return The {@link Multiplayer}
+	 */
+	Multiplayer getMultiplayer();
 
 	enum ConnectionState {
 		CONNECTED, JOINING, DISCONNECTED, LEAVING
@@ -27,6 +35,11 @@ public interface AccountMultiplayer {
 			@Override
 			public ConnectionState getConnectionState() {
 				return ConnectionState.DISCONNECTED;
+			}
+
+			@Override
+			public Multiplayer getMultiplayer() {
+				throw new IllegalStateException();
 			}
 		};
 	}

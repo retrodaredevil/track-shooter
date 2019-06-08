@@ -14,6 +14,8 @@ import me.retrodaredevil.game.trackshooter.account.Show;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
+import me.retrodaredevil.game.trackshooter.multiplayer.DisconnectedMultiplayer;
+import me.retrodaredevil.game.trackshooter.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.render.*;
 import me.retrodaredevil.game.trackshooter.render.components.RenderComponent;
 import me.retrodaredevil.game.trackshooter.render.selection.SelectionMenuRenderComponent;
@@ -170,17 +172,23 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 	@Override
 	public void render(float delta) {
 		idleTime += delta;
-		final boolean isMultiplayerConnected = accountObject.getAccountMultiplayer().getConnectionState() != AccountMultiplayer.ConnectionState.DISCONNECTED;
-		if(gameInput.getFireButton().isJustPressed() || gameInput.getEnterButton().isJustPressed()
-				|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
-				|| renderParts.getOptionsMenu().isMenuOpen()
-				|| isMultiplayerConnected){
+		final AccountMultiplayer accountMultiplayer = accountObject.getAccountMultiplayer();
+		final boolean isMultiplayerConnected = accountMultiplayer.getConnectionState() != AccountMultiplayer.ConnectionState.DISCONNECTED;
+		if(isMultiplayerConnected){
 			idleTime = 0;
-		}
+			if(accountMultiplayer.getConnectionState() == AccountMultiplayer.ConnectionState.CONNECTED) {
+				System.out.println("Starting actual multiplayer game!");
+				normalGame(accountMultiplayer.getMultiplayer());
+			}
+		} else {
+			if (gameInput.getFireButton().isJustPressed() || gameInput.getEnterButton().isJustPressed()
+					|| gameInput.getMainJoystick().getMagnitude() > .5 || Gdx.input.justTouched()
+					|| renderParts.getOptionsMenu().isMenuOpen()) {
+				idleTime = 0;
+			}
 
-		if(!isMultiplayerConnected) {
 			if (gameInput.getStartButton().isJustPressed() || startButton.isPressed()) {
-				normalGame();
+				normalGame(new DisconnectedMultiplayer(gameInputs.size()));
 				return;
 			}
 			if (!renderParts.getOptionsMenu().isMenuOpen() && (gameInput.getBackButton().isJustPressed() || idleTime > DEMO_GAME_INIT_IDLE)) {
@@ -195,67 +203,67 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 				renderParts.getOptionsMenu().setToController(gameInputPlayerIndex, gameInput, gameInputPlayerIndex, gameInput);
 			}
 			optionsDown = optionsButton.isPressed();
-		}
 
-		final AccountManager accountManager = accountObject.getAccountManager();
-		if(signInButton != null && !isMultiplayerConnected){
-			final boolean signedIn = accountManager.isSignedIn();
-			if(signedIn){
-				signInButton.setText("sign out");
-			} else {
-				signInButton.setText("sign in");
-			}
-			if(signInDown && !signInButton.isPressed()){ // just released sign in
-				if(signedIn){
-					accountManager.logout();
+			final AccountManager accountManager = accountObject.getAccountManager();
+			if (signInButton != null) {
+				final boolean signedIn = accountManager.isSignedIn();
+				if (signedIn) {
+					signInButton.setText("sign out");
 				} else {
-					accountManager.signIn();
+					signInButton.setText("sign in");
+				}
+				if (signInDown && !signInButton.isPressed()) { // just released sign in
+					if (signedIn) {
+						accountManager.logout();
+					} else {
+						accountManager.signIn();
+					}
+				}
+				signInDown = signInButton.isPressed();
+			}
+			if (joinRoom != null) {
+				final Show roomShow = accountObject.getAccountMultiplayer().getShowRoomConfig();
+				boolean canShow = roomShow.isCurrentlyAbleToShow();
+				joinRoom.setVisible(canShow);
+				if (canShow) {
+					if (joinRoomDown && !joinRoom.isPressed()) {
+						roomShow.show();
+					}
+					joinRoomDown = joinRoom.isPressed();
 				}
 			}
-			signInDown = signInButton.isPressed();
-		}
-		if(joinRoom != null){
-			final Show roomShow = accountObject.getAccountMultiplayer().getShowRoomConfig();
-			boolean canShow = roomShow.isCurrentlyAbleToShow();
-			joinRoom.setVisible(canShow);
-			if(canShow){
-				if(joinRoomDown && !joinRoom.isPressed()){
-					roomShow.show();
+			if (showInbox != null) {
+				final Show inboxShow = accountObject.getAccountMultiplayer().getShowInbox();
+				boolean canShow = inboxShow.isCurrentlyAbleToShow();
+				showInbox.setVisible(canShow);
+				if (canShow) {
+					if (showInboxDown && !showInbox.isPressed()) {
+						inboxShow.show();
+					}
+					showInboxDown = showInbox.isPressed();
 				}
-				joinRoomDown = joinRoom.isPressed();
 			}
-		}
-		if(showInbox != null){
-			final Show inboxShow = accountObject.getAccountMultiplayer().getShowInbox();
-			boolean canShow = inboxShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
-			showInbox.setVisible(canShow);
-			if(canShow){
-				if(showInboxDown && !showInbox.isPressed()){
-					inboxShow.show();
+			if (showAchievements != null) {
+				final Show achievementsShow = accountObject.getAchievementHandler().getShowAchievements();
+				boolean canShow = achievementsShow.isCurrentlyAbleToShow();
+				showAchievements.setVisible(canShow);
+				if (canShow) {
+					if (showAchievementsDown && !showAchievements.isPressed()) { // just released show achievements
+						achievementsShow.show();
+					}
+					showAchievementsDown = showAchievements.isPressed();
 				}
-				showInboxDown = showInbox.isPressed();
 			}
-		}
-		if(showAchievements != null){
-			final Show achievementsShow = accountObject.getAchievementHandler().getShowAchievements();
-			boolean canShow = achievementsShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
-			showAchievements.setVisible(canShow);
-			if(canShow){
-				if (showAchievementsDown && !showAchievements.isPressed()) { // just released show achievements
-					achievementsShow.show();
+			if (showLeaderboards != null) {
+				final Show leaderboardsShow = accountObject.getAchievementHandler().getShowLeaderboards();
+				boolean canShow = leaderboardsShow.isCurrentlyAbleToShow();
+				showLeaderboards.setVisible(canShow);
+				if (canShow) {
+					if (showLeaderboardsDown && !showLeaderboards.isPressed()) { // just released show leaderboards
+						leaderboardsShow.show();
+					}
+					showLeaderboardsDown = showLeaderboards.isPressed();
 				}
-				showAchievementsDown = showAchievements.isPressed();
-			}
-		}
-		if(showLeaderboards != null){
-			final Show leaderboardsShow = accountObject.getAchievementHandler().getShowLeaderboards();
-			boolean canShow = leaderboardsShow.isCurrentlyAbleToShow() && !isMultiplayerConnected;
-			showLeaderboards.setVisible(canShow);
-			if(canShow){
-				if(showLeaderboardsDown && !showLeaderboards.isPressed()){ // just released show leaderboards
-					leaderboardsShow.show();
-				}
-				showLeaderboardsDown = showLeaderboards.isPressed();
 			}
 		}
 
@@ -268,14 +276,14 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 
 		createRenderer().render(delta);
 	}
-	private void normalGame(){
+	private void normalGame(Multiplayer multiplayer){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, accountObject, volumeControl);
+			nextScreen = new GameScreen(multiplayer, gameInputs, renderObject, renderParts, GameScreen.GameType.NORMAL, accountObject, volumeControl);
 		}
 	}
 	private void demoGame(){
 		if(nextScreen == null) {
-			nextScreen = new GameScreen(gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, accountObject, volumeControl);
+			nextScreen = new GameScreen(new DisconnectedMultiplayer(1), gameInputs, renderObject, renderParts, GameScreen.GameType.DEMO_AI, accountObject, volumeControl);
 		}
 	}
 

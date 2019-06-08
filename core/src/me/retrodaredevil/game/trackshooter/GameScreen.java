@@ -18,6 +18,7 @@ import me.retrodaredevil.game.trackshooter.entity.player.PlayerController;
 import me.retrodaredevil.game.trackshooter.entity.player.Score;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
+import me.retrodaredevil.game.trackshooter.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.Renderer;
@@ -41,12 +42,15 @@ public class GameScreen implements UsableScreen {
 	private final AccountObject accountObject;
 	private final VolumeControl volumeControl;
 
+	private final Multiplayer multiplayer;
+
 	private final Stage stage;
 
 	private boolean shouldExit = false;
 
-	public GameScreen(List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType,
+	public GameScreen(Multiplayer multiplayer, List<GameInput> gameInputs, RenderObject renderObject, RenderParts renderParts, GameType gameType,
 					  AccountObject accountObject, VolumeControl volumeControl){
+		this.multiplayer = multiplayer;
 		this.gameInputs = gameInputs;
 		this.gameType = gameType;
 		this.renderObject = renderObject;
@@ -59,9 +63,14 @@ public class GameScreen implements UsableScreen {
 		stage = new Stage(new WorldViewport(world), renderObject.getBatch());
 
 		if(gameType == GameType.NORMAL){
+			List<Multiplayer.Player> handledPlayers = new ArrayList<>(multiplayer.getHandledPlayers());
+			if(gameInputs.size() > handledPlayers.size()){
+				throw new IllegalArgumentException("gameInputs cannot be bigger than handledPlayers!");
+			}
 			int i = 0;
-			for (GameInput gameInput : gameInputs) {
-				Player player = new Player(world, gameInput::getRumble, passedHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER, volumeControl);
+			for (Multiplayer.Player multiplayerPlayer : handledPlayers) {
+				GameInput gameInput = gameInputs.get(i);
+				Player player = new Player(world, gameInput::getRumble, passedHandler, i % 2 == 0 ? Player.Type.NORMAL : Player.Type.SNIPER, volumeControl, multiplayerPlayer);
 				players.add(player);
 				player.setEntityController(new PlayerController(world, player, gameInput));
 				world.addEntity(player);
@@ -70,7 +79,13 @@ public class GameScreen implements UsableScreen {
 			pauseMenu = new PauseMenu(gameInputs, renderObject, renderParts, () -> setToExit(false));
 			renderParts.getOverlay().setGame(players, world); // only do this for a normal game so it doesn't replace or show the score
 		} else { // assume DEMO_AI
-			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED);
+			if(multiplayer.isConnected()){
+				throw new IllegalArgumentException("Cannot do a demo game with multiplayer!");
+			}
+			if(multiplayer.getPlayers().size() > 1){
+				throw new IllegalArgumentException("Only one Multiplayer.Player supported for a demo");
+			}
+			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED, multiplayer.getPlayers().iterator().next());
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
 			world.addEntity(player);
@@ -102,6 +117,10 @@ public class GameScreen implements UsableScreen {
 				setToExit(false);
 				return;
 			}
+		}
+		if(!multiplayer.isConnected() && !multiplayer.isHost()){
+			setToExit(false);
+			return;
 		}
 		if(isPaused()){
 			return;
@@ -184,6 +203,9 @@ public class GameScreen implements UsableScreen {
 		if(shouldExit){
 			System.out.println("Was already set to exit!");
 			return;
+		}
+		if(multiplayer.isConnected()){
+			multiplayer.leave();
 		}
 		shouldExit = true;
 		System.out.println("Exiting game.");

@@ -161,6 +161,15 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		}
 		return ConnectionState.JOINING;
 	}
+
+	@Override
+	public Multiplayer getMultiplayer() {
+		if(getConnectionState() != ConnectionState.CONNECTED){
+			throw new IllegalStateException();
+		}
+		return requireNonNull(game.gameMultiplayer);
+	}
+
 	private enum IntentType {
 		CREATE_ROOM,
 		RECEIVED_INVITE
@@ -168,7 +177,6 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 	private class Game {
 		private final RoomConfig config;
 		private Room _roomCache = null;
-//		private boolean gameStarted = false;
 		private boolean gameEnded = false;
 		private boolean fullyLeft = false;
 		private String myParticipantId = null;
@@ -463,6 +471,8 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		private final String participantId;
 		private final List<String> participants;
 		private final List<GamePlayer> players;
+		/** Players that we handle */
+		private final List<GamePlayer> handledPlayers;
 		/** The participant id of the host*/
 		private final String host;
 
@@ -474,16 +484,22 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			Room room = game.getRoom();
 			final List<String> participants = new ArrayList<>();
 			final List<GamePlayer> players = new ArrayList<>();
+			final List<GamePlayer> handledPlayers = new ArrayList<>(1);
 			for(String participant : room.getParticipantIds()){
 				if(room.getParticipant(participant).isConnectedToRoom()){
 					participants.add(participant);
-					players.add(new GamePlayer(participant)); // TODO in the future a single participant might have multiple players
+					GamePlayer player = new GamePlayer(participant, this);
+					players.add(player); // TODO in the future a single participant might have multiple players
+					if(participant.equals(participantId)){
+						handledPlayers.add(player);
+					}
 				} else {
 					System.out.println("Participant: " + participant + " is not connected.");
 				}
 			}
 			this.participants = Collections.unmodifiableList(participants);
 			this.players = Collections.unmodifiableList(players);
+			this.handledPlayers = Collections.unmodifiableList(handledPlayers);
 			host = new TreeSet<>(participants).first();
 			if(isHost()){
 				System.out.println("We are the host! We will wait to make sure everyone is ready!");
@@ -579,12 +595,40 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 		public Collection<? extends Player> getPlayers() {
 			return players;
 		}
+
+		@Override
+		public Collection<? extends Player> getHandledPlayers() {
+			return handledPlayers;
+		}
 	}
 	private static class GamePlayer implements Multiplayer.Player{
 		private final String participantId;
+		private final GameMultiplayer multiplayer;
 
-		private GamePlayer(String participantId) {
+		private GamePlayer(String participantId, GameMultiplayer multiplayer) {
 			this.participantId = participantId;
+			this.multiplayer = multiplayer;
+		}
+
+		@Override
+		public boolean isConnected() {
+			if(multiplayer.game.gameEnded){
+				return false;
+			}
+			if(isHandledByUs()){
+				return true;
+			}
+			return multiplayer.game.getRoom().getParticipant(participantId).isConnectedToRoom();
+		}
+
+		@Override
+		public boolean isHandledByUs() {
+			return participantId.equals(multiplayer.participantId);
+		}
+
+		@Override
+		public boolean isPlayerHost() {
+			return multiplayer.isHost();
 		}
 	}
 

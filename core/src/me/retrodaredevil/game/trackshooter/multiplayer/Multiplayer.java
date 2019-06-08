@@ -21,7 +21,16 @@ public interface Multiplayer {
 
 	/** @return A collection of players including us*/
 	Collection<? extends Player> getPlayers();
+	/** @return A collection of players that is handled by us */
+	Collection<? extends Player> getHandledPlayers();
 
 	interface Player {
+		/**
+		 * @return true if the player is connected, false otherwise
+		 * @throws IllegalStateException if {@link Multiplayer#isConnected()} is false
+		 */
+		boolean isConnected();
+		boolean isHandledByUs();
+		boolean isPlayerHost();
 	}
 }

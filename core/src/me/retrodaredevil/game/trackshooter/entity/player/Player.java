@@ -16,6 +16,7 @@ import me.retrodaredevil.game.trackshooter.entity.Entity;
 import me.retrodaredevil.game.trackshooter.entity.SimpleEntity;
 import me.retrodaredevil.game.trackshooter.level.Level;
 import me.retrodaredevil.game.trackshooter.level.LevelMode;
+import me.retrodaredevil.game.trackshooter.multiplayer.Multiplayer;
 import me.retrodaredevil.game.trackshooter.render.components.ImageRenderComponent;
 import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
 import me.retrodaredevil.game.trackshooter.util.CannotHitException;
@@ -38,22 +39,24 @@ public class Player extends SimpleEntity {
 
 
 	private final Map<Bullet.ShotType, List<List<Bullet>>> activeBulletsMap = new EnumMap<>(Bullet.ShotType.class);
-	private final Score score;
 	private final Type playerType;
+	private final Score score;
 	private final VolumeControl volumeControl;
+	private final Multiplayer.Player multiplayerPlayer;
 
 	private boolean hit = false;
 	private boolean triplePowerup = false;
 
 
-	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, AchievementHandler achievementHandler, Type playerType, VolumeControl volumeControl){
+	public Player(World world, PlayerScore.RumbleGetter rumbleGetter, AchievementHandler achievementHandler, Type playerType, VolumeControl volumeControl, Multiplayer.Player multiplayerPlayer){
 		super(world);
 		this.playerType = playerType;
 		this.volumeControl = volumeControl;
+		this.multiplayerPlayer = multiplayerPlayer;
+		score = new PlayerScore(this, rumbleGetter, achievementHandler);
 		setMoveComponent(new TravelRotateVelocityOnTrackMoveComponent(world, this));
 //		setMoveComponent(new FreeVelocityMoveComponent(this));
 		setHitboxSize(.7f);
-		score = new PlayerScore(this, rumbleGetter, achievementHandler);
 		canRespawn = true;
 		collisionIdentity = CollisionIdentity.FRIENDLY;
 	}
