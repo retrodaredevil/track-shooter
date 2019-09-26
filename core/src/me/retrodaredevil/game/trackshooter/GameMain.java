@@ -21,6 +21,7 @@ import java.util.List;
 
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
+import me.retrodaredevil.controller.gdx.GdxControllerPartCreator;
 import me.retrodaredevil.controller.implementations.BaseExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.implementations.BaseLogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.implementations.BaseStandardControllerInput;
@@ -37,7 +38,6 @@ import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.input.*;
-import me.retrodaredevil.game.trackshooter.input.implementations.GdxControllerPartCreator;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.*;

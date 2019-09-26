@@ -6,6 +6,7 @@ import me.retrodaredevil.controller.input.implementations.AutoCachingInputPart;
 import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class ControllerInputPart extends AutoCachingInputPart {
 	private final Controller controller;
 	private final int code;

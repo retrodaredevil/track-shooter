@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import me.retrodaredevil.controller.input.AxisType;
 import me.retrodaredevil.controller.input.implementations.AutoCachingInputPart;
 
+@Deprecated
 public class KeyInputPart extends AutoCachingInputPart {
 	private final int code;
 	private final boolean isButton;

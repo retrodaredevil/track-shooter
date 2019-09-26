@@ -8,6 +8,7 @@ import me.retrodaredevil.controller.input.implementations.JoystickAxisFollowerPa
 import me.retrodaredevil.controller.input.implementations.SimpleJoystickPart;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class ControllerPovJoystick extends SimpleJoystickPart {
 	private static final double INV_SQRT2 = 1.0 / Math.sqrt(2.0);
 

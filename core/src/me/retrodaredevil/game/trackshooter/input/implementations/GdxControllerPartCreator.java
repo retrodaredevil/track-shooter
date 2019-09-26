@@ -9,6 +9,7 @@ import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.trackshooter.util.Util;
 
+@Deprecated
 public class GdxControllerPartCreator implements ControllerPartCreator {
 	private final Controller controller;
 

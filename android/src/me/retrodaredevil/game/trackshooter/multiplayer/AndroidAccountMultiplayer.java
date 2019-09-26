@@ -186,6 +186,7 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 			requireNonNull(data);
 			requireNonNull(intentType);
 
+			RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 			if(intentType == IntentType.CREATE_ROOM) {
 				ArrayList<String> invited = data.getStringArrayListExtra(Games.EXTRA_PLAYER_IDS);
 
@@ -201,7 +202,6 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 				}
 
 				config = builder.build();
-				RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 				client.create(config);
 			} else if(intentType == IntentType.RECEIVED_INVITE){
 				Invitation invitation = requireNonNull(data.getExtras()).getParcelable(com.google.android.gms.games.multiplayer.Multiplayer.EXTRA_INVITATION);
@@ -213,7 +213,6 @@ public class AndroidAccountMultiplayer implements AccountMultiplayer {
 						.setOnMessageReceivedListener(this::onRealTimeMessageReceived)
 						.setRoomStatusUpdateCallback(statusUpdateCallback)
 						.build();
-				RealTimeMultiplayerClient client = Games.getRealTimeMultiplayerClient(context, requireNonNull(accountManager.getLastAccount()));
 				client.join(config);
 			} else throw new UnsupportedOperationException("Unsupported IntentType: " + intentType);
 		}

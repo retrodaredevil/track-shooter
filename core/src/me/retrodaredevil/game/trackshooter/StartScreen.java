@@ -324,7 +324,8 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			"Shoot the starfish once to change its direction!",
 			"Open Source!",
 			"Made by Joshua Shannon!",
-			"Sign in for achievements and leaderboards!"
+			"Sign in for achievements and leaderboards!",
+			"Blue sharks need 3 hits, pink need 2, and red needs one more!"
 	};
 	private class TipsRenderComponent implements RenderComponent {
 		private final Group group = new Table(){{setFillParent(true);}};

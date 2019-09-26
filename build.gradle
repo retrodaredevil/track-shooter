@@ -13,10 +13,7 @@ buildscript {
 		google()
 	}
     dependencies {
-        classpath 'org.wisepersist:gwt-gradle-plugin:1.0.6'
-		classpath 'com.android.tools.build:gradle:3.4.1'
-
-
+		classpath 'com.android.tools.build:gradle:3.5.0'
     }
 }
 configurations.all {
@@ -94,6 +91,7 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.github.retrodaredevil:abstract-controller-lib:$controllerLibVersion"
+        implementation "com.github.retrodaredevil:gdx-controller-lib:v1.0.0"
 
     }
 }

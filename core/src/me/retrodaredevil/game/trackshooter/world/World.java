@@ -31,6 +31,7 @@ public class World implements Updateable, Renderable {
 	private final Queue<Entity> entitiesToAdd = new LinkedList<>();
 	private final List<Entity> entities = new ArrayList<>();
 
+	/** The non-null level*/
 	private Level level;
 	private float timeInSeconds = 0;
 
@@ -59,7 +60,7 @@ public class World implements Updateable, Renderable {
 	@Override
 	public void update(float delta) {
 		timeInSeconds += delta;
-		if(level == null || level.isDone()){
+		if(level.isDone()){
 			level = levelGetter.nextLevel(this);
 		}
 		/*

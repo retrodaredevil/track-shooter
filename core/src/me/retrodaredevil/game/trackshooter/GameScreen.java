@@ -91,6 +91,7 @@ public class GameScreen implements UsableScreen {
 			if(multiplayer.getPlayers().size() > 1){
 				throw new IllegalArgumentException("Only one Multiplayer.Player supported for a demo");
 			}
+			assert passedHandler == AchievementHandler.Defaults.UNSUPPORTED_HANDLER;
 			Player player = new Player(world, () -> null, passedHandler, Player.Type.NORMAL, VolumeControl.Defaults.MUTED, multiplayer.getPlayers().iterator().next());
 			players.add(player);
 			player.setEntityController(new PlayerAIController(world, player));
@@ -128,7 +129,7 @@ public class GameScreen implements UsableScreen {
 			setToExit(false);
 			return;
 		}
-		if(isPaused()){
+		if(isPaused() && !multiplayer.isConnected()){
 			return;
 		}
 		world.update(delta);
@@ -225,7 +226,7 @@ public class GameScreen implements UsableScreen {
 		}
 	}
 
-	public boolean isPaused(){
+	private boolean isPaused(){
 		return pauseMenu != null && pauseMenu.isMenuOpen();
 	}
 

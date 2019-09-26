@@ -1,9 +1,10 @@
 package me.retrodaredevil.game.trackshooter.input;
 
 import com.badlogic.gdx.Input;
+
+import me.retrodaredevil.controller.gdx.KeyInputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.implementations.TwoAxisJoystickPart;
-import me.retrodaredevil.game.trackshooter.input.implementations.KeyInputPart;
 
 public final class FourKeyJoystick {
 	private FourKeyJoystick(){}
