@@ -5,8 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.widget.Toast;
 import com.badlogic.gdx.LifecycleListener;
 import com.badlogic.gdx.backends.android.AndroidApplication;
@@ -26,6 +26,7 @@ import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
+@Deprecated
 public class AndroidAccountMultiplayer implements AccountMultiplayer {
 	private static final int RC_SELECT_PLAYERS = 9006;
 	private static final int RC_WAITING_ROOM = 9007;

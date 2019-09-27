@@ -12,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.Games;
 import me.retrodaredevil.game.trackshooter.account.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.account.achievement.ManualAchievement;
+import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
@@ -95,7 +96,8 @@ public class AndroidLauncher extends AndroidApplication {
 				this,
 				accountManager
 		);
-		AndroidAccountMultiplayer multiplayer = new AndroidAccountMultiplayer(this, accountManager);
+//		AndroidAccountMultiplayer multiplayer = new AndroidAccountMultiplayer(this, accountManager);
+		AccountMultiplayer multiplayer = AccountMultiplayer.Defaults.NOT_SUPPORTED;
 
 		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler, multiplayer)), config);
 		achievementHandler.setView(graphics.getView());
@@ -103,8 +105,4 @@ public class AndroidLauncher extends AndroidApplication {
 	}
 
 
-	@Override
-	protected void onResume() {
-		super.onResume();
-	}
 }
