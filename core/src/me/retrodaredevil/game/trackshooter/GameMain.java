@@ -21,6 +21,8 @@ import java.util.List;
 
 import me.retrodaredevil.controller.ControllerManager;
 import me.retrodaredevil.controller.DefaultControllerManager;
+import me.retrodaredevil.controller.MutableControlConfig;
+import me.retrodaredevil.controller.PartUpdater;
 import me.retrodaredevil.controller.gdx.GdxControllerPartCreator;
 import me.retrodaredevil.controller.implementations.BaseExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.implementations.BaseLogitechAttack3JoystickControllerInput;
@@ -63,7 +65,8 @@ public class GameMain extends Game {
 	private VolumeControl volumeControl;
 	private RenderParts renderParts;
 
-	private ControllerManager controllerManager;
+	private final PartUpdater controllerUpdater = new PartUpdater();
+	private final MutableControlConfig controllerConfig = new MutableControlConfig();
 	private List<GameInput> inputs = new ArrayList<>();
 
 	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject){
@@ -96,7 +99,6 @@ public class GameMain extends Game {
 		));
 		renderParts = new RenderParts(new Background(renderObject), optionMenu,
 				new Overlay(renderObject), new TouchpadRenderer(renderObject), new ArrowRenderer(renderObject), new InputMultiplexer());
-		controllerManager = new DefaultControllerManager();
 		{
 			boolean firstRun = true;
 			for (Iterator<Controller> it = new Array.ArrayIterator<>(Controllers.getControllers()); it.hasNext(); ) {
@@ -139,7 +141,7 @@ public class GameMain extends Game {
 							OptionValues.createImmutableBooleanOptionValue(false)
 					), tracker);
 				}
-				controllerManager.addController(controllerInput);
+				controllerUpdater.addPartAssertNotPresent(controllerInput);
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
 				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl) : Collections.emptySet();
@@ -153,7 +155,7 @@ public class GameMain extends Game {
 
 				// ==== Create our ChangeableGameInput and add it to our official inputs
 				GameInput realGameInput = new ChangeableGameInput(usableInputs);
-				controllerManager.addController(realGameInput);
+				controllerUpdater.addPartAssertNotPresent(realGameInput);
 				inputs.add(realGameInput);
 
 				firstRun = false;
@@ -165,7 +167,7 @@ public class GameMain extends Game {
 //				controllerManager.addController(input);
 //			}
 			GameInput realGameInput = new ChangeableGameInput(gameInputs);
-			controllerManager.addController(realGameInput);
+			controllerUpdater.addPartAssertNotPresent(realGameInput);
 			inputs.add(realGameInput);
 		}
 
@@ -219,7 +221,7 @@ public class GameMain extends Game {
 
 	@Override
 	public void render() {
-		controllerManager.update();
+		controllerUpdater.updateParts(controllerConfig);
 		super.render(); // renders current screen
 //		for(GameInput input : inputs){
 //			if(!input.isConnected()){

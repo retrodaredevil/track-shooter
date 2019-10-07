@@ -13,7 +13,7 @@ buildscript {
 		google()
 	}
     dependencies {
-		classpath 'com.android.tools.build:gradle:3.5.0'
+		classpath 'com.android.tools.build:gradle:3.5.1'
     }
 }
 configurations.all {
@@ -62,7 +62,7 @@ project(":desktop") {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+//        implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
 		implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
 
     }
@@ -88,7 +88,7 @@ project(":core") {
 
     dependencies {
         implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+//        implementation "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
         implementation "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
         implementation "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
