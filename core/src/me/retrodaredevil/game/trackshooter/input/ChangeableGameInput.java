@@ -77,13 +77,14 @@ public class ChangeableGameInput extends SimpleControllerInput implements GameIn
 	protected void onUpdate() {
 		super.onUpdate();
 		UsableGameInput activeInput = getCurrentGameInput();
+		final UsableGameInput lastActiveInput = this.lastActiveInput;
 		if(activeInput != lastActiveInput && lastActiveInput != null){
 			lastActiveInput.setActiveInput(false);
 			partUpdater.removePart(lastActiveInput);
 		}
 		activeInput.setActiveInput(true);
-		lastActiveInput = activeInput;
-		partUpdater.addPart(lastActiveInput);
+		this.lastActiveInput = activeInput;
+		partUpdater.addPart(activeInput);
 	}
 
 	@Override

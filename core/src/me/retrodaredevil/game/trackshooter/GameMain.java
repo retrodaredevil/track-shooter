@@ -19,10 +19,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import me.retrodaredevil.controller.ControllerManager;
-import me.retrodaredevil.controller.DefaultControllerManager;
 import me.retrodaredevil.controller.MutableControlConfig;
 import me.retrodaredevil.controller.PartUpdater;
+import me.retrodaredevil.controller.gdx.ControllerProviders;
 import me.retrodaredevil.controller.gdx.GdxControllerPartCreator;
 import me.retrodaredevil.controller.implementations.BaseExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.implementations.BaseLogitechAttack3JoystickControllerInput;
@@ -39,13 +38,23 @@ import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.game.trackshooter.account.AccountManager;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
-import me.retrodaredevil.game.trackshooter.input.*;
+import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
+import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
+import me.retrodaredevil.game.trackshooter.input.GameInput;
+import me.retrodaredevil.game.trackshooter.input.GameInputs;
+import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
+import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
-import me.retrodaredevil.game.trackshooter.render.parts.*;
+import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
+import me.retrodaredevil.game.trackshooter.render.parts.Background;
+import me.retrodaredevil.game.trackshooter.render.parts.OptionMenu;
+import me.retrodaredevil.game.trackshooter.render.parts.Overlay;
+import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.sound.OptionValueVolumeControl;
 import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
+import me.retrodaredevil.game.trackshooter.util.GdxControllerTester;
 import me.retrodaredevil.game.trackshooter.util.ImmutableConfigurableObject;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -85,6 +94,7 @@ public class GameMain extends Game {
 
 	@Override
 	public void create () {
+		GdxControllerTester.initialize();
 		Batch batch = new SpriteBatch();
 		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
 		Resources.loadToSkin(skin);
@@ -106,7 +116,7 @@ public class GameMain extends Game {
 				String controllerName = controller.getName().toLowerCase();
 
 				// ====== Controller =====
-				final ControllerPartCreator controllerPartCreator = new GdxControllerPartCreator(controller);
+				final ControllerPartCreator controllerPartCreator = new GdxControllerPartCreator(ControllerProviders.wrap(controller), true);
 				final UsableGameInput controllerInput;
 				if(controllerName.contains("extreme") && controllerName.contains("logitech")){
 					controllerInput = new ControllerGameInput(new BaseExtremeFlightJoystickControllerInput(
@@ -145,9 +155,6 @@ public class GameMain extends Game {
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
 				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl) : Collections.emptySet();
-//				for(GameInput input : addBefore){
-//					controllerManager.addController(input);
-//				}
 
 				// ==== Inputs to go into our ChangeableGameInput
 				final List<UsableGameInput> usableInputs = new ArrayList<>(addBefore);
@@ -163,9 +170,6 @@ public class GameMain extends Game {
 		}
 		if(inputs.isEmpty()) { // if there were no controllers, add inputs from getPhysicalInputs()
 			List<UsableGameInput> gameInputs = getPhysicalInputs(rumbleAnalogControl);
-//			for(UsableGameInput input : gameInputs){
-//				controllerManager.addController(input);
-//			}
 			GameInput realGameInput = new ChangeableGameInput(gameInputs);
 			controllerUpdater.addPartAssertNotPresent(realGameInput);
 			inputs.add(realGameInput);

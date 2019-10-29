@@ -44,6 +44,7 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 				new DummyInputPart(0, true),
 				new DummyInputPart(0, true)
 		);
+		partUpdater.addPartAssertNotPresent(rotationPointInput);
 	}
 
 	/**

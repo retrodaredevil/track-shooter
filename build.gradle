@@ -32,8 +32,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
-        controllerLibVersion = "v2.2.0"
-//        controllerLibVersion = "e3e8642e3497b4e7bed9387a2ad9c247eb2f3755"
+        controllerLibVersion = "v2.2.4"
     }
 
     repositories {

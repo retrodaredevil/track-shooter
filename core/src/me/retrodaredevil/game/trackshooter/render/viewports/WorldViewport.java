@@ -3,23 +3,17 @@ package me.retrodaredevil.game.trackshooter.render.viewports;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import java.util.Objects;
-
 import me.retrodaredevil.game.trackshooter.world.World;
 
+import static java.util.Objects.requireNonNull;
+
 public class WorldViewport extends ExtendViewport {
-//	private static final Vector2 temp = new Vector2();
 
 	public WorldViewport(World world, OrthographicCamera camera){
-		super(world.getBounds().getWidth(), world.getBounds().getHeight(), Objects.requireNonNull(camera));
+		super(world.getBounds().getWidth(), world.getBounds().getHeight(), requireNonNull(camera));
 	}
 	public WorldViewport(World world){
 		this(world, new OrthographicCamera());
-	}
-
-	@Override
-	public void update(int screenWidth, int screenHeight, boolean centerCamera) {
-		super.update(screenWidth, screenHeight, centerCamera);
 	}
 
 	@Override
