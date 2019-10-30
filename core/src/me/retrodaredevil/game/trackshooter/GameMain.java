@@ -54,7 +54,6 @@ import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
 import me.retrodaredevil.game.trackshooter.save.SaveObject;
 import me.retrodaredevil.game.trackshooter.sound.OptionValueVolumeControl;
 import me.retrodaredevil.game.trackshooter.sound.VolumeControl;
-import me.retrodaredevil.game.trackshooter.util.GdxControllerTester;
 import me.retrodaredevil.game.trackshooter.util.ImmutableConfigurableObject;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 import me.retrodaredevil.game.trackshooter.util.Resources;
@@ -94,7 +93,7 @@ public class GameMain extends Game {
 
 	@Override
 	public void create () {
-		GdxControllerTester.initialize();
+//		GdxControllerTester.initialize();
 		Batch batch = new SpriteBatch();
 		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
 		Resources.loadToSkin(skin);
