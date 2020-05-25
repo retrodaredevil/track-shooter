@@ -191,7 +191,7 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputQuirk inputQuirk) {
+	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputConfig inputConfig) {
 		if(isTouchpad && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
 		}
@@ -330,10 +330,10 @@ public final class GameInputs {
 			), true, true);
 		} else {
 			shouldIgnorePointer = (pointer) -> false;
-			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt", inputQuirk == InputQuirk.NORMAL);
+			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt", inputConfig.getInputQuirk() == InputQuirk.NORMAL);
 			options.add((ConfigurableObject) mainJoystick);
 
-			if (inputQuirk == InputQuirk.WEAR) {
+			if (inputConfig.getInputQuirk() == InputQuirk.WEAR) {
 				fireButton = new DigitalPatternInputPart(160, 80);
 			} else {
 				fireButton = new GdxScreenTouchButton((x, y) -> {
@@ -345,32 +345,38 @@ public final class GameInputs {
 			}
 		}
 		final OptionValue useY = OptionValues.createBooleanOptionValue(true);
-		rotateAxis = createTouchAxis(useY, options, rotateAreaGetter, isLeftHanded);
-		renderParts.getArrowRenderer().createArrow(new ArrowRenderer.ShouldShowArrow() {
-			long lastPress = 0;
-			@Override
-			public boolean shouldShow() {
-				if(!activeDetector.isActive()){
-					lastPress = 0;
-					return false;
-				}
-				if(!rotateAxis.isDeadzone()){
-					lastPress = System.currentTimeMillis();
-					return false;
-				}
-				return lastPress + 10000 < System.currentTimeMillis(); // hasn't been pressed for 10 seconds
-			}
+		if (inputConfig.getInputQuirk() == InputQuirk.NORMAL) {
+			rotateAxis = createTouchAxis(useY, options, rotateAreaGetter, isLeftHanded);
+			renderParts.getArrowRenderer().createArrow(new ArrowRenderer.ShouldShowArrow() {
+				long lastPress = 0;
 
-			@Override
-			public boolean isHorizontal() {
-				return !useY.getBooleanOptionValue();
-			}
+				@Override
+				public boolean shouldShow() {
+					if (!activeDetector.isActive()) {
+						lastPress = 0;
+						return false;
+					}
+					if (!rotateAxis.isDeadzone()) {
+						lastPress = System.currentTimeMillis();
+						return false;
+					}
+					return lastPress + 10000 < System.currentTimeMillis(); // hasn't been pressed for 10 seconds
+				}
 
-			@Override
-			public boolean isLeft() {
-				return isLeftHanded.getBooleanOptionValue();
-			}
-		});
+				@Override
+				public boolean isHorizontal() {
+					return !useY.getBooleanOptionValue();
+				}
+
+				@Override
+				public boolean isLeft() {
+					return isLeftHanded.getBooleanOptionValue();
+				}
+			});
+		} else {
+			assert inputConfig.getInputQuirk() == InputQuirk.WEAR;
+			rotateAxis = requireNonNull(inputConfig.getOverrideRotateAxis());
+		}
 
 		startButton = new DummyInputPart(0, false);
 		slow = new DummyInputPart(0, false);
@@ -421,12 +427,12 @@ public final class GameInputs {
 		activeDetector.setGameInput(r);
 		return r;
 	}
-	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputQuirk inputQuirk){
-		return createTouchInput(false, renderParts, rumbleAnalogControl, inputQuirk);
+	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputConfig inputConfig){
+		return createTouchInput(false, renderParts, rumbleAnalogControl, inputConfig);
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl, InputQuirk.NORMAL);
+		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl, new InputConfig(InputQuirk.NORMAL));
 	}
 
 	private static ControlOption createRumbleOnSingleShotControlOption(){

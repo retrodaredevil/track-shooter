@@ -42,6 +42,7 @@ import me.retrodaredevil.game.trackshooter.input.ChangeableGameInput;
 import me.retrodaredevil.game.trackshooter.input.ControllerGameInput;
 import me.retrodaredevil.game.trackshooter.input.GameInput;
 import me.retrodaredevil.game.trackshooter.input.GameInputs;
+import me.retrodaredevil.game.trackshooter.input.InputConfig;
 import me.retrodaredevil.game.trackshooter.input.InputQuirk;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
@@ -68,7 +69,7 @@ public class GameMain extends Game {
 	private final PreferencesGetter scorePreferencesGetter;
 	private final RumbleAnalogControl rumbleAnalogControl;
 	private final AccountObject accountObject;
-	private final InputQuirk inputQuirk;
+	private final InputConfig inputConfig;
 
 	private RenderObject renderObject;
 	private SaveObject saveObject;
@@ -79,14 +80,14 @@ public class GameMain extends Game {
 	private final MutableControlConfig controllerConfig = new MutableControlConfig();
 	private List<GameInput> inputs = new ArrayList<>();
 
-	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject, InputQuirk inputQuirk){
+	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject, InputConfig inputConfig){
 		this.scorePreferencesGetter = scorePreferencesGetter;
 		this.rumbleAnalogControl = requireNonNull(rumbleAnalogControl);
 		this.accountObject = requireNonNull(accountObject);
-		this.inputQuirk = requireNonNull(inputQuirk);
+		this.inputConfig = requireNonNull(inputConfig);
 	}
 	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject){
-		this(scorePreferencesGetter, rumbleAnalogControl, accountObject, InputQuirk.NORMAL);
+		this(scorePreferencesGetter, rumbleAnalogControl, accountObject, new InputConfig(InputQuirk.NORMAL));
 	}
 
 	public GameMain(PreferencesGetter scorePreferencesGetter){
@@ -198,18 +199,18 @@ public class GameMain extends Game {
 
 		List<UsableGameInput> gameInputs = new ArrayList<>();
 		if(Gdx.app.getType() == Application.ApplicationType.Android){
-			if (!inputQuirk.isForceGyro()) {
+			if (!inputConfig.getInputQuirk().isForceGyro()) {
 				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts, rumbleAnalogControl));
 			}
 			if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
-				gameInputs.add(GameInputs.createTouchGyroInput(renderParts, rumbleAnalogControl, inputQuirk));
-			} else if (inputQuirk.isForceGyro()) {
+				gameInputs.add(GameInputs.createTouchGyroInput(renderParts, rumbleAnalogControl, inputConfig));
+			} else if (inputConfig.getInputQuirk().isForceGyro()) {
 				throw new IllegalStateException("No gyroscope available!");
 			}
-		} else if (inputQuirk.isForceGyro()) {
+		} else if (inputConfig.getInputQuirk().isForceGyro()) {
 			throw new IllegalStateException("Gyro only available on Android!");
 		}
-		if (!inputQuirk.isForceGyro()) {
+		if (!inputConfig.getInputQuirk().isForceGyro()) {
 			gameInputs.add(GameInputs.createMouseAndKeyboardInput());
 		}
 		return gameInputs;
