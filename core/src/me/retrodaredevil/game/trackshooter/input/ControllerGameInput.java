@@ -1,19 +1,29 @@
 package me.retrodaredevil.game.trackshooter.input;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import me.retrodaredevil.controller.ControllerPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
-import me.retrodaredevil.controller.input.implementations.*;
-import me.retrodaredevil.controller.options.*;
+import me.retrodaredevil.controller.input.implementations.DummyInputPart;
+import me.retrodaredevil.controller.input.implementations.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.implementations.MultiplexerJoystickPart;
+import me.retrodaredevil.controller.input.implementations.SensitiveInputPart;
+import me.retrodaredevil.controller.input.implementations.TwoAxisJoystickPart;
+import me.retrodaredevil.controller.input.implementations.TwoWayInput;
+import me.retrodaredevil.controller.options.ConfigurableControllerPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
+import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.controller.types.ExtremeFlightJoystickControllerInput;
 import me.retrodaredevil.controller.types.LogitechAttack3JoystickControllerInput;
 import me.retrodaredevil.controller.types.RumbleCapableController;
 import me.retrodaredevil.controller.types.StandardControllerInput;
-
-import java.util.Collection;
 
 public class ControllerGameInput extends SimpleUsableGameInput {
 	private final ControllerPart reliesOn;
@@ -58,25 +68,25 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 
 		controlOptions.add(extraOptions);
 
-		mainJoystick = new MultiplexerJoystickPart(
+		mainJoystick = new MultiplexerJoystickPart(Arrays.asList(
 				References.create(controller::getLeftJoy),
 				References.create(controller::getDPad)
-		);
-		selectorJoystick = new MultiplexerJoystickPart(
+		), false);
+		selectorJoystick = new MultiplexerJoystickPart(Arrays.asList(
 				References.create(controller::getLeftJoy),
 				References.create(controller::getRightJoy),
 				References.create(controller::getDPad)
-		);
+		), false);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = new SensitiveInputPart(
 				References.create(() -> controller.getRightJoy().getXAxis()),
-				rotateAxisSensitivity.getOptionValue(),null);
-		fireButton = new HighestPositionInputPart(
+				rotateAxisSensitivity.getOptionValue(),null, true);
+		fireButton = new HighestPositionInputPart(Arrays.asList(
 				References.create(controller::getRightBumper),
 				References.create(controller::getLeftBumper),
 				References.create(controller::getRightTrigger),
 				References.create(controller::getLeftTrigger)
-		);
+		), true, true);
 		slow = References.create(controller::getLeftStick);
 		activatePowerup = References.create(controller::getFaceLeft);
 		startButton = References.create(controller::getStart);
@@ -108,13 +118,16 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 		rotateAxis = new TwoWayInput( // x
 				References.create(controller::getThumbUpper), // +
-				References.create(controller::getThumbLeft)   // -
+				References.create(controller::getThumbLeft),   // -
+				false
 		);
 		fireButton = References.create(controller::getTrigger);
 		slow = References.create(controller::getCenterLeft);
 		activatePowerup = new HighestPositionInputPart(
-				References.create(controller::getLeftUpper),
-				References.create(controller::getLeftLower)
+				Arrays.asList(References.create(controller::getLeftUpper),
+						References.create(controller::getLeftLower)),
+				false,
+				false
 		);
 		startButton = References.create(controller::getRightUpper);
 		pauseButton = startButton;
@@ -137,10 +150,10 @@ public class ControllerGameInput extends SimpleUsableGameInput {
 		reliesOn = controller;
 
 		mainJoystick = References.create(controller::getMainJoystick);
-		selectorJoystick = new MultiplexerJoystickPart(
+		selectorJoystick = new MultiplexerJoystickPart(Arrays.asList(
 				References.create(controller::getMainJoystick),
 				References.create(controller::getDPad)
-		);
+		), false);
 		ControlOption rotateAxisSensitivity = createRotationalAxisSensitivity();
 //		rotateAxis = References.create(() -> controller.getDPad().getXAxis());
         rotateAxis = References.create(controller::getTwist);

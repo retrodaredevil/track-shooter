@@ -11,7 +11,7 @@ public final class FourKeyJoystick {
 
 	public static JoystickPart createFromKeys(int up, int down, int left, int right){
 		return TwoAxisJoystickPart.createFromFour(new KeyInputPart(up), new KeyInputPart(down),
-				new KeyInputPart(left), new KeyInputPart(right));
+				new KeyInputPart(left), new KeyInputPart(right), true, true);
 	}
 
 	public static JoystickPart newArrowKeyJoystick(){

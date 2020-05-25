@@ -4,13 +4,26 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.ui.PointerTouchpad;
+
+import java.util.Arrays;
+import java.util.Collections;
+
 import me.retrodaredevil.controller.PartUpdater;
 import me.retrodaredevil.controller.gdx.KeyInputPart;
 import me.retrodaredevil.controller.input.InputPart;
 import me.retrodaredevil.controller.input.JoystickPart;
 import me.retrodaredevil.controller.input.References;
-import me.retrodaredevil.controller.input.implementations.*;
-import me.retrodaredevil.controller.options.*;
+import me.retrodaredevil.controller.input.implementations.DigitalChildPositionInputPart;
+import me.retrodaredevil.controller.input.implementations.DummyInputPart;
+import me.retrodaredevil.controller.input.implementations.HighestPositionInputPart;
+import me.retrodaredevil.controller.input.implementations.LowestPositionInputPart;
+import me.retrodaredevil.controller.input.implementations.SimpleInputPart;
+import me.retrodaredevil.controller.input.implementations.TwoAxisJoystickPart;
+import me.retrodaredevil.controller.options.ConfigurableObject;
+import me.retrodaredevil.controller.options.ControlOption;
+import me.retrodaredevil.controller.options.OptionTracker;
+import me.retrodaredevil.controller.options.OptionValue;
+import me.retrodaredevil.controller.options.OptionValues;
 import me.retrodaredevil.controller.output.ControllerRumble;
 import me.retrodaredevil.controller.output.DisconnectedRumble;
 import me.retrodaredevil.game.trackshooter.input.implementations.BooleanConfigInputPart;
@@ -28,9 +41,6 @@ import me.retrodaredevil.game.trackshooter.input.implementations.ShouldIgnorePoi
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 import static java.util.Objects.requireNonNull;
 
@@ -150,14 +160,13 @@ public final class GameInputs {
 		final OptionTracker options = new OptionTracker();
 
 		rotateAxis = createMouseAxis(options);
-		fireButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true));
+		fireButton = new HighestPositionInputPart(Arrays.asList(new KeyInputPart(Input.Keys.SPACE), new KeyInputPart(Input.Buttons.LEFT, true)), true, true);
 		startButton = new KeyInputPart(Input.Keys.ENTER);
 		slow = new KeyInputPart(Input.Keys.SHIFT_LEFT);
 		activatePowerup = new KeyInputPart(Input.Keys.F);
-		pauseButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE),
-				new KeyInputPart(Input.Keys.ENTER));
-		backButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE));
-		enterButton = new HighestPositionInputPart(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE));
+		pauseButton = new HighestPositionInputPart(Arrays.asList(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.ENTER)), false, true);
+		backButton = new HighestPositionInputPart(Arrays.asList(new KeyInputPart(Input.Keys.ESCAPE), new KeyInputPart(Input.Keys.BACKSPACE)), false, true);
+		enterButton = new HighestPositionInputPart(Arrays.asList(new KeyInputPart(Input.Keys.ENTER), new KeyInputPart(Input.Keys.SPACE)), false, true);
 
 		final JoystickPart rotationPointInput = new TwoAxisJoystickPart(
 				new DummyInputPart(0, true),
@@ -297,7 +306,8 @@ public final class GameInputs {
 								return inputPart.isJustReleased();
 							}), // will fire if released when constant shoot not enabled
 					new LowestPositionInputPart( // this is for the constant shoot
-							new DigitalPatternInputPart(160, 80),
+							true,
+							Arrays.asList(new DigitalPatternInputPart(160, 80),
 							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
 									new DigitalChildPositionInputPart.DigitalGetter() {
 										Long lastDown = null;
@@ -312,9 +322,9 @@ public final class GameInputs {
 											}
 											return down || (lastDown != null && lastDown + CONSTANT_SHOOT_TIME_AFTER_RELEASE > currentTime);
 									}
-							})
+							})), true
 					)
-			), true);
+			), true, true);
 		} else {
 			shouldIgnorePointer = (pointer) -> false;
 			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt");
