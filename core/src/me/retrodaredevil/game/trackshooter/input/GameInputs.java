@@ -191,7 +191,7 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl) {
+	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputQuirk inputQuirk) {
 		if(isTouchpad && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
 		}
@@ -330,15 +330,19 @@ public final class GameInputs {
 			), true, true);
 		} else {
 			shouldIgnorePointer = (pointer) -> false;
-			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt");
+			mainJoystick = new GdxTiltJoystick("controls.movement." + TOUCH + ".gyro.max_tilt", inputQuirk == InputQuirk.NORMAL);
 			options.add((ConfigurableObject) mainJoystick);
 
-			fireButton = new GdxScreenTouchButton((x, y) -> {
-				if(isPointRotation.getBooleanOptionValue()){
-					return true;
-				}
-				return fireAreaGetter.containsPoint(x, y);
-			});
+			if (inputQuirk == InputQuirk.WEAR) {
+				fireButton = new DigitalPatternInputPart(160, 80);
+			} else {
+				fireButton = new GdxScreenTouchButton((x, y) -> {
+					if (isPointRotation.getBooleanOptionValue()) {
+						return true;
+					}
+					return fireAreaGetter.containsPoint(x, y);
+				});
+			}
 		}
 		final OptionValue useY = OptionValues.createBooleanOptionValue(true);
 		rotateAxis = createTouchAxis(useY, options, rotateAreaGetter, isLeftHanded);
@@ -417,12 +421,12 @@ public final class GameInputs {
 		activeDetector.setGameInput(r);
 		return r;
 	}
-	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(false, renderParts, rumbleAnalogControl);
+	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputQuirk inputQuirk){
+		return createTouchInput(false, renderParts, rumbleAnalogControl, inputQuirk);
 	}
 
 	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl);
+		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl, InputQuirk.NORMAL);
 	}
 
 	private static ControlOption createRumbleOnSingleShotControlOption(){

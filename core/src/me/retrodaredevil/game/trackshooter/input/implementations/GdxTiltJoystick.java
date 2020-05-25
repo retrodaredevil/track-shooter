@@ -20,6 +20,7 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 
 	private final OptionValue maxDegreesOption;
 	private final Collection<ControlOption> controlOptions;
+	private final boolean correctRotation;
 
 	private final InputPart xAxis = new JoystickAxisFollowerPart(this, partUpdater, false);
 	private final InputPart yAxis = new JoystickAxisFollowerPart(this, partUpdater, true);
@@ -31,9 +32,10 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 	 *
 	 * @param maxDegrees The amount of the degrees you have to tilt for either axis to reach a magnitude of 1 in
 	 */
-	private GdxTiltJoystick(String maxTiltCategory, Integer maxDegrees) {
+	private GdxTiltJoystick(String maxTiltCategory, Integer maxDegrees, boolean correctRotation) {
 		super(new JoystickType(true, true, true, true), false, false);
 		maxDegreesOption = OptionValues.createDigitalRangedOptionValue(5, 20, 15);
+		this.correctRotation = correctRotation;
 		controlOptions = Collections.singletonList(new ControlOption(
 				"Tilt Controller Angle",
 				"How many degrees you have to tilt the controller until the magnitude of an axis is 1.",
@@ -44,11 +46,11 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 			maxDegreesOption.setOptionValue(maxDegrees);
 		}
 	}
-	public GdxTiltJoystick(String maxTiltCategory, int maxDegrees){
-		this(maxTiltCategory, Integer.valueOf(maxDegrees));
+	public GdxTiltJoystick(String maxTiltCategory, boolean correctRotation){
+		this(maxTiltCategory, null, correctRotation);
 	}
-	public GdxTiltJoystick(String maxTiltCategory){
-		this(maxTiltCategory, null);
+	public GdxTiltJoystick(String maxTiltCategory) {
+		this(maxTiltCategory, true);
 	}
 
 	@Override
@@ -63,31 +65,34 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 		// works in landscape mode
 		float gyroX = -Gdx.input.getPitch(); // up and down
 		float gyroY = Gdx.input.getRoll(); // side to side
+//		System.out.println("x: " + gyroX + " y: " + gyroY + " rotation: " + Gdx.input.getRotation());
 
 //		System.out.println(Gdx.input.getRotation());
-		final float originalX = gyroX;
-		final float originalY = gyroY;
-		switch(Gdx.input.getRotation()){
-			case 90:
-				break; // landscape, good
-			case 0: // portrait
-				gyroX = originalY;
-				gyroY = -originalX;
+		if (correctRotation) {
+			final float originalX = gyroX;
+			final float originalY = gyroY;
+			switch (Gdx.input.getRotation()) {
+				case 90:
+					break; // landscape, good
+				case 0: // portrait
+					gyroX = originalY;
+					gyroY = -originalX;
 
-				break;
-			case 270: // landscape flipped
-				gyroX = -originalX;
-				gyroY = - originalY;
+					break;
+				case 270: // landscape flipped
+					gyroX = -originalX;
+					gyroY = -originalY;
 
-				break;
-			case 180: // portrait flipped
-				gyroX = -originalY;
-				gyroY = originalX;
+					break;
+				case 180: // portrait flipped
+					gyroX = -originalY;
+					gyroY = originalX;
 
-				break;
-			default:
-				System.out.println("unknown rotation: " + Gdx.input.getRotation());
-				break;
+					break;
+				default:
+					System.out.println("unknown rotation: " + Gdx.input.getRotation());
+					break;
+			}
 		}
 
 		x = degreesToFullAnalog(gyroX, maxDegreesOption.getOptionValue());
@@ -121,12 +126,12 @@ public class GdxTiltJoystick extends SimpleJoystickPart implements ConfigurableC
 
 	@Override
 	public boolean isXDeadzone() {
-		return Math.abs(x) <= config.getFullAnalogDeadzone();
+		return Math.abs(x) <= getConfig().getFullAnalogDeadzone();
 	}
 
 	@Override
 	public boolean isYDeadzone() {
-		return Math.abs(y) <= config.getFullAnalogDeadzone();
+		return Math.abs(y) <= getConfig().getFullAnalogDeadzone();
 	}
 
 	@Override

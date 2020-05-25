@@ -4,7 +4,9 @@
     package="me.retrodaredevil.game.trackshooter">
 
     <uses-feature android:name="android.hardware.type.watch" />
+    <uses-feature android:name=" android.hardware.sensor.gyroscope" android:required="true" />
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +18,12 @@
             android:value="@string/app_id" />
         <meta-data android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version"/>
+        <meta-data
+            android:name="com.google.android.wearable.standalone"
+            android:value="true" />
 
         <activity
-            android:name="me.retrodaredevil.game.trackshooter.GoogleAndroidLauncher"
+            android:name="me.retrodaredevil.game.trackshooter.WearAndroidLauncher"
             android:label="@string/app_name"
             android:configChanges="keyboard|keyboardHidden|navigation|orientation|screenSize">
             <intent-filter>

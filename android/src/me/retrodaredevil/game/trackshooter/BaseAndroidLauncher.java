@@ -8,6 +8,7 @@ import android.os.Vibrator;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
+import me.retrodaredevil.game.trackshooter.input.InputQuirk;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
 
@@ -16,6 +17,10 @@ public abstract class BaseAndroidLauncher extends AndroidApplication {
 
 	protected abstract AccountObject createAccountObject();
 	protected abstract void postInitialize();
+
+	protected InputQuirk getInputQuirk() {
+		return InputQuirk.NORMAL;
+	}
 
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
@@ -34,8 +39,8 @@ public abstract class BaseAndroidLauncher extends AndroidApplication {
 		}
 		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
 
-		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, createAccountObject()), config);
-
+		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, createAccountObject(), getInputQuirk()), config);
+		postInitialize();
 	}
 
 
