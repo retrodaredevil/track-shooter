@@ -1,0 +1,32 @@
+apply plugin: "com.android.library"
+
+configurations { natives }
+
+dependencies {
+    api project(':android')
+    api "com.google.android.gms:play-services-games:19.0.0"
+    api 'com.google.android.gms:play-services-auth:18.0.0'
+}
+android {
+    compileSdkVersion 29
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDirs = ['src']
+            aidl.srcDirs = ['src']
+            renderscript.srcDirs = ['src']
+            res.srcDirs = ['res']
+            assets.srcDirs = ['assets']
+            jniLibs.srcDirs = ['libs']
+        }
+
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    defaultConfig {
+        minSdkVersion 19
+        targetSdkVersion 28 // TODO put this in a variable somewhere
+    }
+}

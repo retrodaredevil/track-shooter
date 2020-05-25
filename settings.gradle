@@ -1,3 +1,3 @@
 include ':packer'
-include 'desktop', 'android', 'core'
-//include 'html'
+include 'desktop', 'core'
+include 'android', 'androidgoogle', 'appgoogle', 'appbasic', 'wearos'

@@ -1,12 +1,5 @@
 package me.retrodaredevil.game.trackshooter;
 
-import android.content.Context;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Vibrator;
-
-import com.badlogic.gdx.backends.android.AndroidApplication;
-import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -23,28 +16,14 @@ import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplaye
 import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
-import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
-import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
+import me.retrodaredevil.game.trackshooter.common.google.R;
 
+public class GoogleAndroidLauncher extends BaseAndroidLauncher {
 
-public class AndroidLauncher extends AndroidApplication {
-
+	private AndroidAchievementHandler achievementHandler;
 
 	@Override
-	protected void onCreate (Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-		config.useGyroscope = true;
-		config.useAccelerometer = true;
-		config.useCompass = true;
-		config.useRotationVectorSensor = true; // may not work on all devices
-		final RumbleAnalogControl rumbleAnalogControl;
-		if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-			Vibrator vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
-			rumbleAnalogControl = new AndroidAnalogRumble(vibrator);
-		} else {
-			rumbleAnalogControl = RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG;
-		}
+	protected AccountObject createAccountObject() {
 		final Map<DefaultGameEvent, String> eventMap = new EnumMap<>(DefaultGameEvent.class);
 		eventMap.put(DefaultGameEvent.SHARKS_KILLED, getString(R.string.event_sharks_killed));
 		eventMap.put(DefaultGameEvent.SNAKES_KILLED, getString(R.string.event_snakes_killed));
@@ -90,22 +69,21 @@ public class AndroidLauncher extends AndroidApplication {
 						.requestScopes(Games.SCOPE_GAMES)
 						.build()
 		);
-		PreferencesGetter scorePreferencesGetter = GameMain.SCORE_PREFERENCSE_GETTER;
 
 		GoogleAccountManager accountManager = new GoogleAccountManager(this, client);
 
-		AndroidAchievementHandler achievementHandler = new AndroidAchievementHandler(
+		achievementHandler = new AndroidAchievementHandler(
 				Collections.unmodifiableMap(eventMap), Collections.unmodifiableMap(achievementMap), Collections.unmodifiableMap(manualAchievementMap),
 				getString(R.string.leaderboard_high_score),
 				this,
 				accountManager
 		);
 		AccountMultiplayer multiplayer = AccountMultiplayer.Defaults.NOT_SUPPORTED;
-
-		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler, multiplayer)), config);
-		achievementHandler.setView(graphics.getView());
-
+		return new AccountObject(accountManager, achievementHandler, multiplayer);
 	}
 
-
+	@Override
+	protected void postInitialize() {
+		achievementHandler.setView(graphics.getView());
+	}
 }

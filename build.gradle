@@ -39,7 +39,6 @@ allprojects {
 			name 'Google'
 		}
 	}
-
 }
 
 project(":desktop") {
