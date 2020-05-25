@@ -307,22 +307,25 @@ public final class GameInputs {
 							}), // will fire if released when constant shoot not enabled
 					new LowestPositionInputPart( // this is for the constant shoot
 							true,
-							Arrays.asList(new DigitalPatternInputPart(160, 80),
-							new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
-									new DigitalChildPositionInputPart.DigitalGetter() {
-										Long lastDown = null;
-										@Override
-										public boolean isDown(InputPart childInputPart) {
-											if(!constantShoot.getBooleanOptionValue()) return false;
+							Arrays.asList(
+									new DigitalPatternInputPart(160, 80),
+									new DigitalChildPositionInputPart(new GdxScreenTouchButton(rotateFireArea, shouldIgnorePointer, true),
+											new DigitalChildPositionInputPart.DigitalGetter() {
+												Long lastDown = null;
+												@Override
+												public boolean isDown(InputPart childInputPart) {
+													if(!constantShoot.getBooleanOptionValue()) return false;
 
-											final boolean down = childInputPart.isDown();
-											final long currentTime = System.currentTimeMillis();
-											if(down){
-												lastDown = currentTime;
+													final boolean down = childInputPart.isDown();
+													final long currentTime = System.currentTimeMillis();
+													if(down){
+														lastDown = currentTime;
+													}
+													return down || (lastDown != null && lastDown + CONSTANT_SHOOT_TIME_AFTER_RELEASE > currentTime);
 											}
-											return down || (lastDown != null && lastDown + CONSTANT_SHOOT_TIME_AFTER_RELEASE > currentTime);
-									}
-							})), true
+									})
+							),
+							true
 					)
 			), true, true);
 		} else {

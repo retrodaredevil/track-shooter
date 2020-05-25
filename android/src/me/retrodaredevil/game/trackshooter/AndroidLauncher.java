@@ -4,12 +4,19 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
+
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.games.Games;
+
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Map;
+
 import me.retrodaredevil.game.trackshooter.account.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.account.achievement.ManualAchievement;
 import me.retrodaredevil.game.trackshooter.account.multiplayer.AccountMultiplayer;
@@ -17,10 +24,7 @@ import me.retrodaredevil.game.trackshooter.achievement.DefaultAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultEventAchievement;
 import me.retrodaredevil.game.trackshooter.achievement.DefaultGameEvent;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
-import me.retrodaredevil.game.trackshooter.multiplayer.AndroidAccountMultiplayer;
 import me.retrodaredevil.game.trackshooter.util.PreferencesGetter;
-
-import java.util.*;
 
 
 public class AndroidLauncher extends AndroidApplication {
@@ -96,7 +100,6 @@ public class AndroidLauncher extends AndroidApplication {
 				this,
 				accountManager
 		);
-//		AndroidAccountMultiplayer multiplayer = new AndroidAccountMultiplayer(this, accountManager);
 		AccountMultiplayer multiplayer = AccountMultiplayer.Defaults.NOT_SUPPORTED;
 
 		initialize(new GameMain(scorePreferencesGetter, rumbleAnalogControl, new AccountObject(accountManager, achievementHandler, multiplayer)), config);

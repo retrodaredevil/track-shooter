@@ -1,24 +1,32 @@
 package me.retrodaredevil.game.trackshooter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.Gravity;
 import android.view.View;
+
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.games.*;
+import com.google.android.gms.games.AchievementsClient;
+import com.google.android.gms.games.EventsClient;
+import com.google.android.gms.games.Games;
+import com.google.android.gms.games.GamesClient;
 import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.event.Event;
 import com.google.android.gms.games.event.EventBuffer;
-import com.google.android.gms.tasks.Task;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 import me.retrodaredevil.game.trackshooter.account.Show;
 import me.retrodaredevil.game.trackshooter.account.achievement.AchievementHandler;
 import me.retrodaredevil.game.trackshooter.account.achievement.EventAchievement;
 import me.retrodaredevil.game.trackshooter.account.achievement.GameEvent;
 import me.retrodaredevil.game.trackshooter.account.achievement.ManualAchievement;
 import me.retrodaredevil.game.trackshooter.util.Util;
-
-import java.util.*;
 
 import static java.util.Objects.requireNonNull;
 
