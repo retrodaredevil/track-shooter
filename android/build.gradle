@@ -24,6 +24,7 @@ dependencies {
 }
 android {
     compileSdkVersion 29
+    namespace 'me.retrodaredevil.trackshooter'
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -43,6 +44,10 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 28 // TODO put this in a variable somewhere
+    }
+    buildFeatures {
+        renderScript true
+        aidl true
     }
 }
 

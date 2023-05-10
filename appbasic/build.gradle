@@ -8,6 +8,7 @@ dependencies {
 
 android {
     compileSdkVersion 29
+    namespace 'me.retrodaredevil.trackshooter'
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
@@ -52,6 +53,10 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     productFlavors {
+    }
+    buildFeatures {
+        renderScript true
+        aidl true
     }
 }
 
