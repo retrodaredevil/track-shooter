@@ -2,16 +2,16 @@ apply plugin: "java"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
-sourceSets.main.java.srcDirs = [ "src/" ]
+//sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "me.retrodaredevil.game.trackshooter.desktop.DesktopLauncher"
-project.ext.assetsDir = new File("../android/assets");
+//project.ext.assetsDir = new File("../android/assets");
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
+//    workingDir = project.assetsDir
     ignoreExitValue = true
 }
 
@@ -19,7 +19,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
+//    workingDir = project.assetsDir
     ignoreExitValue = true
     debug = true
 }
@@ -28,7 +28,7 @@ task dist(type: Jar) {
     from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
-    from files(project.assetsDir);
+//    from files(project.assetsDir);
  
     manifest {
         attributes 'Main-Class': project.mainClassName

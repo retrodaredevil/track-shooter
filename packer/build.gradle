@@ -2,16 +2,16 @@ apply plugin: "java"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
-sourceSets.main.java.srcDirs = [ "src/" ]
+//sourceSets.main.java.srcDirs = [ "src/" ]
 
 project.ext.mainClassName = "me.retrodaredevil.game.trackshooter.packer.TexturePackerMain"
-project.ext.assetsDir = new File("../android/assets/skins/main")
+//project.ext.assetsDir = new File("../android/assets/skins/main")
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
+//    workingDir = project.assetsDir
     ignoreExitValue = true
 }
 
@@ -19,7 +19,7 @@ task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
-    workingDir = project.assetsDir
+//    workingDir = project.assetsDir
     ignoreExitValue = true
     debug = true
 }
