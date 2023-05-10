@@ -1,4 +1,5 @@
 apply plugin: "java"
+apply plugin: "java-library"
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -9,6 +10,6 @@ sourceSets.main.java.srcDirs = [ "src/" ]
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
     implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-    compile "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
-    compile "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
+    api "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
+    api "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
 }
