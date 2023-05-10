@@ -41,37 +41,6 @@ allprojects {
 	}
 }
 
-project(":desktop") {
-    apply plugin: "java"
-
-    dependencies {
-        implementation project(":core")
-        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-		implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
-    }
-}
-
-project(":packer"){
-	apply plugin: "java"
-
-	dependencies {
-		implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-		implementation "com.badlogicgames.gdx:gdx-tools:$gdxVersion"
-	}
-}
-
-project(":core") {
-    apply plugin: "java"
-
-    dependencies {
-        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-        implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-        compile "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
-        compile "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
-    }
-}
-
 wrapper {
     gradleVersion = '6.4.1'
     distributionType = Wrapper.DistributionType.ALL

@@ -1,7 +1,14 @@
 apply plugin: "java"
 
-sourceCompatibility = 1.8
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 sourceSets.main.java.srcDirs = [ "src/" ]
 
+dependencies {
+    implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
+    compile "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
+    compile "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
+}
