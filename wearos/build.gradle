@@ -25,8 +25,12 @@ android {
 
     }
     packagingOptions {
-        exclude 'META-INF/robovm/ios/robovm.xml'
-        exclude 'icon-backups/*'
+        jniLibs {
+            excludes += ['icon-backups/*']
+        }
+        resources {
+            excludes += ['META-INF/robovm/ios/robovm.xml', 'icon-backups/*']
+        }
     }
     defaultConfig {
         applicationId "me.retrodaredevil.game.trackshooter"

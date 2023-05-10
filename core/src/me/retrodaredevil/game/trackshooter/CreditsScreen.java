@@ -41,7 +41,7 @@ public class CreditsScreen extends ScreenAdapter implements UsableScreen {
 		table.setFillParent(true);
 		stage.addActor(table);
 
-		table.add("Game made by Joshua Shannon").center().row();
+		table.add("Game made by Lavender Shannon").center().row();
 		table.add("Game made using LibGDX").center().row();
 		table.add("This game is still in beta, please report any bugs you find").center().row();
 		table.add("and request features to retrodaredevil@gmail.com").center().row();

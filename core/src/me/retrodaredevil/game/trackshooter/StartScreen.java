@@ -323,7 +323,7 @@ public class StartScreen extends ScreenAdapter implements UsableScreen{
 			"Keep shooting at the Sharks to make them spin longer!",
 			"Shoot the starfish once to change its direction!",
 			"Open Source!",
-			"Made by Joshua Shannon!",
+			"Made by Lavender Shannon!",
 			"Sign in for achievements and leaderboards!",
 			"Blue sharks need 3 hits, pink need 2, and red needs one more!"
 	};
