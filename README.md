@@ -21,6 +21,18 @@ Windows: ```gradlew.bat desktop:run```
 
 If you are using logcat, this may be useful if the console is being spammed: `(?=^((?!Skip ramp).)*$)(?=^((?!This process).)*$)`
 
+## Build Troubleshooting
+
+### On Android `libgdx.so` not found
+Relates to issue: https://github.com/libgdx/libgdx/issues/5863.
+Need to run this specific gradle task before deploying.
+
+```shell
+./gradlew appgoogle:copyAndroidNatives
+```
+
+If that does not work, uninstall app from device and then deploy.
+
 
 ## Conventions
 * Use conventions found in `.editorconfig`

@@ -20,7 +20,7 @@ public final class Resources {
 
 	public static void loadToSkin(Skin skin){
 		// thanks http://www.freesfx.co.uk/soundeffects/lasers_weapons/
-		skin.add("bullet", Gdx.audio.newSound(Gdx.files.internal("skins/main/sounds/bullet_sound.mp3")), Sound.class);
+		skin.add("bullet", Gdx.audio.newSound(Gdx.files.classpath("skins/main/sounds/bullet_sound.mp3")), Sound.class);
 	}
 	private static Drawable[] createRegions(boolean vertical, int amount, TextureRegion region){
 		int width;

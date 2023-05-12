@@ -102,10 +102,10 @@ public class GameMain extends Game {
 	public void create () {
 //		GdxControllerTester.initialize();
 		Batch batch = new SpriteBatch();
-		Skin skin = new Skin(Gdx.files.internal("skins/main/skin.json"));
+		Skin skin = new Skin(Gdx.files.classpath("skins/main/skin.json"));
 		Resources.loadToSkin(skin);
-		Skin uiSkin = new Skin(Gdx.files.internal("skins/sgx/sgx-ui.json"));
-		Skin arcadeSkin = new Skin(Gdx.files.internal("skins/arcade/arcade-ui.json"));
+		Skin uiSkin = new Skin(Gdx.files.classpath("skins/sgx/sgx-ui.json"));
+		Skin arcadeSkin = new Skin(Gdx.files.classpath("skins/arcade/arcade-ui.json"));
 		renderObject = new RenderObject(batch, skin, uiSkin, arcadeSkin);
 		saveObject = new SaveObject();
 		OptionValue volumeOption = OptionValues.createAnalogRangedOptionValue(0, 1, 1);

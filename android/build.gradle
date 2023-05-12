@@ -24,14 +24,14 @@ dependencies {
 }
 android {
     compileSdkVersion 29
-    namespace 'me.retrodaredevil.trackshooter'
+    namespace 'me.retrodaredevil.game.trackshooter.common'
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
 //            java.srcDirs = ['src']
 //            aidl.srcDirs = ['src']
 //            renderscript.srcDirs = ['src']
-//            res.srcDirs = ['res']
+            res.srcDirs = ['res']
 //            assets.srcDirs = ['assets']
             jniLibs.srcDirs = ['libs']
         }
@@ -48,6 +48,35 @@ android {
     buildFeatures {
         renderScript true
         aidl true
+    }
+}
+
+
+// called every time gradle gets executed, takes the native dependencies of
+// the natives configuration, and extracts them to the proper libs/ folders
+// so they get packed with the APK.
+task copyAndroidNatives() {
+    // thanks https://github.com/collinsmith/riiablo/blob/4eba03fc1c63dd76759a385a642dd484852bde9e/android/build.gradle#LL69C14-L69C14
+    file("libs/armeabi/").mkdirs()
+    file("libs/armeabi-v7a/").mkdirs()
+    file("libs/arm64-v8a/").mkdirs()
+    file("libs/x86_64/").mkdirs()
+    file("libs/x86/").mkdirs()
+
+    configurations.natives.files.each { jar ->
+        def outputDir = null
+        if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
+        if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
+        if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+        if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
+        if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
+        if (outputDir != null) {
+            copy {
+                from zipTree(jar)
+                into outputDir
+                include "*.so"
+            }
+        }
     }
 }
 
