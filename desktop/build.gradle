@@ -7,6 +7,13 @@ targetCompatibility = JavaVersion.VERSION_1_8
 project.ext.mainClassName = "me.retrodaredevil.game.trackshooter.desktop.DesktopLauncher"
 //project.ext.assetsDir = new File("../android/assets");
 
+dependencies {
+    implementation project(":core")
+    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+    implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
+}
+
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
@@ -27,7 +34,10 @@ task debug(dependsOn: classes, type: JavaExec) {
 task dist(type: Jar) {
     from files(sourceSets.main.output.classesDirs)
     from files(sourceSets.main.output.resourcesDir)
-    from {configurations.compile.collect {zipTree(it)}}
+    from {
+        duplicatesStrategy DuplicatesStrategy.EXCLUDE
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 //    from files(project.assetsDir);
  
     manifest {
@@ -37,9 +47,3 @@ task dist(type: Jar) {
 
 dist.dependsOn classes
 
-dependencies {
-    implementation project(":core")
-    implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-    implementation "com.badlogicgames.gdx:gdx-controllers-lwjgl3:$gdxVersion"
-}
