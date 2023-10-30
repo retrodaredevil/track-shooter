@@ -31,7 +31,12 @@ public class AndroidAnalogRumble implements RumbleAnalogControl {
 			if(!isSupported()){
 				throw new UnsupportedOperationException("This isn't supported!");
 			}
-			vibrator.vibrate(VibrationEffect.createOneShot(min(time, Integer.MAX_VALUE), (int) Math.round(255 * intensity)));
+			int intensityValue = (int) Math.round(255 * intensity);
+			if (intensityValue == 0) {
+				vibrator.cancel();
+			} else {
+				vibrator.vibrate(VibrationEffect.createOneShot(min(time, Integer.MAX_VALUE), intensityValue));
+			}
 		} else {
 			throw new UnsupportedOperationException();
 		}

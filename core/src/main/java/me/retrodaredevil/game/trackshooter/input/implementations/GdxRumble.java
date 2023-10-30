@@ -39,7 +39,7 @@ public class GdxRumble extends SimpleControllerPart implements ControllerRumble,
 
 	private void cancel(){
 		vibrateUntil = 0;
-		Gdx.input.vibrate(0, 0, false);
+		analogControl.setControl(0.0, 0);
 		isRumbling = false;
 	}
 
