@@ -122,7 +122,8 @@ public class GameMain extends Game {
 				String controllerName = controller.getName().toLowerCase();
 
 				// ====== Controller =====
-				final ControllerPartCreator controllerPartCreator = new GdxControllerPartCreator(ControllerProviders.wrap(controller), true);
+				// TODO The commit that this comment is from broke controller support, we should fix it
+				final ControllerPartCreator controllerPartCreator = new GdxControllerPartCreator(ControllerProviders.wrap(controller));
 				final UsableGameInput controllerInput;
 				if(controllerName.contains("extreme") && controllerName.contains("logitech")){
 					controllerInput = new ControllerGameInput(new BaseExtremeFlightJoystickControllerInput(

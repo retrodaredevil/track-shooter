@@ -79,7 +79,7 @@ public class GdxMouseAxis extends AutoCachingInputPart {
 	 * Creates a GdxMouseAxis used for dragging in a certain area of the screen
 	 */
 	public GdxMouseAxis(boolean yAxis, MultiplierGetter multiplierGetter, ScreenArea screenArea){
-		this(true, yAxis, true, multiplierGetter,
+		this(true, yAxis, false, multiplierGetter,
 				true, screenArea, true);
 	}
 	private float getMultiplier(){

@@ -20,7 +20,9 @@ public final class Resources {
 
 	public static void loadToSkin(Skin skin){
 		// thanks http://www.freesfx.co.uk/soundeffects/lasers_weapons/
-		skin.add("bullet", Gdx.audio.newSound(Gdx.files.classpath("skins/main/sounds/bullet_sound.mp3")), Sound.class);
+		// NOTE: We must use an internal file handle here, or it will not work on Android (I think it's a bug in libGDX)
+		//   Because of this, "Internal audio files must be placed in the assets directory"
+		skin.add("bullet", Gdx.audio.newSound(Gdx.files.internal("skins/main/sounds/bullet_sound.mp3")), Sound.class);
 	}
 	private static Drawable[] createRegions(boolean vertical, int amount, TextureRegion region){
 		int width;

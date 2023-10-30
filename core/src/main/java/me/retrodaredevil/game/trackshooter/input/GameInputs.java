@@ -144,11 +144,23 @@ public final class GameInputs {
 	private static InputPart createTouchAxis(OptionValue useY, OptionTracker options, ScreenArea screenArea, OptionValue isLeftHanded){
 		OptionValue multiplier = createRotationMultiplier(options, true, TOUCH).getOptionValue();
 		OptionValue inverted = createRotationInvert(options, TOUCH).getOptionValue();
+		// NOTE: It is important that needsDrag=false because when it is true something doesn't work on Android
+		boolean needsDrag = false;
 		return createRotationAxisChooser(
-				new GdxMouseAxis(false, () -> 7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1), screenArea),
-				new GdxMouseAxis(true,
+				new GdxMouseAxis(
+						true, false, needsDrag,
+						() -> 7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1),
+						true,
+						screenArea,
+						true
+				),
+				new GdxMouseAxis(
+						true, true, needsDrag,
 						() -> -7.0f * (float) multiplier.getOptionValue() * (inverted.getBooleanOptionValue() ? -1 : 1) * (isLeftHanded.getBooleanOptionValue() ? -1 : 1),
-						screenArea),
+						true,
+						screenArea,
+						true
+				),
 				options, useY, TOUCH
 		);
 	}
@@ -232,7 +244,6 @@ public final class GameInputs {
 			leftHandedRotateArea = leftSide;
 			leftHandedFireArea = rightSide;
 
-			System.out.println("Creating fireAreaGetter. isPointRotation.hashCode(): " + isPointRotation.hashCode());
 			fireAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
 				? leftHandedFireArea.containsPoint(x, y)
 				: rightHandedFireArea.containsPoint(x, y);
@@ -403,8 +414,9 @@ public final class GameInputs {
 		dummySelector = new TwoAxisJoystickPart(new DummyInputPart(0, true), new DummyInputPart(0, true));
 		dummyEnter = new DummyInputPart(0, false);
 
-		if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Vibrator)){
-			final GdxRumble gdxRumble = new GdxRumble(rumbleAnalogControl);
+		if(rumbleAnalogControl.isSupported()){ // we only support vibration if analog rumble is supported
+			// TODO consider adding back support for non-analog rumble
+			GdxRumble gdxRumble = new GdxRumble(rumbleAnalogControl);
 			rumble = gdxRumble;
 			options.add(gdxRumble);
 		} else {

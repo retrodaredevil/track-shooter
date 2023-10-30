@@ -9,7 +9,7 @@ targetCompatibility = JavaVersion.VERSION_1_8
 
 dependencies {
     implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
-    implementation "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
     api "com.github.retrodaredevil.abstract-controller-lib:api:$controllerLibVersion"
-    api "com.github.retrodaredevil.abstract-controller-lib:gdx:$controllerLibVersion"
+    api "com.github.retrodaredevil.abstract-controller-lib:gdx2:$controllerLibVersion"
+    api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion" // This is also an API dependency of abstract-controller-lib, so we basically override the version here
 }

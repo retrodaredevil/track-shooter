@@ -10,7 +10,8 @@ dependencies {
 }
 
 android {
-    compileSdkVersion 29
+    // TODO test WearOS again (much of this configuration has been updated without testing it)
+    compileSdk 31
     namespace 'me.retrodaredevil.game.trackshooter'
     sourceSets {
         main {
@@ -35,7 +36,7 @@ android {
     defaultConfig {
         applicationId "me.retrodaredevil.game.trackshooter"
         minSdkVersion 26
-        targetSdkVersion 28
+        targetSdkVersion 31
         versionCode 105
         // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
         versionName '1.10+d alpha'

@@ -5,7 +5,7 @@ configurations { natives }
 dependencies {
     api project(':core')
     api "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
+//    natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a"
     natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
@@ -16,14 +16,13 @@ dependencies {
 //    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-arm64-v8a"
 //    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
 //    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
-    api "com.badlogicgames.gdx:gdx-controllers:$gdxVersion"
-    api "com.badlogicgames.gdx:gdx-controllers-android:$gdxVersion"
+    implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
 
-    api "com.google.android.gms:play-services-games:19.0.0"
-    api 'com.google.android.gms:play-services-auth:18.0.0'
+    api "com.google.android.gms:play-services-games:23.1.0"
+    api 'com.google.android.gms:play-services-auth:20.7.0'
 }
 android {
-    compileSdkVersion 29
+    compileSdk 31
     namespace 'me.retrodaredevil.game.trackshooter.common'
     sourceSets {
         main {
@@ -32,7 +31,7 @@ android {
 //            aidl.srcDirs = ['src']
 //            renderscript.srcDirs = ['src']
             res.srcDirs = ['res']
-//            assets.srcDirs = ['assets']
+//            assets.srcDirs = ['assets'] // this is commented out so we use the default assets location
             jniLibs.srcDirs = ['libs']
         }
 
@@ -43,7 +42,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 28 // TODO put this in a variable somewhere
+        targetSdkVersion 31 // TODO put this in a variable somewhere
     }
     buildFeatures {
         renderScript true
@@ -57,7 +56,7 @@ android {
 // so they get packed with the APK.
 task copyAndroidNatives() {
     // thanks https://github.com/collinsmith/riiablo/blob/4eba03fc1c63dd76759a385a642dd484852bde9e/android/build.gradle#LL69C14-L69C14
-    file("libs/armeabi/").mkdirs()
+    //file("libs/armeabi/").mkdirs()
     file("libs/armeabi-v7a/").mkdirs()
     file("libs/arm64-v8a/").mkdirs()
     file("libs/x86_64/").mkdirs()
@@ -67,7 +66,7 @@ task copyAndroidNatives() {
         def outputDir = null
         if (jar.name.endsWith("natives-arm64-v8a.jar")) outputDir = file("libs/arm64-v8a")
         if (jar.name.endsWith("natives-armeabi-v7a.jar")) outputDir = file("libs/armeabi-v7a")
-        if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
+        //if (jar.name.endsWith("natives-armeabi.jar")) outputDir = file("libs/armeabi")
         if (jar.name.endsWith("natives-x86_64.jar")) outputDir = file("libs/x86_64")
         if (jar.name.endsWith("natives-x86.jar")) outputDir = file("libs/x86")
         if (outputDir != null) {
