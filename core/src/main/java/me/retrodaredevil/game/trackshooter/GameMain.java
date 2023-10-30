@@ -46,6 +46,7 @@ import me.retrodaredevil.game.trackshooter.input.InputConfig;
 import me.retrodaredevil.game.trackshooter.input.InputQuirk;
 import me.retrodaredevil.game.trackshooter.input.RumbleAnalogControl;
 import me.retrodaredevil.game.trackshooter.input.UsableGameInput;
+import me.retrodaredevil.game.trackshooter.input.VolumeButtons;
 import me.retrodaredevil.game.trackshooter.render.RenderObject;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
@@ -68,6 +69,7 @@ public class GameMain extends Game {
 
 	private final PreferencesGetter scorePreferencesGetter;
 	private final RumbleAnalogControl rumbleAnalogControl;
+	private final VolumeButtons volumeButtons;
 	private final AccountObject accountObject;
 	private final InputConfig inputConfig;
 
@@ -80,19 +82,20 @@ public class GameMain extends Game {
 	private final MutableControlConfig controllerConfig = new MutableControlConfig();
 	private List<GameInput> inputs = new ArrayList<>();
 
-	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject, InputConfig inputConfig){
+	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons, AccountObject accountObject, InputConfig inputConfig){
 		this.scorePreferencesGetter = scorePreferencesGetter;
 		this.rumbleAnalogControl = requireNonNull(rumbleAnalogControl);
+		this.volumeButtons = requireNonNull(volumeButtons);
 		this.accountObject = requireNonNull(accountObject);
 		this.inputConfig = requireNonNull(inputConfig);
 	}
-	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, AccountObject accountObject){
-		this(scorePreferencesGetter, rumbleAnalogControl, accountObject, new InputConfig(InputQuirk.NORMAL));
+	public GameMain(PreferencesGetter scorePreferencesGetter, RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons, AccountObject accountObject){
+		this(scorePreferencesGetter, rumbleAnalogControl, volumeButtons, accountObject, new InputConfig(InputQuirk.NORMAL));
 	}
 
 	public GameMain(PreferencesGetter scorePreferencesGetter){
 		this(
-				scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG,
+				scorePreferencesGetter, RumbleAnalogControl.Defaults.UNSUPPORTED_ANALOG, VolumeButtons.Defaults.UNSUPPORTED_VOLUME_BUTTONS,
 				new AccountObject(AccountManager.Defaults.NO_MANAGER, AchievementHandler.Defaults.UNSUPPORTED_HANDLER, AccountMultiplayer.Defaults.NOT_SUPPORTED)
 		);
 	}
@@ -161,7 +164,7 @@ public class GameMain extends Game {
 				controllerUpdater.addPartAssertNotPresent(controllerInput);
 
 				// ====== Physical Inputs (Keyboards, on screen) (Only add if we haven't already)
-				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl) : Collections.emptySet();
+				final Collection<? extends UsableGameInput> addBefore = firstRun ? getPhysicalInputs(rumbleAnalogControl, volumeButtons) : Collections.emptySet();
 
 				// ==== Inputs to go into our ChangeableGameInput
 				final List<UsableGameInput> usableInputs = new ArrayList<>(addBefore);
@@ -176,7 +179,7 @@ public class GameMain extends Game {
 			}
 		}
 		if(inputs.isEmpty()) { // if there were no controllers, add inputs from getPhysicalInputs()
-			List<UsableGameInput> gameInputs = getPhysicalInputs(rumbleAnalogControl);
+			List<UsableGameInput> gameInputs = getPhysicalInputs(rumbleAnalogControl, volumeButtons);
 			GameInput realGameInput = new ChangeableGameInput(gameInputs);
 			controllerUpdater.addPartAssertNotPresent(realGameInput);
 			inputs.add(realGameInput);
@@ -196,15 +199,15 @@ public class GameMain extends Game {
 		Gdx.graphics.setTitle("Track Shooter");
 		startScreen();
 	}
-	private List<UsableGameInput> getPhysicalInputs(RumbleAnalogControl rumbleAnalogControl){
+	private List<UsableGameInput> getPhysicalInputs(RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons){
 
 		List<UsableGameInput> gameInputs = new ArrayList<>();
 		if(Gdx.app.getType() == Application.ApplicationType.Android){
 			if (!inputConfig.getInputQuirk().isForceGyro()) {
-				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts, rumbleAnalogControl));
+				gameInputs.add(GameInputs.createVirtualJoystickInput(renderParts, rumbleAnalogControl, volumeButtons));
 			}
 			if(Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)) {
-				gameInputs.add(GameInputs.createTouchGyroInput(renderParts, rumbleAnalogControl, inputConfig));
+				gameInputs.add(GameInputs.createTouchGyroInput(renderParts, rumbleAnalogControl, volumeButtons, inputConfig));
 			} else if (inputConfig.getInputQuirk().isForceGyro()) {
 				throw new IllegalStateException("No gyroscope available!");
 			}

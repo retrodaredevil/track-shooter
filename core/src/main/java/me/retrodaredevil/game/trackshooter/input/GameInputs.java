@@ -38,6 +38,7 @@ import me.retrodaredevil.game.trackshooter.input.implementations.ScreenArea;
 import me.retrodaredevil.game.trackshooter.input.implementations.ScreenAreas;
 import me.retrodaredevil.game.trackshooter.input.implementations.ScreenPositionJoystick;
 import me.retrodaredevil.game.trackshooter.input.implementations.ShouldIgnorePointer;
+import me.retrodaredevil.game.trackshooter.input.implementations.VolumeButtonsInputPart;
 import me.retrodaredevil.game.trackshooter.render.RenderParts;
 import me.retrodaredevil.game.trackshooter.render.parts.ArrowRenderer;
 import me.retrodaredevil.game.trackshooter.render.parts.TouchpadRenderer;
@@ -203,7 +204,7 @@ public final class GameInputs {
 	 * @param renderParts if not null, we should create a touchpad joystick
 	 * @return
 	 */
-	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputConfig inputConfig) {
+	private static UsableGameInput createTouchInput(boolean isTouchpad, RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons, InputConfig inputConfig) {
 		if(isTouchpad && !Gdx.input.isPeripheralAvailable(Input.Peripheral.Gyroscope)){
 			Gdx.app.error("no gyro scope available", "creating gyro control scheme anyway");
 		}
@@ -250,6 +251,21 @@ public final class GameInputs {
 			rotateAreaGetter = (x, y) -> isLeftHanded.getBooleanOptionValue()
 					? leftHandedRotateArea.containsPoint(x, y) :
 					rightHandedRotateArea.containsPoint(x, y);
+		}
+		final OptionValue isVolumeShootEnabled = !volumeButtons.isSupported()
+				? null
+				: OptionValues.createBooleanOptionValue(false);
+		final InputPart volumeButtonShootInput;
+		if (isVolumeShootEnabled != null) {
+			options.add(new ControlOption(
+					"Shoot with Volume",
+					"When enabled, this allows you to use the volume keys as an additional shoot button.",
+					"controls.shooting." + TOUCH + ".volume_shoot",
+					isVolumeShootEnabled
+			));
+			volumeButtonShootInput = new VolumeButtonsInputPart(volumeButtons, VolumeButtons::getVolumeUpCount, isVolumeShootEnabled);
+		} else {
+			volumeButtonShootInput = new DummyInputPart(0, false);
 		}
 
 		final ShouldIgnorePointer shouldIgnorePointer;
@@ -300,6 +316,7 @@ public final class GameInputs {
 			};
 
 			fireButton = new HighestPositionInputPart(Arrays.asList(
+					volumeButtonShootInput,
 					new GdxScreenTouchButton((x, y) -> {
 						if(isPointRotation.getBooleanOptionValue()){
 							return false;
@@ -439,12 +456,12 @@ public final class GameInputs {
 		activeDetector.setGameInput(r);
 		return r;
 	}
-	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, InputConfig inputConfig){
-		return createTouchInput(false, renderParts, rumbleAnalogControl, inputConfig);
+	public static UsableGameInput createTouchGyroInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons, InputConfig inputConfig){
+		return createTouchInput(false, renderParts, rumbleAnalogControl, volumeButtons, inputConfig);
 	}
 
-	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl){
-		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl, new InputConfig(InputQuirk.NORMAL));
+	public static UsableGameInput createVirtualJoystickInput(RenderParts renderParts, RumbleAnalogControl rumbleAnalogControl, VolumeButtons volumeButtons){
+		return createTouchInput(true, requireNonNull(renderParts), rumbleAnalogControl, volumeButtons, new InputConfig(InputQuirk.NORMAL));
 	}
 
 	private static ControlOption createRumbleOnSingleShotControlOption(){
