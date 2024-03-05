@@ -9,17 +9,18 @@ buildscript {
 		google()
 	}
     dependencies {
-		classpath 'com.android.tools.build:gradle:8.1.2'
+		classpath 'com.android.tools.build:gradle:8.2.2'
     }
 }
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
-}
+//configurations.configureEach {
+//    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+//}
 
 allprojects {
     version = '1.0'
     ext {
         appName = "Track Shooter"
+        // NOTE: Updating to libgdx 1.12.1 breaks arrow renderer
         gdxVersion = '1.12.0'
         gdxControllersVersion = "2.2.3"
 //        controllerLibVersion = "v2.5.0"
@@ -41,6 +42,6 @@ allprojects {
 }
 
 wrapper {
-    gradleVersion = '8.4'
+    gradleVersion = '8.6'
     distributionType = Wrapper.DistributionType.ALL
 }

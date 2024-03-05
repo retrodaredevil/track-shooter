@@ -7,7 +7,7 @@ dependencies {
 }
 
 android {
-    compileSdk 31
+    compileSdk 34
     namespace 'me.retrodaredevil.game.trackshooter'
     sourceSets {
         main {
@@ -32,10 +32,10 @@ android {
     defaultConfig {
         applicationId "me.retrodaredevil.game.trackshooter"
         minSdkVersion 19
-        targetSdkVersion 31
-        versionCode 105
+        targetSdkVersion 34
+        versionCode 110
         // make public versions multiple of 10 // try to make debug builds a multiple of 10 + 5
-        versionName '1.10+d alpha'
+        versionName '1.11'
     }
     buildTypes {
         release {

@@ -4,11 +4,11 @@ configurations { natives }
 
 dependencies {
     api project(':android')
-    api "com.google.android.gms:play-services-games:19.0.0"
-    api 'com.google.android.gms:play-services-auth:18.0.0'
+    api "com.google.android.gms:play-services-games:23.1.0"
+    api 'com.google.android.gms:play-services-auth:21.0.0'
 }
 android {
-    compileSdk 31
+    compileSdk 34
     namespace 'me.retrodaredevil.game.trackshooter.common.google'
     sourceSets {
         main {
@@ -28,7 +28,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31 // TODO put this in a variable somewhere
+        targetSdkVersion 34 // TODO put this in a variable somewhere
     }
     buildFeatures {
         renderScript true
