@@ -17,12 +17,10 @@ dependencies {
 //    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86"
 //    natives "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-x86_64"
     implementation "com.badlogicgames.gdx-controllers:gdx-controllers-android:$gdxControllersVersion"
-
-    api "com.google.android.gms:play-services-games:23.1.0"
-    api 'com.google.android.gms:play-services-auth:21.0.0'
 }
+
 android {
-    compileSdk 31
+    compileSdk 35
     namespace 'me.retrodaredevil.game.trackshooter.common'
     sourceSets {
         main {
@@ -42,7 +40,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 34 // TODO put this in a variable somewhere
+        targetSdkVersion 35 // TODO put this in a variable somewhere
     }
     buildFeatures {
         renderScript true
